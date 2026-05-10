@@ -1,0 +1,21 @@
+{
+  "name": "lootcard-choose",
+  "version": "0.1.0",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "tsx src/index.ts",
+    "gallery:seed": "tsx src/scripts/seed-gallery.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.17.0",
+    "discord.js": "^14.16.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.9",
+    "prisma": "^5.17.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.5.4"
+  }
+}

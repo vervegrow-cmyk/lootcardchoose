@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model GalleryCard {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  imageUrl    String
+  tags        String[]
+  style       String?
+  rarity      String?
+  category    String?
+  character   String?
+  color       String?
+  price       Decimal
+  metadata    Json?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  orders      Order[]
+}
+
+model GallerySearchSession {
+  id                    String   @id @default(cuid())
+  discordUserId         String
+  discordChannelId      String
+  query                 String
+  results               Json
+  selectedGalleryCardId String?
+  status                String
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+model Order {
+  id                String   @id @default(cuid())
+  orderNumber       String
+  discordUserId     String
+  galleryCardId     String
+  shopifyProductId  String?
+  shopifyCheckoutUrl String?
+  amount            Decimal
+  status            String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  galleryCard        GalleryCard @relation(fields: [galleryCardId], references: [id])
+}
