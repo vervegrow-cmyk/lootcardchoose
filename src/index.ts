@@ -72,10 +72,15 @@ const buildHmacMessage = (query: Request["query"]): string => {
     .join("&");
 };
 
-const isValidHmac = (query: Request["query"], providedHmac: string): boolean => {
+const computeHmacDigest = (query: Request["query"]): { message: string; digest: string } => {
   const secret = resolveShopifyClientSecret();
   const message = buildHmacMessage(query);
   const digest = crypto.createHmac("sha256", secret).update(message).digest("hex");
+  return { message, digest };
+};
+
+const isValidHmac = (query: Request["query"], providedHmac: string): boolean => {
+  const { digest } = computeHmacDigest(query);
   const left = Buffer.from(digest, "utf8");
   const right = Buffer.from(providedHmac, "utf8");
   if (left.length !== right.length) {
@@ -111,10 +116,20 @@ const exchangeCodeForAccessToken = async (
 
   if (!response.ok) {
     const payload = await response.text();
+    console.error("[SHOPIFY OAUTH] token exchange error", {
+      shop,
+      status: response.status,
+      payload,
+    });
     throw new Error(`Shopify token exchange failed: ${response.status} ${payload}`);
   }
 
   const data = (await response.json()) as ShopifyAccessTokenResponse;
+  console.log("[SHOPIFY OAUTH] token exchange success", {
+    shop,
+    scope: data.scope ?? null,
+    hasAccessToken: Boolean(data.access_token),
+  });
   if (!data.access_token) {
     throw new Error("Shopify token exchange response missing access_token");
   }
@@ -200,21 +215,46 @@ const startHealthServer = (): void => {
         return;
       }
 
-      if (!isValidHmac(request.query, hmac)) {
+      const { message, digest } = computeHmacDigest(request.query);
+      const hmacValid = isValidHmac(request.query, hmac);
+      console.log("[SHOPIFY OAUTH] hmac validation", {
+        shop,
+        state,
+        timestamp,
+        message,
+        providedHmac: hmac,
+        computedHmac: digest,
+        valid: hmacValid,
+      });
+
+      if (!hmacValid) {
         response.status(400).json({ ok: false, error: "Invalid hmac" });
         return;
       }
 
       const token = await exchangeCodeForAccessToken(shop, code);
 
-      await shopifyInstallationService.saveInstallation({
-        shop,
-        accessToken: token.accessToken,
-        scope: token.scope,
-      });
+      try {
+        await shopifyInstallationService.saveInstallation({
+          shop,
+          accessToken: token.accessToken,
+          scope: token.scope,
+        });
+      } catch (saveError) {
+        console.error("[SHOPIFY OAUTH] prisma save error", {
+          shop,
+          message: saveError instanceof Error ? saveError.message : String(saveError),
+          stack: saveError instanceof Error ? saveError.stack : undefined,
+        });
+        throw saveError;
+      }
 
       sendHtml(response, "Shopify app installed", `Installation succeeded for ${shop}.`);
     } catch (error) {
+      console.error("[SHOPIFY OAUTH] callback error", {
+        message: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+      });
       response.status(500).json({
         ok: false,
         error: error instanceof Error ? error.message : String(error),
