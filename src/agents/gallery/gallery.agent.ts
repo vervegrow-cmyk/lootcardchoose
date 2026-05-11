@@ -1,5 +1,7 @@
 import { AgentContext, AgentDefinition, HermesInput, HermesOutput } from "../../hermes/types";
 import { searchGallerySkill } from "../../skills/gallery/search-gallery.skill";
+import { selectCardSkill } from "../../skills/gallery/select-card.skill";
+import { createCheckoutLinkSkill } from "../../skills/gallery/create-checkout-link.skill";
 import { logger } from "../../utils/logger";
 
 export const GalleryAgent: AgentDefinition = {
@@ -10,7 +12,12 @@ export const GalleryAgent: AgentDefinition = {
     if (context.intent === "gallery_search") {
       logger.info("[GALLERY AGENT] handling gallery_search");
       const result = await searchGallerySkill(
-        { query: input.text, limit: 10 },
+        {
+          query: input.text,
+          limit: 10,
+          discordUserId: context.userId ?? "",
+          discordChannelId: context.channelId ?? "",
+        },
         { ...context, skillId: "gallery.search" }
       );
 
@@ -32,7 +39,38 @@ export const GalleryAgent: AgentDefinition = {
 
     if (context.intent === "gallery_select") {
       logger.info("[GALLERY AGENT] handling gallery_select");
-      return { text: "选择功能开发中" };
+      const selectedIndex = Number.parseInt(input.text.trim(), 10);
+      if (!Number.isFinite(selectedIndex) || selectedIndex <= 0) {
+        return { text: "请选择有效编号（1-10）。" };
+      }
+
+      const selected = await selectCardSkill(
+        {
+          discordUserId: context.userId ?? "",
+          discordChannelId: context.channelId ?? "",
+          selectedIndex,
+        },
+        { ...context, skillId: "gallery.selectCard" }
+      );
+
+      const checkout = await createCheckoutLinkSkill(
+        {
+          title: selected.title,
+          description: selected.description,
+          imageUrl: selected.imageUrl,
+          price: selected.price,
+          tags: selected.tags,
+        },
+        { ...context, skillId: "gallery.createCheckoutLink" }
+      );
+
+      return {
+        text:
+          `✅ 下单链接已生成\n` +
+          `商品：${selected.title}\n` +
+          `价格：$${selected.price}\n` +
+          `付款链接：${checkout.url}`,
+      };
     }
 
     if (context.intent === "help") {

@@ -94,4 +94,11 @@ export const galleryService = {
 
     return dedupeCards(results).slice(0, limit).map(toDto);
   },
+  async getGalleryCardById(cardId: string): Promise<GalleryCardDto | null> {
+    if (!isDatabaseReady()) {
+      throw new Error("DATABASE_NOT_READY");
+    }
+    const card = await galleryRepository.findById(cardId);
+    return card ? toDto(card) : null;
+  },
 };

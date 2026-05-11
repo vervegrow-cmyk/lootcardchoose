@@ -1,8 +1,12 @@
 import { SkillContext, SkillHandler } from "../../hermes/types";
+import { shopifyService } from "../../services/shopify.service";
 
 export type CreateCheckoutLinkInput = {
-  cardId: string;
-  quantity?: number;
+  title: string;
+  description: string | null;
+  imageUrl: string;
+  price: string;
+  tags: string[];
 };
 
 export type CreateCheckoutLinkOutput = {
@@ -13,7 +17,13 @@ export const createCheckoutLinkSkill: SkillHandler<
   CreateCheckoutLinkInput,
   CreateCheckoutLinkOutput
 > = async (input: CreateCheckoutLinkInput, context: SkillContext) => {
-  void input;
   void context;
-  return { url: "" };
+  const result = await shopifyService.createCheckoutLink({
+    title: input.title,
+    description: input.description,
+    imageUrl: input.imageUrl,
+    price: input.price,
+    tags: input.tags,
+  });
+  return { url: result.checkoutUrl };
 };

@@ -22,6 +22,7 @@ export type GalleryCardRecord = {
 
 export type GalleryRepository = {
   findManyByQuery: (query: { keywords: string[]; limit?: number }) => Promise<GalleryCardRecord[]>;
+  findById: (cardId: string) => Promise<GalleryCardRecord | null>;
   findManyByParsedQuery: (query: {
     keywords: string[];
     tags: string[];
@@ -71,6 +72,11 @@ export const galleryRepository: GalleryRepository = {
     logger.info("[GALLERY REPOSITORY] result count=" + results.length);
 
     return results;
+  },
+  async findById(cardId) {
+    return prisma.galleryCard.findFirst({
+      where: { id: cardId, isActive: true },
+    });
   },
   async findManyByParsedQuery(query) {
     const limit = query.limit ?? 10;
