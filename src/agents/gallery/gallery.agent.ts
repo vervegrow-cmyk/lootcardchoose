@@ -2,8 +2,17 @@ import { AgentContext, AgentDefinition, HermesInput, HermesOutput } from "../../
 import { createCheckoutLinkSkill } from "../../skills/gallery/create-checkout-link.skill";
 import { searchGallerySkill } from "../../skills/gallery/search-gallery.skill";
 import { selectCardSkill } from "../../skills/gallery/select-card.skill";
-import { t } from "../../utils/i18n";
 import { logger } from "../../utils/logger";
+
+const buildSearchSuccessText = (language: AgentContext["language"], count: number): string =>
+  language === "zh"
+    ? `为你找到 ${count} 张卡牌样式，回复编号 1-${count} 选择。`
+    : `Found ${count} card styles for you. Reply with a number from 1-${count} to choose.`;
+
+const buildSearchEmptyText = (language: AgentContext["language"]): string =>
+  language === "zh"
+    ? "没有找到匹配的卡牌，请换一个描述试试，例如：黑金 SSR 女角色。"
+    : "No matching cards found. Try another description, for example: black gold SSR female card.";
 
 export const GalleryAgent: AgentDefinition = {
   id: "lootcardchoose",
@@ -15,7 +24,6 @@ export const GalleryAgent: AgentDefinition = {
       const result = await searchGallerySkill(
         {
           query: input.text,
-          limit: 10,
           discordUserId: context.userId ?? "",
           discordChannelId: context.channelId ?? "",
         },
@@ -26,14 +34,14 @@ export const GalleryAgent: AgentDefinition = {
         return {
           type: "text",
           language: context.language,
-          text: t(context.language, "gallery.search.empty"),
+          text: buildSearchEmptyText(context.language),
         };
       }
 
       return {
         type: "gallery_search_results",
         language: context.language,
-        text: t(context.language, "gallery.search.success", { count: result.results.length }),
+        text: buildSearchSuccessText(context.language, result.results.length),
         cards: result.results.map((card) => ({
           id: card.id,
           title: card.title,
@@ -42,9 +50,15 @@ export const GalleryAgent: AgentDefinition = {
           price: card.price,
           tags: card.tags,
         })),
-        selectionPrompt: t(context.language, "gallery.search.chooseHint", {
-          count: result.results.length,
-        }),
+        selectionPrompt:
+          context.language === "zh"
+            ? `回复编号 1-${result.results.length} 选择。`
+            : `Reply with a number from 1-${result.results.length} to choose.`,
+        metadata: {
+          query: result.query,
+          parsedQuery: result.parsedQuery ?? undefined,
+          limit: result.limit,
+        },
       };
     }
 
@@ -55,7 +69,7 @@ export const GalleryAgent: AgentDefinition = {
         return {
           type: "text",
           language: context.language,
-          text: t(context.language, "gallery.select.invalid"),
+          text: context.language === "zh" ? "请选择有效编号（1-10）。" : "Please choose a valid number (1-10).",
         };
       }
 
@@ -83,9 +97,9 @@ export const GalleryAgent: AgentDefinition = {
         type: "text",
         language: context.language,
         text:
-          `${t(context.language, "gallery.select.success", { index: selectedIndex })}\n` +
-          `${t(context.language, "checkout.success")}\n` +
-          `${checkout.url}`,
+          context.language === "zh"
+            ? `已为你选择第 ${selectedIndex} 张卡牌。\n付款链接已生成。\n${checkout.url}`
+            : `Selected card #${selectedIndex} for you.\nYour checkout link is ready.\n${checkout.url}`,
       };
     }
 
@@ -94,7 +108,10 @@ export const GalleryAgent: AgentDefinition = {
       return {
         type: "text",
         language: context.language,
-        text: t(context.language, "help.message"),
+        text:
+          context.language === "zh"
+            ? "输入示例：给我10张黑金SSR女角色卡牌。然后回复 1-10 进行选择。"
+            : "Example: Show me 10 black gold SSR female character cards. Then reply with a number from 1-10.",
       };
     }
 
@@ -107,7 +124,10 @@ export const GalleryAgent: AgentDefinition = {
     return {
       type: "text",
       language: context.language,
-      text: t(context.language, "help.message"),
+      text:
+        context.language === "zh"
+          ? "输入示例：给我10张黑金SSR女角色卡牌。然后回复 1-10 进行选择。"
+          : "Example: Show me 10 black gold SSR female character cards. Then reply with a number from 1-10.",
     };
   },
 };

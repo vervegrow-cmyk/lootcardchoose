@@ -1,8 +1,10 @@
 import { SupportedLanguage } from "../hermes/types";
 import { GalleryCardRecord, galleryRepository } from "../repositories/gallery.repository";
 import { logger } from "../utils/logger";
+import { ParsedGalleryQuery, parseGalleryQuery } from "./llm-query-parser.service";
 import { isDatabaseReady } from "./prisma.service";
-import { parseGalleryQuery } from "./llm-query-parser.service";
+
+export const DEFAULT_GALLERY_RESULT_LIMIT = 10;
 
 export type GalleryCardDto = {
   id: string;
@@ -16,6 +18,13 @@ export type GalleryCardDto = {
   character: string | null;
   color: string | null;
   price: number;
+};
+
+export type GallerySearchResult = {
+  query: string;
+  parsedQuery: ParsedGalleryQuery | null;
+  results: GalleryCardDto[];
+  limit: number;
 };
 
 const TAG_SYNONYMS: Record<string, string[]> = {
@@ -33,11 +42,14 @@ const TAG_SYNONYMS: Record<string, string[]> = {
 
 const stopWords = new Set([
   "给我",
+  "我要",
   "张",
   "卡牌",
   "卡",
   "找图",
   "找卡",
+  "搜索",
+  "图库",
   "要",
   "的",
   "show",
@@ -111,48 +123,76 @@ const mergeTokens = (...groups: string[][]): string[] => {
   return [...merged];
 };
 
+const buildFallbackParsedQuery = (query: string, language: SupportedLanguage): ParsedGalleryQuery => ({
+  language,
+  keywords: extractKeywords(query),
+  tags: [],
+  style: "",
+  rarity: "",
+  category: "",
+  character: "",
+  color: "",
+  mood: "",
+  scene: "",
+  limit: DEFAULT_GALLERY_RESULT_LIMIT,
+});
+
 export const galleryService = {
-  async searchGalleryCards(
-    query: string,
-    limit = 10,
-    language: SupportedLanguage = "zh"
-  ): Promise<GalleryCardDto[]> {
+  async searchGalleryCards(query: string, language: SupportedLanguage = "zh"): Promise<GallerySearchResult> {
     logger.info("[GALLERY SERVICE] search query=" + query);
     if (!isDatabaseReady()) {
       throw new Error("DATABASE_NOT_READY");
     }
 
+    const limit = DEFAULT_GALLERY_RESULT_LIMIT;
     const baseKeywords = extractKeywords(query);
     const expandedKeywords = expandSynonyms(baseKeywords);
     const parsed = await parseGalleryQuery(query, language);
+    const parsedQuery = parsed
+      ? {
+          ...parsed,
+          limit,
+        }
+      : buildFallbackParsedQuery(query, language);
 
-    if (parsed) {
-      const parsedKeywords = expandSynonyms(parsed.keywords.map((keyword) => keyword.toLowerCase()));
-      const parsedTags = expandSynonyms(parsed.tags.map((tag) => tag.toLowerCase()));
-      const keywords = mergeTokens(expandedKeywords, parsedKeywords);
-      const tags = mergeTokens(parsedTags, keywords);
-      const parsedResults = await galleryRepository.findManyByParsedQuery({
-        keywords,
-        tags,
-        style: parsed.style,
-        rarity: parsed.rarity,
-        category: parsed.category,
-        character: parsed.character,
-        color: parsed.color,
-        mood: parsed.mood,
-        scene: parsed.scene,
+    const parsedKeywords = expandSynonyms(parsedQuery.keywords.map((keyword) => keyword.toLowerCase()));
+    const parsedTags = expandSynonyms(parsedQuery.tags.map((tag) => tag.toLowerCase()));
+    const keywords = mergeTokens(expandedKeywords, parsedKeywords);
+    const tags = mergeTokens(parsedTags, keywords);
+
+    const parsedResults = await galleryRepository.findManyByParsedQuery({
+      keywords,
+      tags,
+      style: parsedQuery.style,
+      rarity: parsedQuery.rarity,
+      category: parsedQuery.category,
+      character: parsedQuery.character,
+      color: parsedQuery.color,
+      mood: parsedQuery.mood,
+      scene: parsedQuery.scene,
+      limit,
+    });
+
+    logger.info("[GALLERY SERVICE] parsed search result count=" + parsedResults.length);
+
+    if (parsedResults.length >= limit) {
+      return {
+        query,
+        parsedQuery,
+        results: dedupeCards(parsedResults).slice(0, limit).map(toDto),
         limit,
-      });
+      };
+    }
 
-      logger.info("[GALLERY SERVICE] parsed search result count=" + parsedResults.length);
-      if (parsedResults.length >= limit) {
-        return dedupeCards(parsedResults).slice(0, limit).map(toDto);
-      }
-      if (parsedResults.length > 0) {
-        const remaining = limit - parsedResults.length;
-        const fallback = await galleryRepository.findManyByQuery({ keywords, limit: remaining });
-        return dedupeCards([...parsedResults, ...fallback]).slice(0, limit).map(toDto);
-      }
+    if (parsedResults.length > 0) {
+      const remaining = limit - parsedResults.length;
+      const fallback = await galleryRepository.findManyByQuery({ keywords, limit: remaining });
+      return {
+        query,
+        parsedQuery,
+        results: dedupeCards([...parsedResults, ...fallback]).slice(0, limit).map(toDto),
+        limit,
+      };
     }
 
     const results = await galleryRepository.findManyByQuery({ keywords: expandedKeywords, limit });
@@ -162,10 +202,20 @@ export const galleryService = {
         keywords: [expandedKeywords[0]],
         limit,
       });
-      return dedupeCards(fallback).slice(0, limit).map(toDto);
+      return {
+        query,
+        parsedQuery,
+        results: dedupeCards(fallback).slice(0, limit).map(toDto),
+        limit,
+      };
     }
 
-    return dedupeCards(results).slice(0, limit).map(toDto);
+    return {
+      query,
+      parsedQuery,
+      results: dedupeCards(results).slice(0, limit).map(toDto),
+      limit,
+    };
   },
   async getGalleryCardById(cardId: string): Promise<GalleryCardDto | null> {
     if (!isDatabaseReady()) {

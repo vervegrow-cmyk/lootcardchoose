@@ -20,6 +20,7 @@ export type ServiceId =
 export type IntentId =
   | "gallery_search"
   | "gallery_select"
+  | "gallery_refresh"
   | "order_status"
   | "help"
   | "ignore";

@@ -10,6 +10,7 @@ import {
   SupportedLanguage,
 } from "./types";
 import { HermesOrchestrator } from "./orchestrator";
+import { llmIntentClassifierService } from "../services/llm-intent-classifier.service";
 import { logger } from "../utils/logger";
 
 const detectLanguage = (message: string): SupportedLanguage =>
@@ -25,6 +26,15 @@ const GALLERY_SELECT_PATTERNS: RegExp[] = [
   /^number\s+\d+$/,
 ];
 
+const GALLERY_REFRESH_PATTERNS: RegExp[] = [
+  /^\u6362\u4e00\u6279$/,
+  /^\u518d\u6765\u4e00\u7ec4$/,
+  /^\u66f4\u591a\u7ed3\u679c$/,
+  /^next$/,
+  /^more$/,
+  /^more like this$/,
+];
+
 const HELP_PATTERNS = ["help", "\u5e2e\u52a9", "\u600e\u4e48\u7528", "how to use"];
 
 const ORDER_PATTERNS = [
@@ -36,60 +46,45 @@ const ORDER_PATTERNS = [
   "order status",
 ];
 
-const GALLERY_SEARCH_PATTERNS = [
-  "\u641c\u7d22\u56fe\u5e93",
-  "\u56fe\u5e93",
-  "\u641c\u7d22\u5361\u724c",
-  "\u627e\u5361\u724c",
-  "\u627e\u56fe",
-  "\u627e\u5361",
-  "\u5361\u724c",
-  "\u7ed9\u6211",
-  "\u6211\u8981",
-  "\u9ed1\u91d1",
-  "\u5973\u89d2\u8272",
-  "\u8d5b\u535a\u670b\u514b",
-  "\u673a\u7532",
-  "ssr",
-  "black gold",
-  "female",
-  "card",
-  "cards",
-  "gallery",
-  "search",
-  "show me",
-  "cyberpunk",
-  "mecha",
-  "anime",
-];
-
 export class HermesRouter {
   constructor(private registry: HermesRegistry) {}
 
-  determineIntent(text: string): IntentId {
+  async determineIntent(text: string): Promise<{ intent: IntentId; language: SupportedLanguage }> {
     const normalized = text.trim().toLowerCase();
+    const fallbackLanguage = detectLanguage(text);
 
     if (!normalized) {
-      return "ignore";
+      return { intent: "ignore", language: fallbackLanguage };
     }
 
     if (GALLERY_SELECT_PATTERNS.some((pattern) => pattern.test(normalized))) {
-      return "gallery_select";
+      return { intent: "gallery_select", language: fallbackLanguage };
+    }
+
+    if (GALLERY_REFRESH_PATTERNS.some((pattern) => pattern.test(normalized))) {
+      return { intent: "gallery_refresh", language: fallbackLanguage };
     }
 
     if (HELP_PATTERNS.some((pattern) => normalized.includes(pattern))) {
-      return "help";
+      return { intent: "help", language: fallbackLanguage };
     }
 
     if (ORDER_PATTERNS.some((pattern) => normalized.includes(pattern))) {
-      return "order_status";
+      return { intent: "order_status", language: fallbackLanguage };
     }
 
-    if (GALLERY_SEARCH_PATTERNS.some((pattern) => normalized.includes(pattern))) {
-      return "gallery_search";
+    const classified = await llmIntentClassifierService.classify(text);
+    if (classified.confidence < 0.5) {
+      return {
+        intent: "gallery_search",
+        language: classified.language,
+      };
     }
 
-    return "ignore";
+    return {
+      intent: classified.intent,
+      language: classified.language,
+    };
   }
 
   resolveAgent(intent: IntentId, channelId: string): RoutingDecision {
@@ -102,9 +97,9 @@ export class HermesRouter {
   }
 
   async handle(input: RouterInput): Promise<HermesOutput> {
-    const intent = this.determineIntent(input.text);
-    logger.info("[HERMES ROUTER] intent=" + intent);
-    const decision = this.resolveAgent(intent, input.channelId);
+    const classification = await this.determineIntent(input.text);
+    logger.info("[HERMES ROUTER] intent=" + classification.intent);
+    const decision = this.resolveAgent(classification.intent, input.channelId);
     const agent = this.registry.getAgent(decision.agentId);
 
     if (!agent) {
@@ -113,7 +108,7 @@ export class HermesRouter {
 
     const context: AgentContext = {
       requestId: `${Date.now()}`,
-      language: detectLanguage(input.text),
+      language: classification.language,
       userId: input.userId,
       channelId: input.channelId,
       agentId: decision.agentId,
