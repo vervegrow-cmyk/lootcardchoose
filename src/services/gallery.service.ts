@@ -33,6 +33,19 @@ const toDto = (card: GalleryCardRecord): GalleryCardDto => {
   };
 };
 
+const dedupeCards = (cards: GalleryCardRecord[]): GalleryCardRecord[] => {
+  const seen = new Set<string>();
+  const result: GalleryCardRecord[] = [];
+  for (const card of cards) {
+    if (seen.has(card.id)) {
+      continue;
+    }
+    seen.add(card.id);
+    result.push(card);
+  }
+  return result;
+};
+
 const stopWords = new Set(["给我", "张", "卡牌", "卡", "找图", "找卡", "要", "的"]);
 
 const extractKeywords = (query: string): string[] => {
@@ -60,12 +73,12 @@ export const galleryService = {
       });
       logger.info("[GALLERY SERVICE] parsed search result count=" + parsedResults.length);
       if (parsedResults.length >= limit) {
-        return parsedResults.map(toDto);
+        return dedupeCards(parsedResults).slice(0, limit).map(toDto);
       }
       if (parsedResults.length > 0) {
         const remaining = limit - parsedResults.length;
         const fallback = await galleryRepository.findManyByQuery({ keywords, limit: remaining });
-        return [...parsedResults, ...fallback].map(toDto);
+        return dedupeCards([...parsedResults, ...fallback]).slice(0, limit).map(toDto);
       }
     }
 
@@ -76,9 +89,9 @@ export const galleryService = {
         keywords: [keywords[0]],
         limit,
       });
-      return fallback.map(toDto);
+      return dedupeCards(fallback).slice(0, limit).map(toDto);
     }
 
-    return results.map(toDto);
+    return dedupeCards(results).slice(0, limit).map(toDto);
   },
 };
