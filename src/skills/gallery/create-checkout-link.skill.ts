@@ -29,9 +29,9 @@ export const createCheckoutLinkSkill: SkillHandler<
     return { url: result.checkoutUrl };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    if (message.includes("Shopify authorization failed")) {
+    if (message.includes("Shopify installation not found")) {
       throw new Error(
-        "Shopify 授权失败，请检查 SHOPIFY_CLIENT_ID / SHOPIFY_CLIENT_SECRET / App 是否已安装到店铺。",
+        "Shopify 尚未完成安装授权，请先访问应用的授权入口完成安装。",
       );
     }
     throw error;

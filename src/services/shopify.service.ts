@@ -60,10 +60,10 @@ const resolveProductUrl = (storeDomain: string, handle: string): string =>
 
 export const shopifyService = {
   async createCheckoutLink(input: ShopifyCreateProductInput): Promise<ShopifyCreateProductOutput> {
-    const { shopifyAuthService } = await import("./shopify-auth.service");
+    const { shopifyInstallationService } = await import("./shopify-installation.service");
     const storeDomain = resolveShopifyStoreDomain();
     const apiVersion = resolveShopifyApiVersion();
-    const accessToken = await shopifyAuthService.getShopifyAccessToken();
+    const accessToken = await shopifyInstallationService.getAccessTokenForStore();
 
     const response = await fetch(`https://${storeDomain}/admin/api/${apiVersion}/products.json`, {
       method: "POST",
