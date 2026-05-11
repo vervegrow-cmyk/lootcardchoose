@@ -10,9 +10,81 @@ export type ShopifyCreateProductOutput = {
   checkoutUrl: string;
 };
 
+type ShopifyProductImage = {
+  src: string;
+};
+
+type ShopifyVariant = {
+  price: string;
+};
+
+type ShopifyProductPayload = {
+  product: {
+    title: string;
+    body_html: string | null;
+    tags: string;
+    images?: ShopifyProductImage[];
+    variants: ShopifyVariant[];
+  };
+};
+
+type ShopifyProductResponse = {
+  product: {
+    id: number;
+    handle: string;
+  };
+};
+
+const resolveShopifyStoreDomain = (): string => {
+  const storeDomain = process.env.SHOPIFY_STORE_DOMAIN ?? "";
+  if (!storeDomain) {
+    throw new Error("Missing SHOPIFY_STORE_DOMAIN");
+  }
+  return storeDomain;
+};
+
+const resolveShopifyApiVersion = (): string => process.env.SHOPIFY_API_VERSION ?? "2026-04";
+
+const buildProductPayload = (input: ShopifyCreateProductInput): ShopifyProductPayload => ({
+  product: {
+    title: input.title,
+    body_html: input.description,
+    tags: input.tags.join(", "),
+    images: input.imageUrl ? [{ src: input.imageUrl }] : undefined,
+    variants: [{ price: input.price }],
+  },
+});
+
+const resolveProductUrl = (storeDomain: string, handle: string): string =>
+  `https://${storeDomain}/products/${handle}`;
+
 export const shopifyService = {
   async createCheckoutLink(input: ShopifyCreateProductInput): Promise<ShopifyCreateProductOutput> {
-    void input;
-    return { checkoutUrl: "https://example.com/checkout" };
+    const { shopifyAuthService } = await import("./shopify-auth.service");
+    const storeDomain = resolveShopifyStoreDomain();
+    const apiVersion = resolveShopifyApiVersion();
+    const accessToken = await shopifyAuthService.getShopifyAccessToken();
+
+    const response = await fetch(`https://${storeDomain}/admin/api/${apiVersion}/products.json`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Shopify-Access-Token": accessToken,
+      },
+      body: JSON.stringify(buildProductPayload(input)),
+    });
+
+    if (!response.ok) {
+      const payload = await response.text();
+      throw new Error(`Shopify create product failed: ${response.status} ${payload}`);
+    }
+
+    const data = (await response.json()) as ShopifyProductResponse;
+    const handle = data.product?.handle;
+    if (!handle) {
+      throw new Error("Shopify create product response missing handle");
+    }
+
+    return { checkoutUrl: resolveProductUrl(storeDomain, handle) };
   },
 };

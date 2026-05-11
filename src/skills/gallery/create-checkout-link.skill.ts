@@ -18,12 +18,22 @@ export const createCheckoutLinkSkill: SkillHandler<
   CreateCheckoutLinkOutput
 > = async (input: CreateCheckoutLinkInput, context: SkillContext) => {
   void context;
-  const result = await shopifyService.createCheckoutLink({
-    title: input.title,
-    description: input.description,
-    imageUrl: input.imageUrl,
-    price: input.price,
-    tags: input.tags,
-  });
-  return { url: result.checkoutUrl };
+  try {
+    const result = await shopifyService.createCheckoutLink({
+      title: input.title,
+      description: input.description,
+      imageUrl: input.imageUrl,
+      price: input.price,
+      tags: input.tags,
+    });
+    return { url: result.checkoutUrl };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (message.includes("Shopify authorization failed")) {
+      throw new Error(
+        "Shopify 授权失败，请检查 SHOPIFY_CLIENT_ID / SHOPIFY_CLIENT_SECRET / App 是否已安装到店铺。",
+      );
+    }
+    throw error;
+  }
 };

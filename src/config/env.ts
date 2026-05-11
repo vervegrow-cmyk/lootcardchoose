@@ -7,8 +7,9 @@ export type EnvConfig = {
   deepseekBaseUrl: string;
   deepseekModel: string;
   enableNaturalLanguageSearch: boolean;
-  shopifyShopDomain: string;
-  shopifyAdminAccessToken: string;
+  shopifyStoreDomain: string;
+  shopifyClientId: string;
+  shopifyClientSecret: string;
   shopifyApiVersion: string;
   r2AccessKeyId: string;
   r2SecretAccessKey: string;
@@ -19,6 +20,15 @@ export type EnvConfig = {
 };
 
 export const loadEnv = (): EnvConfig => {
+  if (!process.env.SHOPIFY_CLIENT_ID) {
+    throw new Error("Missing SHOPIFY_CLIENT_ID");
+  }
+  if (!process.env.SHOPIFY_CLIENT_SECRET) {
+    throw new Error("Missing SHOPIFY_CLIENT_SECRET");
+  }
+  if (!process.env.SHOPIFY_STORE_DOMAIN) {
+    throw new Error("Missing SHOPIFY_STORE_DOMAIN");
+  }
   return {
     nodeEnv: process.env.NODE_ENV ?? "development",
     logLevel: process.env.LOG_LEVEL ?? "info",
@@ -28,8 +38,9 @@ export const loadEnv = (): EnvConfig => {
     deepseekBaseUrl: process.env.DEEPSEEK_BASE_URL ?? "https://api.deepseek.com/v1",
     deepseekModel: process.env.DEEPSEEK_MODEL ?? "deepseek-chat",
     enableNaturalLanguageSearch: process.env.ENABLE_NATURAL_LANGUAGE_SEARCH === "true",
-    shopifyShopDomain: process.env.SHOPIFY_SHOP_DOMAIN ?? "",
-    shopifyAdminAccessToken: process.env.SHOPIFY_ADMIN_ACCESS_TOKEN ?? "",
+    shopifyStoreDomain: process.env.SHOPIFY_STORE_DOMAIN ?? "",
+    shopifyClientId: process.env.SHOPIFY_CLIENT_ID ?? "",
+    shopifyClientSecret: process.env.SHOPIFY_CLIENT_SECRET ?? "",
     shopifyApiVersion: process.env.SHOPIFY_API_VERSION ?? "2026-04",
     r2AccessKeyId: process.env.R2_ACCESS_KEY_ID ?? "",
     r2SecretAccessKey: process.env.R2_SECRET_ACCESS_KEY ?? "",
