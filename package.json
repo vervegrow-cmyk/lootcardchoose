@@ -5,7 +5,7 @@
   "type": "commonjs",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "start": "tsx src/index.ts",
+    "start": "echo RAILWAY_START_TEST && tsx src/index.ts",
     "gallery:seed": "tsx src/scripts/seed-gallery.ts"
   },
   "dependencies": {

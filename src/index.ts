@@ -19,7 +19,7 @@ const startHealthServer = (): void => {
   });
 
   app.listen(Number(process.env.PORT || 3000), "0.0.0.0", () => {
-    console.log(`[HTTP] server listening port=${Number(process.env.PORT || 3000)}`);
+    console.log(`[HTTP] server listening port=${process.env.PORT || 3000}`);
   });
 };
 
