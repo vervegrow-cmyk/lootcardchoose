@@ -3,6 +3,10 @@ export type EnvConfig = {
   logLevel: string;
   discordBotToken: string;
   databaseUrl: string;
+  deepseekApiKey: string;
+  deepseekBaseUrl: string;
+  deepseekModel: string;
+  enableNaturalLanguageSearch: boolean;
   shopifyShopDomain: string;
   shopifyAdminAccessToken: string;
   shopifyApiVersion: string;
@@ -20,6 +24,10 @@ export const loadEnv = (): EnvConfig => {
     logLevel: process.env.LOG_LEVEL ?? "info",
     discordBotToken: process.env.DISCORD_BOT_TOKEN ?? "",
     databaseUrl: process.env.DATABASE_URL ?? "",
+    deepseekApiKey: process.env.DEEPSEEK_API_KEY ?? "",
+    deepseekBaseUrl: process.env.DEEPSEEK_BASE_URL ?? "https://api.deepseek.com/v1",
+    deepseekModel: process.env.DEEPSEEK_MODEL ?? "deepseek-chat",
+    enableNaturalLanguageSearch: process.env.ENABLE_NATURAL_LANGUAGE_SEARCH === "true",
     shopifyShopDomain: process.env.SHOPIFY_SHOP_DOMAIN ?? "",
     shopifyAdminAccessToken: process.env.SHOPIFY_ADMIN_ACCESS_TOKEN ?? "",
     shopifyApiVersion: process.env.SHOPIFY_API_VERSION ?? "2026-04",

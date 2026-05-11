@@ -1,6 +1,7 @@
 import { GalleryCardRecord, galleryRepository } from "../repositories/gallery.repository";
 import { logger } from "../utils/logger";
 import { isDatabaseReady } from "./prisma.service";
+import { parseGalleryQuery } from "./llm-query-parser.service";
 
 export type GalleryCardDto = {
   id: string;
@@ -50,6 +51,23 @@ export const galleryService = {
       throw new Error("DATABASE_NOT_READY");
     }
     const keywords = extractKeywords(query);
+    const parsed = await parseGalleryQuery(query);
+    if (parsed) {
+      const parsedResults = await galleryRepository.findManyByParsedQuery({
+        ...parsed,
+        keywords: parsed.keywords.length > 0 ? parsed.keywords : keywords,
+        limit,
+      });
+      logger.info("[GALLERY SERVICE] parsed search result count=" + parsedResults.length);
+      if (parsedResults.length >= limit) {
+        return parsedResults.map(toDto);
+      }
+      if (parsedResults.length > 0) {
+        const remaining = limit - parsedResults.length;
+        const fallback = await galleryRepository.findManyByQuery({ keywords, limit: remaining });
+        return [...parsedResults, ...fallback].map(toDto);
+      }
+    }
 
     const results = await galleryRepository.findManyByQuery({ keywords, limit });
 
