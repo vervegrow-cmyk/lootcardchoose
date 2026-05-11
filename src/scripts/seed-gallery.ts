@@ -133,7 +133,7 @@ const cards = [
   }
 ];
 
-const extraCards = Array.from({ length: 12 }).map((_, index) => ({
+const extraCards = Array.from({ length: 10 }).map((_, index) => ({
   title: `Black Gold SSR Variant ${index + 1}`,
   description: "黑金SSR变体",
   imageUrl: "https://placehold.co/600x800/png",

@@ -16,7 +16,7 @@ export const GalleryAgent: AgentDefinition = {
 
       if (result.results.length === 0) {
         return {
-          text: "图库数据库暂未连接，请稍后再试。",
+          text: "图库暂无匹配卡牌，请换个关键词试试。",
         };
       }
 
