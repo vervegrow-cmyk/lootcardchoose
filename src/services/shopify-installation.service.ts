@@ -21,6 +21,14 @@ export const shopifyInstallationService = {
     }
     return installation.accessToken;
   },
+  async isStoreInstalled(shop?: string): Promise<boolean> {
+    if (!isDatabaseReady()) {
+      return false;
+    }
+    const targetShop = shop ?? resolveShopifyStoreDomain();
+    const installation = await shopifyInstallationRepository.findByShop(targetShop);
+    return Boolean(installation?.accessToken);
+  },
   async saveInstallation(input: {
     shop: string;
     accessToken: string;

@@ -5,20 +5,20 @@ export type ShopifyInstallationRecord = {
   shop: string;
   accessToken: string;
   scope: string | null;
-  createdAt: Date;
+  installedAt: Date;
   updatedAt: Date;
 };
 
 export const shopifyInstallationRepository = {
   async findByShop(shop: string): Promise<ShopifyInstallationRecord | null> {
-    return prisma.shopifyInstallation.findUnique({ where: { shop } });
+    return prisma.shopifyShop.findUnique({ where: { shop } });
   },
   async upsertInstallation(input: {
     shop: string;
     accessToken: string;
     scope: string | null;
   }): Promise<ShopifyInstallationRecord> {
-    return prisma.shopifyInstallation.upsert({
+    return prisma.shopifyShop.upsert({
       where: { shop: input.shop },
       create: {
         shop: input.shop,

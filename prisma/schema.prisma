@@ -54,11 +54,11 @@ model Order {
   galleryCard        GalleryCard @relation(fields: [galleryCardId], references: [id])
 }
 
-model ShopifyInstallation {
+model ShopifyShop {
   id          String   @id @default(cuid())
   shop        String   @unique
   accessToken String
   scope       String?
-  createdAt   DateTime @default(now())
+  installedAt DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

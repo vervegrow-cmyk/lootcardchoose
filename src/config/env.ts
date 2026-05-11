@@ -10,6 +10,8 @@ export type EnvConfig = {
   shopifyStoreDomain: string;
   shopifyClientId: string;
   shopifyClientSecret: string;
+  shopifyScopes: string;
+  shopifyAppUrl: string;
   shopifyApiVersion: string;
   r2AccessKeyId: string;
   r2SecretAccessKey: string;
@@ -29,6 +31,12 @@ export const loadEnv = (): EnvConfig => {
   if (!process.env.SHOPIFY_STORE_DOMAIN) {
     throw new Error("Missing SHOPIFY_STORE_DOMAIN");
   }
+  if (!process.env.SHOPIFY_SCOPES) {
+    throw new Error("Missing SHOPIFY_SCOPES");
+  }
+  if (!process.env.SHOPIFY_APP_URL) {
+    throw new Error("Missing SHOPIFY_APP_URL");
+  }
   return {
     nodeEnv: process.env.NODE_ENV ?? "development",
     logLevel: process.env.LOG_LEVEL ?? "info",
@@ -41,6 +49,8 @@ export const loadEnv = (): EnvConfig => {
     shopifyStoreDomain: process.env.SHOPIFY_STORE_DOMAIN ?? "",
     shopifyClientId: process.env.SHOPIFY_CLIENT_ID ?? "",
     shopifyClientSecret: process.env.SHOPIFY_CLIENT_SECRET ?? "",
+    shopifyScopes: process.env.SHOPIFY_SCOPES ?? "",
+    shopifyAppUrl: process.env.SHOPIFY_APP_URL ?? "",
     shopifyApiVersion: process.env.SHOPIFY_API_VERSION ?? "2026-04",
     r2AccessKeyId: process.env.R2_ACCESS_KEY_ID ?? "",
     r2SecretAccessKey: process.env.R2_SECRET_ACCESS_KEY ?? "",
