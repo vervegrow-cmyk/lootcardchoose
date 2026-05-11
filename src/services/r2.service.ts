@@ -1,4 +1,4 @@
-import { PutObjectCommand, ListObjectsV2Command, S3Client } from "@aws-sdk/client-s3";
+import { DeleteObjectCommand, PutObjectCommand, ListObjectsV2Command, S3Client } from "@aws-sdk/client-s3";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { loadEnv } from "../config/env";
@@ -17,6 +17,7 @@ export type R2UploadOutput = {
 export type R2Service = {
   listObjects: (prefix?: string) => Promise<string[]>;
   uploadFile: (input: R2UploadInput) => Promise<R2UploadOutput>;
+  deleteObject: (key: string) => Promise<void>;
   buildPublicUrl: (key: string) => string;
 };
 
@@ -108,6 +109,19 @@ export const r2Service: R2Service = {
       key,
       publicUrl: r2Service.buildPublicUrl(key),
     };
+  },
+
+  async deleteObject(key) {
+    const env = resolveR2Config();
+    const client = createClient();
+    const normalizedKey = normalizeKey(key);
+
+    await client.send(
+      new DeleteObjectCommand({
+        Bucket: env.r2Bucket,
+        Key: normalizedKey,
+      })
+    );
   },
 
   buildPublicUrl(key) {

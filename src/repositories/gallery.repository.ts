@@ -38,6 +38,7 @@ export type GalleryRepository = {
     metadata: Prisma.InputJsonValue;
     isActive: boolean;
   }) => Promise<GalleryCardRecord>;
+  deactivateCardsMissingFromSyncSource: (activeSyncSourceIds: string[]) => Promise<number>;
   findManyByParsedQuery: (query: {
     keywords: string[];
     tags: string[];
@@ -50,6 +51,15 @@ export type GalleryRepository = {
     scene: string;
     limit?: number;
   }) => Promise<GalleryCardRecord[]>;
+};
+
+const readMetadataSyncSourceId = (metadata: Prisma.JsonValue | null): string | null => {
+  if (metadata == null || typeof metadata !== "object" || Array.isArray(metadata)) {
+    return null;
+  }
+
+  const value = (metadata as Record<string, unknown>).syncSourceId;
+  return typeof value === "string" ? value : null;
 };
 
 const buildKeywordFilters = (keywords: string[]): Prisma.GalleryCardWhereInput[] => {
@@ -128,6 +138,38 @@ export const galleryRepository: GalleryRepository = {
     return prisma.galleryCard.create({
       data,
     });
+  },
+  async deactivateCardsMissingFromSyncSource(activeSyncSourceIds) {
+    const activeIdSet = new Set(activeSyncSourceIds);
+    const activeCards = await prisma.galleryCard.findMany({
+      where: { isActive: true },
+      select: {
+        id: true,
+        metadata: true,
+      },
+    });
+
+    const idsToDeactivate = activeCards
+      .filter((card) => {
+        const syncSourceId = readMetadataSyncSourceId(card.metadata);
+        return syncSourceId?.startsWith("local-gallery:") && !activeIdSet.has(syncSourceId);
+      })
+      .map((card) => card.id);
+
+    if (idsToDeactivate.length === 0) {
+      return 0;
+    }
+
+    const result = await prisma.galleryCard.updateMany({
+      where: {
+        id: { in: idsToDeactivate },
+      },
+      data: {
+        isActive: false,
+      },
+    });
+
+    return result.count;
   },
   async findManyByParsedQuery(query) {
     const limit = query.limit ?? 10;
