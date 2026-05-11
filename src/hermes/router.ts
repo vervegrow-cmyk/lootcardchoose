@@ -15,6 +15,54 @@ import { logger } from "../utils/logger";
 const detectLanguage = (message: string): SupportedLanguage =>
   /[\u4e00-\u9fff]/.test(message) ? "zh" : "en";
 
+const GALLERY_SELECT_PATTERNS: RegExp[] = [
+  /^\d+$/,
+  /^\u9009\u62e9\s*\d+$/,
+  /^\u9009\u7b2c\s*\d+\s*\u5f20$/,
+  /^\u6211\u8981\u7b2c\s*\d+\s*\u5f20$/,
+  /^choose\s+\d+$/,
+  /^select\s+\d+$/,
+  /^number\s+\d+$/,
+];
+
+const HELP_PATTERNS = ["help", "\u5e2e\u52a9", "\u600e\u4e48\u7528", "how to use"];
+
+const ORDER_PATTERNS = [
+  "\u6211\u7684\u8ba2\u5355",
+  "\u67e5\u8be2\u8ba2\u5355",
+  "\u8ba2\u5355\u72b6\u6001",
+  "order",
+  "my order",
+  "order status",
+];
+
+const GALLERY_SEARCH_PATTERNS = [
+  "\u641c\u7d22\u56fe\u5e93",
+  "\u56fe\u5e93",
+  "\u641c\u7d22\u5361\u724c",
+  "\u627e\u5361\u724c",
+  "\u627e\u56fe",
+  "\u627e\u5361",
+  "\u5361\u724c",
+  "\u7ed9\u6211",
+  "\u6211\u8981",
+  "\u9ed1\u91d1",
+  "\u5973\u89d2\u8272",
+  "\u8d5b\u535a\u670b\u514b",
+  "\u673a\u7532",
+  "ssr",
+  "black gold",
+  "female",
+  "card",
+  "cards",
+  "gallery",
+  "search",
+  "show me",
+  "cyberpunk",
+  "mecha",
+  "anime",
+];
+
 export class HermesRouter {
   constructor(private registry: HermesRegistry) {}
 
@@ -25,34 +73,19 @@ export class HermesRouter {
       return "ignore";
     }
 
-    if (/^\d+$/.test(normalized) || /^选择\s*\d+$/.test(normalized) || /^choose\s*\d+$/.test(normalized)) {
+    if (GALLERY_SELECT_PATTERNS.some((pattern) => pattern.test(normalized))) {
       return "gallery_select";
     }
 
-    if (normalized.includes("订单") || normalized.includes("order")) {
-      return "order_status";
-    }
-
-    if (normalized.includes("帮助") || normalized === "help") {
+    if (HELP_PATTERNS.some((pattern) => normalized.includes(pattern))) {
       return "help";
     }
 
-    if (
-      normalized.includes("给我") ||
-      normalized.includes("找图") ||
-      normalized.includes("找卡") ||
-      normalized.includes("黑金") ||
-      normalized.includes("ssr") ||
-      normalized.includes("赛博朋克") ||
-      normalized.includes("女角色") ||
-      normalized.includes("机甲") ||
-      normalized.includes("show me") ||
-      normalized.includes("black gold") ||
-      normalized.includes("female character") ||
-      normalized.includes("cyberpunk") ||
-      normalized.includes("mecha") ||
-      normalized.includes("card")
-    ) {
+    if (ORDER_PATTERNS.some((pattern) => normalized.includes(pattern))) {
+      return "order_status";
+    }
+
+    if (GALLERY_SEARCH_PATTERNS.some((pattern) => normalized.includes(pattern))) {
       return "gallery_search";
     }
 
