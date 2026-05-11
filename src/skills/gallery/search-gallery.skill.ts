@@ -1,6 +1,6 @@
 import { SkillContext, SkillHandler } from "../../hermes/types";
-import { galleryService, GalleryCardDto } from "../../services/gallery.service";
 import { gallerySearchSessionRepository } from "../../repositories/gallery-search-session.repository";
+import { galleryService, GalleryCardDto } from "../../services/gallery.service";
 import { logger } from "../../utils/logger";
 
 export type SearchGalleryInput = {
@@ -18,12 +18,11 @@ export const searchGallerySkill: SkillHandler<SearchGalleryInput, SearchGalleryO
   input: SearchGalleryInput,
   context: SkillContext
 ) => {
-  void context;
   const limit = input.limit ?? 10;
 
   logger.info("[SEARCH GALLERY SKILL] searching query=" + input.query);
   try {
-    const results = await galleryService.searchGalleryCards(input.query, limit);
+    const results = await galleryService.searchGalleryCards(input.query, limit, context.language);
     const sessionResults = results.map((card) => ({
       id: card.id,
       title: card.title,

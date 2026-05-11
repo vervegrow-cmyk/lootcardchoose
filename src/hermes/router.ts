@@ -7,9 +7,13 @@ import {
   RouterInput,
   RoutingDecision,
   IntentId,
+  SupportedLanguage,
 } from "./types";
 import { HermesOrchestrator } from "./orchestrator";
 import { logger } from "../utils/logger";
+
+const detectLanguage = (message: string): SupportedLanguage =>
+  /[\u4e00-\u9fff]/.test(message) ? "zh" : "en";
 
 export class HermesRouter {
   constructor(private registry: HermesRegistry) {}
@@ -21,7 +25,7 @@ export class HermesRouter {
       return "ignore";
     }
 
-    if (/^\d+$/.test(normalized) || /选择\d+/.test(normalized)) {
+    if (/^\d+$/.test(normalized) || /^选择\s*\d+$/.test(normalized) || /^choose\s*\d+$/.test(normalized)) {
       return "gallery_select";
     }
 
@@ -36,10 +40,18 @@ export class HermesRouter {
     if (
       normalized.includes("给我") ||
       normalized.includes("找图") ||
+      normalized.includes("找卡") ||
       normalized.includes("黑金") ||
       normalized.includes("ssr") ||
       normalized.includes("赛博朋克") ||
-      normalized.includes("女角色")
+      normalized.includes("女角色") ||
+      normalized.includes("机甲") ||
+      normalized.includes("show me") ||
+      normalized.includes("black gold") ||
+      normalized.includes("female character") ||
+      normalized.includes("cyberpunk") ||
+      normalized.includes("mecha") ||
+      normalized.includes("card")
     ) {
       return "gallery_search";
     }
@@ -68,6 +80,7 @@ export class HermesRouter {
 
     const context: AgentContext = {
       requestId: `${Date.now()}`,
+      language: detectLanguage(input.text),
       userId: input.userId,
       channelId: input.channelId,
       agentId: decision.agentId,

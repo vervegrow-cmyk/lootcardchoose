@@ -1,6 +1,8 @@
+import { SupportedLanguage } from "../hermes/types";
 import { logger } from "../utils/logger";
 
 export type ParsedGalleryQuery = {
+  language: SupportedLanguage;
   keywords: string[];
   tags: string[];
   style: string;
@@ -10,7 +12,7 @@ export type ParsedGalleryQuery = {
   color: string;
   mood: string;
   scene: string;
-  language: "zh" | "en";
+  limit: number;
 };
 
 type DeepSeekMessage = {
@@ -22,7 +24,8 @@ type DeepSeekResponse = {
   choices?: Array<{ message?: { content?: string } }>;
 };
 
-const defaultParsedQuery: ParsedGalleryQuery = {
+const defaultParsedQuery = (language: SupportedLanguage): ParsedGalleryQuery => ({
+  language,
   keywords: [],
   tags: [],
   style: "",
@@ -32,39 +35,53 @@ const defaultParsedQuery: ParsedGalleryQuery = {
   color: "",
   mood: "",
   scene: "",
-  language: "zh",
-};
+  limit: 10,
+});
 
-const buildPrompt = (userMessage: string): DeepSeekMessage[] => {
+const detectLanguage = (message: string): SupportedLanguage =>
+  /[\u4e00-\u9fff]/.test(message) ? "zh" : "en";
+
+const buildPrompt = (userMessage: string, language: SupportedLanguage): DeepSeekMessage[] => {
   return [
     {
       role: "system",
       content:
-        "你是图库搜索意图解析器。请将用户自然语言转成 JSON，仅输出 JSON 字符串，不要解释。字段：keywords[], tags[], style, rarity, category, character, color, mood, scene, language。language 只能是 zh 或 en。未知字段用空字符串或空数组。",
+        "You are a gallery search intent parser. Convert the user's request into JSON only. Return exactly this shape: {\"language\":\"zh|en\",\"keywords\":string[],\"tags\":string[],\"rarity\":string,\"color\":string,\"character\":string,\"category\":string,\"style\":string,\"limit\":number}. Keep the language field consistent with the user's input language. Do not explain anything.",
     },
     {
       role: "user",
-      content: `用户消息：${userMessage}`,
+      content: `Input language: ${language}\nUser message: ${userMessage}`,
     },
   ];
 };
 
-const safeJsonParse = (raw: string): ParsedGalleryQuery | null => {
+const safeJsonParse = (raw: string, fallbackLanguage: SupportedLanguage): ParsedGalleryQuery | null => {
   try {
-    const parsed = JSON.parse(raw) as ParsedGalleryQuery;
+    const parsed = JSON.parse(raw) as Partial<ParsedGalleryQuery>;
     return {
-      ...defaultParsedQuery,
+      ...defaultParsedQuery(fallbackLanguage),
       ...parsed,
+      language: parsed.language === "zh" || parsed.language === "en" ? parsed.language : fallbackLanguage,
       keywords: Array.isArray(parsed.keywords) ? parsed.keywords : [],
       tags: Array.isArray(parsed.tags) ? parsed.tags : [],
-      language: parsed.language === "en" ? "en" : "zh",
+      limit: typeof parsed.limit === "number" && Number.isFinite(parsed.limit) ? parsed.limit : 10,
+      rarity: typeof parsed.rarity === "string" ? parsed.rarity : "",
+      color: typeof parsed.color === "string" ? parsed.color : "",
+      character: typeof parsed.character === "string" ? parsed.character : "",
+      category: typeof parsed.category === "string" ? parsed.category : "",
+      style: typeof parsed.style === "string" ? parsed.style : "",
+      mood: typeof parsed.mood === "string" ? parsed.mood : "",
+      scene: typeof parsed.scene === "string" ? parsed.scene : "",
     };
   } catch {
     return null;
   }
 };
 
-export const parseGalleryQuery = async (userMessage: string): Promise<ParsedGalleryQuery | null> => {
+export const parseGalleryQuery = async (
+  userMessage: string,
+  language?: SupportedLanguage
+): Promise<ParsedGalleryQuery | null> => {
   const enabled = process.env.ENABLE_NATURAL_LANGUAGE_SEARCH === "true";
   logger.info("[LLM QUERY PARSER] enabled=" + enabled);
 
@@ -72,13 +89,17 @@ export const parseGalleryQuery = async (userMessage: string): Promise<ParsedGall
     return null;
   }
 
+  const resolvedLanguage = language ?? detectLanguage(userMessage);
   const apiKey = process.env.DEEPSEEK_API_KEY ?? "";
   const baseUrl = process.env.DEEPSEEK_BASE_URL ?? "https://api.deepseek.com/v1";
   const model = process.env.DEEPSEEK_MODEL ?? "deepseek-chat";
 
   if (!apiKey) {
     logger.warn("[LLM QUERY PARSER] failed fallback keyword search", { reason: "missing api key" });
-    return null;
+    return {
+      ...defaultParsedQuery(resolvedLanguage),
+      keywords: userMessage.match(/[\u4e00-\u9fff]+|[a-zA-Z0-9]+/g)?.map((token) => token.toLowerCase()) ?? [],
+    };
   }
 
   logger.info("[LLM QUERY PARSER] input=" + userMessage);
@@ -93,7 +114,7 @@ export const parseGalleryQuery = async (userMessage: string): Promise<ParsedGall
       body: JSON.stringify({
         model,
         temperature: 0,
-        messages: buildPrompt(userMessage),
+        messages: buildPrompt(userMessage, resolvedLanguage),
       }),
     });
 
@@ -101,16 +122,22 @@ export const parseGalleryQuery = async (userMessage: string): Promise<ParsedGall
       logger.warn("[LLM QUERY PARSER] failed fallback keyword search", {
         status: response.status,
       });
-      return null;
+      return {
+        ...defaultParsedQuery(resolvedLanguage),
+        keywords: userMessage.match(/[\u4e00-\u9fff]+|[a-zA-Z0-9]+/g)?.map((token) => token.toLowerCase()) ?? [],
+      };
     }
 
     const data = (await response.json()) as DeepSeekResponse;
     const content = data.choices?.[0]?.message?.content?.trim() ?? "";
-    const parsed = safeJsonParse(content);
+    const parsed = safeJsonParse(content, resolvedLanguage);
 
     if (!parsed) {
       logger.warn("[LLM QUERY PARSER] failed fallback keyword search", { reason: "json parse failed" });
-      return null;
+      return {
+        ...defaultParsedQuery(resolvedLanguage),
+        keywords: userMessage.match(/[\u4e00-\u9fff]+|[a-zA-Z0-9]+/g)?.map((token) => token.toLowerCase()) ?? [],
+      };
     }
 
     logger.info("[LLM QUERY PARSER] parsed=" + JSON.stringify(parsed));
@@ -119,6 +146,9 @@ export const parseGalleryQuery = async (userMessage: string): Promise<ParsedGall
     logger.warn("[LLM QUERY PARSER] failed fallback keyword search", {
       message: error instanceof Error ? error.message : String(error),
     });
-    return null;
+    return {
+      ...defaultParsedQuery(resolvedLanguage),
+      keywords: userMessage.match(/[\u4e00-\u9fff]+|[a-zA-Z0-9]+/g)?.map((token) => token.toLowerCase()) ?? [],
+    };
   }
 };

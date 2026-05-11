@@ -23,6 +23,21 @@ export type GalleryCardRecord = {
 export type GalleryRepository = {
   findManyByQuery: (query: { keywords: string[]; limit?: number }) => Promise<GalleryCardRecord[]>;
   findById: (cardId: string) => Promise<GalleryCardRecord | null>;
+  upsertSyncedCard: (input: {
+    syncSourceId: string;
+    title: string;
+    description: string | null;
+    imageUrl: string;
+    tags: string[];
+    style: string | null;
+    rarity: string | null;
+    category: string | null;
+    character: string | null;
+    color: string | null;
+    price: string;
+    metadata: Prisma.InputJsonValue;
+    isActive: boolean;
+  }) => Promise<GalleryCardRecord>;
   findManyByParsedQuery: (query: {
     keywords: string[];
     tags: string[];
@@ -76,6 +91,42 @@ export const galleryRepository: GalleryRepository = {
   async findById(cardId) {
     return prisma.galleryCard.findFirst({
       where: { id: cardId, isActive: true },
+    });
+  },
+  async upsertSyncedCard(input) {
+    const existing = await prisma.galleryCard.findFirst({
+      where: {
+        metadata: {
+          path: ["syncSourceId"],
+          equals: input.syncSourceId,
+        },
+      },
+    });
+
+    const data = {
+      title: input.title,
+      description: input.description,
+      imageUrl: input.imageUrl,
+      tags: input.tags,
+      style: input.style,
+      rarity: input.rarity,
+      category: input.category,
+      character: input.character,
+      color: input.color,
+      price: input.price,
+      metadata: input.metadata,
+      isActive: input.isActive,
+    };
+
+    if (existing) {
+      return prisma.galleryCard.update({
+        where: { id: existing.id },
+        data,
+      });
+    }
+
+    return prisma.galleryCard.create({
+      data,
     });
   },
   async findManyByParsedQuery(query) {

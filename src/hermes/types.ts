@@ -24,10 +24,13 @@ export type IntentId =
   | "help"
   | "ignore";
 
+export type SupportedLanguage = "zh" | "en";
+
 export type HermesContext = {
   requestId: string;
   traceId?: string;
   locale?: string;
+  language: SupportedLanguage;
   userId?: string;
   channelId?: string;
   intent?: IntentId;
@@ -38,10 +41,32 @@ export type HermesInput = {
   text: string;
 };
 
-export type HermesOutput = {
+export type GallerySearchResultCard = {
+  id: string;
+  title: string;
+  description: string | null;
+  imageUrl: string;
+  price: number;
+  tags: string[];
+};
+
+export type HermesTextOutput = {
+  type: "text";
+  language: SupportedLanguage;
   text: string;
   metadata?: Record<string, unknown>;
 };
+
+export type HermesGallerySearchResultsOutput = {
+  type: "gallery_search_results";
+  language: SupportedLanguage;
+  text: string;
+  cards: GallerySearchResultCard[];
+  selectionPrompt: string;
+  metadata?: Record<string, unknown>;
+};
+
+export type HermesOutput = HermesTextOutput | HermesGallerySearchResultsOutput;
 
 export type RouterInput = {
   text: string;

@@ -1,0 +1,16 @@
+{
+  "title": "Black Gold SSR Female Card 01",
+  "description": "黑金 SSR 女角色测试卡牌 01",
+  "tags": ["黑金", "SSR", "女角色", "卡牌", "black gold", "female card"],
+  "style": "black gold",
+  "rarity": "SSR",
+  "category": "anime",
+  "character": "female",
+  "color": "black gold",
+  "price": "49.99",
+  "isActive": true,
+  "metadata": {
+    "sample": true,
+    "testGroup": "phase-b"
+  }
+}

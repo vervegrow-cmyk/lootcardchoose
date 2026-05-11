@@ -1,0 +1,16 @@
+{
+  "title": "Cyberpunk Mecha Card 02",
+  "description": "Cyberpunk mecha test card 02",
+  "tags": ["cyberpunk", "mecha", "card", "赛博朋克", "机甲"],
+  "style": "cyberpunk",
+  "rarity": "SSR",
+  "category": "mecha",
+  "character": "mecha",
+  "color": "steel neon",
+  "price": "58.80",
+  "isActive": true,
+  "metadata": {
+    "sample": true,
+    "testGroup": "phase-b"
+  }
+}

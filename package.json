@@ -6,9 +6,11 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "start": "echo RAILWAY_START_TEST && tsx src/index.ts",
-    "gallery:seed": "tsx src/scripts/seed-gallery.ts"
+    "gallery:seed": "tsx src/scripts/seed-gallery.ts",
+    "gallery:sync": "tsx src/scripts/sync-gallery-r2.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.883.0",
     "@prisma/client": "^5.17.0",
     "discord.js": "^14.16.3",
     "express": "^5.2.1",

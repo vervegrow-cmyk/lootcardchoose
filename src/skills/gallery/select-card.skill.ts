@@ -1,7 +1,8 @@
 import { SkillContext, SkillHandler } from "../../hermes/types";
-import { orderService } from "../../services/order.service";
 import { gallerySearchSessionRepository } from "../../repositories/gallery-search-session.repository";
 import { galleryService } from "../../services/gallery.service";
+import { orderService } from "../../services/order.service";
+import { t } from "../../utils/i18n";
 
 export type SelectCardInput = {
   discordUserId: string;
@@ -24,25 +25,24 @@ export const selectCardSkill: SkillHandler<SelectCardInput, SelectCardOutput> = 
   input: SelectCardInput,
   context: SkillContext
 ) => {
-  void context;
   const session = await gallerySearchSessionRepository.findLatest({
     discordUserId: input.discordUserId,
     discordChannelId: input.discordChannelId,
   });
 
   if (!session || !Array.isArray(session.results)) {
-    throw new Error("NO_SEARCH_SESSION");
+    throw new Error(t(context.language, "gallery.select.invalid"));
   }
 
   const selected = session.results[input.selectedIndex - 1] as { id?: string } | undefined;
   const galleryCardId = selected?.id;
   if (!galleryCardId) {
-    throw new Error("INVALID_SELECTION");
+    throw new Error(t(context.language, "gallery.select.invalid"));
   }
 
   const card = await galleryService.getGalleryCardById(galleryCardId);
   if (!card) {
-    throw new Error("CARD_NOT_FOUND");
+    throw new Error(t(context.language, "gallery.select.invalid"));
   }
 
   const order = await orderService.createOrder({

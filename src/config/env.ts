@@ -22,21 +22,6 @@ export type EnvConfig = {
 };
 
 export const loadEnv = (): EnvConfig => {
-  if (!process.env.SHOPIFY_CLIENT_ID) {
-    throw new Error("Missing SHOPIFY_CLIENT_ID");
-  }
-  if (!process.env.SHOPIFY_CLIENT_SECRET) {
-    throw new Error("Missing SHOPIFY_CLIENT_SECRET");
-  }
-  if (!process.env.SHOPIFY_STORE_DOMAIN) {
-    throw new Error("Missing SHOPIFY_STORE_DOMAIN");
-  }
-  if (!process.env.SHOPIFY_SCOPES) {
-    throw new Error("Missing SHOPIFY_SCOPES");
-  }
-  if (!process.env.SHOPIFY_APP_URL) {
-    throw new Error("Missing SHOPIFY_APP_URL");
-  }
   return {
     nodeEnv: process.env.NODE_ENV ?? "development",
     logLevel: process.env.LOG_LEVEL ?? "info",

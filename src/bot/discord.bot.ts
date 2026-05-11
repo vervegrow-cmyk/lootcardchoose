@@ -1,7 +1,9 @@
-import { Client, GatewayIntentBits, Message } from "discord.js";
+import { Client, EmbedBuilder, GatewayIntentBits, Message } from "discord.js";
+import { loadEnv } from "../config/env";
 import { buildHermesRegistry } from "../hermes/registry";
 import { HermesRouter } from "../hermes/router";
-import { loadEnv } from "../config/env";
+import { buildGalleryResultsEmbeds } from "../utils/embeds";
+import { t } from "../utils/i18n";
 import { logger } from "../utils/logger";
 
 const isLootcardChooseChannel = (message: Message): boolean => {
@@ -43,19 +45,49 @@ export const DiscordBot = {
           userId: message.author.id,
         });
 
-        if (response.text) {
-          await message.reply(response.text);
-          if (response.text.startsWith("✅ 为你找到")) {
-            logger.info("[DISCORD] gallery cards reply sent");
-          } else {
-            logger.info("[DISCORD] reply sent");
-          }
+        if (!response.text) {
+          return;
         }
+
+        if (response.type === "gallery_search_results") {
+          const embeds = buildGalleryResultsEmbeds(response.language, response.cards).map((embed) => {
+            const builder = new EmbedBuilder();
+            if (embed.title) {
+              builder.setTitle(embed.title);
+            }
+            if (embed.description) {
+              builder.setDescription(embed.description);
+            }
+            if (embed.imageUrl) {
+              builder.setImage(embed.imageUrl);
+            }
+            if (embed.fields && embed.fields.length > 0) {
+              builder.addFields(
+                embed.fields.map((field) => ({
+                  name: field.name,
+                  value: field.value,
+                  inline: field.inline ?? false,
+                }))
+              );
+            }
+            return builder;
+          });
+
+          await message.reply({
+            content: `${response.text}\n${response.selectionPrompt}`,
+            embeds,
+          });
+          logger.info("[DISCORD] gallery cards reply sent");
+          return;
+        }
+
+        await message.reply(response.text);
+        logger.info("[DISCORD] reply sent");
       } catch (error) {
         logger.error("[DISCORD] handler error", {
           message: error instanceof Error ? error.message : String(error),
         });
-        await message.reply("系统处理中出错，请稍后再试。");
+        await message.reply(t("en", "error.generic"));
       }
     });
 
