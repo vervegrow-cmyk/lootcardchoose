@@ -14,6 +14,12 @@ export const GalleryAgent: AgentDefinition = {
         { ...context, skillId: "gallery.search" }
       );
 
+      if (result.results.length === 0) {
+        return {
+          text: "图库数据库暂未连接，请稍后再试。",
+        };
+      }
+
       const lines = result.results.map(
         (card: { title: string; price: number }, index: number) =>
           `${index + 1}. ${card.title}｜$${card.price.toFixed(2)}`

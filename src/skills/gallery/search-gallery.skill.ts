@@ -19,8 +19,13 @@ export const searchGallerySkill: SkillHandler<SearchGalleryInput, SearchGalleryO
   const limit = input.limit ?? 10;
 
   logger.info("[SEARCH GALLERY SKILL] searching query=" + input.query);
-
-  const results = await galleryService.searchGalleryCards(input.query, limit);
-
-  return { results };
+  try {
+    const results = await galleryService.searchGalleryCards(input.query, limit);
+    return { results };
+  } catch (error) {
+    logger.warn("[SEARCH GALLERY SKILL] search failed", {
+      message: error instanceof Error ? error.message : String(error),
+    });
+    return { results: [] };
+  }
 };

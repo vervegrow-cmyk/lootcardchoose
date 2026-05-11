@@ -12,6 +12,9 @@ const isLootcardChooseChannel = (message: Message): boolean => {
 export const DiscordBot = {
   start: async (): Promise<void> => {
     const env = loadEnv();
+    if (!env.databaseUrl) {
+      logger.warn("[DISCORD] DATABASE_URL missing - bot will start with limited features");
+    }
     const client = new Client({
       intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
     });
@@ -33,20 +36,26 @@ export const DiscordBot = {
       }
 
       logger.info("[DISCORD] message received");
+      try {
+        const response = await router.handle({
+          text: message.content,
+          channelId: message.channelId,
+          userId: message.author.id,
+        });
 
-      const response = await router.handle({
-        text: message.content,
-        channelId: message.channelId,
-        userId: message.author.id,
-      });
-
-      if (response.text) {
-        await message.reply(response.text);
-        if (response.text.startsWith("✅ 为你找到")) {
-          logger.info("[DISCORD] gallery cards reply sent");
-        } else {
-          logger.info("[DISCORD] reply sent");
+        if (response.text) {
+          await message.reply(response.text);
+          if (response.text.startsWith("✅ 为你找到")) {
+            logger.info("[DISCORD] gallery cards reply sent");
+          } else {
+            logger.info("[DISCORD] reply sent");
+          }
         }
+      } catch (error) {
+        logger.error("[DISCORD] handler error", {
+          message: error instanceof Error ? error.message : String(error),
+        });
+        await message.reply("系统处理中出错，请稍后再试。");
       }
     });
 

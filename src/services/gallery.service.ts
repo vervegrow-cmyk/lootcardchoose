@@ -1,5 +1,6 @@
 import { GalleryCardRecord, galleryRepository } from "../repositories/gallery.repository";
 import { logger } from "../utils/logger";
+import { isDatabaseReady } from "./prisma.service";
 
 export type GalleryCardDto = {
   id: string;
@@ -45,6 +46,9 @@ const extractKeywords = (query: string): string[] => {
 export const galleryService = {
   async searchGalleryCards(query: string, limit = 10): Promise<GalleryCardDto[]> {
     logger.info("[GALLERY SERVICE] search query=" + query);
+    if (!isDatabaseReady()) {
+      throw new Error("DATABASE_NOT_READY");
+    }
     const keywords = extractKeywords(query);
 
     const results = await galleryRepository.findManyByQuery({ keywords, limit });
