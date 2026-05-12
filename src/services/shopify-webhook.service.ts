@@ -10,6 +10,8 @@ type ShopifyWebhookNoteAttribute = {
 
 type ShopifyOrdersPaidWebhookPayload = {
   id?: number | string;
+  name?: string;
+  order_number?: number | string;
   note?: string | null;
   note_attributes?: ShopifyWebhookNoteAttribute[];
   tags?: string;
@@ -58,7 +60,7 @@ export const shopifyWebhookService = {
     rawBody: Buffer;
     hmac: string;
     topic: string;
-  }): Promise<{ orderNumber: string; status: string }> {
+  }): Promise<{ handled: boolean; orderNumber: string | null; status: string }> {
     console.log("[SHOPIFY WEBHOOK] verify start", {
       topic: input.topic,
       hmacExists: Boolean(input.hmac),
@@ -82,12 +84,47 @@ export const shopifyWebhookService = {
 
     const payload = JSON.parse(input.rawBody.toString("utf8")) as ShopifyOrdersPaidWebhookPayload;
     const orderNumber = extractOrderNumber(payload);
+    console.log("[SHOPIFY WEBHOOK] payload parsed", {
+      payloadId: payload.id ?? null,
+      payloadName: payload.name ?? null,
+      payloadOrderNumber: payload.order_number ?? null,
+      note: payload.note ?? null,
+      tags: payload.tags ?? null,
+      noteAttributes:
+        payload.note_attributes?.map((attribute) => ({
+          name: attribute.name ?? null,
+          value: attribute.value ?? null,
+        })) ?? [],
+      extractedOrderNumber: orderNumber,
+    });
+
     if (!orderNumber) {
-      throw new Error("Shopify orders/paid webhook missing orderNumber");
+      console.warn("[SHOPIFY WEBHOOK] orderNumber missing, ignored");
+      return {
+        handled: true,
+        orderNumber: null,
+        status: "ignored",
+      };
     }
 
     console.log("[SHOPIFY WEBHOOK] mark paid start", { orderNumber });
-    const order = await orderService.markPaid({ orderNumber });
+    let order;
+    try {
+      order = await orderService.markPaid({ orderNumber });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      if (message === `Order not found for orderNumber=${orderNumber}`) {
+        console.warn("[SHOPIFY WEBHOOK] local order not found, ignored", {
+          orderNumber,
+        });
+        return {
+          handled: true,
+          orderNumber,
+          status: "ignored",
+        };
+      }
+      throw error;
+    }
     console.log("[SHOPIFY WEBHOOK] mark paid success", { orderNumber: order.orderNumber });
     console.log("[SHOPIFY WEBHOOK] discord notify start", { orderNumber: order.orderNumber });
 
@@ -103,6 +140,7 @@ export const shopifyWebhookService = {
     });
 
     return {
+      handled: true,
       orderNumber: order.orderNumber,
       status: order.status,
     };
