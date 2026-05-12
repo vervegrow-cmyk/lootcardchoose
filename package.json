@@ -9,7 +9,10 @@
     "build": "tsc --noEmit",
     "prisma:generate": "prisma generate",
     "gallery:sync": "tsx src/scripts/sync-gallery-r2.ts",
-    "gallery:test-search": "tsx src/scripts/test-gallery-search.ts"
+    "gallery:test-search": "tsx src/scripts/test-gallery-search.ts",
+    "gallery:test-select": "tsx src/scripts/test-gallery-select.ts",
+    "shopify:webhook:test": "tsx src/scripts/test-shopify-webhook.ts",
+    "test:core": "tsx src/scripts/test-core.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1045.0",

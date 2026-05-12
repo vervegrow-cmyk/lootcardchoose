@@ -39,6 +39,18 @@ const defaultParsedQuery = (language: SupportedLanguage): ParsedGalleryQuery => 
   limit: 10,
 });
 
+const normalizeParsedLimit = (value: unknown): number => {
+  if (typeof value !== "number" || !Number.isFinite(value)) {
+    return 10;
+  }
+
+  if (value < 1) {
+    return 10;
+  }
+
+  return Math.min(Math.floor(value), 10);
+};
+
 const detectLanguage = (message: string): SupportedLanguage =>
   /[\u4e00-\u9fff]/.test(message) ? "zh" : "en";
 
@@ -46,7 +58,7 @@ const buildPrompt = (userMessage: string, language: SupportedLanguage): DeepSeek
   {
     role: "system",
     content:
-      "You are a gallery search intent parser. Convert the user's request into JSON only. Return exactly this shape: {\"language\":\"zh|en\",\"keywords\":string[],\"tags\":string[],\"rarity\":string,\"color\":string,\"character\":string,\"category\":string,\"style\":string,\"mood\":string,\"scene\":string,\"limit\":number}. Keep the language field consistent with the user's input language. Extract concise semantic keywords only. Do not include quantity words, numbers, classifiers, or generic words like cards, images, gallery, or request filler. Do not explain anything.",
+      "You are a gallery search intent parser. Convert the user's request into JSON only. Return exactly this shape: {\"language\":\"zh|en\",\"keywords\":string[],\"tags\":string[],\"rarity\":string,\"color\":string,\"character\":string,\"category\":string,\"style\":string,\"mood\":string,\"scene\":string,\"limit\":number}. Keep the language field consistent with the user's input language. Extract concise semantic keywords only. Do not include quantity words, numbers, classifiers, or generic words like cards, images, gallery, or request filler. If the user does not specify a quantity, set limit to 10. Never return 0, null, negative, NaN, or missing limit. Limit must always be an integer between 1 and 10. For 美女 include semantic intent like 女角色, female, girl, anime girl, female character, beauty when relevant. Do not explain anything.",
   },
   {
     role: "user",
@@ -79,7 +91,7 @@ const safeJsonParse = (raw: string, fallbackLanguage: SupportedLanguage): Parsed
       language: parsed.language === "zh" || parsed.language === "en" ? parsed.language : fallbackLanguage,
       keywords: Array.isArray(parsed.keywords) ? parsed.keywords.filter((item): item is string => typeof item === "string") : [],
       tags: Array.isArray(parsed.tags) ? parsed.tags.filter((item): item is string => typeof item === "string") : [],
-      limit: typeof parsed.limit === "number" && Number.isFinite(parsed.limit) ? parsed.limit : 10,
+      limit: normalizeParsedLimit(parsed.limit),
       rarity: typeof parsed.rarity === "string" ? parsed.rarity : "",
       color: typeof parsed.color === "string" ? parsed.color : "",
       character: typeof parsed.character === "string" ? parsed.character : "",
@@ -96,6 +108,7 @@ const safeJsonParse = (raw: string, fallbackLanguage: SupportedLanguage): Parsed
 const fallbackParsedQuery = (userMessage: string, language: SupportedLanguage): ParsedGalleryQuery => ({
   ...defaultParsedQuery(language),
   keywords: userMessage.match(/[\u4e00-\u9fff]+|[a-zA-Z0-9]+/g) ?? [],
+  limit: 10,
 });
 
 export const parseGalleryQuery = async (

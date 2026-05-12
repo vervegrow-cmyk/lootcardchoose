@@ -63,6 +63,19 @@ export type GalleryRepository = {
 };
 
 const SEARCH_CANDIDATE_LIMIT = 200;
+const DEFAULT_REPOSITORY_LIMIT = 10;
+
+const normalizeSearchLimit = (value: unknown): number => {
+  if (typeof value !== "number" || !Number.isFinite(value)) {
+    return DEFAULT_REPOSITORY_LIMIT;
+  }
+
+  if (value < 1) {
+    return DEFAULT_REPOSITORY_LIMIT;
+  }
+
+  return Math.min(Math.floor(value), DEFAULT_REPOSITORY_LIMIT);
+};
 
 const normalizeText = (value: string | null | undefined): string => (value ?? "").trim().toLowerCase();
 
@@ -247,7 +260,7 @@ const rankCards = (cards: GalleryCardRecord[], input: ParsedGallerySearchInput):
 };
 
 const searchAndRank = async (input: ParsedGallerySearchInput): Promise<GalleryCardRecord[]> => {
-  const limit = input.limit ?? 10;
+  const limit = normalizeSearchLimit(input.limit);
   const candidates = await prisma.galleryCard.findMany({
     where: buildSearchWhere(input),
     take: SEARCH_CANDIDATE_LIMIT,
@@ -261,7 +274,7 @@ const searchAndRank = async (input: ParsedGallerySearchInput): Promise<GalleryCa
 
 export const galleryRepository: GalleryRepository = {
   async search(query) {
-    const limit = query.limit ?? 10;
+    const limit = normalizeSearchLimit(query.limit);
     const keywords = normalizeKeywords(query.keywords);
     const tags = normalizeKeywords(query.tags);
 

@@ -6,6 +6,18 @@ import { isDatabaseReady } from "./prisma.service";
 
 export const DEFAULT_GALLERY_RESULT_LIMIT = 10;
 
+const normalizeSearchLimit = (value: unknown): number => {
+  if (typeof value !== "number" || !Number.isFinite(value)) {
+    return DEFAULT_GALLERY_RESULT_LIMIT;
+  }
+
+  if (value < 1) {
+    return DEFAULT_GALLERY_RESULT_LIMIT;
+  }
+
+  return Math.min(Math.floor(value), DEFAULT_GALLERY_RESULT_LIMIT);
+};
+
 export type GalleryCardDto = {
   id: string;
   title: string;
@@ -67,6 +79,8 @@ const KEYWORD_EXPANSIONS: Record<string, string[]> = {
   gold: ["\u91d1\u8272"],
   "\u9ed1\u8272": ["black"],
   black: ["\u9ed1\u8272"],
+  "\u7f8e\u5973": ["\u5973\u89d2\u8272", "female", "girl", "anime girl", "female character", "beauty"],
+  beauty: ["\u7f8e\u5973"],
 };
 
 const MEASURE_WORDS = new Set(["\u5f20", "\u4e2a", "\u5957", "\u6b3e", "\u79cd"]);
@@ -257,7 +271,7 @@ export const galleryService = {
     }
 
     const parsed = await parseGalleryQuery(query, language);
-    const limit = Math.min(parsed?.limit ?? DEFAULT_GALLERY_RESULT_LIMIT, DEFAULT_GALLERY_RESULT_LIMIT);
+    const limit = normalizeSearchLimit(parsed?.limit);
     const parsedQuery = parsed
       ? {
           ...parsed,
