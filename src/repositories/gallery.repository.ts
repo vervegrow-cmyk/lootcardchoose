@@ -40,6 +40,7 @@ type ScoredGalleryCard = {
 };
 
 export type GalleryRepository = {
+  search: (query: ParsedGallerySearchInput) => Promise<GalleryCardRecord[]>;
   findManyByQuery: (query: { keywords: string[]; limit?: number }) => Promise<GalleryCardRecord[]>;
   findById: (cardId: string) => Promise<GalleryCardRecord | null>;
   upsertSyncedCard: (input: {
@@ -259,14 +260,34 @@ const searchAndRank = async (input: ParsedGallerySearchInput): Promise<GalleryCa
 };
 
 export const galleryRepository: GalleryRepository = {
-  async findManyByQuery(query) {
+  async search(query) {
     const limit = query.limit ?? 10;
     const keywords = normalizeKeywords(query.keywords);
+    const tags = normalizeKeywords(query.tags);
 
-    logger.info("[GALLERY REPOSITORY] prisma search start", { keywords, limit });
+    logger.info("[GALLERY REPOSITORY] prisma search start", {
+      keywords,
+      tags,
+      limit,
+      rarity: query.rarity,
+      color: query.color,
+      character: query.character,
+      category: query.category,
+      style: query.style,
+      mood: query.mood,
+      scene: query.scene,
+    });
 
     return searchAndRank({
+      ...query,
       keywords,
+      tags,
+      limit,
+    });
+  },
+  async findManyByQuery(query) {
+    return galleryRepository.search({
+      keywords: query.keywords,
       tags: [],
       style: "",
       rarity: "",
@@ -275,7 +296,7 @@ export const galleryRepository: GalleryRepository = {
       color: "",
       mood: "",
       scene: "",
-      limit,
+      limit: query.limit,
     });
   },
   async findById(cardId) {
@@ -352,28 +373,9 @@ export const galleryRepository: GalleryRepository = {
     return result.count;
   },
   async findManyByParsedQuery(query) {
-    const limit = query.limit ?? 10;
-    const keywords = normalizeKeywords(query.keywords);
-    const tags = normalizeKeywords(query.tags);
-
-    logger.info("[GALLERY REPOSITORY] prisma search start", {
-      keywords,
-      tags,
-      limit,
-      rarity: query.rarity,
-      color: query.color,
-      character: query.character,
-      category: query.category,
-      style: query.style,
-      mood: query.mood,
-      scene: query.scene,
-    });
-
-    return searchAndRank({
+    return galleryRepository.search({
       ...query,
-      keywords,
-      tags,
-      limit,
+      limit: query.limit,
     });
   },
 };

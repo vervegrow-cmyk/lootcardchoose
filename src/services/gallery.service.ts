@@ -249,11 +249,6 @@ export const buildStructuredGalleryKeywords = (parsedQuery: ParsedGalleryQuery):
   return normalizeGalleryKeywords(rawStructuredValues);
 };
 
-const hasStructuredIntent = (parsedQuery: ParsedGalleryQuery): boolean =>
-  buildStructuredGalleryKeywords(parsedQuery).length > 0 ||
-  STRUCTURED_FIELDS.some((field) => parsedQuery[field].trim().length > 0) ||
-  parsedQuery.tags.some((tag) => tag.trim().length > 0);
-
 export const galleryService = {
   async searchGalleryCards(query: string, language: SupportedLanguage = "zh"): Promise<GallerySearchResult> {
     logger.info("[GALLERY SERVICE] search query=" + query);
@@ -275,27 +270,23 @@ export const galleryService = {
     const structuredKeywords = buildStructuredGalleryKeywords(parsedQuery);
     logger.info("[GALLERY SERVICE] structured keywords=" + JSON.stringify(structuredKeywords));
 
-    const shouldUseRawFallback = !parsed || !hasStructuredIntent(parsedQuery);
-    const searchKeywords = shouldUseRawFallback ? normalizeGalleryKeywords([query]) : structuredKeywords;
-    const searchTags = shouldUseRawFallback ? [] : normalizeGalleryKeywords(parsedQuery.tags);
+    const shouldUseStructuredSearch = structuredKeywords.length > 0;
+    const fallbackKeywords = shouldUseStructuredSearch ? [] : normalizeGalleryKeywords([query]);
+    const finalKeywords = shouldUseStructuredSearch ? structuredKeywords : fallbackKeywords;
+    const finalTags = shouldUseStructuredSearch ? normalizeGalleryKeywords(parsedQuery.tags) : [];
 
-    const resultsSource = shouldUseRawFallback
-      ? await galleryRepository.findManyByQuery({
-          keywords: searchKeywords,
-          limit,
-        })
-      : await galleryRepository.findManyByParsedQuery({
-          keywords: searchKeywords,
-          tags: searchTags,
-          style: parsedQuery.style,
-          rarity: parsedQuery.rarity,
-          category: parsedQuery.category,
-          character: parsedQuery.character,
-          color: parsedQuery.color,
-          mood: parsedQuery.mood,
-          scene: parsedQuery.scene,
-          limit,
-        });
+    const resultsSource = await galleryRepository.search({
+      keywords: finalKeywords,
+      tags: finalTags,
+      style: shouldUseStructuredSearch ? parsedQuery.style : "",
+      rarity: shouldUseStructuredSearch ? parsedQuery.rarity : "",
+      category: shouldUseStructuredSearch ? parsedQuery.category : "",
+      character: shouldUseStructuredSearch ? parsedQuery.character : "",
+      color: shouldUseStructuredSearch ? parsedQuery.color : "",
+      mood: shouldUseStructuredSearch ? parsedQuery.mood : "",
+      scene: shouldUseStructuredSearch ? parsedQuery.scene : "",
+      limit,
+    });
 
     const results = dedupeCards(resultsSource).slice(0, limit).map(toDto);
     logger.info("[GALLERY SERVICE] final result count=" + results.length);
