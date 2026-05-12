@@ -5,7 +5,7 @@ import { isDatabaseReady } from "./services/prisma.service";
 import { shopifyInstallationService } from "./services/shopify-installation.service";
 import { shopifyWebhookService } from "./services/shopify-webhook.service";
 
-console.log("[BOOT] lootcardchoose search-fix-v3 038e643");
+console.log("[BOOT] lootcardchoose route-debug-v1");
 
 type ShopifyAccessTokenResponse = {
   access_token?: string;
@@ -168,6 +168,7 @@ const startHealthServer = (): void => {
     response.status(200).json({ ok: true });
   });
 
+  console.log("[ROUTE REGISTER] POST /webhooks/shopify/orders-paid");
   app.post(
     SHOPIFY_ORDERS_PAID_WEBHOOK_ROUTE,
     express.raw({ type: "application/json" }),
@@ -210,10 +211,14 @@ const startHealthServer = (): void => {
     }
   );
 
+  console.log("[ROUTE REGISTER] GET /debug/routes");
   app.get("/debug/routes", (_request: Request, response: Response) => {
     response.status(200).json({
       ok: true,
+      version: "route-debug-v1",
       routes: {
+        root: "/",
+        debug: "/debug/routes",
         webhook: SHOPIFY_ORDERS_PAID_WEBHOOK_ROUTE,
       },
     });
