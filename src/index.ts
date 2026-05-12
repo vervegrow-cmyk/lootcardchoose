@@ -14,6 +14,7 @@ type ShopifyAccessTokenResponse = {
 
 const oauthStateStore = new Map<string, number>();
 const SHOPIFY_STATE_TTL_MS = 10 * 60 * 1000;
+const SHOPIFY_ORDERS_PAID_WEBHOOK_ROUTE = "/webhooks/shopify/orders-paid";
 
 const resolveEnv = (key: string): string => {
   const value = process.env[key] ?? "";
@@ -167,39 +168,55 @@ const startHealthServer = (): void => {
     response.status(200).json({ ok: true });
   });
 
-  app.post("/webhooks/shopify/orders-paid", express.raw({ type: "application/json" }), async (request, response) => {
-    try {
-      const topic = request.header("x-shopify-topic") ?? "";
-      const providedHmac = request.header("x-shopify-hmac-sha256") ?? "";
-      const rawBody = Buffer.isBuffer(request.body) ? request.body : Buffer.from([]);
-      console.log("[SHOPIFY WEBHOOK] route hit", {
-        topic,
-        hmacExists: Boolean(providedHmac),
-        rawBodyLength: rawBody.length,
-      });
-
-      if (!providedHmac || !shopifyWebhookService.verifyOrdersPaidWebhook(rawBody, providedHmac)) {
-        console.warn("[SHOPIFY WEBHOOK] hmac failed", {
+  app.post(
+    SHOPIFY_ORDERS_PAID_WEBHOOK_ROUTE,
+    express.raw({ type: "application/json" }),
+    async (request, response) => {
+      try {
+        const topic = request.header("x-shopify-topic") ?? "";
+        const providedHmac = request.header("x-shopify-hmac-sha256") ?? "";
+        const rawBody = Buffer.isBuffer(request.body) ? request.body : Buffer.from([]);
+        console.log("[SHOPIFY WEBHOOK] route hit", {
+          route: SHOPIFY_ORDERS_PAID_WEBHOOK_ROUTE,
           topic,
           hmacExists: Boolean(providedHmac),
           rawBodyLength: rawBody.length,
         });
-        response.status(401).json({ ok: false, error: "Invalid Shopify webhook hmac" });
-        return;
-      }
 
-      console.log("[SHOPIFY WEBHOOK] hmac verified", {
-        topic,
-        rawBodyLength: rawBody.length,
-      });
-      const result = await shopifyWebhookService.handleOrdersPaidWebhook(rawBody);
-      response.status(200).json({ ok: true, orderNumber: result.orderNumber, status: result.status });
-    } catch (error) {
-      response.status(500).json({
-        ok: false,
-        error: error instanceof Error ? error.message : String(error),
-      });
+        if (!providedHmac || !shopifyWebhookService.verifyOrdersPaidWebhook(rawBody, providedHmac)) {
+          console.warn("[SHOPIFY WEBHOOK] hmac failed", {
+            route: SHOPIFY_ORDERS_PAID_WEBHOOK_ROUTE,
+            topic,
+            hmacExists: Boolean(providedHmac),
+            rawBodyLength: rawBody.length,
+          });
+          response.status(401).json({ ok: false, error: "Invalid Shopify webhook hmac" });
+          return;
+        }
+
+        console.log("[SHOPIFY WEBHOOK] hmac verified", {
+          route: SHOPIFY_ORDERS_PAID_WEBHOOK_ROUTE,
+          topic,
+          rawBodyLength: rawBody.length,
+        });
+        const result = await shopifyWebhookService.handleOrdersPaidWebhook(rawBody);
+        response.status(200).json({ ok: true, orderNumber: result.orderNumber, status: result.status });
+      } catch (error) {
+        response.status(500).json({
+          ok: false,
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
     }
+  );
+
+  app.get("/debug/routes", (_request: Request, response: Response) => {
+    response.status(200).json({
+      ok: true,
+      routes: {
+        webhook: SHOPIFY_ORDERS_PAID_WEBHOOK_ROUTE,
+      },
+    });
   });
 
   app.get("/install", (request: Request, response: Response) => {
