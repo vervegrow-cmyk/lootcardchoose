@@ -9,6 +9,7 @@ export type OrderRecord = {
   status: OrderStatus;
   shopifyProductId: string | null;
   shopifyCheckoutUrl: string | null;
+  title: string;
 };
 
 export const orderService = {
@@ -18,6 +19,17 @@ export const orderService = {
     amount: string;
   }): Promise<OrderRecord> {
     return orderRepository.create(input);
+  },
+  async updateShopifyLink(input: {
+    orderId: string;
+    shopifyProductId: string;
+    shopifyCheckoutUrl: string;
+    status: "checkout_created";
+  }): Promise<OrderRecord> {
+    return orderRepository.updateShopifyLink(input);
+  },
+  async findByShopifyProductId(shopifyProductId: string): Promise<OrderRecord | null> {
+    return orderRepository.findByShopifyProductId(shopifyProductId);
   },
   async markPaid(input: { orderNumber: string }): Promise<OrderRecord> {
     const order = await orderRepository.findByOrderNumber(input.orderNumber);

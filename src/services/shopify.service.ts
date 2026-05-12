@@ -9,6 +9,7 @@ export type ShopifyCreateProductInput = {
 
 export type ShopifyCreateProductOutput = {
   checkoutUrl: string;
+  shopifyProductId: string;
 };
 
 type ShopifyProductImage = {
@@ -17,6 +18,7 @@ type ShopifyProductImage = {
 
 type ShopifyVariant = {
   price: string;
+  sku: string;
 };
 
 type ShopifyProductPayload = {
@@ -55,7 +57,7 @@ const buildProductPayload = (input: ShopifyCreateProductInput): ShopifyProductPa
     body_html: input.description,
     tags: [...input.tags, `order:${input.orderNumber}`].join(", "),
     images: input.imageUrl ? [{ src: input.imageUrl }] : undefined,
-    variants: [{ price: input.price }],
+    variants: [{ price: input.price, sku: input.orderNumber }],
   },
 });
 
@@ -99,9 +101,15 @@ export const shopifyService = {
 
     const variantId = product.variants?.[0]?.id;
     if (variantId) {
-      return { checkoutUrl: resolveCartUrl(storeDomain, variantId, input.orderNumber) };
+      return {
+        checkoutUrl: resolveCartUrl(storeDomain, variantId, input.orderNumber),
+        shopifyProductId: String(product.id),
+      };
     }
 
-    return { checkoutUrl: resolveProductUrl(storeDomain, handle) };
+    return {
+      checkoutUrl: resolveProductUrl(storeDomain, handle),
+      shopifyProductId: String(product.id),
+    };
   },
 };

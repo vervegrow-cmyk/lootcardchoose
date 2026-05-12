@@ -14,6 +14,8 @@ type ShopifyWebhookLineItemProperty = {
 };
 
 type ShopifyWebhookLineItem = {
+  sku?: string | null;
+  product_id?: number | string | null;
   properties?: ShopifyWebhookLineItemProperty[];
 };
 
@@ -63,6 +65,14 @@ const extractOrderNumber = (payload: ShopifyOrdersPaidWebhookPayload): string | 
     return lineItemProperty.value.trim();
   }
 
+  const lineItemSku = payload.line_items
+    ?.map((lineItem) => lineItem.sku?.trim() ?? "")
+    .find((sku) => Boolean(sku));
+
+  if (lineItemSku) {
+    return lineItemSku;
+  }
+
   const tags = payload.tags ?? "";
   const orderTag = tags
     .split(",")
@@ -74,6 +84,19 @@ const extractOrderNumber = (payload: ShopifyOrdersPaidWebhookPayload): string | 
   }
 
   return null;
+};
+
+const extractShopifyProductId = (payload: ShopifyOrdersPaidWebhookPayload): string | null => {
+  const productId = payload.line_items
+    ?.map((lineItem) => {
+      if (lineItem.product_id === null || lineItem.product_id === undefined) {
+        return "";
+      }
+      return String(lineItem.product_id).trim();
+    })
+    .find((value) => Boolean(value));
+
+  return productId || null;
 };
 
 export const shopifyWebhookService = {
@@ -105,6 +128,7 @@ export const shopifyWebhookService = {
 
     const payload = JSON.parse(input.rawBody.toString("utf8")) as ShopifyOrdersPaidWebhookPayload;
     const orderNumber = extractOrderNumber(payload);
+    const shopifyProductId = extractShopifyProductId(payload);
     console.log("[SHOPIFY WEBHOOK] payload parsed", {
       payloadId: payload.id ?? null,
       payloadName: payload.name ?? null,
@@ -123,10 +147,21 @@ export const shopifyWebhookService = {
             value: property.value ?? null,
           }))
         ) ?? [],
+      lineItemsSku: payload.line_items?.map((lineItem) => lineItem.sku ?? null) ?? [],
+      lineItemsProductId: payload.line_items?.map((lineItem) => lineItem.product_id ?? null) ?? [],
       extractedOrderNumber: orderNumber,
+      extractedShopifyProductId: shopifyProductId,
     });
 
-    if (!orderNumber) {
+    let resolvedOrderNumber = orderNumber;
+    if (!resolvedOrderNumber && shopifyProductId) {
+      const orderByProductId = await orderService.findByShopifyProductId(shopifyProductId);
+      if (orderByProductId) {
+        resolvedOrderNumber = orderByProductId.orderNumber;
+      }
+    }
+
+    if (!resolvedOrderNumber) {
       console.warn("[SHOPIFY WEBHOOK] orderNumber missing, ignored");
       return {
         handled: true,
@@ -135,19 +170,19 @@ export const shopifyWebhookService = {
       };
     }
 
-    console.log("[SHOPIFY WEBHOOK] mark paid start", { orderNumber });
+    console.log("[SHOPIFY WEBHOOK] mark paid start", { orderNumber: resolvedOrderNumber });
     let order;
     try {
-      order = await orderService.markPaid({ orderNumber });
+      order = await orderService.markPaid({ orderNumber: resolvedOrderNumber });
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      if (message === `Order not found for orderNumber=${orderNumber}`) {
+      if (message === `Order not found for orderNumber=${resolvedOrderNumber}`) {
         console.warn("[SHOPIFY WEBHOOK] local order not found, ignored", {
-          orderNumber,
+          orderNumber: resolvedOrderNumber,
         });
         return {
           handled: true,
-          orderNumber,
+          orderNumber: resolvedOrderNumber,
           status: "ignored",
         };
       }
@@ -160,6 +195,7 @@ export const shopifyWebhookService = {
       discordUserId: order.discordUserId,
       orderNumber: order.orderNumber,
       amount: order.amount,
+      title: order.title,
     });
 
     console.log("[SHOPIFY WEBHOOK] completed", {

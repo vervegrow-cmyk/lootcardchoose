@@ -15,6 +15,7 @@ export const discordNotificationService = {
     discordUserId: string;
     orderNumber: string;
     amount: string;
+    title: string;
   }): Promise<void> {
     if (!discordClient) {
       logger.warn("[DISCORD NOTIFICATION] client not ready for paid notification", {
@@ -23,7 +24,14 @@ export const discordNotificationService = {
       return;
     }
 
-    const message = `Payment received\n\nOrder: ${input.orderNumber}\nAmount: $${input.amount}`;
+    const message =
+      "✅ Payment received!\n\n" +
+      "Your order has been paid successfully.\n" +
+      `Order: ${input.orderNumber}\n` +
+      `Item: ${input.title}\n` +
+      `Amount: $${input.amount}\n\n` +
+      "We’ll prepare your card and ship it as soon as possible.\n" +
+      "Please keep an eye on your tracking updates.";
 
     try {
       const user = await discordClient.users.fetch(input.discordUserId);

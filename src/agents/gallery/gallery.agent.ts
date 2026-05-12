@@ -84,6 +84,7 @@ export const GalleryAgent: AgentDefinition = {
 
       const checkout = await createCheckoutLinkSkill(
         {
+          orderId: selected.orderId,
           title: selected.title,
           description: selected.description,
           imageUrl: selected.imageUrl,
