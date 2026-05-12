@@ -15,4 +15,6 @@ export type GalleryAgentOutput = {
   summary: string;
   selectedCards: GallerySelection[];
   language?: SupportedLanguage;
+  refreshMode?: "next_batch" | "refine" | "broaden" | "random_fallback";
+  reason?: string;
 };

@@ -7,6 +7,7 @@ export type AgentId =
 
 export type SkillId =
   | "gallery.search"
+  | "gallery.refresh"
   | "gallery.selectCard"
   | "gallery.createCheckoutLink"
   | "gallery.help";
@@ -51,6 +52,8 @@ export type GallerySearchResultCard = {
   price: number;
   tags: string[];
   language?: SupportedLanguage;
+  refreshMode?: "next_batch" | "refine" | "broaden" | "random_fallback";
+  reason?: string;
 };
 
 export type HermesTextOutput = {
@@ -66,6 +69,8 @@ export type HermesGallerySearchResultsOutput = {
   text: string;
   cards: GallerySearchResultCard[];
   selectionPrompt: string;
+  refreshMode?: "next_batch" | "refine" | "broaden" | "random_fallback";
+  reason?: string;
   metadata?: Record<string, unknown>;
 };
 

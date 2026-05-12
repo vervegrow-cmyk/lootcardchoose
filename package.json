@@ -14,6 +14,7 @@
     "gallery:sync": "tsx src/scripts/sync-gallery-r2.ts",
     "gallery:test-search": "tsx src/scripts/test-gallery-search.ts",
     "gallery:test-help": "tsx src/scripts/test-gallery-help.ts",
+    "gallery:test-refresh": "tsx src/scripts/test-gallery-refresh.ts",
     "gallery:test-select": "tsx src/scripts/test-gallery-select.ts",
     "shopify:webhook:test": "tsx src/scripts/test-shopify-webhook.ts",
     "test:core": "tsx src/scripts/test-core.ts"

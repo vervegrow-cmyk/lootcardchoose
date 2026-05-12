@@ -37,7 +37,30 @@ const SEARCH_KEYWORDS = [
   "动漫",
 ];
 
-const REFRESH_KEYWORDS = ["换一批", "再来一组", "更多结果", "more", "next", "more like this"];
+const REFRESH_KEYWORDS = [
+  "can we switch to another batch",
+  "show me another batch",
+  "next batch",
+  "more options",
+  "any other options",
+  "show me more",
+  "more like this",
+  "i don't like these",
+  "not these",
+  "try another style",
+  "something else",
+  "these are not what i want",
+  "换一批",
+  "再来一批",
+  "还有别的吗",
+  "下一批",
+  "更多类似的",
+  "不喜欢这些",
+  "不是这种",
+  "换个风格",
+  "还有其他的吗",
+  "这些不太对",
+];
 
 const HELP_KEYWORDS = [
   "help",
@@ -72,7 +95,7 @@ const buildPrompt = (message: string, language: SupportedLanguage): DeepSeekMess
       '{"intent":"gallery_search|gallery_select|gallery_refresh|order_status|help|ignore","language":"zh|en","confidence":0.0,"reason":"short reason"}. ' +
       "gallery_search = the user wants to browse or search cards by style, color, rarity, character, mood, scene, or recommendation. " +
       "gallery_select = the user selects one numbered result. " +
-      "gallery_refresh = the user wants another batch. " +
+      "gallery_refresh = the user wants another batch, more options, another style, or says the current cards are not right. " +
       "order_status = the user explicitly checks an order status. " +
       "help = the user asks how to buy, how to choose, payment, shipping, tracking, or how the system works. " +
       "ignore = fully unrelated.",

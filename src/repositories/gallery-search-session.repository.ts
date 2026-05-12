@@ -23,6 +23,7 @@ export type GallerySearchSessionRepository = {
   }) => Promise<GallerySearchSessionRecord>;
   findLatest: (input: { discordUserId: string; discordChannelId: string }) => Promise<GallerySearchSessionRecord | null>;
   findLatestByUserId: (discordUserId: string) => Promise<GallerySearchSessionRecord | null>;
+  findRecentByUserId: (input: { discordUserId: string; take?: number }) => Promise<GallerySearchSessionRecord[]>;
   updateSelectedCard: (input: { sessionId: string; galleryCardId: string }) => Promise<void>;
 };
 
@@ -53,6 +54,15 @@ export const gallerySearchSessionRepository: GallerySearchSessionRepository = {
         discordUserId,
       },
       orderBy: { createdAt: "desc" },
+    });
+  },
+  async findRecentByUserId(input) {
+    return prisma.gallerySearchSession.findMany({
+      where: {
+        discordUserId: input.discordUserId,
+      },
+      orderBy: { createdAt: "desc" },
+      take: input.take ?? 20,
     });
   },
   async updateSelectedCard(input) {

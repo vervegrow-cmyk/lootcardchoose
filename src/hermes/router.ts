@@ -28,11 +28,30 @@ const GALLERY_SELECT_PATTERNS: RegExp[] = [
 
 const GALLERY_REFRESH_PATTERNS: RegExp[] = [
   /^\u6362\u4e00\u6279$/,
-  /^\u518d\u6765\u4e00\u7ec4$/,
+  /^\u518d\u6765\u4e00\u6279$/,
+  /^\u8fd8\u6709\u522b\u7684\u5417$/,
+  /^\u4e0b\u4e00\u6279$/,
+  /^\u66f4\u591a\u7c7b\u4f3c\u7684$/,
+  /^\u4e0d\u559c\u6b22\u8fd9\u4e9b$/,
+  /^\u4e0d\u662f\u8fd9\u79cd$/,
+  /^\u6362\u4e2a\u98ce\u683c$/,
+  /^\u8fd8\u6709\u5176\u4ed6\u7684\u5417$/,
+  /^\u8fd9\u4e9b\u4e0d\u592a\u5bf9$/,
   /^\u66f4\u591a\u7ed3\u679c$/,
   /^next$/,
   /^more$/,
   /^more like this$/,
+  /^next batch$/,
+  /^show me another batch$/,
+  /^more options$/,
+  /^any other options\??$/,
+  /^show me more$/,
+  /^i don't like these$/,
+  /^not these$/,
+  /^try another style$/,
+  /^something else$/,
+  /^these are not what i want$/,
+  /^can we switch to another batch\??$/,
 ];
 
 const HELP_PATTERNS = ["help", "\u5e2e\u52a9", "\u600e\u4e48\u7528", "how to use"];

@@ -32,6 +32,7 @@ type ParsedGallerySearchInput = {
   mood: string;
   scene: string;
   limit?: number;
+  excludeIds?: string[];
 };
 
 type ScoredGalleryCard = {
@@ -41,6 +42,7 @@ type ScoredGalleryCard = {
 
 export type GalleryRepository = {
   search: (query: ParsedGallerySearchInput) => Promise<GalleryCardRecord[]>;
+  findActiveExcluding: (input: { excludeIds?: string[]; limit?: number }) => Promise<GalleryCardRecord[]>;
   findManyByQuery: (query: { keywords: string[]; limit?: number }) => Promise<GalleryCardRecord[]>;
   findById: (cardId: string) => Promise<GalleryCardRecord | null>;
   upsertSyncedCard: (input: {
@@ -165,6 +167,18 @@ const buildSearchWhere = (input: ParsedGallerySearchInput): Prisma.GalleryCardWh
 
   return {
     isActive: true,
+    NOT: {
+      imageUrl: {
+        contains: "placehold.co",
+      },
+    },
+    ...(input.excludeIds && input.excludeIds.length > 0
+      ? {
+          id: {
+            notIn: input.excludeIds,
+          },
+        }
+      : {}),
     OR: orFilters.length > 0 ? orFilters : undefined,
   };
 };
@@ -310,6 +324,28 @@ export const galleryRepository: GalleryRepository = {
       mood: "",
       scene: "",
       limit: query.limit,
+    });
+  },
+  async findActiveExcluding(input) {
+    const limit = normalizeSearchLimit(input.limit);
+    return prisma.galleryCard.findMany({
+      where: {
+        isActive: true,
+        NOT: {
+          imageUrl: {
+            contains: "placehold.co",
+          },
+        },
+        ...(input.excludeIds && input.excludeIds.length > 0
+          ? {
+              id: {
+                notIn: input.excludeIds,
+              },
+            }
+          : {}),
+      },
+      orderBy: { createdAt: "desc" },
+      take: limit,
     });
   },
   async findById(cardId) {

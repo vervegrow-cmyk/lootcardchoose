@@ -43,7 +43,7 @@ export const searchGallerySkill: SkillHandler<SearchGalleryInput, SearchGalleryO
           ...card,
           language: searchResult.language,
         })),
-        status: "search",
+        status: "active",
       });
     } catch (sessionError) {
       logger.warn("[SEARCH GALLERY SKILL] session create failed", {

@@ -6,7 +6,7 @@ const GALLERY_STOP_WORDS = new Set([
   "帮我",
   "来点",
   "来些",
-  "一下",
+  "一个",
   "找",
   "搜索",
   "图库",
@@ -29,16 +29,16 @@ const GALLERY_STOP_WORDS = new Set([
 const MEASURE_WORDS = new Set(["张", "个", "套", "款", "种"]);
 
 const CANONICAL_TERM_MAP: Record<string, string> = {
-  "黑金": "black gold",
+  黑金: "black gold",
   "black gold": "black gold",
   ssr: "SSR",
   sr: "SR",
   ur: "UR",
   r: "R",
   n: "N",
-  "女角色": "female character",
-  "女性角色": "female character",
-  美女: "female character",
+  女角色: "female character",
+  女性角色: "female character",
+  美女: "beauty",
   female: "female character",
   girl: "female character",
   "anime girl": "female character",
@@ -89,7 +89,6 @@ const CANONICAL_TERM_MAP: Record<string, string> = {
   checkout: "checkout",
   角色: "character",
   character: "character",
-  how: "help",
   帮助: "help",
   怎么: "help",
 };
@@ -97,11 +96,45 @@ const CANONICAL_TERM_MAP: Record<string, string> = {
 const KEYWORD_EXPANSIONS: Record<string, string[]> = {
   "black gold": ["SSR", "female character", "anime"],
   "female character": ["female", "girl", "anime girl", "anime", "beauty"],
+  beauty: ["female character", "anime"],
   anime: ["collectible card"],
   mecha: ["robot", "collectible card"],
   premium: ["luxury"],
   buy: ["checkout", "product page"],
+  cute: ["anime", "female character"],
+  dark: ["anime", "premium"],
 };
+
+const NEXT_BATCH_PATTERNS = [
+  "can we switch to another batch",
+  "show me another batch",
+  "next batch",
+  "more options",
+  "any other options",
+  "show me more",
+  "more like this",
+  "换一批",
+  "再来一批",
+  "还有别的吗",
+  "下一批",
+  "更多类似的",
+  "还有其他的吗",
+];
+
+const REFINE_PATTERNS = [
+  "i don't like these",
+  "not these",
+  "these are not what i want",
+  "不喜欢这些",
+  "不是这种",
+  "这些不太对",
+];
+
+const BROADEN_PATTERNS = [
+  "try another style",
+  "something else",
+  "换个风格",
+];
 
 const normalizeText = (value: string): string => value.trim().toLowerCase();
 
@@ -132,7 +165,7 @@ export const canonicalizeGalleryTerm = (value: string): string => {
 
 const stripMeaninglessText = (value: string): string => {
   let cleaned = value.trim();
-  cleaned = cleaned.replace(/[，。、“”"'`’‘！？?!,.:;()[\]{}<>/\\|@#$%^&*_+=~-]+/g, " ");
+  cleaned = cleaned.replace(/[，。、“”"'‘’！；？！,.:;()[\]{}<>/\\|@#$%^&*_+=~-]+/g, " ");
   cleaned = cleaned.replace(/\d+\s*(张|个|套|款|种)?/g, " ");
 
   for (const stopWord of GALLERY_STOP_WORDS) {
@@ -229,3 +262,23 @@ export const expandGalleryKeywords = (values: string[]): string[] => {
 
 export const normalizeGalleryKeywordsToEnglish = (values: string[]): string[] =>
   expandGalleryKeywords(values.flatMap((value) => extractGalleryKeywordCandidates(value)));
+
+export const inferRefreshModeFromMessage = (
+  message: string
+): "next_batch" | "refine" | "broaden" => {
+  const normalized = normalizeText(message);
+
+  if (REFINE_PATTERNS.some((pattern) => normalized.includes(pattern))) {
+    return "refine";
+  }
+
+  if (BROADEN_PATTERNS.some((pattern) => normalized.includes(pattern))) {
+    return "broaden";
+  }
+
+  if (NEXT_BATCH_PATTERNS.some((pattern) => normalized.includes(pattern))) {
+    return "next_batch";
+  }
+
+  return "next_batch";
+};
