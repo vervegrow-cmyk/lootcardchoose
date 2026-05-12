@@ -65,7 +65,6 @@ const resolveProductUrl = (storeDomain: string, handle: string): string =>
 const resolveCartUrl = (storeDomain: string, variantId: number, orderNumber: string): string => {
   const url = new URL(`https://${storeDomain}/cart/${variantId}:1`);
   url.searchParams.set("attributes[orderNumber]", orderNumber);
-  url.searchParams.set("properties[orderNumber]", orderNumber);
   url.searchParams.set("note", orderNumber);
   return url.toString();
 };
