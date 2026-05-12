@@ -7,7 +7,10 @@
     "build": "tsc -p tsconfig.json",
     "start": "echo RAILWAY_START_TEST && tsx src/index.ts",
     "gallery:seed": "tsx src/scripts/seed-gallery.ts",
-    "gallery:sync": "tsx src/scripts/sync-gallery-r2.ts"
+    "gallery:sync": "tsx src/scripts/sync-gallery-r2.ts",
+    "gallery:analyze": "tsx src/scripts/analyze-gallery-images.ts",
+    "gallery:analyze:force": "tsx src/scripts/analyze-gallery-images.ts --force",
+    "gallery:sync:vision": "npm run gallery:analyze && npm run gallery:sync"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.883.0",

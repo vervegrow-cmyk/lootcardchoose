@@ -19,6 +19,10 @@ export type EnvConfig = {
   r2Endpoint: string;
   r2PublicUrl: string;
   enableLootcardChoose: boolean;
+  siliconflowApiKey: string;
+  siliconflowBaseUrl: string;
+  siliconflowVisionModel: string;
+  enableGalleryVisionMetadata: boolean;
 };
 
 export const loadEnv = (): EnvConfig => {
@@ -43,5 +47,9 @@ export const loadEnv = (): EnvConfig => {
     r2Endpoint: process.env.R2_ENDPOINT ?? "",
     r2PublicUrl: process.env.R2_PUBLIC_URL ?? "",
     enableLootcardChoose: process.env.ENABLE_LOOTCARD_CHOOSE === "true",
+    siliconflowApiKey: process.env.SILICONFLOW_API_KEY ?? "",
+    siliconflowBaseUrl: process.env.SILICONFLOW_BASE_URL ?? "https://api.siliconflow.cn/v1",
+    siliconflowVisionModel: process.env.SILICONFLOW_VISION_MODEL ?? "Qwen/Qwen3-VL-8B-Instruct",
+    enableGalleryVisionMetadata: process.env.ENABLE_GALLERY_VISION_METADATA === "true",
   };
 };

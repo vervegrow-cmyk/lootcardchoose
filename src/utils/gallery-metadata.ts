@@ -9,7 +9,11 @@ export type GalleryImageMetadata = {
   category?: string | null;
   character?: string | null;
   color?: string | null;
+  mood?: string | null;
+  scene?: string | null;
   price?: string | number | null;
+  confidence?: number | null;
+  visionSource?: string | null;
   isActive?: boolean;
   metadata?: Record<string, unknown>;
 };
