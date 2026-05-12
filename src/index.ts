@@ -4,7 +4,7 @@ import { DiscordBot } from "./bot/discord.bot";
 import { isDatabaseReady } from "./services/prisma.service";
 import { shopifyInstallationService } from "./services/shopify-installation.service";
 
-console.log("[BOOT] lootcardchoose source-start-v1");
+console.log("[BOOT] lootcardchoose search-fix-v3 038e643");
 
 type ShopifyAccessTokenResponse = {
   access_token?: string;
