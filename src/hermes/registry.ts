@@ -1,5 +1,6 @@
 import { AgentDefinition, SkillDefinition, RegisteredSkill } from "./types";
 import { GalleryAgent } from "../agents/gallery/gallery.agent";
+import { galleryHelpSkill } from "../skills/gallery/gallery-help.skill";
 import { searchGallerySkill } from "../skills/gallery/search-gallery.skill";
 
 export class HermesRegistry {
@@ -39,6 +40,11 @@ export const buildHermesRegistry = (): HermesRegistry => {
     id: "gallery.search",
     name: "SearchGallerySkill",
     handler: searchGallerySkill,
+  });
+  registry.registerSkill({
+    id: "gallery.help",
+    name: "GalleryHelpSkill",
+    handler: galleryHelpSkill,
   });
 
   return registry;

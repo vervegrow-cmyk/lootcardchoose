@@ -1,5 +1,6 @@
 import { IntentId, SupportedLanguage } from "../hermes/types";
 import { loadEnv } from "../config/env";
+import { detectPreferredLanguage } from "../utils/gallery-language";
 import { logger } from "../utils/logger";
 
 export type IntentClassificationResult = {
@@ -19,46 +20,62 @@ type DeepSeekResponse = {
 };
 
 const SEARCH_KEYWORDS = [
-  "搜索图库",
-  "图库",
-  "搜索卡牌",
-  "找卡牌",
-  "找图",
-  "找卡",
-  "卡牌",
-  "给我",
-  "我要",
-  "黑金",
-  "女角色",
-  "赛博朋克",
-  "机甲",
-  "ssr",
-  "black gold",
-  "female",
-  "card",
-  "cards",
   "gallery",
   "search",
   "show me",
-  "cyberpunk",
-  "mecha",
+  "card",
+  "cards",
+  "black gold",
+  "female",
   "anime",
+  "ssr",
+  "给我",
+  "卡牌",
+  "图库",
+  "黑金",
+  "女角色",
+  "动漫",
 ];
 
 const REFRESH_KEYWORDS = ["换一批", "再来一组", "更多结果", "more", "next", "more like this"];
 
-const HELP_KEYWORDS = ["help", "帮助", "怎么用", "how to use"];
+const HELP_KEYWORDS = [
+  "help",
+  "how to use",
+  "how do i buy",
+  "how do i choose",
+  "buy",
+  "purchase",
+  "checkout",
+  "payment",
+  "pay",
+  "shipping",
+  "tracking",
+  "怎么买",
+  "怎么选",
+  "付款",
+  "支付",
+  "发货",
+  "物流",
+  "帮助",
+];
 
-const ORDER_KEYWORDS = ["我的订单", "查询订单", "订单状态", "order", "my order", "order status"];
+const ORDER_KEYWORDS = ["我的订单", "查询订单", "订单状态", "order status", "my order"];
 
-const detectLanguage = (message: string): SupportedLanguage =>
-  /[\u4e00-\u9fff]/.test(message) ? "zh" : "en";
+const detectLanguage = (message: string): SupportedLanguage => detectPreferredLanguage(message);
 
 const buildPrompt = (message: string, language: SupportedLanguage): DeepSeekMessage[] => [
   {
     role: "system",
     content:
-      'You are the intent classifier for the LootCardChoose Discord gallery system. Return JSON only in this shape: {"intent":"gallery_search|gallery_select|gallery_refresh|order_status|help|ignore","language":"zh|en","confidence":0.0,"reason":"short reason"}. Intent definitions: gallery_search = user wants to browse, search, recommend, describe style, character, color, rarity, mood, premium feeling, cool feeling, collectible feeling, or any card preference. gallery_select = user selects one result from the current list. gallery_refresh = user wants another batch, more results, next batch, or dislikes current results. order_status = user checks orders. help = user asks how to use. ignore = fully unrelated. If the user expresses aesthetic preference without saying search explicitly, classify as gallery_search.',
+      'You are the intent classifier for the LootCardChoose Discord gallery system. Return JSON only in this shape: ' +
+      '{"intent":"gallery_search|gallery_select|gallery_refresh|order_status|help|ignore","language":"zh|en","confidence":0.0,"reason":"short reason"}. ' +
+      "gallery_search = the user wants to browse or search cards by style, color, rarity, character, mood, scene, or recommendation. " +
+      "gallery_select = the user selects one numbered result. " +
+      "gallery_refresh = the user wants another batch. " +
+      "order_status = the user explicitly checks an order status. " +
+      "help = the user asks how to buy, how to choose, payment, shipping, tracking, or how the system works. " +
+      "ignore = fully unrelated.",
   },
   {
     role: "user",
@@ -123,7 +140,7 @@ const fallbackIntentClassification = (message: string): IntentClassificationResu
     intent: "gallery_search",
     language,
     confidence: 0.4,
-    reason: "fallback default for lootcardchoose natural language",
+    reason: "fallback default for natural language card requests",
   };
 };
 

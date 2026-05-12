@@ -8,7 +8,8 @@ export type AgentId =
 export type SkillId =
   | "gallery.search"
   | "gallery.selectCard"
-  | "gallery.createCheckoutLink";
+  | "gallery.createCheckoutLink"
+  | "gallery.help";
 
 export type ServiceId =
   | "gallery"
@@ -49,6 +50,7 @@ export type GallerySearchResultCard = {
   imageUrl: string;
   price: number;
   tags: string[];
+  language?: SupportedLanguage;
 };
 
 export type HermesTextOutput = {
@@ -67,7 +69,17 @@ export type HermesGallerySearchResultsOutput = {
   metadata?: Record<string, unknown>;
 };
 
-export type HermesOutput = HermesTextOutput | HermesGallerySearchResultsOutput;
+export type HermesGalleryCheckoutCreatedOutput = {
+  type: "gallery_checkout_created";
+  language: SupportedLanguage;
+  text: string;
+  metadata?: Record<string, unknown>;
+};
+
+export type HermesOutput =
+  | HermesTextOutput
+  | HermesGallerySearchResultsOutput
+  | HermesGalleryCheckoutCreatedOutput;
 
 export type RouterInput = {
   text: string;

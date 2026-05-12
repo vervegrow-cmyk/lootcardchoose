@@ -1,6 +1,9 @@
+import { SupportedLanguage } from "../../hermes/types";
+
 export type GalleryQuery = {
   keywords: string[];
   limit?: number;
+  language?: SupportedLanguage;
 };
 
 export type GallerySelection = {
@@ -11,4 +14,5 @@ export type GallerySelection = {
 export type GalleryAgentOutput = {
   summary: string;
   selectedCards: GallerySelection[];
+  language?: SupportedLanguage;
 };

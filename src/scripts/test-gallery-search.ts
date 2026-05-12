@@ -7,9 +7,21 @@ import { buildStructuredGalleryKeywords, galleryService } from "../services/gall
 import { parseGalleryQuery } from "../services/llm-query-parser.service";
 
 const TEST_CASES = [
-  "美女",
-  "黑金 SSR 女角色",
-  "给我10张黑金SSR女角色卡牌",
+  {
+    query: "Show me 10 black gold SSR female cards",
+    expectedLanguage: "en" as const,
+    expectedKeywords: ["black gold", "SSR", "female character"],
+  },
+  {
+    query: "给我10张黑金SSR女角色卡牌",
+    expectedLanguage: "zh" as const,
+    expectedKeywords: ["black gold", "SSR", "female character"],
+  },
+  {
+    query: "美女",
+    expectedLanguage: "zh" as const,
+    expectedKeywords: ["female character", "beauty"],
+  },
 ];
 
 const ensure = (condition: unknown, message: string): void => {
@@ -18,27 +30,48 @@ const ensure = (condition: unknown, message: string): void => {
   }
 };
 
+const includesKeyword = (keywords: string[], expected: string): boolean =>
+  keywords.map((keyword) => keyword.toLowerCase()).includes(expected.toLowerCase());
+
 const main = async (): Promise<void> => {
-  for (const query of TEST_CASES) {
-    console.log(`[TEST GALLERY SEARCH] query=${JSON.stringify(query)}`);
+  for (const testCase of TEST_CASES) {
+    console.log(`[TEST GALLERY SEARCH] query=${JSON.stringify(testCase.query)}`);
 
-    const parsed = await parseGalleryQuery(query, "zh");
+    const parsed = await parseGalleryQuery(testCase.query);
     console.log(`[TEST GALLERY SEARCH] parsed=${JSON.stringify(parsed)}`);
+    ensure(parsed, `Expected parsed query for ${testCase.query}`);
+    if (!parsed) {
+      continue;
+    }
 
-    const structuredKeywords = parsed ? buildStructuredGalleryKeywords(parsed) : [];
+    ensure(parsed.language === testCase.expectedLanguage, `Expected language=${testCase.expectedLanguage}`);
+    ensure(parsed.limit > 0, `Expected parsed limit > 0 for query=${testCase.query}`);
+    ensure(parsed.limit <= 10, `Expected parsed limit <= 10 for query=${testCase.query}`);
+
+    const structuredKeywords = buildStructuredGalleryKeywords(parsed);
     console.log(`[TEST GALLERY SEARCH] structured keywords=${JSON.stringify(structuredKeywords)}`);
 
-    const result = await galleryService.searchGalleryCards(query, "zh");
+    for (const expectedKeyword of testCase.expectedKeywords) {
+      ensure(
+        includesKeyword(structuredKeywords, expectedKeyword),
+        `Expected keyword ${expectedKeyword} for query=${testCase.query}`
+      );
+    }
+
+    const result = await galleryService.searchGalleryCards(testCase.query, parsed.language);
     console.log(
       `[TEST GALLERY SEARCH] summary=${JSON.stringify({
-        query,
+        query: testCase.query,
+        language: result.language,
         limit: result.limit,
         resultCount: result.results.length,
       })}`
     );
 
-    ensure(result.limit > 0, `Expected search limit > 0 for query=${query}`);
-    ensure(result.results.length > 0, `Expected search results > 0 for query=${query}`);
+    ensure(result.language === testCase.expectedLanguage, `Expected result language=${testCase.expectedLanguage}`);
+    ensure(result.limit > 0, `Expected search limit > 0 for query=${testCase.query}`);
+    ensure(result.limit <= 10, `Expected search limit <= 10 for query=${testCase.query}`);
+    ensure(result.results.length > 0, `Expected search results > 0 for query=${testCase.query}`);
 
     result.results.forEach((card, index) => {
       console.log(

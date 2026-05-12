@@ -12,6 +12,7 @@ export type SearchGalleryInput = {
 
 export type SearchGalleryOutput = {
   query: string;
+  language: SkillContext["language"];
   parsedQuery: ParsedGalleryQuery | null;
   results: GalleryCardDto[];
   limit: number;
@@ -38,7 +39,10 @@ export const searchGallerySkill: SkillHandler<SearchGalleryInput, SearchGalleryO
         discordUserId: input.discordUserId,
         discordChannelId: input.discordChannelId,
         query: searchResult.query,
-        results: sessionResults,
+        results: sessionResults.map((card) => ({
+          ...card,
+          language: searchResult.language,
+        })),
         status: "search",
       });
     } catch (sessionError) {
@@ -49,6 +53,7 @@ export const searchGallerySkill: SkillHandler<SearchGalleryInput, SearchGalleryO
 
     return {
       query: searchResult.query,
+      language: searchResult.language,
       parsedQuery: searchResult.parsedQuery,
       results: searchResult.results,
       limit: searchResult.limit,
@@ -59,6 +64,7 @@ export const searchGallerySkill: SkillHandler<SearchGalleryInput, SearchGalleryO
     });
     return {
       query: input.query,
+      language: context.language,
       parsedQuery: null,
       results: [],
       limit: 10,

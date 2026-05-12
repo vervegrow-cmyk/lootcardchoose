@@ -3,6 +3,7 @@ import { spawnSync } from "node:child_process";
 const COMMANDS = [
   "npm run build",
   "npm run gallery:test-search",
+  "npm run gallery:test-help",
   "npm run gallery:test-select",
   "npm run shopify:webhook:test",
 ];
