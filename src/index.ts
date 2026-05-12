@@ -13,6 +13,7 @@ type ShopifyAccessTokenResponse = {
 
 const oauthStateStore = new Map<string, number>();
 const SHOPIFY_STATE_TTL_MS = 10 * 60 * 1000;
+const SHOPIFY_ORDERS_PAID_WEBHOOK_ROUTE = "/webhooks/shopify/orders-paid";
 
 const resolveEnv = (key: string): string => {
   const value = process.env[key] ?? "";
@@ -81,6 +82,21 @@ const computeHmacDigest = (query: Request["query"]): { message: string; digest: 
 
 const isValidHmac = (query: Request["query"], providedHmac: string): boolean => {
   const { digest } = computeHmacDigest(query);
+  const left = Buffer.from(digest, "utf8");
+  const right = Buffer.from(providedHmac, "utf8");
+  if (left.length !== right.length) {
+    return false;
+  }
+  return crypto.timingSafeEqual(left, right);
+};
+
+const computeWebhookHmacDigest = (rawBody: Buffer): string => {
+  const secret = resolveShopifyClientSecret();
+  return crypto.createHmac("sha256", secret).update(rawBody).digest("base64");
+};
+
+const isValidWebhookHmac = (rawBody: Buffer, providedHmac: string): boolean => {
+  const digest = computeWebhookHmacDigest(rawBody);
   const left = Buffer.from(digest, "utf8");
   const right = Buffer.from(providedHmac, "utf8");
   if (left.length !== right.length) {
@@ -164,6 +180,49 @@ const startHealthServer = (): void => {
 
   app.get("/health", (_request: Request, response: Response) => {
     response.status(200).json({ ok: true });
+  });
+
+  console.log("[ROUTE REGISTER] POST /webhooks/shopify/orders-paid");
+  app.post(
+    SHOPIFY_ORDERS_PAID_WEBHOOK_ROUTE,
+    express.raw({ type: "application/json" }),
+    async (request: Request, response: Response) => {
+      const topic = request.header("x-shopify-topic") ?? "";
+      const providedHmac = request.header("x-shopify-hmac-sha256") ?? "";
+      const rawBody = Buffer.isBuffer(request.body) ? request.body : Buffer.from([]);
+
+      console.log("[SHOPIFY WEBHOOK] route hit", {
+        route: SHOPIFY_ORDERS_PAID_WEBHOOK_ROUTE,
+        topic,
+        hmacExists: Boolean(providedHmac),
+        rawBodyLength: rawBody.length,
+      });
+
+      if (!providedHmac || !isValidWebhookHmac(rawBody, providedHmac)) {
+        console.warn("[SHOPIFY WEBHOOK] hmac failed", {
+          route: SHOPIFY_ORDERS_PAID_WEBHOOK_ROUTE,
+          topic,
+          hmacExists: Boolean(providedHmac),
+          rawBodyLength: rawBody.length,
+        });
+        response.status(401).json({ ok: false, error: "Invalid Shopify webhook hmac" });
+        return;
+      }
+
+      response.status(200).json({ ok: true });
+    }
+  );
+
+  console.log("[ROUTE REGISTER] GET /debug/routes");
+  app.get("/debug/routes", (_request: Request, response: Response) => {
+    response.status(200).json({
+      ok: true,
+      routes: {
+        root: "/",
+        debug: "/debug/routes",
+        webhook: SHOPIFY_ORDERS_PAID_WEBHOOK_ROUTE,
+      },
+    });
   });
 
   app.get("/install", (request: Request, response: Response) => {
