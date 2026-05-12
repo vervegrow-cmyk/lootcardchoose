@@ -8,6 +8,7 @@ export type CreateCheckoutLinkInput = {
   imageUrl: string;
   price: string;
   tags: string[];
+  orderNumber: string;
 };
 
 export type CreateCheckoutLinkOutput = {
@@ -26,6 +27,7 @@ export const createCheckoutLinkSkill: SkillHandler<
       imageUrl: input.imageUrl,
       price: input.price,
       tags: input.tags,
+      orderNumber: input.orderNumber,
     });
     return { url: result.checkoutUrl };
   } catch (error) {

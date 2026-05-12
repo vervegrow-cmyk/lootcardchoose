@@ -8,6 +8,15 @@ type ShopifyWebhookNoteAttribute = {
   value?: string;
 };
 
+type ShopifyWebhookLineItemProperty = {
+  name?: string;
+  value?: string;
+};
+
+type ShopifyWebhookLineItem = {
+  properties?: ShopifyWebhookLineItemProperty[];
+};
+
 type ShopifyOrdersPaidWebhookPayload = {
   id?: number | string;
   name?: string;
@@ -15,6 +24,7 @@ type ShopifyOrdersPaidWebhookPayload = {
   note?: string | null;
   note_attributes?: ShopifyWebhookNoteAttribute[];
   tags?: string;
+  line_items?: ShopifyWebhookLineItem[];
 };
 
 const previewDigest = (value: string): string => `${value.slice(0, 12)}...`;
@@ -40,6 +50,17 @@ const extractOrderNumber = (payload: ShopifyOrdersPaidWebhookPayload): string | 
 
   if (payload.note?.trim()) {
     return payload.note.trim();
+  }
+
+  const lineItemProperty = payload.line_items
+    ?.flatMap((lineItem) => lineItem.properties ?? [])
+    .find((property) => {
+      const name = property.name?.trim().toLowerCase();
+      return name === "ordernumber" || name === "order_number";
+    });
+
+  if (lineItemProperty?.value) {
+    return lineItemProperty.value.trim();
   }
 
   const tags = payload.tags ?? "";
@@ -95,6 +116,13 @@ export const shopifyWebhookService = {
           name: attribute.name ?? null,
           value: attribute.value ?? null,
         })) ?? [],
+      lineItemProperties:
+        payload.line_items?.map((lineItem) =>
+          (lineItem.properties ?? []).map((property) => ({
+            name: property.name ?? null,
+            value: property.value ?? null,
+          }))
+        ) ?? [],
       extractedOrderNumber: orderNumber,
     });
 

@@ -89,6 +89,7 @@ export const GalleryAgent: AgentDefinition = {
           imageUrl: selected.imageUrl,
           price: selected.price,
           tags: selected.tags,
+          orderNumber: selected.orderNumber,
         },
         { ...context, skillId: "gallery.createCheckoutLink" }
       );

@@ -4,6 +4,7 @@ export type ShopifyCreateProductInput = {
   imageUrl: string;
   price: string;
   tags: string[];
+  orderNumber: string;
 };
 
 export type ShopifyCreateProductOutput = {
@@ -32,6 +33,9 @@ type ShopifyProductResponse = {
   product: {
     id: number;
     handle: string;
+    variants?: Array<{
+      id: number;
+    }>;
   };
 };
 
@@ -49,7 +53,7 @@ const buildProductPayload = (input: ShopifyCreateProductInput): ShopifyProductPa
   product: {
     title: input.title,
     body_html: input.description,
-    tags: input.tags.join(", "),
+    tags: [...input.tags, `order:${input.orderNumber}`].join(", "),
     images: input.imageUrl ? [{ src: input.imageUrl }] : undefined,
     variants: [{ price: input.price }],
   },
@@ -57,6 +61,14 @@ const buildProductPayload = (input: ShopifyCreateProductInput): ShopifyProductPa
 
 const resolveProductUrl = (storeDomain: string, handle: string): string =>
   `https://${storeDomain}/products/${handle}`;
+
+const resolveCartUrl = (storeDomain: string, variantId: number, orderNumber: string): string => {
+  const url = new URL(`https://${storeDomain}/cart/${variantId}:1`);
+  url.searchParams.set("attributes[orderNumber]", orderNumber);
+  url.searchParams.set("properties[orderNumber]", orderNumber);
+  url.searchParams.set("note", orderNumber);
+  return url.toString();
+};
 
 export const shopifyService = {
   async createCheckoutLink(input: ShopifyCreateProductInput): Promise<ShopifyCreateProductOutput> {
@@ -80,9 +92,15 @@ export const shopifyService = {
     }
 
     const data = (await response.json()) as ShopifyProductResponse;
-    const handle = data.product?.handle;
+    const product = data.product;
+    const handle = product?.handle;
     if (!handle) {
       throw new Error("Shopify create product response missing handle");
+    }
+
+    const variantId = product.variants?.[0]?.id;
+    if (variantId) {
+      return { checkoutUrl: resolveCartUrl(storeDomain, variantId, input.orderNumber) };
     }
 
     return { checkoutUrl: resolveProductUrl(storeDomain, handle) };
