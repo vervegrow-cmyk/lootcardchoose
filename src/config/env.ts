@@ -1,3 +1,6 @@
+import { existsSync, readFileSync } from "node:fs";
+import path from "node:path";
+
 export type EnvConfig = {
   nodeEnv: string;
   logLevel: string;
@@ -25,15 +28,73 @@ export type EnvConfig = {
   enableGalleryVisionMetadata: boolean;
 };
 
+let hasLoadedEnvFiles = false;
+
+const parseEnvValue = (value: string): string => {
+  const trimmed = value.trim();
+  if (
+    (trimmed.startsWith("\"") && trimmed.endsWith("\"")) ||
+    (trimmed.startsWith("'") && trimmed.endsWith("'"))
+  ) {
+    return trimmed.slice(1, -1);
+  }
+  return trimmed;
+};
+
+const loadEnvFile = (filePath: string): void => {
+  if (!existsSync(filePath)) {
+    return;
+  }
+
+  const contents = readFileSync(filePath, "utf8");
+  for (const rawLine of contents.split(/\r?\n/)) {
+    const line = rawLine.trim();
+    if (!line || line.startsWith("#")) {
+      continue;
+    }
+
+    const separatorIndex = line.indexOf("=");
+    if (separatorIndex <= 0) {
+      continue;
+    }
+
+    const key = line.slice(0, separatorIndex).trim();
+    const value = parseEnvValue(line.slice(separatorIndex + 1));
+    if (!key || process.env[key] != null) {
+      continue;
+    }
+
+    process.env[key] = value;
+  }
+};
+
+const ensureEnvLoaded = (): void => {
+  if (hasLoadedEnvFiles) {
+    return;
+  }
+
+  const cwd = process.cwd();
+  loadEnvFile(path.resolve(cwd, ".env"));
+  loadEnvFile(path.resolve(cwd, ".env.local"));
+  hasLoadedEnvFiles = true;
+};
+
 export const loadEnv = (): EnvConfig => {
+  ensureEnvLoaded();
+
+  const deepseekApiKey = process.env.DEEPSEEK_API_KEY ?? process.env.SILICONFLOW_API_KEY ?? "";
+  const deepseekBaseUrl =
+    process.env.DEEPSEEK_BASE_URL ?? process.env.SILICONFLOW_BASE_URL ?? "https://api.deepseek.com/v1";
+  const deepseekModel = process.env.DEEPSEEK_MODEL ?? "deepseek-chat";
+
   return {
     nodeEnv: process.env.NODE_ENV ?? "development",
     logLevel: process.env.LOG_LEVEL ?? "info",
     discordBotToken: process.env.DISCORD_BOT_TOKEN ?? "",
     databaseUrl: process.env.DATABASE_URL ?? "",
-    deepseekApiKey: process.env.DEEPSEEK_API_KEY ?? "",
-    deepseekBaseUrl: process.env.DEEPSEEK_BASE_URL ?? "https://api.deepseek.com/v1",
-    deepseekModel: process.env.DEEPSEEK_MODEL ?? "deepseek-chat",
+    deepseekApiKey,
+    deepseekBaseUrl,
+    deepseekModel,
     enableNaturalLanguageSearch: process.env.ENABLE_NATURAL_LANGUAGE_SEARCH === "true",
     shopifyStoreDomain: process.env.SHOPIFY_STORE_DOMAIN ?? "",
     shopifyClientId: process.env.SHOPIFY_CLIENT_ID ?? "",
@@ -50,6 +111,6 @@ export const loadEnv = (): EnvConfig => {
     siliconflowApiKey: process.env.SILICONFLOW_API_KEY ?? "",
     siliconflowBaseUrl: process.env.SILICONFLOW_BASE_URL ?? "https://api.siliconflow.cn/v1",
     siliconflowVisionModel: process.env.SILICONFLOW_VISION_MODEL ?? "Qwen/Qwen3-VL-8B-Instruct",
-    enableGalleryVisionMetadata: process.env.ENABLE_GALLERY_VISION_METADATA === "true",
+    enableGalleryVisionMetadata: process.env.ENABLE_GALLERY_VISION_METADATA !== "false",
   };
 };

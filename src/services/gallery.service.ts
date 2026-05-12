@@ -18,46 +18,88 @@ export type GalleryCardDto = {
   character: string | null;
   color: string | null;
   price: number;
+  score?: number;
 };
 
 export type GallerySearchResult = {
   query: string;
   parsedQuery: ParsedGalleryQuery | null;
+  structuredKeywords: string[];
   results: GalleryCardDto[];
   limit: number;
 };
 
-const TAG_SYNONYMS: Record<string, string[]> = {
-  "黑金": ["black gold"],
-  "black gold": ["黑金"],
-  "女角色": ["female character", "girl", "female"],
-  "female character": ["女角色"],
-  "卡牌": ["card", "trading card"],
-  "card": ["卡牌"],
-  "赛博朋克": ["cyberpunk"],
-  "cyberpunk": ["赛博朋克"],
-  "机甲": ["mecha"],
-  "mecha": ["机甲"],
+const KEYWORD_EXPANSIONS: Record<string, string[]> = {
+  "\u9ed1\u91d1": ["black gold"],
+  "black gold": ["\u9ed1\u91d1"],
+  SSR: ["ssr"],
+  ssr: ["SSR"],
+  "\u5973\u89d2\u8272": ["female", "girl", "anime girl", "female character", "anime"],
+  female: ["\u5973\u89d2\u8272"],
+  girl: ["\u5973\u89d2\u8272"],
+  "anime girl": ["\u5973\u89d2\u8272"],
+  "female character": ["\u5973\u89d2\u8272"],
+  "\u5361\u724c": ["card", "trading card"],
+  card: ["\u5361\u724c"],
+  "trading card": ["\u5361\u724c"],
+  "\u52a8\u6f2b": ["anime"],
+  anime: ["\u52a8\u6f2b"],
+  "\u673a\u7532": ["mecha"],
+  mecha: ["\u673a\u7532"],
+  "\u6697\u9ed1": ["dark"],
+  dark: ["\u6697\u9ed1"],
+  "\u9f99": ["dragon"],
+  dragon: ["\u9f99"],
+  "\u8d5b\u535a\u670b\u514b": ["cyberpunk"],
+  cyberpunk: ["\u8d5b\u535a\u670b\u514b"],
+  "\u53ef\u7231": ["cute"],
+  cute: ["\u53ef\u7231"],
+  "\u9ad8\u7ea7\u611f": ["premium", "luxury"],
+  premium: ["\u9ad8\u7ea7\u611f"],
+  luxury: ["\u9ad8\u7ea7\u611f"],
+  "\u6218\u6597": ["battle"],
+  battle: ["\u6218\u6597"],
+  "\u9b54\u6cd5": ["magic"],
+  magic: ["\u9b54\u6cd5"],
+  "\u672a\u6765\u611f": ["futuristic"],
+  futuristic: ["\u672a\u6765\u611f"],
+  "\u91d1\u8272": ["gold"],
+  gold: ["\u91d1\u8272"],
+  "\u9ed1\u8272": ["black"],
+  black: ["\u9ed1\u8272"],
 };
 
-const stopWords = new Set([
-  "给我",
-  "我要",
-  "张",
-  "卡牌",
-  "卡",
-  "找图",
-  "找卡",
-  "搜索",
-  "图库",
-  "要",
-  "的",
+const MEASURE_WORDS = new Set(["\u5f20", "\u4e2a", "\u5957", "\u6b3e", "\u79cd"]);
+const STOP_WORDS = new Set([
+  "\u7ed9\u6211",
+  "\u6211\u8981",
+  "\u5e2e\u6211",
+  "\u627e",
+  "\u641c\u7d22",
+  "\u56fe\u5e93",
+  "\u56fe\u7247",
+  "\u5361\u724c",
+  "\u6837\u5f0f",
+  "\u6765\u70b9",
+  "\u6765\u4e9b",
+  "\u4e00\u4e0b",
   "show",
   "me",
   "please",
-  "cards",
+  "find",
+  "search",
+  "gallery",
+  "image",
+  "images",
   "card",
+  "cards",
+  "trading card",
 ]);
+
+const STRUCTURED_FIELDS: Array<keyof Pick<
+  ParsedGalleryQuery,
+  "rarity" | "color" | "character" | "category" | "style" | "mood" | "scene"
+>> = ["rarity", "color", "character", "category", "style", "mood", "scene"];
 
 const toDto = (card: GalleryCardRecord): GalleryCardDto => ({
   id: card.id,
@@ -71,11 +113,13 @@ const toDto = (card: GalleryCardRecord): GalleryCardDto => ({
   character: card.character,
   color: card.color,
   price: Number(card.price),
+  score: card.score,
 });
 
 const dedupeCards = (cards: GalleryCardRecord[]): GalleryCardRecord[] => {
   const seen = new Set<string>();
   const result: GalleryCardRecord[] = [];
+
   for (const card of cards) {
     if (seen.has(card.id)) {
       continue;
@@ -83,49 +127,107 @@ const dedupeCards = (cards: GalleryCardRecord[]): GalleryCardRecord[] => {
     seen.add(card.id);
     result.push(card);
   }
+
   return result;
 };
 
-const extractKeywords = (query: string): string[] => {
-  const tokens = query.match(/[\u4e00-\u9fff]+|[a-zA-Z0-9]+(?:\s+[a-zA-Z0-9]+)*/g) ?? [];
-  return tokens
-    .map((token) => token.trim().toLowerCase())
-    .filter((token) => token.length > 0)
-    .filter((token) => !stopWords.has(token));
-};
+const normalizeForLookup = (value: string): string => value.trim().toLowerCase();
 
-const expandSynonyms = (tokens: string[]): string[] => {
-  const expanded = new Set<string>();
-  for (const token of tokens) {
-    const normalized = token.trim().toLowerCase();
-    if (!normalized) {
+const uniqueKeywords = (values: string[]): string[] => {
+  const seen = new Set<string>();
+  const result: string[] = [];
+
+  for (const value of values) {
+    const normalized = normalizeForLookup(value);
+    if (!normalized || seen.has(normalized)) {
       continue;
     }
-    expanded.add(normalized);
-    const synonyms = TAG_SYNONYMS[normalized] ?? [];
-    for (const synonym of synonyms) {
-      expanded.add(synonym.toLowerCase());
-    }
+    seen.add(normalized);
+    result.push(value.trim());
   }
-  return [...expanded];
+
+  return result;
 };
 
-const mergeTokens = (...groups: string[][]): string[] => {
-  const merged = new Set<string>();
-  for (const group of groups) {
-    for (const token of group) {
-      const normalized = token.trim().toLowerCase();
-      if (normalized) {
-        merged.add(normalized);
-      }
+const stripMeaninglessText = (value: string): string => {
+  let cleaned = value.trim();
+
+  cleaned = cleaned.replace(/[，。、“”"'`‘’！？!?,.:;()[\]{}<>/\\|@#$%^&*_+=~-]+/g, " ");
+  cleaned = cleaned.replace(/\d+\s*(张|个|套|款|种)/g, " ");
+
+  for (const stopWord of STOP_WORDS) {
+    cleaned = cleaned.replace(new RegExp(stopWord, "gi"), " ");
+  }
+
+  return cleaned.replace(/\s+/g, " ").trim();
+};
+
+const extractKeywordCandidates = (input: string): string[] => {
+  const cleaned = stripMeaninglessText(input);
+  if (!cleaned) {
+    return [];
+  }
+
+  const matches = cleaned.match(/[\u4e00-\u9fff]+|[a-zA-Z]+(?:\s+[a-zA-Z]+)*|[0-9]+/g) ?? [];
+  const result: string[] = [];
+
+  for (const rawMatch of matches) {
+    let token = rawMatch.trim();
+    if (!token || /^\d+$/.test(token)) {
+      continue;
+    }
+
+    while (token.length > 1 && MEASURE_WORDS.has(token.charAt(0))) {
+      token = token.slice(1).trim();
+    }
+
+    while (token.length > 1 && MEASURE_WORDS.has(token.charAt(token.length - 1))) {
+      token = token.slice(0, -1).trim();
+    }
+
+    if (!token) {
+      continue;
+    }
+
+    const normalized = normalizeForLookup(token);
+    if (!normalized || STOP_WORDS.has(normalized) || STOP_WORDS.has(token)) {
+      continue;
+    }
+
+    result.push(token);
+  }
+
+  return uniqueKeywords(result);
+};
+
+const expandKeywords = (tokens: string[]): string[] => {
+  const expanded: string[] = [];
+
+  for (const token of tokens) {
+    const trimmed = token.trim();
+    if (!trimmed) {
+      continue;
+    }
+
+    expanded.push(trimmed);
+
+    const directMatches = KEYWORD_EXPANSIONS[trimmed] ?? KEYWORD_EXPANSIONS[trimmed.toLowerCase()] ?? [];
+    for (const match of directMatches) {
+      expanded.push(match);
     }
   }
-  return [...merged];
+
+  return uniqueKeywords(expanded);
+};
+
+export const normalizeGalleryKeywords = (values: string[]): string[] => {
+  const candidates = values.flatMap((value) => extractKeywordCandidates(value));
+  return expandKeywords(candidates);
 };
 
 const buildFallbackParsedQuery = (query: string, language: SupportedLanguage): ParsedGalleryQuery => ({
   language,
-  keywords: extractKeywords(query),
+  keywords: normalizeGalleryKeywords([query]),
   tags: [],
   style: "",
   rarity: "",
@@ -137,6 +239,21 @@ const buildFallbackParsedQuery = (query: string, language: SupportedLanguage): P
   limit: DEFAULT_GALLERY_RESULT_LIMIT,
 });
 
+export const buildStructuredGalleryKeywords = (parsedQuery: ParsedGalleryQuery): string[] => {
+  const rawStructuredValues = [
+    ...parsedQuery.keywords,
+    ...parsedQuery.tags,
+    ...STRUCTURED_FIELDS.map((field) => parsedQuery[field]),
+  ];
+
+  return normalizeGalleryKeywords(rawStructuredValues);
+};
+
+const hasStructuredIntent = (parsedQuery: ParsedGalleryQuery): boolean =>
+  buildStructuredGalleryKeywords(parsedQuery).length > 0 ||
+  STRUCTURED_FIELDS.some((field) => parsedQuery[field].trim().length > 0) ||
+  parsedQuery.tags.some((tag) => tag.trim().length > 0);
+
 export const galleryService = {
   async searchGalleryCards(query: string, language: SupportedLanguage = "zh"): Promise<GallerySearchResult> {
     logger.info("[GALLERY SERVICE] search query=" + query);
@@ -144,10 +261,8 @@ export const galleryService = {
       throw new Error("DATABASE_NOT_READY");
     }
 
-    const limit = DEFAULT_GALLERY_RESULT_LIMIT;
-    const baseKeywords = extractKeywords(query);
-    const expandedKeywords = expandSynonyms(baseKeywords);
     const parsed = await parseGalleryQuery(query, language);
+    const limit = Math.min(parsed?.limit ?? DEFAULT_GALLERY_RESULT_LIMIT, DEFAULT_GALLERY_RESULT_LIMIT);
     const parsedQuery = parsed
       ? {
           ...parsed,
@@ -155,65 +270,41 @@ export const galleryService = {
         }
       : buildFallbackParsedQuery(query, language);
 
-    const parsedKeywords = expandSynonyms(parsedQuery.keywords.map((keyword) => keyword.toLowerCase()));
-    const parsedTags = expandSynonyms(parsedQuery.tags.map((tag) => tag.toLowerCase()));
-    const keywords = mergeTokens(expandedKeywords, parsedKeywords);
-    const tags = mergeTokens(parsedTags, keywords);
+    logger.info("[GALLERY SERVICE] parsed search input=" + JSON.stringify(parsedQuery));
 
-    const parsedResults = await galleryRepository.findManyByParsedQuery({
-      keywords,
-      tags,
-      style: parsedQuery.style,
-      rarity: parsedQuery.rarity,
-      category: parsedQuery.category,
-      character: parsedQuery.character,
-      color: parsedQuery.color,
-      mood: parsedQuery.mood,
-      scene: parsedQuery.scene,
-      limit,
-    });
+    const structuredKeywords = buildStructuredGalleryKeywords(parsedQuery);
+    logger.info("[GALLERY SERVICE] structured keywords=" + JSON.stringify(structuredKeywords));
 
-    logger.info("[GALLERY SERVICE] parsed search result count=" + parsedResults.length);
+    const shouldUseRawFallback = !parsed || !hasStructuredIntent(parsedQuery);
+    const searchKeywords = shouldUseRawFallback ? normalizeGalleryKeywords([query]) : structuredKeywords;
+    const searchTags = shouldUseRawFallback ? [] : normalizeGalleryKeywords(parsedQuery.tags);
 
-    if (parsedResults.length >= limit) {
-      return {
-        query,
-        parsedQuery,
-        results: dedupeCards(parsedResults).slice(0, limit).map(toDto),
-        limit,
-      };
-    }
+    const resultsSource = shouldUseRawFallback
+      ? await galleryRepository.findManyByQuery({
+          keywords: searchKeywords,
+          limit,
+        })
+      : await galleryRepository.findManyByParsedQuery({
+          keywords: searchKeywords,
+          tags: searchTags,
+          style: parsedQuery.style,
+          rarity: parsedQuery.rarity,
+          category: parsedQuery.category,
+          character: parsedQuery.character,
+          color: parsedQuery.color,
+          mood: parsedQuery.mood,
+          scene: parsedQuery.scene,
+          limit,
+        });
 
-    if (parsedResults.length > 0) {
-      const remaining = limit - parsedResults.length;
-      const fallback = await galleryRepository.findManyByQuery({ keywords, limit: remaining });
-      return {
-        query,
-        parsedQuery,
-        results: dedupeCards([...parsedResults, ...fallback]).slice(0, limit).map(toDto),
-        limit,
-      };
-    }
-
-    const results = await galleryRepository.findManyByQuery({ keywords: expandedKeywords, limit });
-
-    if (results.length === 0 && expandedKeywords.length > 1) {
-      const fallback = await galleryRepository.findManyByQuery({
-        keywords: [expandedKeywords[0]],
-        limit,
-      });
-      return {
-        query,
-        parsedQuery,
-        results: dedupeCards(fallback).slice(0, limit).map(toDto),
-        limit,
-      };
-    }
+    const results = dedupeCards(resultsSource).slice(0, limit).map(toDto);
+    logger.info("[GALLERY SERVICE] final result count=" + results.length);
 
     return {
       query,
       parsedQuery,
-      results: dedupeCards(results).slice(0, limit).map(toDto),
+      structuredKeywords,
+      results,
       limit,
     };
   },

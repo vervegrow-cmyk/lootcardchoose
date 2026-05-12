@@ -1,4 +1,5 @@
 import { IntentId, SupportedLanguage } from "../hermes/types";
+import { loadEnv } from "../config/env";
 import { logger } from "../utils/logger";
 
 export type IntentClassificationResult = {
@@ -128,10 +129,11 @@ const fallbackIntentClassification = (message: string): IntentClassificationResu
 
 export const llmIntentClassifierService = {
   async classify(message: string): Promise<IntentClassificationResult> {
+    const env = loadEnv();
     const language = detectLanguage(message);
-    const apiKey = process.env.DEEPSEEK_API_KEY ?? "";
-    const baseUrl = process.env.DEEPSEEK_BASE_URL ?? "https://api.deepseek.com/v1";
-    const model = process.env.DEEPSEEK_MODEL ?? "deepseek-chat";
+    const apiKey = env.deepseekApiKey;
+    const baseUrl = env.deepseekBaseUrl;
+    const model = env.deepseekModel;
 
     if (!apiKey) {
       logger.warn("[LLM INTENT CLASSIFIER] using fallback", { reason: "missing api key" });
