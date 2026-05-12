@@ -14,7 +14,7 @@ export type CreateCheckoutLinkInput = {
 };
 
 export type CreateCheckoutLinkOutput = {
-  url: string;
+  productUrl: string;
 };
 
 export const createCheckoutLinkSkill: SkillHandler<
@@ -23,7 +23,7 @@ export const createCheckoutLinkSkill: SkillHandler<
 > = async (input: CreateCheckoutLinkInput, context: SkillContext) => {
   void t(context.language, "checkout.creating");
   try {
-    const result = await shopifyService.createCheckoutLink({
+    const result = await shopifyService.createProductFromGalleryCard({
       title: input.title,
       description: input.description,
       imageUrl: input.imageUrl,
@@ -37,7 +37,7 @@ export const createCheckoutLinkSkill: SkillHandler<
       shopifyCheckoutUrl: result.checkoutUrl,
       status: "checkout_created",
     });
-    return { url: result.checkoutUrl };
+    return { productUrl: result.productUrl };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     if (message.includes("Shopify installation not found")) {

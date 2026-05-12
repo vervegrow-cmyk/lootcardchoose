@@ -6,12 +6,12 @@ import { logger } from "../../utils/logger";
 
 const buildSearchSuccessText = (language: AgentContext["language"], count: number): string =>
   language === "zh"
-    ? `为你找到 ${count} 张卡牌样式，回复编号 1-${count} 选择。`
+    ? `涓轰綘鎵惧埌 ${count} 寮犲崱鐗屾牱寮忥紝鍥炲缂栧彿 1-${count} 閫夋嫨銆俙`
     : `Found ${count} card styles for you. Reply with a number from 1-${count} to choose.`;
 
 const buildSearchEmptyText = (language: AgentContext["language"]): string =>
   language === "zh"
-    ? "没有找到匹配的卡牌，请换一个描述试试，例如：黑金 SSR 女角色。"
+    ? "娌℃湁鎵惧埌鍖归厤鐨勫崱鐗岋紝璇锋崲涓€涓弿杩拌瘯璇曪紝渚嬪锛氶粦閲?SSR 濂宠鑹层€?"
     : "No matching cards found. Try another description, for example: black gold SSR female card.";
 
 export const GalleryAgent: AgentDefinition = {
@@ -52,7 +52,7 @@ export const GalleryAgent: AgentDefinition = {
         })),
         selectionPrompt:
           context.language === "zh"
-            ? `回复编号 1-${result.results.length} 选择。`
+            ? `鍥炲缂栧彿 1-${result.results.length} 閫夋嫨銆俙`
             : `Reply with a number from 1-${result.results.length} to choose.`,
         metadata: {
           query: result.query,
@@ -69,7 +69,7 @@ export const GalleryAgent: AgentDefinition = {
         return {
           type: "text",
           language: context.language,
-          text: context.language === "zh" ? "请选择有效编号（1-10）。" : "Please choose a valid number (1-10).",
+          text: context.language === "zh" ? "璇烽€夋嫨鏈夋晥缂栧彿锛?-10锛夈€?" : "Please choose a valid number (1-10).",
         };
       }
 
@@ -98,10 +98,7 @@ export const GalleryAgent: AgentDefinition = {
       return {
         type: "text",
         language: context.language,
-        text:
-          context.language === "zh"
-            ? `已为你选择第 ${selectedIndex} 张卡牌。\n付款链接已生成。\n${checkout.url}`
-            : `Selected card #${selectedIndex} for you.\nYour checkout link is ready.\n${checkout.url}`,
+        text: `✅ Your card listing is ready!\n\nItem: ${selected.title}\nPrice: $${selected.price}\nProduct page: ${checkout.productUrl}\n\nYou can review the card and complete checkout from the product page.`,
       };
     }
 
@@ -112,7 +109,7 @@ export const GalleryAgent: AgentDefinition = {
         language: context.language,
         text:
           context.language === "zh"
-            ? "输入示例：给我10张黑金SSR女角色卡牌。然后回复 1-10 进行选择。"
+            ? "杈撳叆绀轰緥锛氱粰鎴?0寮犻粦閲慡SR濂宠鑹插崱鐗屻€傜劧鍚庡洖澶?1-10 杩涜閫夋嫨銆?"
             : "Example: Show me 10 black gold SSR female character cards. Then reply with a number from 1-10.",
       };
     }
@@ -128,7 +125,7 @@ export const GalleryAgent: AgentDefinition = {
       language: context.language,
       text:
         context.language === "zh"
-          ? "输入示例：给我10张黑金SSR女角色卡牌。然后回复 1-10 进行选择。"
+          ? "杈撳叆绀轰緥锛氱粰鎴?0寮犻粦閲慡SR濂宠鑹插崱鐗屻€傜劧鍚庡洖澶?1-10 杩涜閫夋嫨銆?"
           : "Example: Show me 10 black gold SSR female character cards. Then reply with a number from 1-10.",
     };
   },

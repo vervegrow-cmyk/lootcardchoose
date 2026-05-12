@@ -8,6 +8,7 @@ export type ShopifyCreateProductInput = {
 };
 
 export type ShopifyCreateProductOutput = {
+  productUrl: string;
   checkoutUrl: string;
   shopifyProductId: string;
 };
@@ -72,7 +73,7 @@ const resolveCartUrl = (storeDomain: string, variantId: number, orderNumber: str
 };
 
 export const shopifyService = {
-  async createCheckoutLink(input: ShopifyCreateProductInput): Promise<ShopifyCreateProductOutput> {
+  async createProductFromGalleryCard(input: ShopifyCreateProductInput): Promise<ShopifyCreateProductOutput> {
     const { shopifyInstallationService } = await import("./shopify-installation.service");
     const storeDomain = resolveShopifyStoreDomain();
     const apiVersion = resolveShopifyApiVersion();
@@ -99,17 +100,23 @@ export const shopifyService = {
       throw new Error("Shopify create product response missing handle");
     }
 
+    const productUrl = resolveProductUrl(storeDomain, handle);
     const variantId = product.variants?.[0]?.id;
     if (variantId) {
       return {
+        productUrl,
         checkoutUrl: resolveCartUrl(storeDomain, variantId, input.orderNumber),
         shopifyProductId: String(product.id),
       };
     }
 
     return {
-      checkoutUrl: resolveProductUrl(storeDomain, handle),
+      productUrl,
+      checkoutUrl: productUrl,
       shopifyProductId: String(product.id),
     };
+  },
+  async createCheckoutLink(input: ShopifyCreateProductInput): Promise<ShopifyCreateProductOutput> {
+    return this.createProductFromGalleryCard(input);
   },
 };
