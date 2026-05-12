@@ -2,6 +2,7 @@ import { Client, EmbedBuilder, GatewayIntentBits, Message } from "discord.js";
 import { loadEnv } from "../config/env";
 import { buildHermesRegistry } from "../hermes/registry";
 import { HermesRouter } from "../hermes/router";
+import { discordNotificationService } from "../services/discord-notification.service";
 import { buildGalleryResultsEmbeds } from "../utils/embeds";
 import { t } from "../utils/i18n";
 import { logger } from "../utils/logger";
@@ -20,6 +21,7 @@ export const DiscordBot = {
     const client = new Client({
       intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
     });
+    discordNotificationService.registerClient(client);
 
     const registry = buildHermesRegistry();
     const router = new HermesRouter(registry);

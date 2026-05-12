@@ -1,4 +1,7 @@
-export type ShopifyCreateProductInput = {
+import { loadEnv } from "../config/env";
+
+export type ShopifyGalleryCardInput = {
+  galleryCardId: string;
   title: string;
   description: string | null;
   imageUrl: string;
@@ -6,7 +9,15 @@ export type ShopifyCreateProductInput = {
   tags: string[];
 };
 
+export type ShopifyOrderInput = {
+  id: string;
+  orderNumber: string;
+  amount: string;
+  status: string;
+};
+
 export type ShopifyCreateProductOutput = {
+  shopifyProductId: string;
   checkoutUrl: string;
 };
 
@@ -23,6 +34,7 @@ type ShopifyProductPayload = {
     title: string;
     body_html: string | null;
     tags: string;
+    status: "active";
     images?: ShopifyProductImage[];
     variants: ShopifyVariant[];
   };
@@ -32,34 +44,56 @@ type ShopifyProductResponse = {
   product: {
     id: number;
     handle: string;
+    variants?: Array<{ id?: number }>;
   };
 };
 
 const resolveShopifyStoreDomain = (): string => {
-  const storeDomain = process.env.SHOPIFY_STORE_DOMAIN ?? "";
-  if (!storeDomain) {
+  const env = loadEnv();
+  if (!env.shopifyStoreDomain) {
     throw new Error("Missing SHOPIFY_STORE_DOMAIN");
   }
-  return storeDomain;
+  return env.shopifyStoreDomain;
 };
 
-const resolveShopifyApiVersion = (): string => process.env.SHOPIFY_API_VERSION ?? "2026-04";
+const resolveShopifyApiVersion = (): string => loadEnv().shopifyApiVersion;
 
-const buildProductPayload = (input: ShopifyCreateProductInput): ShopifyProductPayload => ({
+const buildProductPayload = (
+  card: ShopifyGalleryCardInput,
+  order: ShopifyOrderInput
+): ShopifyProductPayload => ({
   product: {
-    title: input.title,
-    body_html: input.description,
-    tags: input.tags.join(", "),
-    images: input.imageUrl ? [{ src: input.imageUrl }] : undefined,
-    variants: [{ price: input.price }],
+    title: card.title,
+    body_html: card.description,
+    tags: [...card.tags, `gallery-card:${card.galleryCardId}`, `order:${order.orderNumber}`].join(", "),
+    status: "active",
+    images: card.imageUrl ? [{ src: card.imageUrl }] : undefined,
+    variants: [{ price: card.price }],
   },
 });
 
 const resolveProductUrl = (storeDomain: string, handle: string): string =>
   `https://${storeDomain}/products/${handle}`;
 
+const resolveCartUrl = (
+  storeDomain: string,
+  variantId: number | undefined,
+  orderNumber: string
+): string | null => {
+  if (!variantId) {
+    return null;
+  }
+  const url = new URL(`https://${storeDomain}/cart/${variantId}:1`);
+  url.searchParams.set("attributes[orderNumber]", orderNumber);
+  url.searchParams.set("note", orderNumber);
+  return url.toString();
+};
+
 export const shopifyService = {
-  async createCheckoutLink(input: ShopifyCreateProductInput): Promise<ShopifyCreateProductOutput> {
+  async createProductFromGalleryCard(
+    card: ShopifyGalleryCardInput,
+    order: ShopifyOrderInput
+  ): Promise<ShopifyCreateProductOutput> {
     const { shopifyInstallationService } = await import("./shopify-installation.service");
     const storeDomain = resolveShopifyStoreDomain();
     const apiVersion = resolveShopifyApiVersion();
@@ -71,7 +105,7 @@ export const shopifyService = {
         "Content-Type": "application/json",
         "X-Shopify-Access-Token": accessToken,
       },
-      body: JSON.stringify(buildProductPayload(input)),
+      body: JSON.stringify(buildProductPayload(card, order)),
     });
 
     if (!response.ok) {
@@ -80,11 +114,19 @@ export const shopifyService = {
     }
 
     const data = (await response.json()) as ShopifyProductResponse;
+    const productId = data.product?.id;
     const handle = data.product?.handle;
-    if (!handle) {
-      throw new Error("Shopify create product response missing handle");
+    if (!productId || !handle) {
+      throw new Error("Shopify create product response missing product id or handle");
     }
 
-    return { checkoutUrl: resolveProductUrl(storeDomain, handle) };
+    const variantId = data.product.variants?.[0]?.id;
+    const checkoutUrl =
+      resolveCartUrl(storeDomain, variantId, order.orderNumber) ?? resolveProductUrl(storeDomain, handle);
+
+    return {
+      shopifyProductId: String(productId),
+      checkoutUrl,
+    };
   },
 };

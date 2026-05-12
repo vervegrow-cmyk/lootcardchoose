@@ -3,6 +3,7 @@ import express, { Request, Response } from "express";
 import { DiscordBot } from "./bot/discord.bot";
 import { isDatabaseReady } from "./services/prisma.service";
 import { shopifyInstallationService } from "./services/shopify-installation.service";
+import { shopifyWebhookService } from "./services/shopify-webhook.service";
 
 console.log("[BOOT] lootcardchoose search-fix-v3 038e643");
 
@@ -164,6 +165,41 @@ const startHealthServer = (): void => {
 
   app.get("/health", (_request: Request, response: Response) => {
     response.status(200).json({ ok: true });
+  });
+
+  app.post("/webhooks/shopify/orders-paid", express.raw({ type: "application/json" }), async (request, response) => {
+    try {
+      const topic = request.header("x-shopify-topic") ?? "";
+      const providedHmac = request.header("x-shopify-hmac-sha256") ?? "";
+      const rawBody = Buffer.isBuffer(request.body) ? request.body : Buffer.from([]);
+      console.log("[SHOPIFY WEBHOOK] route hit", {
+        topic,
+        hmacExists: Boolean(providedHmac),
+        rawBodyLength: rawBody.length,
+      });
+
+      if (!providedHmac || !shopifyWebhookService.verifyOrdersPaidWebhook(rawBody, providedHmac)) {
+        console.warn("[SHOPIFY WEBHOOK] hmac failed", {
+          topic,
+          hmacExists: Boolean(providedHmac),
+          rawBodyLength: rawBody.length,
+        });
+        response.status(401).json({ ok: false, error: "Invalid Shopify webhook hmac" });
+        return;
+      }
+
+      console.log("[SHOPIFY WEBHOOK] hmac verified", {
+        topic,
+        rawBodyLength: rawBody.length,
+      });
+      const result = await shopifyWebhookService.handleOrdersPaidWebhook(rawBody);
+      response.status(200).json({ ok: true, orderNumber: result.orderNumber, status: result.status });
+    } catch (error) {
+      response.status(500).json({
+        ok: false,
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
   });
 
   app.get("/install", (request: Request, response: Response) => {
