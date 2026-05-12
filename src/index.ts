@@ -5,7 +5,7 @@ import { isDatabaseReady } from "./services/prisma.service";
 import { shopifyInstallationService } from "./services/shopify-installation.service";
 import { shopifyWebhookService } from "./services/shopify-webhook.service";
 
-console.log("[BOOT] lootcardchoose route-debug-v1");
+console.log("[BOOT] lootcardchoose route-debug-v2-force-deploy");
 
 type ShopifyAccessTokenResponse = {
   access_token?: string;
