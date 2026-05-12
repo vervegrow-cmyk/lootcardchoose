@@ -3,6 +3,7 @@ import express, { Request, Response } from "express";
 import { DiscordBot } from "./bot/discord.bot";
 import { isDatabaseReady } from "./services/prisma.service";
 import { shopifyInstallationService } from "./services/shopify-installation.service";
+import { shopifyWebhookService } from "./services/shopify-webhook.service";
 
 console.log("[BOOT] lootcardchoose source-start-v1");
 
@@ -82,21 +83,6 @@ const computeHmacDigest = (query: Request["query"]): { message: string; digest: 
 
 const isValidHmac = (query: Request["query"], providedHmac: string): boolean => {
   const { digest } = computeHmacDigest(query);
-  const left = Buffer.from(digest, "utf8");
-  const right = Buffer.from(providedHmac, "utf8");
-  if (left.length !== right.length) {
-    return false;
-  }
-  return crypto.timingSafeEqual(left, right);
-};
-
-const computeWebhookHmacDigest = (rawBody: Buffer): string => {
-  const secret = resolveShopifyClientSecret();
-  return crypto.createHmac("sha256", secret).update(rawBody).digest("base64");
-};
-
-const isValidWebhookHmac = (rawBody: Buffer, providedHmac: string): boolean => {
-  const digest = computeWebhookHmacDigest(rawBody);
   const left = Buffer.from(digest, "utf8");
   const right = Buffer.from(providedHmac, "utf8");
   if (left.length !== right.length) {
@@ -187,29 +173,32 @@ const startHealthServer = (): void => {
     SHOPIFY_ORDERS_PAID_WEBHOOK_ROUTE,
     express.raw({ type: "application/json" }),
     async (request: Request, response: Response) => {
-      const topic = request.header("x-shopify-topic") ?? "";
-      const providedHmac = request.header("x-shopify-hmac-sha256") ?? "";
-      const rawBody = Buffer.isBuffer(request.body) ? request.body : Buffer.from([]);
+      try {
+        const topic = request.header("x-shopify-topic") ?? "";
+        const providedHmac = request.header("x-shopify-hmac-sha256") ?? "";
+        const rawBody = Buffer.isBuffer(request.body) ? request.body : Buffer.from([]);
 
-      console.log("[SHOPIFY WEBHOOK] route hit", {
-        route: SHOPIFY_ORDERS_PAID_WEBHOOK_ROUTE,
-        topic,
-        hmacExists: Boolean(providedHmac),
-        rawBodyLength: rawBody.length,
-      });
-
-      if (!providedHmac || !isValidWebhookHmac(rawBody, providedHmac)) {
-        console.warn("[SHOPIFY WEBHOOK] hmac failed", {
+        console.log("[SHOPIFY WEBHOOK] route hit", {
           route: SHOPIFY_ORDERS_PAID_WEBHOOK_ROUTE,
           topic,
           hmacExists: Boolean(providedHmac),
           rawBodyLength: rawBody.length,
         });
-        response.status(401).json({ ok: false, error: "Invalid Shopify webhook hmac" });
-        return;
-      }
 
-      response.status(200).json({ ok: true });
+        const result = await shopifyWebhookService.handleOrdersPaidWebhook({
+          rawBody,
+          hmac: providedHmac,
+          topic,
+        });
+        response.status(200).json({ ok: true, orderNumber: result.orderNumber, status: result.status });
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        if (message === "Invalid Shopify webhook hmac") {
+          response.status(401).json({ ok: false, error: message });
+          return;
+        }
+        response.status(500).json({ ok: false, error: message });
+      }
     }
   );
 

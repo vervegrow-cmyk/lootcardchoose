@@ -10,6 +10,7 @@ export type EnvConfig = {
   shopifyStoreDomain: string;
   shopifyClientId: string;
   shopifyClientSecret: string;
+  shopifyWebhookSecret: string;
   shopifyScopes: string;
   shopifyAppUrl: string;
   shopifyApiVersion: string;
@@ -34,6 +35,7 @@ export const loadEnv = (): EnvConfig => {
     shopifyStoreDomain: process.env.SHOPIFY_STORE_DOMAIN ?? "",
     shopifyClientId: process.env.SHOPIFY_CLIENT_ID ?? "",
     shopifyClientSecret: process.env.SHOPIFY_CLIENT_SECRET ?? "",
+    shopifyWebhookSecret: process.env.SHOPIFY_WEBHOOK_SECRET ?? process.env.SHOPIFY_CLIENT_SECRET ?? "",
     shopifyScopes: process.env.SHOPIFY_SCOPES ?? "",
     shopifyAppUrl: process.env.SHOPIFY_APP_URL ?? "",
     shopifyApiVersion: process.env.SHOPIFY_API_VERSION ?? "2026-04",
