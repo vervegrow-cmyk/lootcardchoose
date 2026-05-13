@@ -9,6 +9,7 @@ import { HermesRouter } from "../hermes/router";
 import { gallerySearchSessionRepository } from "../repositories/gallery-search-session.repository";
 import { orderService } from "../services/order.service";
 import { shopifyService } from "../services/shopify.service";
+import { awaitPendingSearchSessionWrite } from "../skills/gallery/search-gallery.skill";
 
 const ensure = (condition: unknown, message: string): void => {
   if (!condition) {
@@ -49,6 +50,12 @@ const main = async (): Promise<void> => {
 
   assert.equal(searchResult.type, "gallery_search_results");
   ensure(searchResult.cards.length > 0, "Expected gallery search results for select test");
+
+  await awaitPendingSearchSessionWrite({
+    discordUserId,
+    discordChannelId,
+    timeoutMs: 5000,
+  });
 
   const activeSessionsAfterSearch = await gallerySearchSessionRepository.findRecentByUserId({
     discordUserId,

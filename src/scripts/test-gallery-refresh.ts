@@ -9,6 +9,7 @@ import { buildHermesRegistry } from "../hermes/registry";
 import { HermesRouter } from "../hermes/router";
 import { galleryRepository } from "../repositories/gallery.repository";
 import { gallerySearchSessionRepository } from "../repositories/gallery-search-session.repository";
+import { awaitPendingSearchSessionWrite } from "../skills/gallery/search-gallery.skill";
 import { parseSelectedIndex } from "../utils/gallery-language";
 import { logger } from "../utils/logger";
 
@@ -102,6 +103,11 @@ const run = async (): Promise<void> => {
   assert.equal(firstSearch.type, "gallery_search_results");
   ensure(firstSearch.cards.length > 0, "Expected first English search results");
   const firstBatchCardIds = firstSearch.cards.map((card) => card.id);
+  await awaitPendingSearchSessionWrite({
+    discordUserId: enUserId,
+    discordChannelId: enChannelId,
+    timeoutMs: 5000,
+  });
   const activeSessionsAfterFirstSearch = await gallerySearchSessionRepository.findRecentByUserId({
     discordUserId: enUserId,
     discordChannelId: enChannelId,
@@ -255,6 +261,11 @@ const run = async (): Promise<void> => {
     channelId: anchorChannelId,
   });
   assert.equal(anchorSearch.type, "gallery_search_results");
+  await awaitPendingSearchSessionWrite({
+    discordUserId: anchorUserId,
+    discordChannelId: anchorChannelId,
+    timeoutMs: 5000,
+  });
   const baseAnchorCards = anchorSearch.cards.slice(0, 4).map(createSessionResultCard);
 
   await gallerySearchSessionRepository.archiveActiveSessions({
@@ -305,6 +316,11 @@ const run = async (): Promise<void> => {
     channelId: exhaustedChannelId,
   });
   assert.equal(exhaustedSearch.type, "gallery_search_results");
+  await awaitPendingSearchSessionWrite({
+    discordUserId: exhaustedUserId,
+    discordChannelId: exhaustedChannelId,
+    timeoutMs: 5000,
+  });
 
   const originalSearch = galleryRepository.search;
   const originalFindActiveExcluding = galleryRepository.findActiveExcluding;

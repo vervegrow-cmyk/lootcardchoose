@@ -3,6 +3,7 @@ import { gallerySearchSessionRepository } from "../../repositories/gallery-searc
 import { GalleryCardDto, GallerySearchResult, galleryService } from "../../services/gallery.service";
 import { ParsedGalleryQuery } from "../../services/llm-query-parser.service";
 import { logger } from "../../utils/logger";
+import { UserFacingError } from "../../utils/user-facing-error";
 
 export type SearchGalleryInput = {
   query: string;
@@ -18,6 +19,135 @@ export type SearchGalleryOutput = {
   limit: number;
 };
 
+type SearchSessionWriteTask = {
+  discordUserId: string;
+  discordChannelId: string;
+  query: string;
+  language: SkillContext["language"];
+  resultCount: number;
+  results: Array<{
+    id: string;
+    title: string;
+    description: string | null;
+    imageUrl: string;
+    price: number;
+    tags: string[];
+    language: SkillContext["language"];
+    batchIndex: number;
+    originalQuery: string;
+  }>;
+};
+
+type PendingSearchSessionWriteState = {
+  ready: Promise<void>;
+  write: Promise<void>;
+};
+
+const pendingSearchSessionWrites = new Map<string, PendingSearchSessionWriteState>();
+
+const buildSessionWriteKey = (discordUserId: string, discordChannelId: string): string =>
+  `${discordUserId}:${discordChannelId}`;
+
+const scheduleSearchSessionWrite = (task: SearchSessionWriteTask): void => {
+  const key = buildSessionWriteKey(task.discordUserId, task.discordChannelId);
+  const previousWrite = pendingSearchSessionWrites.get(key)?.write ?? Promise.resolve();
+
+  let resolveReady: (() => void) | undefined;
+  const ready = new Promise<void>((resolve) => {
+    resolveReady = resolve;
+  });
+
+  const writePromise = previousWrite
+    .catch(() => undefined)
+    .then(async () => {
+      const startedAt = Date.now();
+      logger.info("[SEARCH GALLERY SKILL] session create start", {
+        discordUserId: task.discordUserId,
+        discordChannelId: task.discordChannelId,
+        sessionQuery: task.query,
+        resultCount: task.resultCount,
+      });
+
+      try {
+        const createdSession = await gallerySearchSessionRepository.create({
+          discordUserId: task.discordUserId,
+          discordChannelId: task.discordChannelId,
+          query: task.query,
+          results: task.results,
+          status: "active",
+        });
+        resolveReady?.();
+
+        const archivedCount = await gallerySearchSessionRepository.archiveOtherActiveSessions({
+          discordUserId: task.discordUserId,
+          discordChannelId: task.discordChannelId,
+          keepSessionId: createdSession.id,
+        });
+
+        logger.info("[SEARCH GALLERY SKILL] session create success", {
+          discordUserId: task.discordUserId,
+          discordChannelId: task.discordChannelId,
+          sessionId: createdSession.id,
+          archivedCount,
+          sessionQuery: task.query,
+          resultCount: task.resultCount,
+          latencyMs: Date.now() - startedAt,
+        });
+      } catch (error) {
+        resolveReady?.();
+        logger.warn("[SEARCH GALLERY SKILL] session create failed", {
+          discordUserId: task.discordUserId,
+          discordChannelId: task.discordChannelId,
+          sessionQuery: task.query,
+          resultCount: task.resultCount,
+          latencyMs: Date.now() - startedAt,
+          message: error instanceof Error ? error.message : String(error),
+        });
+      }
+    });
+
+  const state: PendingSearchSessionWriteState = {
+    ready,
+    write: Promise.resolve(),
+  };
+
+  const trackedWrite = writePromise.finally(() => {
+    if (pendingSearchSessionWrites.get(key) === state) {
+      pendingSearchSessionWrites.delete(key);
+    }
+  });
+  state.write = trackedWrite;
+
+  pendingSearchSessionWrites.set(key, state);
+};
+
+export const awaitPendingSearchSessionWrite = async (input: {
+  discordUserId: string;
+  discordChannelId: string;
+  timeoutMs: number;
+}): Promise<boolean> => {
+  const key = buildSessionWriteKey(input.discordUserId, input.discordChannelId);
+  const pendingWrite = pendingSearchSessionWrites.get(key);
+
+  if (!pendingWrite) {
+    return true;
+  }
+
+  let timeoutHandle: NodeJS.Timeout | undefined;
+  try {
+    return await Promise.race<boolean>([
+      pendingWrite.ready.then(() => true),
+      new Promise<boolean>((resolve) => {
+        timeoutHandle = setTimeout(() => resolve(false), input.timeoutMs);
+      }),
+    ]);
+  } finally {
+    if (timeoutHandle) {
+      clearTimeout(timeoutHandle);
+    }
+  }
+};
+
 export const searchGallerySkill: SkillHandler<SearchGalleryInput, SearchGalleryOutput> = async (
   input: SearchGalleryInput,
   context: SkillContext
@@ -27,6 +157,7 @@ export const searchGallerySkill: SkillHandler<SearchGalleryInput, SearchGalleryO
     discordUserId: input.discordUserId,
     discordChannelId: input.discordChannelId,
   });
+
   try {
     const searchResult: GallerySearchResult = await galleryService.searchGalleryCards(input.query, context.language);
     const sessionResults = searchResult.results.map((card) => ({
@@ -36,36 +167,19 @@ export const searchGallerySkill: SkillHandler<SearchGalleryInput, SearchGalleryO
       imageUrl: card.imageUrl,
       price: card.price,
       tags: card.tags,
+      language: searchResult.language,
+      batchIndex: 1,
+      originalQuery: searchResult.query,
     }));
 
-    try {
-      const archivedCount = await gallerySearchSessionRepository.archiveActiveSessions({
-        discordUserId: input.discordUserId,
-        discordChannelId: input.discordChannelId,
-      });
-      logger.info("[SEARCH GALLERY SKILL] archived active sessions", {
-        discordUserId: input.discordUserId,
-        discordChannelId: input.discordChannelId,
-        archivedCount,
-      });
-
-      await gallerySearchSessionRepository.create({
-        discordUserId: input.discordUserId,
-        discordChannelId: input.discordChannelId,
-        query: searchResult.query,
-        results: sessionResults.map((card) => ({
-          ...card,
-          language: searchResult.language,
-          batchIndex: 1,
-          originalQuery: searchResult.query,
-        })),
-        status: "active",
-      });
-    } catch (sessionError) {
-      logger.warn("[SEARCH GALLERY SKILL] session create failed", {
-        message: sessionError instanceof Error ? sessionError.message : String(sessionError),
-      });
-    }
+    scheduleSearchSessionWrite({
+      discordUserId: input.discordUserId,
+      discordChannelId: input.discordChannelId,
+      query: searchResult.query,
+      language: searchResult.language,
+      resultCount: searchResult.results.length,
+      results: sessionResults,
+    });
 
     return {
       query: searchResult.query,
@@ -75,15 +189,25 @@ export const searchGallerySkill: SkillHandler<SearchGalleryInput, SearchGalleryO
       limit: searchResult.limit,
     };
   } catch (error) {
-    logger.warn("[SEARCH GALLERY SKILL] search failed", {
+    logger.error("[SEARCH GALLERY SKILL] search failed", {
+      query: input.query,
+      discordUserId: input.discordUserId,
+      discordChannelId: input.discordChannelId,
       message: error instanceof Error ? error.message : String(error),
     });
-    return {
-      query: input.query,
-      language: context.language,
-      parsedQuery: null,
-      results: [],
-      limit: 10,
-    };
+
+    if (error instanceof UserFacingError) {
+      throw error;
+    }
+
+    const unavailableMessage =
+      context.language === "zh"
+        ? "图库搜索暂时不可用，请稍后再试。"
+        : "The gallery search service is temporarily unavailable. Please try again in a moment.";
+
+    throw new UserFacingError(unavailableMessage, {
+      stage: "search",
+      code: "gallery.search.unavailable",
+    });
   }
 };

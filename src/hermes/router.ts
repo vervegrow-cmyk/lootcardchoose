@@ -1,5 +1,10 @@
-import { fallbackIntentClassification, llmIntentClassifierService } from "../services/llm-intent-classifier.service";
 import { gallerySearchSessionRepository } from "../repositories/gallery-search-session.repository";
+import {
+  IntentClassificationResult,
+  fallbackIntentClassification,
+  llmIntentClassifierService,
+} from "../services/llm-intent-classifier.service";
+import { awaitPendingSearchSessionWrite } from "../skills/gallery/search-gallery.skill";
 import { isGalleryRefreshMessage, isGallerySelectMessage } from "../utils/gallery-language";
 import { logger } from "../utils/logger";
 import { HermesOrchestrator } from "./orchestrator";
@@ -15,7 +20,15 @@ import {
   SupportedLanguage,
 } from "./types";
 
-const detectLanguage = (message: string): SupportedLanguage => (/[\u4e00-\u9fff]/.test(message) ? "zh" : "en");
+type DetermineIntentPath =
+  | "rule_select"
+  | "rule_refresh"
+  | "rule_help"
+  | "rule_order"
+  | "llm"
+  | "llm_low_confidence_fallback"
+  | "llm_timeout_fallback"
+  | "llm_parse_fallback";
 
 const HELP_PATTERNS = [
   "help",
@@ -43,6 +56,20 @@ const ORDER_PATTERNS: RegExp[] = [
   /查订单/,
 ];
 
+const detectLanguage = (message: string): SupportedLanguage => (/[\u4e00-\u9fff]/.test(message) ? "zh" : "en");
+
+const resolveClassifiedPath = (classification: IntentClassificationResult): DetermineIntentPath => {
+  if (classification.source !== "fallback") {
+    return "llm";
+  }
+
+  if (classification.fallbackReason === "timeout") {
+    return "llm_timeout_fallback";
+  }
+
+  return "llm_parse_fallback";
+};
+
 export class HermesRouter {
   constructor(private registry: HermesRegistry) {}
 
@@ -53,62 +80,144 @@ export class HermesRouter {
       channelId?: string;
     }
   ): Promise<{ intent: IntentId; language: SupportedLanguage }> {
+    const startedAt = Date.now();
     const normalized = text.trim().toLowerCase();
     const fallbackLanguage = detectLanguage(text);
-    const hasActiveGallerySession =
-      Boolean(context?.userId && context?.channelId) &&
-      Boolean(
-        await gallerySearchSessionRepository.findLatest({
-          discordUserId: context?.userId ?? "",
-          discordChannelId: context?.channelId ?? "",
-          status: "active",
-        })
-      );
+    let hasActiveGallerySession = false;
+    let resolvedIntent: IntentId = "ignore";
+    let resolvedLanguage: SupportedLanguage = fallbackLanguage;
+    let path: DetermineIntentPath = "llm";
 
-    if (!normalized) {
-      return { intent: "ignore", language: fallbackLanguage };
-    }
-
-    if (isGallerySelectMessage(text, { hasActiveSession: hasActiveGallerySession })) {
-      return { intent: "gallery_select", language: fallbackLanguage };
-    }
-
-    if (isGalleryRefreshMessage(text)) {
-      return { intent: "gallery_refresh", language: fallbackLanguage };
-    }
-
-    if (HELP_PATTERNS.some((pattern) => normalized.includes(pattern))) {
-      return { intent: "help", language: fallbackLanguage };
-    }
-
-    if (ORDER_PATTERNS.some((pattern) => pattern.test(text.trim()))) {
-      return { intent: "order_status", language: fallbackLanguage };
-    }
-
-    const classified = await llmIntentClassifierService.classify(text, {
-      hasActiveGallerySession,
+    logger.info("[ROUTER] determineIntent start", {
+      userId: context?.userId ?? "",
+      channelId: context?.channelId ?? "",
+      text,
     });
-    if (classified.confidence < 0.5) {
-      const fallback = fallbackIntentClassification(text, {
-        hasActiveGallerySession,
-      });
-      if (fallback.intent !== "ignore") {
+
+    try {
+      if (context?.userId && context?.channelId) {
+        const completed = await awaitPendingSearchSessionWrite({
+          discordUserId: context.userId,
+          discordChannelId: context.channelId,
+          timeoutMs: 1200,
+        });
+
+        if (!completed) {
+          logger.warn("[ROUTER] pending search session wait timeout", {
+            userId: context.userId,
+            channelId: context.channelId,
+            timeoutMs: 1200,
+          });
+        }
+
+        hasActiveGallerySession = Boolean(
+          await gallerySearchSessionRepository.findLatest({
+            discordUserId: context.userId,
+            discordChannelId: context.channelId,
+            status: "active",
+          })
+        );
+      }
+
+      if (!normalized) {
+        resolvedIntent = "ignore";
+        resolvedLanguage = fallbackLanguage;
         return {
-          intent: fallback.intent,
-          language: fallback.language,
+          intent: resolvedIntent,
+          language: resolvedLanguage,
         };
       }
 
-      return {
-        intent: "gallery_search",
-        language: classified.language,
-      };
-    }
+      if (isGallerySelectMessage(text, { hasActiveSession: hasActiveGallerySession })) {
+        path = "rule_select";
+        resolvedIntent = "gallery_select";
+        resolvedLanguage = fallbackLanguage;
+        return {
+          intent: resolvedIntent,
+          language: resolvedLanguage,
+        };
+      }
 
-    return {
-      intent: classified.intent,
-      language: classified.language,
-    };
+      if (isGalleryRefreshMessage(text)) {
+        path = "rule_refresh";
+        resolvedIntent = "gallery_refresh";
+        resolvedLanguage = fallbackLanguage;
+        return {
+          intent: resolvedIntent,
+          language: resolvedLanguage,
+        };
+      }
+
+      if (HELP_PATTERNS.some((pattern) => normalized.includes(pattern))) {
+        path = "rule_help";
+        resolvedIntent = "help";
+        resolvedLanguage = fallbackLanguage;
+        return {
+          intent: resolvedIntent,
+          language: resolvedLanguage,
+        };
+      }
+
+      if (ORDER_PATTERNS.some((pattern) => pattern.test(text.trim()))) {
+        path = "rule_order";
+        resolvedIntent = "order_status";
+        resolvedLanguage = fallbackLanguage;
+        return {
+          intent: resolvedIntent,
+          language: resolvedLanguage,
+        };
+      }
+
+      const classified = await llmIntentClassifierService.classify(text, {
+        hasActiveGallerySession,
+      });
+      const classifiedPath = resolveClassifiedPath(classified);
+
+      if (classified.confidence < 0.5) {
+        const fallback = fallbackIntentClassification(text, {
+          hasActiveGallerySession,
+        });
+
+        path =
+          classified.source === "fallback" && classified.fallbackReason
+            ? classifiedPath
+            : "llm_low_confidence_fallback";
+        if (fallback.intent !== "ignore") {
+          resolvedIntent = fallback.intent;
+          resolvedLanguage = fallback.language;
+          return {
+            intent: resolvedIntent,
+            language: resolvedLanguage,
+          };
+        }
+
+        resolvedIntent = "gallery_search";
+        resolvedLanguage = classified.language;
+        return {
+          intent: resolvedIntent,
+          language: resolvedLanguage,
+        };
+      }
+
+      path = resolveClassifiedPath(classified);
+      resolvedIntent = classified.intent;
+      resolvedLanguage = classified.language;
+      return {
+        intent: resolvedIntent,
+        language: resolvedLanguage,
+      };
+    } finally {
+      logger.info("[ROUTER] determineIntent end", {
+        userId: context?.userId ?? "",
+        channelId: context?.channelId ?? "",
+        text,
+        intent: resolvedIntent,
+        language: resolvedLanguage,
+        hasActiveGallerySession,
+        path,
+        latencyMs: Date.now() - startedAt,
+      });
+    }
   }
 
   resolveAgent(intent: IntentId, channelId: string): RoutingDecision {

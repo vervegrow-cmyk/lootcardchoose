@@ -7,11 +7,23 @@ import {
 } from "../utils/gallery-language";
 import { logger } from "../utils/logger";
 
+export const INTENT_CLASSIFIER_TIMEOUT_MS = 5000;
+
+export type IntentClassifierFallbackReason =
+  | "timeout"
+  | "non_200"
+  | "json_parse_failed"
+  | "network_error"
+  | "missing_api_key"
+  | "keyword";
+
 export type IntentClassificationResult = {
   intent: IntentId;
   language: SupportedLanguage;
   confidence: number;
   reason: string;
+  source: "llm" | "fallback";
+  fallbackReason?: IntentClassifierFallbackReason;
 };
 
 type DeepSeekMessage = {
@@ -61,7 +73,7 @@ const HELP_KEYWORDS = [
   "物流",
   "帮助",
   "怎么买",
-  "怎么选",
+  "怎么退",
 ];
 
 const ORDER_KEYWORDS = ["我的订单", "查询订单", "订单状态", "order status", "my order"];
@@ -101,15 +113,32 @@ const normalizeIntent = (value: unknown): IntentId => {
   }
 };
 
+const extractJsonPayload = (raw: string): string => {
+  const trimmed = raw.trim();
+  const fencedMatch = trimmed.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
+  if (fencedMatch?.[1]) {
+    return fencedMatch[1].trim();
+  }
+
+  const firstBrace = trimmed.indexOf("{");
+  const lastBrace = trimmed.lastIndexOf("}");
+  if (firstBrace >= 0 && lastBrace > firstBrace) {
+    return trimmed.slice(firstBrace, lastBrace + 1);
+  }
+
+  return trimmed;
+};
+
 const safeJsonParse = (raw: string, fallbackLanguage: SupportedLanguage): IntentClassificationResult | null => {
   try {
-    const parsed = JSON.parse(raw) as Partial<IntentClassificationResult>;
+    const parsed = JSON.parse(extractJsonPayload(raw)) as Partial<IntentClassificationResult>;
     return {
       intent: normalizeIntent(parsed.intent),
       language: parsed.language === "zh" || parsed.language === "en" ? parsed.language : fallbackLanguage,
       confidence:
         typeof parsed.confidence === "number" && Number.isFinite(parsed.confidence) ? parsed.confidence : 0,
       reason: typeof parsed.reason === "string" ? parsed.reason : "",
+      source: "llm",
     };
   } catch {
     return null;
@@ -120,33 +149,76 @@ export const fallbackIntentClassification = (
   message: string,
   options?: {
     hasActiveGallerySession?: boolean;
-  }
+  },
+  fallbackReason: IntentClassifierFallbackReason = "keyword"
 ): IntentClassificationResult => {
   const normalized = message.trim().toLowerCase();
   const language = detectLanguage(message);
 
   if (!normalized) {
-    return { intent: "ignore", language, confidence: 1, reason: "empty message" };
+    return {
+      intent: "ignore",
+      language,
+      confidence: 1,
+      reason: "empty message",
+      source: "fallback",
+      fallbackReason,
+    };
   }
 
   if (isGallerySelectMessage(message, { hasActiveSession: options?.hasActiveGallerySession })) {
-    return { intent: "gallery_select", language, confidence: 0.99, reason: "matched select fallback keyword" };
+    return {
+      intent: "gallery_select",
+      language,
+      confidence: 0.99,
+      reason: "matched select fallback keyword",
+      source: "fallback",
+      fallbackReason,
+    };
   }
 
   if (isGalleryRefreshMessage(message)) {
-    return { intent: "gallery_refresh", language, confidence: 0.98, reason: "matched refresh fallback keyword" };
+    return {
+      intent: "gallery_refresh",
+      language,
+      confidence: 0.98,
+      reason: "matched refresh fallback keyword",
+      source: "fallback",
+      fallbackReason,
+    };
   }
 
   if (ORDER_KEYWORDS.some((keyword) => normalized.includes(keyword))) {
-    return { intent: "order_status", language, confidence: 0.95, reason: "matched order fallback keyword" };
+    return {
+      intent: "order_status",
+      language,
+      confidence: 0.95,
+      reason: "matched order fallback keyword",
+      source: "fallback",
+      fallbackReason,
+    };
   }
 
   if (SEARCH_KEYWORDS.some((keyword) => normalized.includes(keyword))) {
-    return { intent: "gallery_search", language, confidence: 0.85, reason: "matched search fallback keyword" };
+    return {
+      intent: "gallery_search",
+      language,
+      confidence: 0.85,
+      reason: "matched search fallback keyword",
+      source: "fallback",
+      fallbackReason,
+    };
   }
 
   if (HELP_KEYWORDS.some((keyword) => normalized.includes(keyword))) {
-    return { intent: "help", language, confidence: 0.8, reason: "matched help fallback keyword" };
+    return {
+      intent: "help",
+      language,
+      confidence: 0.8,
+      reason: "matched help fallback keyword",
+      source: "fallback",
+      fallbackReason,
+    };
   }
 
   return {
@@ -154,8 +226,15 @@ export const fallbackIntentClassification = (
     language,
     confidence: 0.3,
     reason: "fallback default ignore",
+    source: "fallback",
+    fallbackReason,
   };
 };
+
+const isAbortError = (error: unknown): boolean =>
+  error instanceof Error && (error.name === "AbortError" || error.message.toLowerCase().includes("aborted"));
+
+const INTENT_TIMEOUT_ERROR = "LLM_INTENT_TIMEOUT";
 
 export const llmIntentClassifierService = {
   async classify(
@@ -171,48 +250,103 @@ export const llmIntentClassifierService = {
     const model = env.deepseekModel;
 
     if (!apiKey) {
-      logger.warn("[LLM INTENT CLASSIFIER] using fallback", { reason: "missing api key" });
-      return fallbackIntentClassification(message, options);
+      logger.warn("[LLM INTENT CLASSIFIER] fallback", {
+        message,
+        reason: "missing_api_key",
+      });
+      return fallbackIntentClassification(message, options, "missing_api_key");
     }
 
+    const controller = new AbortController();
+    let timeoutHandle: NodeJS.Timeout | undefined;
+
     try {
-      const response = await fetch(`${baseUrl}/chat/completions`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({
-          model,
-          temperature: 0,
-          messages: buildPrompt(message, language),
+      const response = await Promise.race<
+        | {
+            ok: true;
+            payload: DeepSeekResponse;
+          }
+        | {
+            ok: false;
+            status: number;
+          }
+      >([
+        (async () => {
+          const httpResponse = await fetch(`${baseUrl}/chat/completions`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${apiKey}`,
+            },
+            body: JSON.stringify({
+              model,
+              temperature: 0,
+              messages: buildPrompt(message, language),
+            }),
+            signal: controller.signal,
+          });
+
+          if (!httpResponse.ok) {
+            return {
+              ok: false as const,
+              status: httpResponse.status,
+            };
+          }
+
+          return {
+            ok: true as const,
+            payload: (await httpResponse.json()) as DeepSeekResponse,
+          };
+        })(),
+        new Promise<never>((_, reject) => {
+          timeoutHandle = setTimeout(() => {
+            controller.abort();
+            reject(new Error(INTENT_TIMEOUT_ERROR));
+          }, INTENT_CLASSIFIER_TIMEOUT_MS);
         }),
-      });
+      ]);
 
       if (!response.ok) {
-        logger.warn("[LLM INTENT CLASSIFIER] using fallback", {
-          reason: "non-200 response",
+        logger.warn("[LLM INTENT CLASSIFIER] fallback", {
+          message,
+          reason: "non_200",
           status: response.status,
         });
-        return fallbackIntentClassification(message, options);
+        return fallbackIntentClassification(message, options, "non_200");
       }
 
-      const data = (await response.json()) as DeepSeekResponse;
-      const content = data.choices?.[0]?.message?.content?.trim() ?? "";
+      const content = response.payload.choices?.[0]?.message?.content?.trim() ?? "";
       const parsed = safeJsonParse(content, language);
 
       if (!parsed) {
-        logger.warn("[LLM INTENT CLASSIFIER] using fallback", { reason: "json parse failed" });
-        return fallbackIntentClassification(message, options);
+        logger.warn("[LLM INTENT CLASSIFIER] fallback", {
+          message,
+          reason: "json_parse_failed",
+        });
+        return fallbackIntentClassification(message, options, "json_parse_failed");
       }
 
       logger.info("[LLM INTENT CLASSIFIER] parsed", parsed);
       return parsed;
     } catch (error) {
-      logger.warn("[LLM INTENT CLASSIFIER] using fallback", {
-        message: error instanceof Error ? error.message : String(error),
+      if ((error instanceof Error && error.message === INTENT_TIMEOUT_ERROR) || isAbortError(error)) {
+        logger.warn("[LLM INTENT CLASSIFIER] timeout", {
+          message,
+          timeoutMs: INTENT_CLASSIFIER_TIMEOUT_MS,
+        });
+        return fallbackIntentClassification(message, options, "timeout");
+      }
+
+      logger.warn("[LLM INTENT CLASSIFIER] fallback", {
+        message,
+        reason: "network_error",
+        error: error instanceof Error ? error.message : String(error),
       });
-      return fallbackIntentClassification(message, options);
+      return fallbackIntentClassification(message, options, "network_error");
+    } finally {
+      if (timeoutHandle) {
+        clearTimeout(timeoutHandle);
+      }
     }
   },
 };

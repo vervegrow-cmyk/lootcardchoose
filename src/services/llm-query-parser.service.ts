@@ -8,6 +8,8 @@ import {
 } from "../utils/gallery-language";
 import { logger } from "../utils/logger";
 
+export const QUERY_PARSER_TIMEOUT_MS = 6000;
+
 export type ParsedGalleryQuery = {
   language: SupportedLanguage;
   keywords: string[];
@@ -52,12 +54,12 @@ const buildPrompt = (userMessage: string, language: SupportedLanguage): DeepSeek
     role: "system",
     content:
       "You are a gallery search parser for LootCardChoose. Return JSON only. Use exactly this shape: " +
-      "{\"language\":\"zh|en\",\"keywords\":string[],\"tags\":string[],\"rarity\":string,\"color\":string," +
-      "\"character\":string,\"category\":string,\"style\":string,\"mood\":string,\"scene\":string,\"limit\":number}. " +
-      "The language field must reflect the user's original input language. If language is unclear, use \"en\". " +
+      '{"language":"zh|en","keywords":string[],"tags":string[],"rarity":string,"color":string,' +
+      '"character":string,"category":string,"style":string,"mood":string,"scene":string,"limit":number}. ' +
+      'The language field must reflect the user\'s original input language. If language is unclear, use "en". ' +
       "All searchable fields should prefer concise English terms even when the user writes in Chinese. " +
-      "Example: 给我10张黑金SSR女角色卡牌 -> keywords [\"black gold\",\"SSR\",\"female character\",\"anime\"], " +
-      "color \"black gold\", rarity \"SSR\", character \"female character\". " +
+      'Example: 给我10张黑金SSR女角色卡牌 -> keywords ["black gold","SSR","female character","anime"], ' +
+      'color "black gold", rarity "SSR", character "female character". ' +
       "Do not include quantity words, numbers, classifiers, or generic filler like cards, images, gallery, give me, show me. " +
       "If quantity is missing or invalid, use limit 10. Limit must always be an integer between 1 and 10. " +
       "Do not explain anything.",
@@ -106,6 +108,32 @@ const normalizeKeywords = (value: unknown): string[] =>
     ? normalizeGalleryKeywordsToEnglish(value.filter((item): item is string => typeof item === "string"))
     : [];
 
+const buildFallbackKeywordSeeds = (userMessage: string): string[] => {
+  const seeds = [userMessage];
+
+  if (/[女婦妇]角色|女性角色|女孩|女生|少女|美女/.test(userMessage)) {
+    seeds.push("female character");
+  }
+
+  if (/美女/.test(userMessage)) {
+    seeds.push("beauty");
+  }
+
+  if (/动漫|二次元/i.test(userMessage)) {
+    seeds.push("anime");
+  }
+
+  if (/黑金|black gold/i.test(userMessage)) {
+    seeds.push("black gold");
+  }
+
+  if (/SSR/i.test(userMessage)) {
+    seeds.push("SSR");
+  }
+
+  return seeds;
+};
+
 const safeJsonParse = (raw: string, fallbackLanguage: SupportedLanguage): ParsedGalleryQuery | null => {
   try {
     const parsed = JSON.parse(extractJsonPayload(raw)) as Partial<ParsedGalleryQuery>;
@@ -151,9 +179,28 @@ const safeJsonParse = (raw: string, fallbackLanguage: SupportedLanguage): Parsed
 
 const fallbackParsedQuery = (userMessage: string, language: SupportedLanguage): ParsedGalleryQuery => ({
   ...defaultParsedQuery(language),
-  keywords: normalizeGalleryKeywordsToEnglish([userMessage]),
+  keywords: normalizeGalleryKeywordsToEnglish(buildFallbackKeywordSeeds(userMessage)),
   limit: 10,
 });
+
+const logFallback = (
+  query: string,
+  language: SupportedLanguage,
+  reason: "timeout" | "non_200" | "json_parse_failed" | "network_error" | "missing_api_key"
+): ParsedGalleryQuery => {
+  const fallback = fallbackParsedQuery(query, language);
+  logger.warn("[LLM QUERY PARSER] fallback", {
+    query,
+    reason,
+    fallbackKeywords: fallback.keywords,
+  });
+  return fallback;
+};
+
+const isAbortError = (error: unknown): boolean =>
+  error instanceof Error && (error.name === "AbortError" || error.message.toLowerCase().includes("aborted"));
+
+const QUERY_PARSER_TIMEOUT_ERROR = "LLM_QUERY_PARSER_TIMEOUT";
 
 export const parseGalleryQuery = async (
   userMessage: string,
@@ -161,7 +208,7 @@ export const parseGalleryQuery = async (
 ): Promise<ParsedGalleryQuery | null> => {
   const env = loadEnv();
   const enabled = env.enableNaturalLanguageSearch;
-  logger.info("[LLM QUERY PARSER] enabled=" + enabled);
+  logger.info("[LLM QUERY PARSER] enabled", { enabled });
 
   if (!enabled) {
     return null;
@@ -173,48 +220,102 @@ export const parseGalleryQuery = async (
   const model = env.deepseekModel;
 
   if (!apiKey) {
-    logger.warn("[LLM QUERY PARSER] failed fallback keyword search", { reason: "missing api key" });
-    return fallbackParsedQuery(userMessage, resolvedLanguage);
+    return logFallback(userMessage, resolvedLanguage, "missing_api_key");
   }
 
-  logger.info("[LLM QUERY PARSER] input=" + JSON.stringify(userMessage));
+  logger.info("[LLM QUERY PARSER] input", { query: userMessage, language: resolvedLanguage });
+
+  const controller = new AbortController();
+  let timeoutHandle: NodeJS.Timeout | undefined;
 
   try {
-    const response = await fetch(`${baseUrl}/chat/completions`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model,
-        temperature: 0,
-        messages: buildPrompt(userMessage, resolvedLanguage),
+    const response = await Promise.race<
+      | {
+          ok: true;
+          payload: DeepSeekResponse;
+        }
+      | {
+          ok: false;
+          status: number;
+        }
+    >([
+      (async () => {
+        const httpResponse = await fetch(`${baseUrl}/chat/completions`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${apiKey}`,
+          },
+          body: JSON.stringify({
+            model,
+            temperature: 0,
+            messages: buildPrompt(userMessage, resolvedLanguage),
+          }),
+          signal: controller.signal,
+        });
+
+        if (!httpResponse.ok) {
+          return {
+            ok: false as const,
+            status: httpResponse.status,
+          };
+        }
+
+        return {
+          ok: true as const,
+          payload: (await httpResponse.json()) as DeepSeekResponse,
+        };
+      })(),
+      new Promise<never>((_, reject) => {
+        timeoutHandle = setTimeout(() => {
+          controller.abort();
+          reject(new Error(QUERY_PARSER_TIMEOUT_ERROR));
+        }, QUERY_PARSER_TIMEOUT_MS);
       }),
-    });
+    ]);
 
     if (!response.ok) {
-      logger.warn("[LLM QUERY PARSER] failed fallback keyword search", {
+      const fallback = fallbackParsedQuery(userMessage, resolvedLanguage);
+      logger.warn("[LLM QUERY PARSER] fallback", {
+        query: userMessage,
+        reason: "non_200",
         status: response.status,
+        fallbackKeywords: fallback.keywords,
       });
-      return fallbackParsedQuery(userMessage, resolvedLanguage);
+      return fallback;
     }
 
-    const data = (await response.json()) as DeepSeekResponse;
-    const content = data.choices?.[0]?.message?.content?.trim() ?? "";
+    const content = response.payload.choices?.[0]?.message?.content?.trim() ?? "";
     const parsed = safeJsonParse(content, resolvedLanguage);
 
     if (!parsed) {
-      logger.warn("[LLM QUERY PARSER] failed fallback keyword search", { reason: "json parse failed" });
-      return fallbackParsedQuery(userMessage, resolvedLanguage);
+      return logFallback(userMessage, resolvedLanguage, "json_parse_failed");
     }
 
-    logger.info("[LLM QUERY PARSER] parsed=" + JSON.stringify(parsed));
+    logger.info("[LLM QUERY PARSER] parsed", parsed);
     return parsed;
   } catch (error) {
-    logger.warn("[LLM QUERY PARSER] failed fallback keyword search", {
-      message: error instanceof Error ? error.message : String(error),
+    if ((error instanceof Error && error.message === QUERY_PARSER_TIMEOUT_ERROR) || isAbortError(error)) {
+      const fallback = fallbackParsedQuery(userMessage, resolvedLanguage);
+      logger.warn("[LLM QUERY PARSER] timeout", {
+        query: userMessage,
+        timeoutMs: QUERY_PARSER_TIMEOUT_MS,
+        fallbackKeywords: fallback.keywords,
+      });
+      return fallback;
+    }
+
+    const fallback = fallbackParsedQuery(userMessage, resolvedLanguage);
+    logger.warn("[LLM QUERY PARSER] fallback", {
+      query: userMessage,
+      reason: "network_error",
+      error: error instanceof Error ? error.message : String(error),
+      fallbackKeywords: fallback.keywords,
     });
-    return fallbackParsedQuery(userMessage, resolvedLanguage);
+    return fallback;
+  } finally {
+    if (timeoutHandle) {
+      clearTimeout(timeoutHandle);
+    }
   }
 };

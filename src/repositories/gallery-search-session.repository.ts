@@ -34,6 +34,11 @@ export type GallerySearchSessionRepository = {
     status?: string;
   }) => Promise<GallerySearchSessionRecord[]>;
   archiveActiveSessions: (input: { discordUserId: string; discordChannelId: string }) => Promise<number>;
+  archiveOtherActiveSessions: (input: {
+    discordUserId: string;
+    discordChannelId: string;
+    keepSessionId: string;
+  }) => Promise<number>;
   updateSelectedCard: (input: { sessionId: string; galleryCardId: string }) => Promise<void>;
 };
 
@@ -84,6 +89,23 @@ export const gallerySearchSessionRepository: GallerySearchSessionRepository = {
         discordUserId: input.discordUserId,
         discordChannelId: input.discordChannelId,
         status: "active",
+      },
+      data: {
+        status: "archived",
+      },
+    });
+
+    return result.count;
+  },
+  async archiveOtherActiveSessions(input) {
+    const result = await prisma.gallerySearchSession.updateMany({
+      where: {
+        discordUserId: input.discordUserId,
+        discordChannelId: input.discordChannelId,
+        status: "active",
+        id: {
+          not: input.keepSessionId,
+        },
       },
       data: {
         status: "archived",

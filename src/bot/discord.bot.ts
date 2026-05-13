@@ -14,9 +14,82 @@ import { t } from "../utils/i18n";
 import { logger } from "../utils/logger";
 import { isUserFacingError } from "../utils/user-facing-error";
 
-const isLootcardChooseChannel = (message: Message): boolean => {
-  const channelName = message.channel && "name" in message.channel ? message.channel.name : "";
-  return channelName === "lootcardchoose";
+const LOOTCARDCHOOSE_CHANNEL_NAME = "lootcardchoose";
+
+type DiscordIgnoreReason = "wrong_channel" | "not_mentioned" | "bot_message" | "empty_content";
+
+type DiscordMessageHandlingDecision = {
+  shouldHandle: boolean;
+  reason?: DiscordIgnoreReason;
+  channelName: string;
+  mentioned: boolean;
+  normalizedText: string;
+};
+
+const getChannelName = (message: Message): string =>
+  message.channel && "name" in message.channel && typeof message.channel.name === "string" ? message.channel.name : "";
+
+const buildMentionRegex = (botUserId: string): RegExp => new RegExp(`<@!?${botUserId}>`, "g");
+
+const normalizeDiscordMessageContent = (content: string, botUserId: string | null): string => {
+  const withoutMentions = botUserId ? content.replace(buildMentionRegex(botUserId), " ") : content;
+  return withoutMentions.replace(/\s+/g, " ").trim();
+};
+
+const shouldHandleDiscordMessage = (message: Message, botUserId: string | null): DiscordMessageHandlingDecision => {
+  const channelName = getChannelName(message);
+  const mentioned = botUserId
+    ? message.mentions.users.has(botUserId) || buildMentionRegex(botUserId).test(message.content)
+    : false;
+  const normalizedText = normalizeDiscordMessageContent(message.content, botUserId);
+
+  if (message.author.bot) {
+    return {
+      shouldHandle: false,
+      reason: "bot_message",
+      channelName,
+      mentioned,
+      normalizedText,
+    };
+  }
+
+  const isLootcardChooseChannel = channelName === LOOTCARDCHOOSE_CHANNEL_NAME;
+  if (!isLootcardChooseChannel && !channelName) {
+    return {
+      shouldHandle: false,
+      reason: "wrong_channel",
+      channelName,
+      mentioned,
+      normalizedText,
+    };
+  }
+
+  if (!isLootcardChooseChannel && !mentioned) {
+    return {
+      shouldHandle: false,
+      reason: "not_mentioned",
+      channelName,
+      mentioned,
+      normalizedText,
+    };
+  }
+
+  if (!normalizedText) {
+    return {
+      shouldHandle: false,
+      reason: "empty_content",
+      channelName,
+      mentioned,
+      normalizedText,
+    };
+  }
+
+  return {
+    shouldHandle: true,
+    channelName,
+    mentioned,
+    normalizedText,
+  };
 };
 
 const extractDiscordApiCode = (error: unknown): string | number | null => {
@@ -170,18 +243,28 @@ export const DiscordBot = {
     });
 
     client.on("messageCreate", async (message: Message) => {
-      if (message.author.bot) {
-        return;
-      }
+      const handlingDecision = shouldHandleDiscordMessage(message, client.user?.id ?? null);
 
-      if (!isLootcardChooseChannel(message)) {
+      if (!handlingDecision.shouldHandle) {
+        logger.info("[DISCORD] message ignored", {
+          userId: message.author.id,
+          channelId: message.channelId,
+          channelName: handlingDecision.channelName,
+          mentioned: handlingDecision.mentioned,
+          reason: handlingDecision.reason,
+          rawContent: message.content,
+          normalizedContent: handlingDecision.normalizedText,
+        });
         return;
       }
 
       logger.info("[DISCORD] message received", {
         userId: message.author.id,
         channelId: message.channelId,
-        content: message.content,
+        channelName: handlingDecision.channelName,
+        mentioned: handlingDecision.mentioned,
+        rawContent: message.content,
+        normalizedContent: handlingDecision.normalizedText,
       });
 
       const startedAt = Date.now();
@@ -192,7 +275,7 @@ export const DiscordBot = {
 
         stage = "router.handle";
         const response = await router.handle({
-          text: message.content,
+          text: handlingDecision.normalizedText,
           channelId: message.channelId,
           userId: message.author.id,
         });
@@ -275,7 +358,7 @@ export const DiscordBot = {
           latencyMs: Date.now() - startedAt,
         });
       } catch (error) {
-        const language: SupportedLanguage = /[\u4e00-\u9fff]/.test(message.content) ? "zh" : "en";
+        const language: SupportedLanguage = /[\u4e00-\u9fff]/.test(handlingDecision.normalizedText) ? "zh" : "en";
         const fallbackText = isUserFacingError(error) ? error.message : t(language, "error.generic");
 
         logger.error("[DISCORD] handler error", {

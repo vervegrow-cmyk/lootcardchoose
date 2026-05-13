@@ -17,6 +17,7 @@ import { ParsedGalleryQuery, parseGalleryQuery } from "./llm-query-parser.servic
 import { isDatabaseReady } from "./prisma.service";
 
 export const DEFAULT_GALLERY_RESULT_LIMIT = 10;
+export const REFRESH_PLANNER_TIMEOUT_MS = 8000;
 
 export type GalleryCardDto = {
   id: string;
@@ -486,6 +487,11 @@ const buildDefaultSessionMetadata = (
 
 const buildPoolExhaustedQuestion = (language: SupportedLanguage): string => t(language, "gallery.refresh.poolExhausted");
 
+const isAbortError = (error: unknown): boolean =>
+  error instanceof Error && (error.name === "AbortError" || error.message.toLowerCase().includes("aborted"));
+
+const REFRESH_PLANNER_TIMEOUT_ERROR = "GALLERY_REFRESH_PLANNER_TIMEOUT";
+
 export const galleryService = {
   async searchGalleryCards(query: string, language: SupportedLanguage = "en"): Promise<GallerySearchResult> {
     logger.info("[GALLERY SERVICE] search", { query, language });
@@ -509,6 +515,13 @@ export const galleryService = {
     logger.info("[GALLERY SERVICE] structured keywords", { structuredKeywords });
 
     const fallbackKeywords = structuredKeywords.length > 0 ? [] : normalizeGalleryKeywordsToEnglish([query]);
+    if (structuredKeywords.length === 0) {
+      logger.info("[GALLERY SERVICE] raw query fallback", {
+        query,
+        fallbackKeywords,
+        reason: "structured_keywords_empty",
+      });
+    }
     const finalKeywords = structuredKeywords.length > 0 ? structuredKeywords : fallbackKeywords;
     const finalTags = structuredKeywords.length > 0 ? normalizeGalleryKeywordsToEnglish(parsedQuery.tags) : [];
 
@@ -571,23 +584,57 @@ export const galleryService = {
     let decision = fallbackDecision;
 
     if (env.enableNaturalLanguageSearch && env.deepseekApiKey) {
+      const controller = new AbortController();
+      let timeoutHandle: NodeJS.Timeout | undefined;
+
       try {
-        const response = await fetch(`${env.deepseekBaseUrl}/chat/completions`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${env.deepseekApiKey}`,
-          },
-          body: JSON.stringify({
-            model: env.deepseekModel,
-            temperature: 0,
-            messages: buildRefreshPrompt(promptPayload),
+        const response = await Promise.race<
+          | {
+              ok: true;
+              payload: DeepSeekResponse;
+            }
+          | {
+              ok: false;
+              status: number;
+            }
+        >([
+          (async () => {
+            const httpResponse = await fetch(`${env.deepseekBaseUrl}/chat/completions`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${env.deepseekApiKey}`,
+              },
+              body: JSON.stringify({
+                model: env.deepseekModel,
+                temperature: 0,
+                messages: buildRefreshPrompt(promptPayload),
+              }),
+              signal: controller.signal,
+            });
+
+            if (!httpResponse.ok) {
+              return {
+                ok: false as const,
+                status: httpResponse.status,
+              };
+            }
+
+            return {
+              ok: true as const,
+              payload: (await httpResponse.json()) as DeepSeekResponse,
+            };
+          })(),
+          new Promise<never>((_, reject) => {
+            timeoutHandle = setTimeout(() => {
+              controller.abort();
+              reject(new Error(REFRESH_PLANNER_TIMEOUT_ERROR));
+            }, REFRESH_PLANNER_TIMEOUT_MS);
           }),
-        });
+        ]);
 
         if (response.ok) {
-          const payload = (await response.json()) as DeepSeekResponse;
-          const content = payload.choices?.[0]?.message?.content?.trim() ?? "";
+          const content = response.payload.choices?.[0]?.message?.content?.trim() ?? "";
           const parsedDecision = parseRefreshDecision(content, fallbackDecision, language);
           if (parsedDecision) {
             decision = {
@@ -599,11 +646,30 @@ export const galleryService = {
                   : fallbackDecision.searchKeywords,
             };
           }
+        } else {
+          logger.warn("[GALLERY SERVICE] refresh planner fallback", {
+            query: input.previousSession.query,
+            reason: "non_200",
+            status: response.status,
+          });
         }
       } catch (error) {
-        logger.warn("[GALLERY SERVICE] refresh decision fallback", {
-          message: error instanceof Error ? error.message : String(error),
-        });
+        if ((error instanceof Error && error.message === REFRESH_PLANNER_TIMEOUT_ERROR) || isAbortError(error)) {
+          logger.warn("[GALLERY SERVICE] refresh planner timeout", {
+            query: input.previousSession.query,
+            timeoutMs: REFRESH_PLANNER_TIMEOUT_MS,
+          });
+        } else {
+          logger.warn("[GALLERY SERVICE] refresh planner fallback", {
+            query: input.previousSession.query,
+            reason: "network_error",
+            message: error instanceof Error ? error.message : String(error),
+          });
+        }
+      } finally {
+        if (timeoutHandle) {
+          clearTimeout(timeoutHandle);
+        }
       }
     }
 
