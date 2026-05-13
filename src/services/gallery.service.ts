@@ -141,6 +141,26 @@ const readSessionCards = (results: Prisma.JsonValue): Array<{ id: string }> => {
     .filter((item) => Boolean(item.id));
 };
 
+const readSessionCardSummaries = (
+  results: Prisma.JsonValue
+): Array<{ id: string; title: string; tags: string[]; style: string; color: string; rarity: string }> => {
+  if (!Array.isArray(results)) {
+    return [];
+  }
+
+  return results
+    .filter(isJsonObject)
+    .map((item) => ({
+      id: typeof item.id === "string" ? item.id : "",
+      title: typeof item.title === "string" ? item.title : "",
+      tags: Array.isArray(item.tags) ? item.tags.filter((tag): tag is string => typeof tag === "string") : [],
+      style: typeof item.style === "string" ? item.style : "",
+      color: typeof item.color === "string" ? item.color : "",
+      rarity: typeof item.rarity === "string" ? item.rarity : "",
+    }))
+    .filter((item) => Boolean(item.id));
+};
+
 const extractSessionLanguage = (session: GallerySearchSessionRecord): SupportedLanguage => {
   if (Array.isArray(session.results) && session.results.length > 0 && isJsonObject(session.results[0])) {
     const language = session.results[0].language;
@@ -193,7 +213,8 @@ const buildFallbackRefreshDecision = (
 const buildRefreshPrompt = (
   currentMessage: string,
   previousQuery: ParsedGalleryQuery,
-  language: SupportedLanguage
+  language: SupportedLanguage,
+  previousCards: Array<{ id: string; title: string; tags: string[]; style: string; color: string; rarity: string }>
 ): DeepSeekMessage[] => [
   {
     role: "system",
@@ -203,10 +224,19 @@ const buildRefreshPrompt = (
       "\"keep\":string[],\"avoid\":string[],\"broaden\":string[],\"searchKeywords\":string[]," +
       "\"reason\":string,\"shouldAskClarifyingQuestion\":boolean,\"shortQuestion\":string}. " +
       "Keep search keywords short and English-first. " +
+      "Reflect lightly on why the previous batch may not fit. " +
+      "Preserve core preference keywords from the previous query unless the user clearly asks for a different style. " +
+      "Add concise avoid terms like previous cards or same composition when helpful. " +
       "Use next_batch when the user simply wants more similar options. " +
       "Use refine when the user dislikes the current cards. " +
       "Use broaden when the user wants another style or related options. " +
       "Only use need_clarification if the request is truly ambiguous. " +
+      "Example JSON: " +
+      "{\"language\":\"en\",\"refreshMode\":\"refine\",\"keep\":[\"female character\",\"SSR\",\"anime\"]," +
+      "\"avoid\":[\"previous cards\",\"same composition\"],\"broaden\":[\"premium\",\"fantasy\",\"elegant\"]," +
+      "\"searchKeywords\":[\"female character\",\"SSR\",\"anime\",\"premium\",\"fantasy\"]," +
+      "\"reason\":\"The user dislikes the current batch and wants a closer stylistic match.\"," +
+      "\"shouldAskClarifyingQuestion\":false,\"shortQuestion\":\"\"}. " +
       "Do not write explanations outside JSON.",
   },
   {
@@ -215,6 +245,7 @@ const buildRefreshPrompt = (
       language,
       previousQuery,
       currentMessage,
+      previousCards: previousCards.slice(0, 5),
     }),
   },
 ];
@@ -374,6 +405,7 @@ export const galleryService = {
     const limit = normalizeGalleryLimit(input.limit ?? previousParsed.limit, DEFAULT_GALLERY_RESULT_LIMIT);
 
     const fallbackDecision = buildFallbackRefreshDecision(input.currentMessage, previousParsed, language);
+    const previousCards = readSessionCardSummaries(input.previousSession.results);
     const env = loadEnv();
     let decision = fallbackDecision;
 
@@ -388,7 +420,7 @@ export const galleryService = {
           body: JSON.stringify({
             model: env.deepseekModel,
             temperature: 0,
-            messages: buildRefreshPrompt(input.currentMessage, previousParsed, language),
+            messages: buildRefreshPrompt(input.currentMessage, previousParsed, language, previousCards),
           }),
         });
 

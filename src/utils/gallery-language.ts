@@ -102,6 +102,8 @@ const KEYWORD_EXPANSIONS: Record<string, string[]> = {
   buy: ["checkout", "product page"],
   cute: ["anime", "female character"],
   dark: ["anime", "premium"],
+  fantasy: ["premium", "anime"],
+  elegant: ["premium", "beauty"],
 };
 
 const NEXT_BATCH_PATTERNS = [
@@ -328,7 +330,8 @@ export const parseSelectedIndex = (message: string): number | null => {
 
   if (
     normalized.includes("first") ||
-    normalized.includes("one") ||
+    normalized.includes("number one") ||
+    normalized.includes("option one") ||
     normalized.includes("第一个") ||
     normalized.includes("选第一个")
   ) {

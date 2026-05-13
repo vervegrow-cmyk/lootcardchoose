@@ -4,10 +4,10 @@ dotenv.config();
 dotenv.config({ path: ".env.local", override: true });
 
 import assert from "node:assert/strict";
+import { HermesOutput } from "../hermes/types";
 import { buildHermesRegistry } from "../hermes/registry";
 import { HermesRouter } from "../hermes/router";
 import { gallerySearchSessionRepository } from "../repositories/gallery-search-session.repository";
-import { HermesOutput } from "../hermes/types";
 import { parseSelectedIndex } from "../utils/gallery-language";
 import { logger } from "../utils/logger";
 
@@ -53,6 +53,8 @@ const run = async (): Promise<void> => {
 
   const enUserId = `refresh-en-user-${suffix}`;
   const enChannelId = `refresh-en-channel-${suffix}`;
+  const broadenUserId = `refresh-broaden-user-${suffix}`;
+  const broadenChannelId = `refresh-broaden-channel-${suffix}`;
   const zhUserId = `refresh-zh-user-${suffix}`;
   const zhChannelId = `refresh-zh-channel-${suffix}`;
 
@@ -67,7 +69,6 @@ const run = async (): Promise<void> => {
   const firstBatchCardIds = firstSearch.cards.map((card) => card.id);
 
   let secondResponse: HermesOutput | undefined;
-
   const fullChainLogs = await collectLogs(async () => {
     secondResponse = await router.handle({
       text: "Can we switch to another batch?",
@@ -79,6 +80,7 @@ const run = async (): Promise<void> => {
   if (!secondResponse) {
     throw new Error("Expected refresh response");
   }
+
   assert.equal(secondResponse.type, "gallery_search_results");
   assert.equal(secondResponse.language, "en");
   assert.equal(secondResponse.refreshMode, "next_batch");
@@ -97,7 +99,6 @@ const run = async (): Promise<void> => {
   assert.ok(fullChainLogs.includes("[REFRESH GALLERY SKILL] completed"));
 
   const refineIntent = await router.determineIntent("I don't like these, show me another style");
-  console.log("[TEST GALLERY REFRESH] refine intent=", JSON.stringify(refineIntent));
   assert.equal(refineIntent.intent, "gallery_refresh");
 
   const refineResponse = await router.handle({
@@ -105,16 +106,34 @@ const run = async (): Promise<void> => {
     userId: enUserId,
     channelId: enChannelId,
   });
-
   assert.equal(refineResponse.type, "gallery_search_results");
   assert.ok(["refine", "broaden", "random_fallback"].includes(refineResponse.refreshMode ?? ""));
 
+  const broadenIntent = await router.determineIntent("Show me another style");
+  assert.equal(broadenIntent.intent, "gallery_refresh");
+
+  const broadenSearch = await router.handle({
+    text: "girl",
+    userId: broadenUserId,
+    channelId: broadenChannelId,
+  });
+  assert.equal(broadenSearch.type, "gallery_search_results");
+
+  const broadenResponse = await router.handle({
+    text: "Show me another style",
+    userId: broadenUserId,
+    channelId: broadenChannelId,
+  });
+  assert.equal(broadenResponse.type, "gallery_search_results");
+  assert.ok(["broaden", "random_fallback", "refine"].includes(broadenResponse.refreshMode ?? ""));
+
   const selectIntent = await router.determineIntent("one");
-  console.log("[TEST GALLERY REFRESH] select intent=", JSON.stringify(selectIntent));
   assert.equal(selectIntent.intent, "gallery_select");
+  assert.equal(parseSelectedIndex("1"), 1);
   assert.equal(parseSelectedIndex("one"), 1);
   assert.equal(parseSelectedIndex("first"), 1);
   assert.equal(parseSelectedIndex("第一个"), 1);
+  assert.equal(parseSelectedIndex("选1"), 1);
 
   const activeSession = await gallerySearchSessionRepository.findLatest({
     discordUserId: enUserId,
@@ -128,12 +147,10 @@ const run = async (): Promise<void> => {
     userId: zhUserId,
     channelId: zhChannelId,
   });
-
   assert.equal(zhSearch.type, "gallery_search_results");
   ensure(zhSearch.cards.length > 0, "Expected Chinese search results");
 
   const zhIntent = await router.determineIntent("换一批");
-  console.log("[TEST GALLERY REFRESH] chinese intent=", JSON.stringify(zhIntent));
   assert.equal(zhIntent.intent, "gallery_refresh");
   assert.equal(zhIntent.language, "zh");
 
@@ -142,7 +159,6 @@ const run = async (): Promise<void> => {
     userId: zhUserId,
     channelId: zhChannelId,
   });
-
   assert.equal(zhRefresh.language, "zh");
   assert.equal(zhRefresh.type, "gallery_search_results");
   assert.equal(zhRefresh.text, "这是为你换的一批卡牌，请回复编号选择一张。");
@@ -152,7 +168,6 @@ const run = async (): Promise<void> => {
     userId: `no-history-user-${suffix}`,
     channelId: `no-history-channel-${suffix}`,
   });
-
   assert.equal(noHistoryResponse.type, "text");
   assert.equal(
     noHistoryResponse.text,

@@ -3,11 +3,11 @@ import { SupportedLanguage } from "../hermes/types";
 const dictionary: Record<SupportedLanguage, Record<string, string>> = {
   zh: {
     "channel.onlyLootcardchoose": "请到 #lootcardchoose 频道使用图库选卡功能。",
-    "gallery.search.success": "我为你找到 {count} 张卡牌。",
+    "gallery.search.success": "我为你找到了 {count} 张卡牌。",
     "gallery.search.empty": "抱歉，暂时没有找到符合要求的卡牌。",
     "gallery.search.chooseHint": "请回复 1-{count} 的编号进行选择。",
     "gallery.search.resultTitle": "第 {index} 张：{title}",
-    "gallery.search.resultPrice": "价格：${price}",
+    "gallery.search.resultPrice": "价格：{price}",
     "gallery.search.resultTags": "标签：{tags}",
     "gallery.select.invalid": "请选择有效编号（1-10）。",
     "gallery.select.success": "你已选择这张卡牌。",
