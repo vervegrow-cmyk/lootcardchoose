@@ -33,6 +33,9 @@ type ParsedGallerySearchInput = {
   scene: string;
   limit?: number;
   excludeIds?: string[];
+  preferredKeywords?: string[];
+  broadenKeywords?: string[];
+  avoidKeywords?: string[];
 };
 
 type ScoredGalleryCard = {
@@ -130,10 +133,22 @@ const buildKeywordMatchers = (keyword: string): Prisma.GalleryCardWhereInput[] =
   { color: { contains: keyword, mode: "insensitive" } },
 ];
 
+const buildAvoidMatchers = (keyword: string): Prisma.GalleryCardWhereInput => ({
+  OR: buildKeywordMatchers(keyword),
+});
+
 const buildSearchWhere = (input: ParsedGallerySearchInput): Prisma.GalleryCardWhereInput => {
   const keywords = normalizeKeywords(input.keywords);
   const tags = normalizeKeywords(input.tags);
+  const avoidKeywords = normalizeKeywords(input.avoidKeywords ?? []);
   const orFilters: Prisma.GalleryCardWhereInput[] = [];
+  const notFilters: Prisma.GalleryCardWhereInput[] = [
+    {
+      imageUrl: {
+        contains: "placehold.co",
+      },
+    },
+  ];
 
   for (const keyword of keywords) {
     orFilters.push(...buildKeywordMatchers(keyword));
@@ -165,13 +180,13 @@ const buildSearchWhere = (input: ParsedGallerySearchInput): Prisma.GalleryCardWh
     orFilters.push({ description: { contains: input.scene, mode: "insensitive" } });
   }
 
+  for (const avoidKeyword of avoidKeywords) {
+    notFilters.push(buildAvoidMatchers(avoidKeyword));
+  }
+
   return {
     isActive: true,
-    NOT: {
-      imageUrl: {
-        contains: "placehold.co",
-      },
-    },
+    NOT: notFilters,
     ...(input.excludeIds && input.excludeIds.length > 0
       ? {
           id: {
@@ -183,36 +198,83 @@ const buildSearchWhere = (input: ParsedGallerySearchInput): Prisma.GalleryCardWh
   };
 };
 
-const scoreKeywordMatches = (card: GalleryCardRecord, keywords: string[], tags: string[]): number => {
+const computeKeywordSignal = (card: GalleryCardRecord, keyword: string): number => {
   const tagSet = new Set(card.tags.map((tag) => normalizeText(tag)));
   const title = normalizeText(card.title);
   const description = normalizeText(card.description);
   const style = normalizeText(card.style);
+  const rarity = normalizeText(card.rarity);
+  const category = normalizeText(card.category);
+  const character = normalizeText(card.character);
+  const color = normalizeText(card.color);
   const metadata = stringifyMetadata(card.metadata);
+  let score = 0;
+
+  if (tagSet.has(keyword)) {
+    score += 10;
+  }
+  if (style.includes(keyword)) {
+    score += 5;
+  }
+  if (title.includes(keyword)) {
+    score += 3;
+  }
+  if (description.includes(keyword)) {
+    score += 3;
+  }
+  if (rarity.includes(keyword)) {
+    score += 4;
+  }
+  if (category.includes(keyword)) {
+    score += 4;
+  }
+  if (character.includes(keyword)) {
+    score += 4;
+  }
+  if (color.includes(keyword)) {
+    score += 4;
+  }
+  if (metadata.includes(keyword)) {
+    score += 2;
+  }
+
+  return score;
+};
+
+const scoreKeywordMatches = (
+  card: GalleryCardRecord,
+  keywords: string[],
+  tags: string[],
+  preferredKeywords: string[],
+  broadenKeywords: string[],
+  avoidKeywords: string[]
+): number => {
   const normalizedKeywords = keywords.map((keyword) => normalizeText(keyword));
   const normalizedTags = tags.map((tag) => normalizeText(tag));
+  const normalizedPreferredKeywords = preferredKeywords.map((keyword) => normalizeText(keyword));
+  const normalizedBroadenKeywords = broadenKeywords.map((keyword) => normalizeText(keyword));
+  const normalizedAvoidKeywords = avoidKeywords.map((keyword) => normalizeText(keyword));
 
   let score = 0;
 
-  for (const tag of [...normalizedKeywords, ...normalizedTags]) {
-    if (tagSet.has(tag)) {
-      score += 10;
-    }
+  for (const keyword of normalizedKeywords) {
+    score += computeKeywordSignal(card, keyword);
   }
 
-  for (const keyword of normalizedKeywords) {
-    if (style.includes(keyword)) {
-      score += 5;
-    }
-    if (title.includes(keyword)) {
-      score += 3;
-    }
-    if (description.includes(keyword)) {
-      score += 3;
-    }
-    if (metadata.includes(keyword)) {
-      score += 2;
-    }
+  for (const tag of normalizedTags) {
+    score += computeKeywordSignal(card, tag);
+  }
+
+  for (const keyword of normalizedPreferredKeywords) {
+    score += computeKeywordSignal(card, keyword);
+  }
+
+  for (const keyword of normalizedBroadenKeywords) {
+    score += Math.ceil(computeKeywordSignal(card, keyword) / 2);
+  }
+
+  for (const keyword of normalizedAvoidKeywords) {
+    score -= computeKeywordSignal(card, keyword) * 2;
   }
 
   return score;
@@ -251,12 +313,17 @@ const scoreStructuredFields = (card: GalleryCardRecord, input: ParsedGallerySear
 const rankCards = (cards: GalleryCardRecord[], input: ParsedGallerySearchInput): GalleryCardRecord[] => {
   const keywords = normalizeKeywords(input.keywords);
   const tags = normalizeKeywords(input.tags);
+  const preferredKeywords = normalizeKeywords(input.preferredKeywords ?? []);
+  const broadenKeywords = normalizeKeywords(input.broadenKeywords ?? []);
+  const avoidKeywords = normalizeKeywords(input.avoidKeywords ?? []);
 
   const scored = cards
     .map(
       (card): ScoredGalleryCard => ({
         card,
-        score: scoreKeywordMatches(card, keywords, tags) + scoreStructuredFields(card, input),
+        score:
+          scoreKeywordMatches(card, keywords, tags, preferredKeywords, broadenKeywords, avoidKeywords) +
+          scoreStructuredFields(card, input),
       })
     )
     .filter((entry) => entry.score > 0)
@@ -291,10 +358,16 @@ export const galleryRepository: GalleryRepository = {
     const limit = normalizeSearchLimit(query.limit);
     const keywords = normalizeKeywords(query.keywords);
     const tags = normalizeKeywords(query.tags);
+    const preferredKeywords = normalizeKeywords(query.preferredKeywords ?? []);
+    const broadenKeywords = normalizeKeywords(query.broadenKeywords ?? []);
+    const avoidKeywords = normalizeKeywords(query.avoidKeywords ?? []);
 
     logger.info("[GALLERY REPOSITORY] prisma search start", {
       keywords,
       tags,
+      preferredKeywords,
+      broadenKeywords,
+      avoidKeywords,
       limit,
       rarity: query.rarity,
       color: query.color,
@@ -309,6 +382,9 @@ export const galleryRepository: GalleryRepository = {
       ...query,
       keywords,
       tags,
+      preferredKeywords,
+      broadenKeywords,
+      avoidKeywords,
       limit,
     });
   },

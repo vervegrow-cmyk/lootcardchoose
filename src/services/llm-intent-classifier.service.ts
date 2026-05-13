@@ -36,6 +36,9 @@ const SEARCH_KEYWORDS = [
   "黑金",
   "女角色",
   "动漫",
+  "搜索",
+  "查找",
+  "找卡",
 ];
 
 const HELP_KEYWORDS = [
@@ -51,11 +54,14 @@ const HELP_KEYWORDS = [
   "shipping",
   "tracking",
   "怎么",
+  "如何",
   "付款",
   "支付",
   "发货",
   "物流",
   "帮助",
+  "怎么买",
+  "怎么选",
 ];
 
 const ORDER_KEYWORDS = ["我的订单", "查询订单", "订单状态", "order status", "my order"];
@@ -110,7 +116,12 @@ const safeJsonParse = (raw: string, fallbackLanguage: SupportedLanguage): Intent
   }
 };
 
-export const fallbackIntentClassification = (message: string): IntentClassificationResult => {
+export const fallbackIntentClassification = (
+  message: string,
+  options?: {
+    hasActiveGallerySession?: boolean;
+  }
+): IntentClassificationResult => {
   const normalized = message.trim().toLowerCase();
   const language = detectLanguage(message);
 
@@ -118,7 +129,7 @@ export const fallbackIntentClassification = (message: string): IntentClassificat
     return { intent: "ignore", language, confidence: 1, reason: "empty message" };
   }
 
-  if (isGallerySelectMessage(message)) {
+  if (isGallerySelectMessage(message, { hasActiveSession: options?.hasActiveGallerySession })) {
     return { intent: "gallery_select", language, confidence: 0.99, reason: "matched select fallback keyword" };
   }
 
@@ -147,7 +158,12 @@ export const fallbackIntentClassification = (message: string): IntentClassificat
 };
 
 export const llmIntentClassifierService = {
-  async classify(message: string): Promise<IntentClassificationResult> {
+  async classify(
+    message: string,
+    options?: {
+      hasActiveGallerySession?: boolean;
+    }
+  ): Promise<IntentClassificationResult> {
     const env = loadEnv();
     const language = detectLanguage(message);
     const apiKey = env.deepseekApiKey;
@@ -156,7 +172,7 @@ export const llmIntentClassifierService = {
 
     if (!apiKey) {
       logger.warn("[LLM INTENT CLASSIFIER] using fallback", { reason: "missing api key" });
-      return fallbackIntentClassification(message);
+      return fallbackIntentClassification(message, options);
     }
 
     try {
@@ -178,7 +194,7 @@ export const llmIntentClassifierService = {
           reason: "non-200 response",
           status: response.status,
         });
-        return fallbackIntentClassification(message);
+        return fallbackIntentClassification(message, options);
       }
 
       const data = (await response.json()) as DeepSeekResponse;
@@ -187,7 +203,7 @@ export const llmIntentClassifierService = {
 
       if (!parsed) {
         logger.warn("[LLM INTENT CLASSIFIER] using fallback", { reason: "json parse failed" });
-        return fallbackIntentClassification(message);
+        return fallbackIntentClassification(message, options);
       }
 
       logger.info("[LLM INTENT CLASSIFIER] parsed=" + JSON.stringify(parsed));
@@ -196,7 +212,7 @@ export const llmIntentClassifierService = {
       logger.warn("[LLM INTENT CLASSIFIER] using fallback", {
         message: error instanceof Error ? error.message : String(error),
       });
-      return fallbackIntentClassification(message);
+      return fallbackIntentClassification(message, options);
     }
   },
 };

@@ -146,28 +146,120 @@ const BROADEN_PATTERNS = [
 
 const GALLERY_REFRESH_PATTERNS = [...NEXT_BATCH_PATTERNS, ...REFINE_PATTERNS, ...BROADEN_PATTERNS];
 
-const GALLERY_SELECT_PATTERNS = [
-  /^(?:1|one|first)$/i,
-  /^number\s+one$/i,
-  /^option\s+one$/i,
-  /^i\s+choose\s+one$/i,
-  /^i(?:'ll|\s+will)?\s+take\s+the\s+first\s+one$/i,
-  /^i(?:'ll|\s+will)?\s+take\s+the\s+first$/i,
-  /^choose\s+one$/i,
-  /^select\s+one$/i,
-  /^the\s+first\s+one$/i,
-  /^第一个$/,
-  /^选第一个$/,
-  /^我要第一个$/,
-  /^选择1$/,
-  /^选1$/,
-];
+const ENGLISH_NUMBER_WORDS: Record<string, number> = {
+  one: 1,
+  two: 2,
+  three: 3,
+  four: 4,
+  five: 5,
+  six: 6,
+  seven: 7,
+  eight: 8,
+  nine: 9,
+  ten: 10,
+  first: 1,
+  second: 2,
+  third: 3,
+  fourth: 4,
+  fifth: 5,
+  sixth: 6,
+  seventh: 7,
+  eighth: 8,
+  ninth: 9,
+  tenth: 10,
+};
+
+const CHINESE_NUMBER_MAP: Record<string, number> = {
+  一: 1,
+  二: 2,
+  三: 3,
+  四: 4,
+  五: 5,
+  六: 6,
+  七: 7,
+  八: 8,
+  九: 9,
+  十: 10,
+};
 
 const normalizeText = (value: string): string => value.trim().toLowerCase();
 
 const containsPattern = (message: string, patterns: string[]): boolean => {
   const normalized = normalizeText(message);
   return patterns.some((pattern) => normalized.includes(pattern));
+};
+
+const parseExplicitEnglishSelection = (normalized: string): number | null => {
+  const exactDigit = normalized.match(/^#?\s*(10|[1-9])$/);
+  if (exactDigit) {
+    return Number.parseInt(exactDigit[1], 10);
+  }
+
+  if (normalized in ENGLISH_NUMBER_WORDS) {
+    return ENGLISH_NUMBER_WORDS[normalized];
+  }
+
+  const matchers: Array<RegExp> = [
+    /^number\s+(one|two|three|four|five|six|seven|eight|nine|ten)$/,
+    /^option\s+(one|two|three|four|five|six|seven|eight|nine|ten)$/,
+    /^(?:i\s+choose|choose|select|pick|take)\s+(one|two|three|four|five|six|seven|eight|nine|ten|10|[1-9])$/,
+    /^(?:the\s+)?(first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth)(?:\s+one)?$/,
+    /^i(?:'ll|\s+will)?\s+take\s+the\s+(first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth)(?:\s+one)?$/,
+  ];
+
+  for (const matcher of matchers) {
+    const match = normalized.match(matcher);
+    const token = match?.[1];
+    if (!token) {
+      continue;
+    }
+
+    if (/^\d+$/.test(token)) {
+      const numericValue = Number.parseInt(token, 10);
+      return numericValue >= 1 && numericValue <= 10 ? numericValue : null;
+    }
+
+    return ENGLISH_NUMBER_WORDS[token] ?? null;
+  }
+
+  return null;
+};
+
+const parseExplicitChineseSelection = (message: string): number | null => {
+  const trimmed = message.trim();
+
+  const exactDigit = trimmed.match(/^#?\s*(10|[1-9])$/);
+  if (exactDigit) {
+    return Number.parseInt(exactDigit[1], 10);
+  }
+
+  const patterns: Array<RegExp> = [
+    /^第([1-9]|10)个$/,
+    /^第([一二三四五六七八九十])个$/,
+    /^选([1-9]|10)$/,
+    /^选择([1-9]|10)$/,
+    /^选第([1-9]|10)个$/,
+    /^选第([一二三四五六七八九十])个$/,
+    /^我要第([1-9]|10)个$/,
+    /^我要第([一二三四五六七八九十])个$/,
+  ];
+
+  for (const pattern of patterns) {
+    const match = trimmed.match(pattern);
+    const token = match?.[1];
+    if (!token) {
+      continue;
+    }
+
+    if (/^\d+$/.test(token)) {
+      const numericValue = Number.parseInt(token, 10);
+      return numericValue >= 1 && numericValue <= 10 ? numericValue : null;
+    }
+
+    return CHINESE_NUMBER_MAP[token] ?? null;
+  }
+
+  return null;
 };
 
 export const detectPreferredLanguage = (message: string): SupportedLanguage =>
@@ -198,7 +290,7 @@ export const canonicalizeGalleryTerm = (value: string): string => {
 const stripMeaninglessText = (value: string): string => {
   let cleaned = value.trim();
   cleaned = cleaned.replace(/[，。、“”"'‘’！；？,.:;()[\]{}<>/\\|@#$%^&*_+=~-]+/g, " ");
-  cleaned = cleaned.replace(/\d+\s*(张|个|款|种)/g, " ");
+  cleaned = cleaned.replace(/\d+\s*(张|个|款|种)?/g, " ");
 
   for (const stopWord of GALLERY_STOP_WORDS) {
     cleaned = cleaned.replace(new RegExp(stopWord, "gi"), " ");
@@ -315,29 +407,33 @@ export const inferRefreshModeFromMessage = (
   return "next_batch";
 };
 
-export const parseSelectedIndex = (message: string): number | null => {
+export const parseSelectedIndex = (
+  message: string,
+  options?: {
+    hasActiveSession?: boolean;
+  }
+): number | null => {
+  if (!options?.hasActiveSession) {
+    return null;
+  }
+
   const normalized = normalizeText(message);
-
-  const numericMatch = normalized.match(/\d+/);
-  if (numericMatch) {
-    const selectedIndex = Number.parseInt(numericMatch[0], 10);
-    return Number.isFinite(selectedIndex) && selectedIndex > 0 ? selectedIndex : null;
+  const englishSelection = parseExplicitEnglishSelection(normalized);
+  if (englishSelection) {
+    return englishSelection;
   }
 
-  if (GALLERY_SELECT_PATTERNS.some((pattern) => pattern.test(message.trim()))) {
-    return 1;
-  }
-
-  if (
-    normalized.includes("first") ||
-    normalized.includes("one") ||
-    normalized.includes("第一个") ||
-    normalized.includes("选第一个")
-  ) {
-    return 1;
+  const chineseSelection = parseExplicitChineseSelection(message);
+  if (chineseSelection) {
+    return chineseSelection;
   }
 
   return null;
 };
 
-export const isGallerySelectMessage = (message: string): boolean => parseSelectedIndex(message) !== null;
+export const isGallerySelectMessage = (
+  message: string,
+  options?: {
+    hasActiveSession?: boolean;
+  }
+): boolean => parseSelectedIndex(message, options) !== null;

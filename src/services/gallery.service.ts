@@ -56,6 +56,28 @@ export type GalleryRefreshResult = {
   searchKeywords: string[];
 };
 
+export type RefreshPlannerCardSummary = {
+  id: string;
+  title: string;
+  tags: string[];
+  style: string;
+  color: string;
+  rarity: string;
+};
+
+export type RefreshPlannerSessionMetadata = {
+  previousSessionId: string;
+  previousQuery: string;
+  originalQuery: string;
+  previousBatchSize: number;
+  previousBatchCardIds: string[];
+  recentActiveSessionCount: number;
+  totalExcludedCardCount: number;
+  latestBatchIndex: number;
+  recentRefreshModes: string[];
+  hasSelectedCard: boolean;
+};
+
 type RefreshDecision = {
   language: SupportedLanguage;
   refreshMode: RefreshMode;
@@ -75,6 +97,23 @@ type DeepSeekMessage = {
 
 type DeepSeekResponse = {
   choices?: Array<{ message?: { content?: string } }>;
+};
+
+type RefreshPlannerPromptPayload = {
+  language: SupportedLanguage;
+  userFeedback: string;
+  previousQuery: ParsedGalleryQuery;
+  previousCards: RefreshPlannerCardSummary[];
+  sessionMetadata: RefreshPlannerSessionMetadata;
+};
+
+export type RefreshGalleryCardsInput = {
+  discordUserId: string;
+  currentMessage: string;
+  previousSession: GallerySearchSessionRecord;
+  excludeIds: string[];
+  limit?: number;
+  sessionMetadata?: RefreshPlannerSessionMetadata;
 };
 
 const STRUCTURED_FIELDS: Array<keyof Pick<
@@ -129,6 +168,26 @@ const buildFallbackParsedQuery = (query: string, language: SupportedLanguage): P
 const safeArray = (value: unknown): string[] =>
   Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [];
 
+const normalizeKeyword = (value: string): string => value.trim().toLowerCase();
+
+const dedupeKeywordList = (values: string[]): string[] => {
+  const seen = new Set<string>();
+  const result: string[] = [];
+
+  for (const value of values) {
+    const trimmed = value.trim();
+    const normalized = normalizeKeyword(trimmed);
+    if (!normalized || seen.has(normalized)) {
+      continue;
+    }
+
+    seen.add(normalized);
+    result.push(trimmed);
+  }
+
+  return result;
+};
+
 const isJsonObject = (value: Prisma.JsonValue): value is Prisma.JsonObject =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
@@ -145,7 +204,7 @@ const readSessionCards = (results: Prisma.JsonValue): Array<{ id: string }> => {
 
 const readSessionCardSummaries = (
   results: Prisma.JsonValue
-): Array<{ id: string; title: string; tags: string[]; style: string; color: string; rarity: string }> => {
+): RefreshPlannerCardSummary[] => {
   if (!Array.isArray(results)) {
     return [];
   }
@@ -213,10 +272,7 @@ const buildFallbackRefreshDecision = (
 };
 
 const buildRefreshPrompt = (
-  currentMessage: string,
-  previousQuery: ParsedGalleryQuery,
-  language: SupportedLanguage,
-  previousCards: Array<{ id: string; title: string; tags: string[]; style: string; color: string; rarity: string }>
+  payload: RefreshPlannerPromptPayload
 ): DeepSeekMessage[] => [
   {
     role: "system",
@@ -239,16 +295,17 @@ const buildRefreshPrompt = (
       "\"searchKeywords\":[\"female character\",\"SSR\",\"anime\",\"premium\",\"fantasy\"]," +
       "\"reason\":\"The user dislikes the current batch and wants a closer stylistic match.\"," +
       "\"shouldAskClarifyingQuestion\":false,\"shortQuestion\":\"\"}. " +
+      "The arrays keep, avoid, broaden, and searchKeywords are used directly for repository filtering and ranking, " +
+      "so only output short concrete keyword phrases, never full sentences. " +
+      "Use previousCards and sessionMetadata to avoid repeating recently shown cards or the same stale style. " +
+      "Prefer visual descriptors, character traits, rarity, tone, and style cues over generic words. " +
+      "If the user only wants another batch, keep the core preference stable and avoid over-broadening. " +
+      "If you ask a clarifying question, set refreshMode to need_clarification and keep the question short. " +
       "Do not write explanations outside JSON.",
   },
   {
     role: "user",
-    content: JSON.stringify({
-      language,
-      previousQuery,
-      currentMessage,
-      previousCards: previousCards.slice(0, 5),
-    }),
+    content: JSON.stringify(payload),
   },
 ];
 
@@ -288,11 +345,18 @@ const parseRefreshDecision = (
   }
 };
 
+type RefreshSearchHints = {
+  preferredKeywords?: string[];
+  broadenKeywords?: string[];
+  avoidKeywords?: string[];
+};
+
 const buildStrictSearchInput = (
   parsedQuery: ParsedGalleryQuery,
   keywords: string[],
   limit: number,
-  excludeIds: string[]
+  excludeIds: string[],
+  hints?: RefreshSearchHints
 ) => ({
   keywords,
   tags: parsedQuery.tags,
@@ -305,13 +369,17 @@ const buildStrictSearchInput = (
   scene: parsedQuery.scene,
   limit,
   excludeIds,
+  preferredKeywords: hints?.preferredKeywords ?? [],
+  broadenKeywords: hints?.broadenKeywords ?? [],
+  avoidKeywords: hints?.avoidKeywords ?? [],
 });
 
 const buildBroadenedSearchInput = (
   parsedQuery: ParsedGalleryQuery,
   keywords: string[],
   limit: number,
-  excludeIds: string[]
+  excludeIds: string[],
+  hints?: RefreshSearchHints
 ) => ({
   keywords,
   tags: [],
@@ -324,6 +392,9 @@ const buildBroadenedSearchInput = (
   scene: "",
   limit,
   excludeIds,
+  preferredKeywords: hints?.preferredKeywords ?? [],
+  broadenKeywords: hints?.broadenKeywords ?? [],
+  avoidKeywords: hints?.avoidKeywords ?? [],
 });
 
 export const buildStructuredGalleryKeywords = (parsedQuery: ParsedGalleryQuery): string[] => {
@@ -335,6 +406,49 @@ export const buildStructuredGalleryKeywords = (parsedQuery: ParsedGalleryQuery):
 
   return expandGalleryKeywords(rawValues.map((value) => canonicalizeGalleryTerm(value)));
 };
+
+const buildAppliedRefreshKeywords = (
+  decision: RefreshDecision,
+  previousParsed: ParsedGalleryQuery
+): Pick<GalleryRefreshResult, "keep" | "avoid" | "broaden" | "searchKeywords"> => {
+  const keep =
+    decision.keep.length > 0
+      ? dedupeKeywordList(expandGalleryKeywords(decision.keep))
+      : buildStructuredGalleryKeywords(previousParsed);
+  const broaden = decision.broaden.length > 0 ? dedupeKeywordList(expandGalleryKeywords(decision.broaden)) : [];
+  const searchKeywords =
+    decision.searchKeywords.length > 0
+      ? dedupeKeywordList(expandGalleryKeywords(decision.searchKeywords))
+      : keep;
+  const positiveKeywordSet = new Set([...keep, ...broaden, ...searchKeywords].map(normalizeKeyword));
+  const avoid = dedupeKeywordList(expandGalleryKeywords(decision.avoid)).filter(
+    (keyword) => !positiveKeywordSet.has(normalizeKeyword(keyword))
+  );
+
+  return {
+    keep,
+    avoid,
+    broaden,
+    searchKeywords,
+  };
+};
+
+const buildDefaultSessionMetadata = (
+  previousSession: GallerySearchSessionRecord,
+  previousCards: RefreshPlannerCardSummary[],
+  excludeIds: string[]
+): RefreshPlannerSessionMetadata => ({
+  previousSessionId: previousSession.id,
+  previousQuery: previousSession.query,
+  originalQuery: previousSession.query,
+  previousBatchSize: previousCards.length,
+  previousBatchCardIds: previousCards.map((card) => card.id),
+  recentActiveSessionCount: 1,
+  totalExcludedCardCount: excludeIds.length,
+  latestBatchIndex: 1,
+  recentRefreshModes: [],
+  hasSelectedCard: Boolean(previousSession.selectedGalleryCardId),
+});
 
 export const galleryService = {
   async searchGalleryCards(query: string, language: SupportedLanguage = "en"): Promise<GallerySearchResult> {
@@ -388,13 +502,7 @@ export const galleryService = {
     };
   },
 
-  async refreshGalleryCards(input: {
-    discordUserId: string;
-    currentMessage: string;
-    previousSession: GallerySearchSessionRecord;
-    excludeIds: string[];
-    limit?: number;
-  }): Promise<GalleryRefreshResult> {
+  async refreshGalleryCards(input: RefreshGalleryCardsInput): Promise<GalleryRefreshResult> {
     logger.info("[GALLERY SERVICE] refresh query=" + input.previousSession.query);
     if (!isDatabaseReady()) {
       throw new Error("DATABASE_NOT_READY");
@@ -408,6 +516,16 @@ export const galleryService = {
 
     const fallbackDecision = buildFallbackRefreshDecision(input.currentMessage, previousParsed, language);
     const previousCards = readSessionCardSummaries(input.previousSession.results);
+    const sessionMetadata =
+      input.sessionMetadata ?? buildDefaultSessionMetadata(input.previousSession, previousCards, input.excludeIds);
+    const promptPayload: RefreshPlannerPromptPayload = {
+      language,
+      userFeedback: input.currentMessage,
+      previousQuery: previousParsed,
+      previousCards: previousCards.slice(0, 6),
+      sessionMetadata,
+    };
+    logger.info("[GALLERY SERVICE] refresh prompt context=" + JSON.stringify(promptPayload));
     const env = loadEnv();
     let decision = fallbackDecision;
 
@@ -422,7 +540,7 @@ export const galleryService = {
           body: JSON.stringify({
             model: env.deepseekModel,
             temperature: 0,
-            messages: buildRefreshPrompt(input.currentMessage, previousParsed, language, previousCards),
+            messages: buildRefreshPrompt(promptPayload),
           }),
         });
 
@@ -448,6 +566,10 @@ export const galleryService = {
       }
     }
 
+    logger.info("[GALLERY SERVICE] refresh planner decision=" + JSON.stringify(decision));
+    const appliedKeywords = buildAppliedRefreshKeywords(decision, previousParsed);
+    logger.info("[GALLERY SERVICE] refresh applied keywords=" + JSON.stringify(appliedKeywords));
+
     if (decision.shouldAskClarifyingQuestion || decision.refreshMode === "need_clarification") {
       return {
         cards: [],
@@ -462,29 +584,29 @@ export const galleryService = {
         limit,
         excludedCardIds: input.excludeIds,
         parsedQuery: previousParsed,
-        keep: decision.keep,
-        avoid: decision.avoid,
-        broaden: decision.broaden,
-        searchKeywords: decision.searchKeywords,
+        keep: appliedKeywords.keep,
+        avoid: appliedKeywords.avoid,
+        broaden: appliedKeywords.broaden,
+        searchKeywords: appliedKeywords.searchKeywords,
       };
     }
 
-    const strictKeywords =
-      decision.keep.length > 0 ? expandGalleryKeywords(decision.keep) : buildStructuredGalleryKeywords(previousParsed);
-    const refinedKeywords =
-      decision.searchKeywords.length > 0 ? expandGalleryKeywords(decision.searchKeywords) : strictKeywords;
-    const broadenKeywords = decision.broaden.length > 0 ? expandGalleryKeywords(decision.broaden) : [];
-
     const strictResults = await galleryRepository.search(
-      buildStrictSearchInput(previousParsed, strictKeywords, limit, input.excludeIds)
+      buildStrictSearchInput(previousParsed, appliedKeywords.keep, limit, input.excludeIds, {
+        preferredKeywords: appliedKeywords.keep,
+        avoidKeywords: appliedKeywords.avoid,
+      })
     );
 
     let chosenMode: Exclude<RefreshMode, "need_clarification"> = decision.refreshMode;
     let finalCards = strictResults;
 
-    if (finalCards.length < limit && refinedKeywords.length > 0) {
+    if (finalCards.length < limit && appliedKeywords.searchKeywords.length > 0) {
       const refinedResults = await galleryRepository.search(
-        buildStrictSearchInput(previousParsed, refinedKeywords, limit, input.excludeIds)
+        buildStrictSearchInput(previousParsed, appliedKeywords.searchKeywords, limit, input.excludeIds, {
+          preferredKeywords: dedupeKeywordList([...appliedKeywords.keep, ...appliedKeywords.searchKeywords]),
+          avoidKeywords: appliedKeywords.avoid,
+        })
       );
       finalCards = dedupeCards([...finalCards, ...refinedResults]);
       if (chosenMode === "next_batch" && refinedResults.length > strictResults.length) {
@@ -492,9 +614,19 @@ export const galleryService = {
       }
     }
 
-    if (finalCards.length < limit && broadenKeywords.length > 0) {
+    if (finalCards.length < limit && appliedKeywords.broaden.length > 0) {
       const broadenedResults = await galleryRepository.search(
-        buildBroadenedSearchInput(previousParsed, [...strictKeywords, ...broadenKeywords], limit, input.excludeIds)
+        buildBroadenedSearchInput(
+          previousParsed,
+          dedupeKeywordList([...appliedKeywords.keep, ...appliedKeywords.broaden]),
+          limit,
+          input.excludeIds,
+          {
+            preferredKeywords: appliedKeywords.keep,
+            broadenKeywords: appliedKeywords.broaden,
+            avoidKeywords: appliedKeywords.avoid,
+          }
+        )
       );
       finalCards = dedupeCards([...finalCards, ...broadenedResults]);
       chosenMode = "broaden";
@@ -521,10 +653,10 @@ export const galleryService = {
       limit,
       excludedCardIds: input.excludeIds,
       parsedQuery: previousParsed,
-      keep: decision.keep,
-      avoid: decision.avoid,
-      broaden: decision.broaden,
-      searchKeywords: decision.searchKeywords,
+      keep: appliedKeywords.keep,
+      avoid: appliedKeywords.avoid,
+      broaden: appliedKeywords.broaden,
+      searchKeywords: appliedKeywords.searchKeywords,
     };
   },
 

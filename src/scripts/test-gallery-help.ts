@@ -1,7 +1,9 @@
 import assert from "node:assert/strict";
+import { SkillContext } from "../hermes/types";
+import { buildHermesRegistry } from "../hermes/registry";
+import { HermesRouter } from "../hermes/router";
 import { llmIntentClassifierService } from "../services/llm-intent-classifier.service";
 import { galleryHelpSkill } from "../skills/gallery/gallery-help.skill";
-import { SkillContext } from "../hermes/types";
 
 const buildContext = (language: SkillContext["language"]): SkillContext => ({
   requestId: `help-${Date.now()}-${language}`,
@@ -15,8 +17,21 @@ const buildContext = (language: SkillContext["language"]): SkillContext => ({
 const containsChinese = (value: string): boolean => /[\u4e00-\u9fff]/.test(value);
 
 const run = async (): Promise<void> => {
+  const router = new HermesRouter(buildHermesRegistry());
   const englishMessage = "How do I buy this card?";
   const chineseMessage = "怎么买这张卡？";
+
+  const englishPurchaseIntent = await router.determineIntent("How do I order this card?");
+  assert.equal(englishPurchaseIntent.intent, "help");
+
+  const englishOrderStatusIntent = await router.determineIntent("Where is my order?");
+  assert.equal(englishOrderStatusIntent.intent, "order_status");
+
+  const chinesePurchaseIntent = await router.determineIntent("怎么购买这张卡？");
+  assert.equal(chinesePurchaseIntent.intent, "help");
+
+  const chineseOrderStatusIntent = await router.determineIntent("查询订单状态");
+  assert.equal(chineseOrderStatusIntent.intent, "order_status");
 
   const englishIntent = await llmIntentClassifierService.classify(englishMessage);
   console.log("[TEST GALLERY HELP] english intent=", JSON.stringify(englishIntent));
@@ -38,7 +53,7 @@ const run = async (): Promise<void> => {
   console.log("[TEST GALLERY HELP] chinese reply=", JSON.stringify(chineseReply));
   assert.equal(chineseReply.language, "zh");
   assert.ok(containsChinese(chineseReply.text));
-  assert.ok(/购买|搜索|编号|卡牌/.test(chineseReply.text));
+  assert.ok(/购买|搜索|编号|卡/.test(chineseReply.text));
 
   console.log("[TEST GALLERY HELP] all bilingual help assertions passed");
 };

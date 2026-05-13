@@ -4,7 +4,12 @@ import {
   gallerySearchSessionRepository,
 } from "../../repositories/gallery-search-session.repository";
 import { Prisma } from "@prisma/client";
-import { GalleryCardDto, GalleryRefreshResult, galleryService } from "../../services/gallery.service";
+import {
+  GalleryCardDto,
+  GalleryRefreshResult,
+  RefreshPlannerSessionMetadata,
+  galleryService,
+} from "../../services/gallery.service";
 import { detectPreferredLanguage } from "../../utils/gallery-language";
 import { logger } from "../../utils/logger";
 
@@ -45,6 +50,40 @@ const extractCardIds = (session: GallerySearchSessionRecord): string[] => {
     .filter(Boolean);
 };
 
+const readSessionResultMetadata = (
+  session: GallerySearchSessionRecord
+): {
+  batchIndex: number | null;
+  refreshMode: string | null;
+  originalQuery: string | null;
+} => {
+  if (!Array.isArray(session.results)) {
+    return {
+      batchIndex: null,
+      refreshMode: null,
+      originalQuery: null,
+    };
+  }
+
+  const isJsonObject = (value: Prisma.JsonValue): value is Prisma.JsonObject =>
+    typeof value === "object" && value !== null && !Array.isArray(value);
+
+  const firstResult = session.results.find(isJsonObject);
+  if (!firstResult) {
+    return {
+      batchIndex: null,
+      refreshMode: null,
+      originalQuery: null,
+    };
+  }
+
+  return {
+    batchIndex: typeof firstResult.batchIndex === "number" ? firstResult.batchIndex : null,
+    refreshMode: typeof firstResult.refreshMode === "string" ? firstResult.refreshMode : null,
+    originalQuery: typeof firstResult.originalQuery === "string" ? firstResult.originalQuery : null,
+  };
+};
+
 export const refreshGallerySkill: SkillHandler<RefreshGalleryInput, RefreshGalleryOutput> = async (
   input,
   context
@@ -83,6 +122,27 @@ export const refreshGallerySkill: SkillHandler<RefreshGalleryInput, RefreshGalle
 
   const excludeIds = Array.from(new Set(recentSessions.flatMap(extractCardIds)));
   const firstBatchCardIds = extractCardIds(previousSession);
+  const previousSessionMetadata = readSessionResultMetadata(previousSession);
+  const recentRefreshModes = Array.from(
+    new Set(
+      recentSessions
+        .map((session) => readSessionResultMetadata(session).refreshMode)
+        .filter((value): value is string => Boolean(value))
+    )
+  );
+  const sessionMetadata: RefreshPlannerSessionMetadata = {
+    previousSessionId: previousSession.id,
+    previousQuery: previousSession.query,
+    originalQuery: previousSessionMetadata.originalQuery ?? previousSession.query,
+    previousBatchSize: firstBatchCardIds.length,
+    previousBatchCardIds: firstBatchCardIds,
+    recentActiveSessionCount: recentSessions.length,
+    totalExcludedCardCount: excludeIds.length,
+    latestBatchIndex: previousSessionMetadata.batchIndex ?? recentSessions.length,
+    recentRefreshModes,
+    hasSelectedCard: Boolean(previousSession.selectedGalleryCardId),
+  };
+  logger.info("[REFRESH GALLERY SKILL] session metadata=" + JSON.stringify(sessionMetadata));
 
   const refreshResult = await galleryService.refreshGalleryCards({
     discordUserId: input.discordUserId,
@@ -90,6 +150,7 @@ export const refreshGallerySkill: SkillHandler<RefreshGalleryInput, RefreshGalle
     previousSession,
     excludeIds,
     limit: 10,
+    sessionMetadata,
   });
 
   const secondBatchCardIds = refreshResult.cards.map((card) => card.id);

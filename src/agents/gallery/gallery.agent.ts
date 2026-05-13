@@ -1,4 +1,5 @@
 import { AgentContext, AgentDefinition, HermesInput, HermesOutput, RefreshMode } from "../../hermes/types";
+import { gallerySearchSessionRepository } from "../../repositories/gallery-search-session.repository";
 import { galleryHelpSkill } from "../../skills/gallery/gallery-help.skill";
 import { CreateCheckoutLinkSkill } from "../../skills/gallery/create-checkout-link.skill";
 import { refreshGallerySkill } from "../../skills/gallery/refresh-gallery.skill";
@@ -175,7 +176,14 @@ export const GalleryAgent: AgentDefinition = {
       }
       case "gallery_select": {
         logger.info("[GALLERY AGENT] handling gallery_select");
-        const selectedIndex = parseSelectedIndex(input.text);
+        const activeSession = await gallerySearchSessionRepository.findLatest({
+          discordUserId: context.userId ?? "",
+          discordChannelId: context.channelId ?? "",
+          status: "active",
+        });
+        const selectedIndex = parseSelectedIndex(input.text, {
+          hasActiveSession: Boolean(activeSession),
+        });
         if (!selectedIndex) {
           return {
             type: "text",

@@ -58,6 +58,19 @@ const run = async (): Promise<void> => {
   const zhUserId = `refresh-zh-user-${suffix}`;
   const zhChannelId = `refresh-zh-channel-${suffix}`;
 
+  const numberedSearchIntent = await router.determineIntent("Show me 10 black gold SSR female cards", {
+    userId: `search-user-${suffix}`,
+    channelId: `search-channel-${suffix}`,
+  });
+  assert.equal(numberedSearchIntent.intent, "gallery_search");
+
+  const noSessionSelectIntent = await router.determineIntent("one", {
+    userId: `no-session-user-${suffix}`,
+    channelId: `no-session-channel-${suffix}`,
+  });
+  assert.notEqual(noSessionSelectIntent.intent, "gallery_select");
+  assert.equal(parseSelectedIndex("1"), null);
+
   const firstSearch = await router.handle({
     text: "girl",
     userId: enUserId,
@@ -101,8 +114,18 @@ const run = async (): Promise<void> => {
   assert.ok(fullChainLogs.includes("[GALLERY AGENT] handling gallery_refresh"));
   assert.ok(fullChainLogs.includes("[REFRESH GALLERY SKILL] start"));
   assert.ok(fullChainLogs.includes("[REFRESH GALLERY SKILL] completed"));
+  assert.ok(fullChainLogs.some((line) => line.includes("[REFRESH GALLERY SKILL] session metadata=")));
+  assert.ok(fullChainLogs.some((line) => line.includes("[GALLERY SERVICE] refresh prompt context=")));
+  assert.ok(fullChainLogs.some((line) => line.includes("\"userFeedback\":\"Can we switch to another batch?\"")));
+  assert.ok(fullChainLogs.some((line) => line.includes("\"sessionMetadata\"")));
+  assert.ok(fullChainLogs.some((line) => line.includes("[GALLERY SERVICE] refresh applied keywords=")));
+  assert.ok(fullChainLogs.some((line) => line.includes("\"preferredKeywords\"")));
+  assert.ok(fullChainLogs.some((line) => line.includes("\"avoidKeywords\"")));
 
-  const refineIntent = await router.determineIntent("I don't like these, show me another style");
+  const refineIntent = await router.determineIntent("I don't like these, show me another style", {
+    userId: enUserId,
+    channelId: enChannelId,
+  });
   assert.equal(refineIntent.intent, "gallery_refresh");
 
   const refineResponse = await router.handle({
@@ -113,7 +136,10 @@ const run = async (): Promise<void> => {
   assert.equal(refineResponse.type, "gallery_search_results");
   assert.ok(["refine", "broaden", "random_fallback"].includes(refineResponse.refreshMode ?? ""));
 
-  const broadenIntent = await router.determineIntent("Show me another style");
+  const broadenIntent = await router.determineIntent("Show me another style", {
+    userId: broadenUserId,
+    channelId: broadenChannelId,
+  });
   assert.equal(broadenIntent.intent, "gallery_refresh");
 
   const broadenSearch = await router.handle({
@@ -131,14 +157,18 @@ const run = async (): Promise<void> => {
   assert.equal(broadenResponse.type, "gallery_search_results");
   assert.ok(["broaden", "random_fallback", "refine"].includes(broadenResponse.refreshMode ?? ""));
 
-  const selectIntent = await router.determineIntent("one");
+  const selectIntent = await router.determineIntent("one", {
+    userId: enUserId,
+    channelId: enChannelId,
+  });
   assert.equal(selectIntent.intent, "gallery_select");
-  assert.equal(parseSelectedIndex("1"), 1);
-  assert.equal(parseSelectedIndex("one"), 1);
-  assert.equal(parseSelectedIndex("first"), 1);
-  assert.equal(parseSelectedIndex("number one"), 1);
-  assert.equal(parseSelectedIndex("第一个"), 1);
-  assert.equal(parseSelectedIndex("选1"), 1);
+  assert.equal(parseSelectedIndex("1", { hasActiveSession: true }), 1);
+  assert.equal(parseSelectedIndex("one", { hasActiveSession: true }), 1);
+  assert.equal(parseSelectedIndex("first", { hasActiveSession: true }), 1);
+  assert.equal(parseSelectedIndex("number one", { hasActiveSession: true }), 1);
+  assert.equal(parseSelectedIndex("第一个", { hasActiveSession: true }), 1);
+  assert.equal(parseSelectedIndex("选1", { hasActiveSession: true }), 1);
+  assert.equal(parseSelectedIndex("Show me 10 black gold SSR female cards", { hasActiveSession: true }), null);
 
   const activeSession = await gallerySearchSessionRepository.findLatest({
     discordUserId: enUserId,
@@ -155,7 +185,10 @@ const run = async (): Promise<void> => {
   assert.equal(zhSearch.type, "gallery_search_results");
   ensure(zhSearch.cards.length > 0, "Expected Chinese search results");
 
-  const zhIntent = await router.determineIntent("换一批");
+  const zhIntent = await router.determineIntent("换一批", {
+    userId: zhUserId,
+    channelId: zhChannelId,
+  });
   assert.equal(zhIntent.intent, "gallery_refresh");
   assert.equal(zhIntent.language, "zh");
 
