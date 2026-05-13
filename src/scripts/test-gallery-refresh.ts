@@ -7,6 +7,7 @@ import assert from "node:assert/strict";
 import { HermesOutput } from "../hermes/types";
 import { buildHermesRegistry } from "../hermes/registry";
 import { HermesRouter } from "../hermes/router";
+import { galleryRepository } from "../repositories/gallery.repository";
 import { gallerySearchSessionRepository } from "../repositories/gallery-search-session.repository";
 import { parseSelectedIndex } from "../utils/gallery-language";
 import { logger } from "../utils/logger";
@@ -46,6 +47,23 @@ const collectLogs = async (run: () => Promise<void>): Promise<string[]> => {
   }
 };
 
+const createSessionResultCard = (card: {
+  id: string;
+  title: string;
+  description: string | null;
+  imageUrl: string;
+  price: number;
+  tags: string[];
+}) => ({
+  id: card.id,
+  title: card.title,
+  description: card.description,
+  imageUrl: card.imageUrl,
+  price: card.price,
+  tags: card.tags,
+  language: "en" as const,
+});
+
 const run = async (): Promise<void> => {
   const registry = buildHermesRegistry();
   const router = new HermesRouter(registry);
@@ -57,6 +75,10 @@ const run = async (): Promise<void> => {
   const broadenChannelId = `refresh-broaden-channel-${suffix}`;
   const zhUserId = `refresh-zh-user-${suffix}`;
   const zhChannelId = `refresh-zh-channel-${suffix}`;
+  const anchorUserId = `refresh-anchor-user-${suffix}`;
+  const anchorChannelId = `refresh-anchor-channel-${suffix}`;
+  const exhaustedUserId = `refresh-exhausted-user-${suffix}`;
+  const exhaustedChannelId = `refresh-exhausted-channel-${suffix}`;
 
   const numberedSearchIntent = await router.determineIntent("Show me 10 black gold SSR female cards", {
     userId: `search-user-${suffix}`,
@@ -108,12 +130,20 @@ const run = async (): Promise<void> => {
   assert.ok(Array.isArray(secondResponse.metadata?.avoid));
   assert.ok(Array.isArray(secondResponse.metadata?.broaden));
   assert.ok(Array.isArray(secondResponse.metadata?.searchKeywords));
+  assert.equal(secondResponse.metadata?.poolExhausted, false);
 
   const secondBatchCardIds = secondResponse.cards.map((card) => card.id);
   ensure(secondBatchCardIds.length > 0, "Expected second English batch");
   for (const cardId of secondBatchCardIds) {
     assert.ok(!firstBatchCardIds.includes(cardId), `Expected refreshed batch to exclude ${cardId}`);
   }
+  for (const badKeyword of ["previous s", "sa composition", "cha"]) {
+    assert.ok(!secondResponse.metadata?.keep?.includes(badKeyword));
+    assert.ok(!secondResponse.metadata?.avoid?.includes(badKeyword));
+    assert.ok(!secondResponse.metadata?.broaden?.includes(badKeyword));
+    assert.ok(!secondResponse.metadata?.searchKeywords?.includes(badKeyword));
+  }
+
   const activeSessionsAfterRefresh = await gallerySearchSessionRepository.findRecentByUserId({
     discordUserId: enUserId,
     discordChannelId: enChannelId,
@@ -128,11 +158,11 @@ const run = async (): Promise<void> => {
   assert.ok(fullChainLogs.some((line) => line.includes("[GALLERY AGENT] handling gallery_refresh")));
   assert.ok(fullChainLogs.some((line) => line.includes("[REFRESH GALLERY SKILL] start")));
   assert.ok(fullChainLogs.some((line) => line.includes("[REFRESH GALLERY SKILL] completed")));
-  assert.ok(fullChainLogs.some((line) => line.includes("[REFRESH GALLERY SKILL] session metadata=")));
-  assert.ok(fullChainLogs.some((line) => line.includes("[GALLERY SERVICE] refresh prompt context=")));
+  assert.ok(fullChainLogs.some((line) => line.includes("[REFRESH GALLERY SKILL] session metadata")));
+  assert.ok(fullChainLogs.some((line) => line.includes("[GALLERY SERVICE] refresh prompt context")));
   assert.ok(fullChainLogs.some((line) => line.includes("\"userFeedback\":\"Can we switch to another batch?\"")));
   assert.ok(fullChainLogs.some((line) => line.includes("\"sessionMetadata\"")));
-  assert.ok(fullChainLogs.some((line) => line.includes("[GALLERY SERVICE] refresh applied keywords=")));
+  assert.ok(fullChainLogs.some((line) => line.includes("[GALLERY SERVICE] refresh applied keywords")));
   assert.ok(fullChainLogs.some((line) => line.includes("\"preferredKeywords\"")));
   assert.ok(fullChainLogs.some((line) => line.includes("\"avoidKeywords\"")));
 
@@ -184,13 +214,6 @@ const run = async (): Promise<void> => {
   assert.equal(parseSelectedIndex("选1", { hasActiveSession: true }), 1);
   assert.equal(parseSelectedIndex("Show me 10 black gold SSR female cards", { hasActiveSession: true }), null);
 
-  const activeSession = await gallerySearchSessionRepository.findLatest({
-    discordUserId: enUserId,
-    discordChannelId: enChannelId,
-    status: "active",
-  });
-  ensure(activeSession && Array.isArray(activeSession.results) && activeSession.results.length > 0, "Expected active session");
-
   const zhSearch = await router.handle({
     text: "女孩卡牌",
     userId: zhUserId,
@@ -226,6 +249,88 @@ const run = async (): Promise<void> => {
     "Please search for a card style first, then I can show you another batch."
   );
 
+  const anchorSearch = await router.handle({
+    text: "girl",
+    userId: anchorUserId,
+    channelId: anchorChannelId,
+  });
+  assert.equal(anchorSearch.type, "gallery_search_results");
+  const baseAnchorCards = anchorSearch.cards.slice(0, 4).map(createSessionResultCard);
+
+  await gallerySearchSessionRepository.archiveActiveSessions({
+    discordUserId: anchorUserId,
+    discordChannelId: anchorChannelId,
+  });
+
+  const archivedAnchorSession = await gallerySearchSessionRepository.create({
+    discordUserId: anchorUserId,
+    discordChannelId: anchorChannelId,
+    query: "girl",
+    results: baseAnchorCards.map((card) => ({
+      ...card,
+      batchIndex: 2,
+      refreshMode: "broaden",
+      originalQuery: "girl",
+    })),
+    status: "archived",
+  });
+
+  const sparseDisplaySession = await gallerySearchSessionRepository.create({
+    discordUserId: anchorUserId,
+    discordChannelId: anchorChannelId,
+    query: "girl",
+    results: baseAnchorCards.slice(0, 1).map((card) => ({
+      ...card,
+      batchIndex: 3,
+      refreshMode: "random_fallback",
+      originalQuery: "girl",
+      previousSessionId: archivedAnchorSession.id,
+      anchorSessionId: archivedAnchorSession.id,
+    })),
+    status: "active",
+  });
+
+  const anchorRefreshResponse = await router.handle({
+    text: "I don't like these, show me another style",
+    userId: anchorUserId,
+    channelId: anchorChannelId,
+  });
+  ensure(anchorRefreshResponse.metadata, "Expected refresh metadata for anchor test");
+  assert.equal(anchorRefreshResponse.metadata?.anchorSessionId, archivedAnchorSession.id);
+  assert.equal(anchorRefreshResponse.metadata?.displaySessionId, sparseDisplaySession.id);
+
+  const exhaustedSearch = await router.handle({
+    text: "girl",
+    userId: exhaustedUserId,
+    channelId: exhaustedChannelId,
+  });
+  assert.equal(exhaustedSearch.type, "gallery_search_results");
+
+  const originalSearch = galleryRepository.search;
+  const originalFindActiveExcluding = galleryRepository.findActiveExcluding;
+  galleryRepository.search = async () => [];
+  galleryRepository.findActiveExcluding = async () => [];
+
+  try {
+    const exhaustedResponse = await router.handle({
+      text: "I don't like these, show me another style",
+      userId: exhaustedUserId,
+      channelId: exhaustedChannelId,
+    });
+    assert.equal(exhaustedResponse.type, "text");
+    assert.equal(
+      exhaustedResponse.text,
+      "I’ve already shown most of the close matches for this direction. Give me one new style, color, or theme and I’ll refine the next batch."
+    );
+    assert.equal(exhaustedResponse.metadata?.refreshMode, "need_clarification");
+    assert.equal(exhaustedResponse.metadata?.poolExhausted, true);
+    assert.ok(exhaustedResponse.metadata?.anchorSessionId);
+    assert.ok(exhaustedResponse.metadata?.displaySessionId);
+  } finally {
+    galleryRepository.search = originalSearch;
+    galleryRepository.findActiveExcluding = originalFindActiveExcluding;
+  }
+
   console.log(
     "[TEST GALLERY REFRESH] summary=",
     JSON.stringify({
@@ -239,6 +344,9 @@ const run = async (): Promise<void> => {
         avoid: secondResponse.metadata?.avoid,
         broaden: secondResponse.metadata?.broaden,
         searchKeywords: secondResponse.metadata?.searchKeywords,
+        anchorSessionId: secondResponse.metadata?.anchorSessionId,
+        displaySessionId: secondResponse.metadata?.displaySessionId,
+        poolExhausted: secondResponse.metadata?.poolExhausted,
       },
     })
   );

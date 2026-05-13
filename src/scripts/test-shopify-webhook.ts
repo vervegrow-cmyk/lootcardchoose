@@ -5,8 +5,8 @@ dotenv.config();
 dotenv.config({ path: ".env.local", override: true });
 process.env.SHOPIFY_CLIENT_SECRET ||= "test-shopify-client-secret";
 
-import { galleryService } from "../services/gallery.service";
 import { discordNotificationService } from "../services/discord-notification.service";
+import { galleryService } from "../services/gallery.service";
 import { orderService } from "../services/order.service";
 import { shopifyWebhookService } from "../services/shopify-webhook.service";
 
@@ -37,6 +37,9 @@ const main = async (): Promise<void> => {
     orderId: pendingOrder.id,
     shopifyProductId: "test-shopify-product-id",
     shopifyCheckoutUrl: "https://example.com/test-checkout",
+    shopifyProductUrl: "https://example.com/products/test-product",
+    shopifyShareImageUrl: "https://example.com/share-image.jpg",
+    shopifyProductHandle: "test-product",
     status: "checkout_created",
   });
 

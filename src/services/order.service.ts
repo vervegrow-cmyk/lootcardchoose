@@ -9,6 +9,9 @@ export type OrderRecord = {
   status: OrderStatus;
   shopifyProductId: string | null;
   shopifyCheckoutUrl: string | null;
+  shopifyProductUrl: string | null;
+  shopifyShareImageUrl: string | null;
+  shopifyProductHandle: string | null;
 };
 
 export const orderService = {
@@ -23,6 +26,9 @@ export const orderService = {
     orderId: string;
     shopifyProductId: string;
     shopifyCheckoutUrl: string;
+    shopifyProductUrl: string;
+    shopifyShareImageUrl: string;
+    shopifyProductHandle: string;
     status: "checkout_created";
   }): Promise<OrderRecord> {
     return orderRepository.updateShopifyLink(input);

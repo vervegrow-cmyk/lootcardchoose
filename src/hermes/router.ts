@@ -1,22 +1,21 @@
-import { HermesRegistry } from "./registry";
-import {
-  HermesInput,
-  HermesOutput,
-  AgentId,
-  AgentContext,
-  RouterInput,
-  RoutingDecision,
-  IntentId,
-  SupportedLanguage,
-} from "./types";
-import { HermesOrchestrator } from "./orchestrator";
 import { fallbackIntentClassification, llmIntentClassifierService } from "../services/llm-intent-classifier.service";
 import { gallerySearchSessionRepository } from "../repositories/gallery-search-session.repository";
 import { isGalleryRefreshMessage, isGallerySelectMessage } from "../utils/gallery-language";
 import { logger } from "../utils/logger";
+import { HermesOrchestrator } from "./orchestrator";
+import { HermesRegistry } from "./registry";
+import {
+  AgentContext,
+  AgentId,
+  HermesInput,
+  HermesOutput,
+  IntentId,
+  RouterInput,
+  RoutingDecision,
+  SupportedLanguage,
+} from "./types";
 
-const detectLanguage = (message: string): SupportedLanguage =>
-  /[\u4e00-\u9fff]/.test(message) ? "zh" : "en";
+const detectLanguage = (message: string): SupportedLanguage => (/[\u4e00-\u9fff]/.test(message) ? "zh" : "en");
 
 const HELP_PATTERNS = [
   "help",

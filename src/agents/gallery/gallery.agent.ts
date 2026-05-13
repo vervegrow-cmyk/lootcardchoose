@@ -1,36 +1,31 @@
 import { AgentContext, AgentDefinition, HermesInput, HermesOutput, RefreshMode } from "../../hermes/types";
 import { gallerySearchSessionRepository } from "../../repositories/gallery-search-session.repository";
-import { galleryHelpSkill } from "../../skills/gallery/gallery-help.skill";
 import { CreateCheckoutLinkSkill } from "../../skills/gallery/create-checkout-link.skill";
+import { galleryHelpSkill } from "../../skills/gallery/gallery-help.skill";
 import { refreshGallerySkill } from "../../skills/gallery/refresh-gallery.skill";
 import { searchGallerySkill } from "../../skills/gallery/search-gallery.skill";
 import { selectCardSkill } from "../../skills/gallery/select-card.skill";
 import { parseSelectedIndex } from "../../utils/gallery-language";
 import { t } from "../../utils/i18n";
 import { logger } from "../../utils/logger";
+import { isUserFacingError } from "../../utils/user-facing-error";
 
-const buildSearchSuccessText = (language: AgentContext["language"]): string =>
-  language === "zh"
-    ? "我为你找到了以下卡牌，请回复编号选择一张。"
-    : "Here are the cards I found for you. Reply with a number to select one.";
+const buildSearchSuccessText = (language: AgentContext["language"], count: number): string =>
+  t(language, "gallery.search.success", { count });
 
-const buildSearchEmptyText = (language: AgentContext["language"]): string =>
-  language === "zh"
-    ? "抱歉，暂时没有找到符合要求的卡牌。你可以换一种颜色、稀有度或角色描述再试试。"
-    : "Sorry, I couldn't find matching cards. Try describing the style, color, rarity, or character type.";
+const buildSearchEmptyText = (language: AgentContext["language"]): string => t(language, "gallery.search.empty");
 
 const buildCheckoutReadyText = (language: AgentContext["language"]): string =>
-  language === "zh"
-    ? "你的卡牌商品页已准备好，可以先分享，也可以直接购买。"
-    : "Your card page is ready. You can share it or buy it now.";
+  language === "zh" ? "你的卡牌商品页已准备好，可以先分享，也可以直接购买。" : "Your card page is ready. You can share it or buy it now.";
 
 const buildRefreshText = (
   language: AgentContext["language"],
   refreshMode: RefreshMode,
-  shortQuestion?: string
+  shortQuestion?: string,
+  poolExhausted?: boolean
 ): string => {
   if (refreshMode === "need_clarification") {
-    return shortQuestion || t(language, "gallery.refresh.needClarification");
+    return shortQuestion || (poolExhausted ? t(language, "gallery.refresh.poolExhausted") : t(language, "gallery.refresh.needClarification"));
   }
 
   if (refreshMode === "refine") {
@@ -56,6 +51,7 @@ export const GalleryAgent: AgentDefinition = {
           discordChannelId: context.channelId ?? "",
           query: input.text,
         });
+
         const result = await searchGallerySkill(
           {
             query: input.text,
@@ -76,7 +72,7 @@ export const GalleryAgent: AgentDefinition = {
         return {
           type: "gallery_search_results",
           language: result.language,
-          text: buildSearchSuccessText(result.language),
+          text: buildSearchSuccessText(result.language, result.results.length),
           cards: result.results.map((card) => ({
             id: card.id,
             title: card.title,
@@ -86,7 +82,9 @@ export const GalleryAgent: AgentDefinition = {
             tags: card.tags,
             language: result.language,
           })),
-          selectionPrompt: result.language === "zh" ? "请回复编号选择一张。" : "Reply with a number to select one.",
+          selectionPrompt: t(result.language, "gallery.search.chooseHint", {
+            count: Math.min(result.results.length, 10),
+          }),
           metadata: {
             query: result.query,
             parsedQuery: result.parsedQuery ?? undefined,
@@ -96,12 +94,14 @@ export const GalleryAgent: AgentDefinition = {
           },
         };
       }
+
       case "gallery_refresh": {
         logger.info("[GALLERY AGENT] handling gallery_refresh", {
           discordUserId: context.userId ?? "",
           discordChannelId: context.channelId ?? "",
           feedback: input.text,
         });
+
         const result = await refreshGallerySkill(
           {
             discordUserId: context.userId ?? "",
@@ -123,6 +123,9 @@ export const GalleryAgent: AgentDefinition = {
               avoid: result.avoid,
               broaden: result.broaden,
               searchKeywords: result.searchKeywords,
+              anchorSessionId: result.anchorSessionId,
+              displaySessionId: result.displaySessionId,
+              poolExhausted: result.poolExhausted,
             },
           };
         }
@@ -131,7 +134,7 @@ export const GalleryAgent: AgentDefinition = {
           return {
             type: "text",
             language: result.language,
-            text: buildRefreshText(result.language, result.refreshMode, result.shortQuestion),
+            text: buildRefreshText(result.language, result.refreshMode, result.shortQuestion, result.poolExhausted),
             metadata: {
               refreshMode: result.refreshMode,
               reason: result.reason,
@@ -140,6 +143,9 @@ export const GalleryAgent: AgentDefinition = {
               avoid: result.avoid,
               broaden: result.broaden,
               searchKeywords: result.searchKeywords,
+              anchorSessionId: result.anchorSessionId,
+              displaySessionId: result.displaySessionId,
+              poolExhausted: result.poolExhausted,
             },
           };
         }
@@ -149,7 +155,7 @@ export const GalleryAgent: AgentDefinition = {
         return {
           type: "gallery_search_results",
           language: result.language,
-          text: buildRefreshText(result.language, refreshMode, result.shortQuestion),
+          text: buildRefreshText(result.language, refreshMode, result.shortQuestion, result.poolExhausted),
           cards: result.results.map((card) => ({
             id: card.id,
             title: card.title,
@@ -161,7 +167,9 @@ export const GalleryAgent: AgentDefinition = {
             refreshMode,
             reason: result.reason,
           })),
-          selectionPrompt: result.language === "zh" ? "请回复编号选择一张。" : "Reply with a number to select one.",
+          selectionPrompt: t(result.language, "gallery.search.chooseHint", {
+            count: Math.min(result.results.length, 10),
+          }),
           refreshMode,
           reason: result.reason,
           metadata: {
@@ -174,9 +182,13 @@ export const GalleryAgent: AgentDefinition = {
             avoid: result.avoid,
             broaden: result.broaden,
             searchKeywords: result.searchKeywords,
+            anchorSessionId: result.anchorSessionId,
+            displaySessionId: result.displaySessionId,
+            poolExhausted: result.poolExhausted,
           },
         };
       }
+
       case "gallery_select": {
         const activeSession = await gallerySearchSessionRepository.findLatest({
           discordUserId: context.userId ?? "",
@@ -265,6 +277,8 @@ export const GalleryAgent: AgentDefinition = {
             discordChannelId: context.channelId ?? "",
             activeSessionId: activeSession?.id ?? null,
             selectedIndex,
+            stage: isUserFacingError(error) ? error.stage : "agent",
+            code: isUserFacingError(error) ? error.code : "gallery.select.unknown",
             message,
           });
 
@@ -275,6 +289,7 @@ export const GalleryAgent: AgentDefinition = {
           };
         }
       }
+
       case "help":
       case "order_status": {
         logger.info("[GALLERY AGENT] handling help-like inquiry", {
@@ -283,6 +298,7 @@ export const GalleryAgent: AgentDefinition = {
           message: input.text,
           intent: context.intent,
         });
+
         const result = await galleryHelpSkill(
           {
             message: input.text,
@@ -296,12 +312,14 @@ export const GalleryAgent: AgentDefinition = {
           text: result.text,
         };
       }
+
       case "ignore":
         logger.info("[GALLERY AGENT] handling ignore", {
           discordUserId: context.userId ?? "",
           discordChannelId: context.channelId ?? "",
         });
         return { type: "text", language: context.language, text: "" };
+
       default:
         logger.info("[GALLERY AGENT] handling unknown", {
           discordUserId: context.userId ?? "",

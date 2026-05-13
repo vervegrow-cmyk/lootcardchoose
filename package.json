@@ -16,6 +16,7 @@
     "gallery:test-help": "tsx src/scripts/test-gallery-help.ts",
     "gallery:test-refresh": "tsx src/scripts/test-gallery-refresh.ts",
     "gallery:test-select": "tsx src/scripts/test-gallery-select.ts",
+    "gallery:test-discord": "tsx src/scripts/test-discord-bot.ts",
     "shopify:webhook:test": "tsx src/scripts/test-shopify-webhook.ts",
     "test:core": "tsx src/scripts/test-core.ts"
   },

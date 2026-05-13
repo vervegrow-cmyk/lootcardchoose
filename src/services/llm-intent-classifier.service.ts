@@ -206,7 +206,7 @@ export const llmIntentClassifierService = {
         return fallbackIntentClassification(message, options);
       }
 
-      logger.info("[LLM INTENT CLASSIFIER] parsed=" + JSON.stringify(parsed));
+      logger.info("[LLM INTENT CLASSIFIER] parsed", parsed);
       return parsed;
     } catch (error) {
       logger.warn("[LLM INTENT CLASSIFIER] using fallback", {

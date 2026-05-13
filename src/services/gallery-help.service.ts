@@ -17,7 +17,7 @@ const fallbackAnswer = (message: string, language: SupportedLanguage): string =>
 
   if (language === "zh") {
     if (normalized.includes("买") || normalized.includes("付款") || normalized.includes("支付")) {
-      return "你可以先搜索喜欢的卡牌，回复编号选择，然后打开系统返回的商品链接完成购买。";
+      return "你可以先搜索喜欢的卡牌，回复编号选择，然后打开系统返回的商品页完成购买。";
     }
     if (normalized.includes("发货") || normalized.includes("物流") || normalized.includes("跟踪")) {
       return "付款成功后，我们会准备你的卡牌并尽快发货。请留意后续物流更新。";

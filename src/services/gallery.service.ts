@@ -1,8 +1,8 @@
 import { Prisma } from "@prisma/client";
 import { RefreshMode, SupportedLanguage } from "../hermes/types";
+import { loadEnv } from "../config/env";
 import { GallerySearchSessionRecord } from "../repositories/gallery-search-session.repository";
 import { GalleryCardRecord, galleryRepository } from "../repositories/gallery.repository";
-import { loadEnv } from "../config/env";
 import {
   canonicalizeGalleryTerm,
   detectPreferredLanguage,
@@ -11,6 +11,7 @@ import {
   normalizeGalleryKeywordsToEnglish,
   normalizeGalleryLimit,
 } from "../utils/gallery-language";
+import { t } from "../utils/i18n";
 import { logger } from "../utils/logger";
 import { ParsedGalleryQuery, parseGalleryQuery } from "./llm-query-parser.service";
 import { isDatabaseReady } from "./prisma.service";
@@ -54,6 +55,7 @@ export type GalleryRefreshResult = {
   avoid: string[];
   broaden: string[];
   searchKeywords: string[];
+  poolExhausted: boolean;
 };
 
 export type RefreshPlannerCardSummary = {
@@ -67,6 +69,8 @@ export type RefreshPlannerCardSummary = {
 
 export type RefreshPlannerSessionMetadata = {
   previousSessionId: string;
+  displaySessionId: string;
+  anchorSessionId: string;
   previousQuery: string;
   originalQuery: string;
   previousBatchSize: number;
@@ -111,15 +115,34 @@ export type RefreshGalleryCardsInput = {
   discordUserId: string;
   currentMessage: string;
   previousSession: GallerySearchSessionRecord;
+  displaySession?: GallerySearchSessionRecord;
   excludeIds: string[];
   limit?: number;
   sessionMetadata?: RefreshPlannerSessionMetadata;
 };
 
-const STRUCTURED_FIELDS: Array<keyof Pick<
-  ParsedGalleryQuery,
-  "rarity" | "color" | "character" | "category" | "style" | "mood" | "scene"
->> = ["rarity", "color", "character", "category", "style", "mood", "scene"];
+type RefreshSearchHints = {
+  preferredKeywords?: string[];
+  broadenKeywords?: string[];
+  avoidKeywords?: string[];
+};
+
+const STRUCTURED_FIELDS: Array<
+  keyof Pick<ParsedGalleryQuery, "rarity" | "color" | "character" | "category" | "style" | "mood" | "scene">
+> = ["rarity", "color", "character", "category", "style", "mood", "scene"];
+
+const META_ONLY_REFRESH_KEYWORDS = new Set([
+  "previous cards",
+  "same composition",
+  "previous s",
+  "sa composition",
+  "other options",
+  "another batch",
+  "different style",
+  "more options",
+]);
+
+const SHORT_KEYWORD_ALLOWLIST = new Set(["ani", "sr", "ur", "ssr", "r", "n"]);
 
 const toDto = (card: GalleryCardRecord): GalleryCardDto => ({
   id: card.id,
@@ -180,7 +203,6 @@ const dedupeKeywordList = (values: string[]): string[] => {
     if (!normalized || seen.has(normalized)) {
       continue;
     }
-
     seen.add(normalized);
     result.push(trimmed);
   }
@@ -188,23 +210,39 @@ const dedupeKeywordList = (values: string[]): string[] => {
   return result;
 };
 
+const isRepositoryKeywordCandidate = (value: string): boolean => {
+  const normalized = normalizeKeyword(value);
+  if (!normalized) {
+    return false;
+  }
+
+  if (META_ONLY_REFRESH_KEYWORDS.has(normalized)) {
+    return false;
+  }
+
+  if (normalized.startsWith("previous ") || normalized.startsWith("same ")) {
+    return false;
+  }
+
+  const compact = normalized.replace(/\s+/g, " ").trim();
+  if (compact.length <= 3 && !SHORT_KEYWORD_ALLOWLIST.has(compact)) {
+    return false;
+  }
+
+  return true;
+};
+
+const sanitizePlannerKeywordList = (values: string[]): string[] =>
+  dedupeKeywordList(
+    normalizeGalleryKeywordsToEnglish(values)
+      .map((value) => value.trim())
+      .filter(isRepositoryKeywordCandidate)
+  );
+
 const isJsonObject = (value: Prisma.JsonValue): value is Prisma.JsonObject =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
-const readSessionCards = (results: Prisma.JsonValue): Array<{ id: string }> => {
-  if (!Array.isArray(results)) {
-    return [];
-  }
-
-  return results
-    .filter(isJsonObject)
-    .map((item) => ({ id: typeof item.id === "string" ? item.id : "" }))
-    .filter((item) => Boolean(item.id));
-};
-
-const readSessionCardSummaries = (
-  results: Prisma.JsonValue
-): RefreshPlannerCardSummary[] => {
+const readSessionCardSummaries = (results: Prisma.JsonValue): RefreshPlannerCardSummary[] => {
   if (!Array.isArray(results)) {
     return [];
   }
@@ -271,9 +309,7 @@ const buildFallbackRefreshDecision = (
   };
 };
 
-const buildRefreshPrompt = (
-  payload: RefreshPlannerPromptPayload
-): DeepSeekMessage[] => [
+const buildRefreshPrompt = (payload: RefreshPlannerPromptPayload): DeepSeekMessage[] => [
   {
     role: "system",
     content:
@@ -299,7 +335,11 @@ const buildRefreshPrompt = (
       "so only output short concrete keyword phrases, never full sentences. " +
       "Use previousCards and sessionMetadata to avoid repeating recently shown cards or the same stale style. " +
       "Prefer visual descriptors, character traits, rarity, tone, and style cues over generic words. " +
+      "Only output phrases that could realistically appear in title, tags, style, category, character, color, or description. " +
+      "Never output broken fragments such as previous s, sa composition, cha, or other truncated tokens. " +
+      "Treat previous cards and same composition as semantic hints, not as literal retrieval phrases. " +
       "If the user only wants another batch, keep the core preference stable and avoid over-broadening. " +
+      "If the close-match pool appears exhausted, set refreshMode to need_clarification and ask for one new style, color, or theme cue. " +
       "If you ask a clarifying question, set refreshMode to need_clarification and keep the question short. " +
       "Do not write explanations outside JSON.",
   },
@@ -332,10 +372,10 @@ const parseRefreshDecision = (
     return {
       language: parsed.language === "zh" || parsed.language === "en" ? parsed.language : language,
       refreshMode,
-      keep: normalizeGalleryKeywordsToEnglish(safeArray(parsed.keep)),
-      avoid: normalizeGalleryKeywordsToEnglish(safeArray(parsed.avoid)),
-      broaden: normalizeGalleryKeywordsToEnglish(safeArray(parsed.broaden)),
-      searchKeywords: normalizeGalleryKeywordsToEnglish(safeArray(parsed.searchKeywords)),
+      keep: sanitizePlannerKeywordList(safeArray(parsed.keep)),
+      avoid: sanitizePlannerKeywordList(safeArray(parsed.avoid)),
+      broaden: sanitizePlannerKeywordList(safeArray(parsed.broaden)),
+      searchKeywords: sanitizePlannerKeywordList(safeArray(parsed.searchKeywords)),
       reason: typeof parsed.reason === "string" && parsed.reason.trim() ? parsed.reason.trim() : fallback.reason,
       shouldAskClarifyingQuestion: Boolean(parsed.shouldAskClarifyingQuestion),
       shortQuestion: typeof parsed.shortQuestion === "string" ? parsed.shortQuestion.trim() : "",
@@ -343,12 +383,6 @@ const parseRefreshDecision = (
   } catch {
     return null;
   }
-};
-
-type RefreshSearchHints = {
-  preferredKeywords?: string[];
-  broadenKeywords?: string[];
-  avoidKeywords?: string[];
 };
 
 const buildStrictSearchInput = (
@@ -413,15 +447,13 @@ const buildAppliedRefreshKeywords = (
 ): Pick<GalleryRefreshResult, "keep" | "avoid" | "broaden" | "searchKeywords"> => {
   const keep =
     decision.keep.length > 0
-      ? dedupeKeywordList(expandGalleryKeywords(decision.keep))
+      ? sanitizePlannerKeywordList(decision.keep)
       : buildStructuredGalleryKeywords(previousParsed);
-  const broaden = decision.broaden.length > 0 ? dedupeKeywordList(expandGalleryKeywords(decision.broaden)) : [];
+  const broaden = decision.broaden.length > 0 ? sanitizePlannerKeywordList(decision.broaden) : [];
   const searchKeywords =
-    decision.searchKeywords.length > 0
-      ? dedupeKeywordList(expandGalleryKeywords(decision.searchKeywords))
-      : keep;
+    decision.searchKeywords.length > 0 ? sanitizePlannerKeywordList(decision.searchKeywords) : keep;
   const positiveKeywordSet = new Set([...keep, ...broaden, ...searchKeywords].map(normalizeKeyword));
-  const avoid = dedupeKeywordList(expandGalleryKeywords(decision.avoid)).filter(
+  const avoid = sanitizePlannerKeywordList(decision.avoid).filter(
     (keyword) => !positiveKeywordSet.has(normalizeKeyword(keyword))
   );
 
@@ -439,6 +471,8 @@ const buildDefaultSessionMetadata = (
   excludeIds: string[]
 ): RefreshPlannerSessionMetadata => ({
   previousSessionId: previousSession.id,
+  displaySessionId: previousSession.id,
+  anchorSessionId: previousSession.id,
   previousQuery: previousSession.query,
   originalQuery: previousSession.query,
   previousBatchSize: previousCards.length,
@@ -450,9 +484,11 @@ const buildDefaultSessionMetadata = (
   hasSelectedCard: Boolean(previousSession.selectedGalleryCardId),
 });
 
+const buildPoolExhaustedQuestion = (language: SupportedLanguage): string => t(language, "gallery.refresh.poolExhausted");
+
 export const galleryService = {
   async searchGalleryCards(query: string, language: SupportedLanguage = "en"): Promise<GallerySearchResult> {
-    logger.info("[GALLERY SERVICE] search query=" + query);
+    logger.info("[GALLERY SERVICE] search", { query, language });
     if (!isDatabaseReady()) {
       throw new Error("DATABASE_NOT_READY");
     }
@@ -467,10 +503,10 @@ export const galleryService = {
         }
       : buildFallbackParsedQuery(query, preferredLanguage);
 
-    logger.info("[GALLERY SERVICE] parsed search input=" + JSON.stringify(parsedQuery));
+    logger.info("[GALLERY SERVICE] parsed search input", parsedQuery);
 
     const structuredKeywords = buildStructuredGalleryKeywords(parsedQuery);
-    logger.info("[GALLERY SERVICE] structured keywords=" + JSON.stringify(structuredKeywords));
+    logger.info("[GALLERY SERVICE] structured keywords", { structuredKeywords });
 
     const fallbackKeywords = structuredKeywords.length > 0 ? [] : normalizeGalleryKeywordsToEnglish([query]);
     const finalKeywords = structuredKeywords.length > 0 ? structuredKeywords : fallbackKeywords;
@@ -490,7 +526,7 @@ export const galleryService = {
     });
 
     const results = dedupeCards(resultsSource).slice(0, limit).map(toDto);
-    logger.info("[GALLERY SERVICE] final result count=" + results.length);
+    logger.info("[GALLERY SERVICE] final result count", { count: results.length, query });
 
     return {
       query,
@@ -503,7 +539,11 @@ export const galleryService = {
   },
 
   async refreshGalleryCards(input: RefreshGalleryCardsInput): Promise<GalleryRefreshResult> {
-    logger.info("[GALLERY SERVICE] refresh query=" + input.previousSession.query);
+    logger.info("[GALLERY SERVICE] refresh", {
+      query: input.previousSession.query,
+      displaySessionId: input.displaySession?.id ?? input.previousSession.id,
+      anchorSessionId: input.previousSession.id,
+    });
     if (!isDatabaseReady()) {
       throw new Error("DATABASE_NOT_READY");
     }
@@ -525,7 +565,8 @@ export const galleryService = {
       previousCards: previousCards.slice(0, 6),
       sessionMetadata,
     };
-    logger.info("[GALLERY SERVICE] refresh prompt context=" + JSON.stringify(promptPayload));
+    logger.info("[GALLERY SERVICE] refresh prompt context", promptPayload);
+
     const env = loadEnv();
     let decision = fallbackDecision;
 
@@ -566,9 +607,9 @@ export const galleryService = {
       }
     }
 
-    logger.info("[GALLERY SERVICE] refresh planner decision=" + JSON.stringify(decision));
+    logger.info("[GALLERY SERVICE] refresh planner decision", decision);
     const appliedKeywords = buildAppliedRefreshKeywords(decision, previousParsed);
-    logger.info("[GALLERY SERVICE] refresh applied keywords=" + JSON.stringify(appliedKeywords));
+    logger.info("[GALLERY SERVICE] refresh applied keywords", appliedKeywords);
 
     if (decision.shouldAskClarifyingQuestion || decision.refreshMode === "need_clarification") {
       return {
@@ -576,11 +617,7 @@ export const galleryService = {
         language: decision.language,
         refreshMode: "need_clarification",
         reason: decision.reason,
-        shortQuestion:
-          decision.shortQuestion ||
-          (decision.language === "zh"
-            ? "你想换成哪种风格：可爱、暗黑、幻想，还是高级感？"
-            : "What style would you like next — cute, dark, fantasy, or premium?"),
+        shortQuestion: decision.shortQuestion || t(decision.language, "gallery.refresh.needClarification"),
         limit,
         excludedCardIds: input.excludeIds,
         parsedQuery: previousParsed,
@@ -588,6 +625,7 @@ export const galleryService = {
         avoid: appliedKeywords.avoid,
         broaden: appliedKeywords.broaden,
         searchKeywords: appliedKeywords.searchKeywords,
+        poolExhausted: false,
       };
     }
 
@@ -645,6 +683,29 @@ export const galleryService = {
       }
     }
 
+    if (finalCards.length === 0) {
+      const reason =
+        decision.language === "zh"
+          ? "当前搜索方向的近似卡牌已经基本展示完了。"
+          : "The close-match pool is exhausted for this search.";
+
+      return {
+        cards: [],
+        language: decision.language,
+        refreshMode: "need_clarification",
+        reason,
+        shortQuestion: buildPoolExhaustedQuestion(decision.language),
+        limit,
+        excludedCardIds: input.excludeIds,
+        parsedQuery: previousParsed,
+        keep: appliedKeywords.keep,
+        avoid: appliedKeywords.avoid,
+        broaden: appliedKeywords.broaden,
+        searchKeywords: appliedKeywords.searchKeywords,
+        poolExhausted: true,
+      };
+    }
+
     return {
       cards: finalCards.slice(0, limit).map(toDto),
       language: decision.language,
@@ -657,6 +718,7 @@ export const galleryService = {
       avoid: appliedKeywords.avoid,
       broaden: appliedKeywords.broaden,
       searchKeywords: appliedKeywords.searchKeywords,
+      poolExhausted: chosenMode === "random_fallback" && finalCards.length < 3,
     };
   },
 

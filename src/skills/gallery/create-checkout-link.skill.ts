@@ -3,6 +3,7 @@ import { orderService } from "../../services/order.service";
 import { ShopifyGalleryCardInput, ShopifyOrderInput, shopifyService } from "../../services/shopify.service";
 import { t } from "../../utils/i18n";
 import { logger } from "../../utils/logger";
+import { UserFacingError, isUserFacingError } from "../../utils/user-facing-error";
 
 export type CreateCheckoutLinkInput = ShopifyGalleryCardInput & {
   order: ShopifyOrderInput;
@@ -18,6 +19,9 @@ export type CreateCheckoutLinkOutput = {
     status: string;
     shopifyProductId: string | null;
     shopifyCheckoutUrl: string | null;
+    shopifyProductUrl: string | null;
+    shopifyShareImageUrl: string | null;
+    shopifyProductHandle: string | null;
   };
   productUrl: string;
   purchaseUrl: string;
@@ -53,6 +57,9 @@ export const createCheckoutLink: SkillHandler<CreateCheckoutLinkInput, CreateChe
       orderId: input.order.id,
       shopifyProductId: result.shopifyProductId,
       shopifyCheckoutUrl: result.purchaseUrl,
+      shopifyProductUrl: result.productUrl,
+      shopifyShareImageUrl: result.shareImageUrl,
+      shopifyProductHandle: result.productHandle,
       status: "checkout_created",
     });
 
@@ -75,6 +82,9 @@ export const createCheckoutLink: SkillHandler<CreateCheckoutLinkInput, CreateChe
         status: updatedOrder.status,
         shopifyProductId: updatedOrder.shopifyProductId,
         shopifyCheckoutUrl: updatedOrder.shopifyCheckoutUrl,
+        shopifyProductUrl: updatedOrder.shopifyProductUrl,
+        shopifyShareImageUrl: updatedOrder.shopifyShareImageUrl,
+        shopifyProductHandle: updatedOrder.shopifyProductHandle,
       },
       productUrl: result.productUrl,
       purchaseUrl: result.purchaseUrl,
@@ -88,7 +98,18 @@ export const createCheckoutLink: SkillHandler<CreateCheckoutLinkInput, CreateChe
       galleryCardId: selectedCard.galleryCardId,
       message,
     });
-    throw new Error(t(context.language, "checkout.failed"));
+    if (isUserFacingError(error)) {
+      throw error;
+    }
+    throw new UserFacingError(t(context.language, "checkout.failed"), {
+      code: "checkout.failed",
+      stage: "checkout",
+      metadata: {
+        orderNumber: input.order.orderNumber,
+        galleryCardId: selectedCard.galleryCardId,
+        message,
+      },
+    });
   }
 };
 

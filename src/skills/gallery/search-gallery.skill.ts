@@ -22,7 +22,11 @@ export const searchGallerySkill: SkillHandler<SearchGalleryInput, SearchGalleryO
   input: SearchGalleryInput,
   context: SkillContext
 ) => {
-  logger.info("[SEARCH GALLERY SKILL] searching query=" + input.query);
+  logger.info("[SEARCH GALLERY SKILL] searching", {
+    query: input.query,
+    discordUserId: input.discordUserId,
+    discordChannelId: input.discordChannelId,
+  });
   try {
     const searchResult: GallerySearchResult = await galleryService.searchGalleryCards(input.query, context.language);
     const sessionResults = searchResult.results.map((card) => ({
@@ -52,6 +56,8 @@ export const searchGallerySkill: SkillHandler<SearchGalleryInput, SearchGalleryO
         results: sessionResults.map((card) => ({
           ...card,
           language: searchResult.language,
+          batchIndex: 1,
+          originalQuery: searchResult.query,
         })),
         status: "active",
       });

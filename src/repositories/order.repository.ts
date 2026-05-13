@@ -1,4 +1,5 @@
 import { prisma } from "../services/prisma.service";
+import { logger } from "../utils/logger";
 
 export type OrderStatus = "pending" | "checkout_created" | "paid" | "cancelled";
 
@@ -11,6 +12,9 @@ export type OrderRepositoryRecord = {
   status: OrderStatus;
   shopifyProductId: string | null;
   shopifyCheckoutUrl: string | null;
+  shopifyProductUrl: string | null;
+  shopifyShareImageUrl: string | null;
+  shopifyProductHandle: string | null;
 };
 
 export type OrderRepository = {
@@ -23,6 +27,9 @@ export type OrderRepository = {
     orderId: string;
     shopifyProductId: string;
     shopifyCheckoutUrl: string;
+    shopifyProductUrl: string;
+    shopifyShareImageUrl: string;
+    shopifyProductHandle: string;
     status: "checkout_created";
   }) => Promise<OrderRepositoryRecord>;
   updateStatus: (input: {
@@ -32,8 +39,36 @@ export type OrderRepository = {
   findByOrderNumber: (orderNumber: string) => Promise<OrderRepositoryRecord | null>;
 };
 
+let ensureOrderColumnsPromise: Promise<void> | null = null;
+
+const ensureOrderColumns = async (): Promise<void> => {
+  if (!ensureOrderColumnsPromise) {
+    ensureOrderColumnsPromise = (async () => {
+      try {
+        await prisma.$executeRawUnsafe(
+          'ALTER TABLE "Order" ADD COLUMN IF NOT EXISTS "shopifyProductUrl" TEXT'
+        );
+        await prisma.$executeRawUnsafe(
+          'ALTER TABLE "Order" ADD COLUMN IF NOT EXISTS "shopifyShareImageUrl" TEXT'
+        );
+        await prisma.$executeRawUnsafe(
+          'ALTER TABLE "Order" ADD COLUMN IF NOT EXISTS "shopifyProductHandle" TEXT'
+        );
+      } catch (error) {
+        logger.warn("[ORDER REPOSITORY] ensure order columns failed", {
+          message: error instanceof Error ? error.message : String(error),
+        });
+        throw error;
+      }
+    })();
+  }
+
+  return ensureOrderColumnsPromise;
+};
+
 export const orderRepository: OrderRepository = {
   async createPendingOrder(input) {
+    await ensureOrderColumns();
     const record = await prisma.order.create({
       data: {
         discordUserId: input.discordUserId,
@@ -53,14 +88,21 @@ export const orderRepository: OrderRepository = {
       status: record.status as OrderStatus,
       shopifyProductId: record.shopifyProductId,
       shopifyCheckoutUrl: record.shopifyCheckoutUrl,
+      shopifyProductUrl: record.shopifyProductUrl,
+      shopifyShareImageUrl: record.shopifyShareImageUrl,
+      shopifyProductHandle: record.shopifyProductHandle,
     };
   },
   async updateShopifyLink(input) {
+    await ensureOrderColumns();
     const record = await prisma.order.update({
       where: { id: input.orderId },
       data: {
         shopifyProductId: input.shopifyProductId,
         shopifyCheckoutUrl: input.shopifyCheckoutUrl,
+        shopifyProductUrl: input.shopifyProductUrl,
+        shopifyShareImageUrl: input.shopifyShareImageUrl,
+        shopifyProductHandle: input.shopifyProductHandle,
         status: input.status,
       },
     });
@@ -74,9 +116,13 @@ export const orderRepository: OrderRepository = {
       status: record.status as OrderStatus,
       shopifyProductId: record.shopifyProductId,
       shopifyCheckoutUrl: record.shopifyCheckoutUrl,
+      shopifyProductUrl: record.shopifyProductUrl,
+      shopifyShareImageUrl: record.shopifyShareImageUrl,
+      shopifyProductHandle: record.shopifyProductHandle,
     };
   },
   async updateStatus(input) {
+    await ensureOrderColumns();
     const record = await prisma.order.update({
       where: { id: input.orderId },
       data: {
@@ -93,9 +139,13 @@ export const orderRepository: OrderRepository = {
       status: record.status as OrderStatus,
       shopifyProductId: record.shopifyProductId,
       shopifyCheckoutUrl: record.shopifyCheckoutUrl,
+      shopifyProductUrl: record.shopifyProductUrl,
+      shopifyShareImageUrl: record.shopifyShareImageUrl,
+      shopifyProductHandle: record.shopifyProductHandle,
     };
   },
   async findByOrderNumber(orderNumber) {
+    await ensureOrderColumns();
     const record = await prisma.order.findFirst({
       where: { orderNumber },
     });
@@ -113,6 +163,9 @@ export const orderRepository: OrderRepository = {
       status: record.status as OrderStatus,
       shopifyProductId: record.shopifyProductId,
       shopifyCheckoutUrl: record.shopifyCheckoutUrl,
+      shopifyProductUrl: record.shopifyProductUrl,
+      shopifyShareImageUrl: record.shopifyShareImageUrl,
+      shopifyProductHandle: record.shopifyProductHandle,
     };
   },
 };

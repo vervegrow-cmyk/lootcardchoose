@@ -89,6 +89,9 @@ const main = async (): Promise<void> => {
     assert.equal(persistedOrder.status, "checkout_created");
     assert.equal(persistedOrder.shopifyProductId, "mock-shopify-product-id");
     assert.equal(persistedOrder.shopifyCheckoutUrl, checkoutResponse.purchaseUrl);
+    assert.equal(persistedOrder.shopifyProductUrl, checkoutResponse.productUrl);
+    assert.equal(persistedOrder.shopifyShareImageUrl, checkoutResponse.shareImageUrl);
+    assert.equal(persistedOrder.shopifyProductHandle, checkoutResponse.productHandle);
 
     console.log(`[TEST GALLERY SELECT] productUrl=${checkoutResponse.productUrl}`);
     console.log(`[TEST GALLERY SELECT] purchaseUrl=${checkoutResponse.purchaseUrl}`);

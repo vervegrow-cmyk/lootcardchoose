@@ -1,9 +1,5 @@
-import { SkillContext, SkillHandler } from "../../hermes/types";
-import {
-  GallerySearchSessionRecord,
-  gallerySearchSessionRepository,
-} from "../../repositories/gallery-search-session.repository";
 import { Prisma } from "@prisma/client";
+import { SkillContext, SkillHandler } from "../../hermes/types";
 import {
   GalleryCardDto,
   GalleryRefreshResult,
@@ -12,6 +8,10 @@ import {
 } from "../../services/gallery.service";
 import { detectPreferredLanguage } from "../../utils/gallery-language";
 import { logger } from "../../utils/logger";
+import {
+  GallerySearchSessionRecord,
+  gallerySearchSessionRepository,
+} from "../../repositories/gallery-search-session.repository";
 
 export type RefreshGalleryInput = {
   discordUserId: string;
@@ -34,6 +34,9 @@ export type RefreshGalleryOutput = {
   avoid: string[];
   broaden: string[];
   searchKeywords: string[];
+  anchorSessionId: string | null;
+  displaySessionId: string | null;
+  poolExhausted: boolean;
 };
 
 const extractCardIds = (session: GallerySearchSessionRecord): string[] => {
@@ -56,12 +59,14 @@ const readSessionResultMetadata = (
   batchIndex: number | null;
   refreshMode: string | null;
   originalQuery: string | null;
+  anchorSessionId: string | null;
 } => {
   if (!Array.isArray(session.results)) {
     return {
       batchIndex: null,
       refreshMode: null,
       originalQuery: null,
+      anchorSessionId: null,
     };
   }
 
@@ -74,6 +79,7 @@ const readSessionResultMetadata = (
       batchIndex: null,
       refreshMode: null,
       originalQuery: null,
+      anchorSessionId: null,
     };
   }
 
@@ -81,22 +87,49 @@ const readSessionResultMetadata = (
     batchIndex: typeof firstResult.batchIndex === "number" ? firstResult.batchIndex : null,
     refreshMode: typeof firstResult.refreshMode === "string" ? firstResult.refreshMode : null,
     originalQuery: typeof firstResult.originalQuery === "string" ? firstResult.originalQuery : null,
+    anchorSessionId: typeof firstResult.anchorSessionId === "string" ? firstResult.anchorSessionId : null,
   };
 };
 
-export const refreshGallerySkill: SkillHandler<RefreshGalleryInput, RefreshGalleryOutput> = async (
-  input,
-  context
-) => {
-  logger.info("[REFRESH GALLERY SKILL] start");
+const isSparseRandomFallbackSession = (session: GallerySearchSessionRecord): boolean => {
+  const metadata = readSessionResultMetadata(session);
+  return metadata.refreshMode === "random_fallback" && extractCardIds(session).length < 3;
+};
 
-  const previousSession = await gallerySearchSessionRepository.findLatest({
+const choosePlanningAnchorSession = (
+  displaySession: GallerySearchSessionRecord,
+  recentSessions: GallerySearchSessionRecord[]
+): GallerySearchSessionRecord => {
+  for (const session of recentSessions) {
+    const resultCount = extractCardIds(session).length;
+    if (resultCount < 3) {
+      continue;
+    }
+
+    if (isSparseRandomFallbackSession(session)) {
+      continue;
+    }
+
+    return session;
+  }
+
+  return displaySession;
+};
+
+export const refreshGallerySkill: SkillHandler<RefreshGalleryInput, RefreshGalleryOutput> = async (input, context) => {
+  logger.info("[REFRESH GALLERY SKILL] start", {
+    discordUserId: input.discordUserId,
+    discordChannelId: input.discordChannelId,
+    currentMessage: input.currentMessage,
+  });
+
+  const displaySession = await gallerySearchSessionRepository.findLatest({
     discordUserId: input.discordUserId,
     discordChannelId: input.discordChannelId,
     status: "active",
   });
 
-  if (!previousSession) {
+  if (!displaySession) {
     return {
       query: "",
       language: detectPreferredLanguage(input.currentMessage),
@@ -111,6 +144,9 @@ export const refreshGallerySkill: SkillHandler<RefreshGalleryInput, RefreshGalle
       avoid: [],
       broaden: [],
       searchKeywords: [],
+      anchorSessionId: null,
+      displaySessionId: null,
+      poolExhausted: false,
     };
   }
 
@@ -119,11 +155,12 @@ export const refreshGallerySkill: SkillHandler<RefreshGalleryInput, RefreshGalle
     discordChannelId: input.discordChannelId,
     take: 20,
   });
+  const planningAnchorSession = choosePlanningAnchorSession(displaySession, recentSessions);
 
   const excludeIds = Array.from(new Set(recentSessions.flatMap(extractCardIds)));
-  const firstBatchCardIds = extractCardIds(previousSession);
+  const firstBatchCardIds = extractCardIds(displaySession);
   const recentActiveSessionCount = recentSessions.filter((session) => session.status === "active").length;
-  const previousSessionMetadata = readSessionResultMetadata(previousSession);
+  const anchorSessionMetadata = readSessionResultMetadata(planningAnchorSession);
   const recentRefreshModes = Array.from(
     new Set(
       recentSessions
@@ -132,23 +169,27 @@ export const refreshGallerySkill: SkillHandler<RefreshGalleryInput, RefreshGalle
     )
   );
   const sessionMetadata: RefreshPlannerSessionMetadata = {
-    previousSessionId: previousSession.id,
-    previousQuery: previousSession.query,
-    originalQuery: previousSessionMetadata.originalQuery ?? previousSession.query,
-    previousBatchSize: firstBatchCardIds.length,
-    previousBatchCardIds: firstBatchCardIds,
+    previousSessionId: displaySession.id,
+    displaySessionId: displaySession.id,
+    anchorSessionId: planningAnchorSession.id,
+    previousQuery: planningAnchorSession.query,
+    originalQuery: anchorSessionMetadata.originalQuery ?? planningAnchorSession.query,
+    previousBatchSize: extractCardIds(planningAnchorSession).length,
+    previousBatchCardIds: extractCardIds(planningAnchorSession),
     recentActiveSessionCount,
     totalExcludedCardCount: excludeIds.length,
-    latestBatchIndex: previousSessionMetadata.batchIndex ?? recentSessions.length,
+    latestBatchIndex: anchorSessionMetadata.batchIndex ?? recentSessions.length,
     recentRefreshModes,
-    hasSelectedCard: Boolean(previousSession.selectedGalleryCardId),
+    hasSelectedCard: Boolean(displaySession.selectedGalleryCardId),
   };
-  logger.info("[REFRESH GALLERY SKILL] session metadata=" + JSON.stringify(sessionMetadata));
+
+  logger.info("[REFRESH GALLERY SKILL] session metadata", sessionMetadata);
 
   const refreshResult = await galleryService.refreshGalleryCards({
     discordUserId: input.discordUserId,
     currentMessage: input.currentMessage,
-    previousSession,
+    previousSession: planningAnchorSession,
+    displaySession,
     excludeIds,
     limit: 10,
     sessionMetadata,
@@ -170,7 +211,7 @@ export const refreshGallerySkill: SkillHandler<RefreshGalleryInput, RefreshGalle
     await gallerySearchSessionRepository.create({
       discordUserId: input.discordUserId,
       discordChannelId: input.discordChannelId,
-      query: previousSession.query,
+      query: planningAnchorSession.query,
       results: refreshResult.cards.map((card) => ({
         id: card.id,
         title: card.title,
@@ -180,18 +221,27 @@ export const refreshGallerySkill: SkillHandler<RefreshGalleryInput, RefreshGalle
         tags: card.tags,
         language: refreshResult.language,
         batchIndex: recentSessions.length + 1,
-        previousSessionId: previousSession.id,
+        previousSessionId: displaySession.id,
+        anchorSessionId: planningAnchorSession.id,
         refreshMode: refreshResult.refreshMode,
-        originalQuery: previousSession.query,
+        originalQuery: planningAnchorSession.query,
       })),
       status: "active",
     });
   }
 
-  logger.info("[REFRESH GALLERY SKILL] completed");
+  logger.info("[REFRESH GALLERY SKILL] completed", {
+    discordUserId: input.discordUserId,
+    discordChannelId: input.discordChannelId,
+    refreshMode: refreshResult.refreshMode,
+    cardCount: refreshResult.cards.length,
+    poolExhausted: refreshResult.poolExhausted,
+    anchorSessionId: planningAnchorSession.id,
+    displaySessionId: displaySession.id,
+  });
 
   return {
-    query: previousSession.query,
+    query: planningAnchorSession.query,
     language: refreshResult.language,
     refreshMode: refreshResult.refreshMode,
     reason: refreshResult.reason,
@@ -205,5 +255,8 @@ export const refreshGallerySkill: SkillHandler<RefreshGalleryInput, RefreshGalle
     avoid: refreshResult.avoid,
     broaden: refreshResult.broaden,
     searchKeywords: refreshResult.searchKeywords,
+    anchorSessionId: planningAnchorSession.id,
+    displaySessionId: displaySession.id,
+    poolExhausted: refreshResult.poolExhausted,
   };
 };

@@ -289,7 +289,7 @@ export const canonicalizeGalleryTerm = (value: string): string => {
 
 const stripMeaninglessText = (value: string): string => {
   let cleaned = value.trim();
-  cleaned = cleaned.replace(/[，。、“”"'‘’！；？,.:;()[\]{}<>/\\|@#$%^&*_+=~-]+/g, " ");
+  cleaned = cleaned.replace(/[，。、“”"'‘’！？；？,.:;()[\]{}<>/\\|@#$%^&*_+=~-]+/g, " ");
   cleaned = cleaned.replace(/\d+\s*(张|个|款|种)?/g, " ");
 
   for (const stopWord of GALLERY_STOP_WORDS) {
@@ -389,9 +389,7 @@ export const normalizeGalleryKeywordsToEnglish = (values: string[]): string[] =>
 
 export const isGalleryRefreshMessage = (message: string): boolean => containsPattern(message, GALLERY_REFRESH_PATTERNS);
 
-export const inferRefreshModeFromMessage = (
-  message: string
-): "next_batch" | "refine" | "broaden" => {
+export const inferRefreshModeFromMessage = (message: string): "next_batch" | "refine" | "broaden" => {
   if (containsPattern(message, REFINE_PATTERNS)) {
     return "refine";
   }

@@ -4,6 +4,7 @@ import { galleryService } from "../../services/gallery.service";
 import { orderService } from "../../services/order.service";
 import { t } from "../../utils/i18n";
 import { logger } from "../../utils/logger";
+import { UserFacingError, isUserFacingError } from "../../utils/user-facing-error";
 
 export type SelectCardInput = {
   discordUserId: string;
@@ -25,6 +26,11 @@ export type SelectCardOutput = {
     orderNumber: string;
     amount: string;
     status: string;
+    shopifyProductId: string | null;
+    shopifyCheckoutUrl: string | null;
+    shopifyProductUrl: string | null;
+    shopifyShareImageUrl: string | null;
+    shopifyProductHandle: string | null;
   };
 };
 
@@ -32,7 +38,9 @@ const buildOutOfRangeText = (language: SkillContext["language"], max: number): s
   language === "zh" ? `请选择 1 到 ${max} 之间的编号。` : `Please choose a number from 1 to ${max}.`;
 
 const buildSelectionFailedText = (language: SkillContext["language"]): string =>
-  language === "zh" ? "暂时无法处理这次选图，请重新选择或重新搜索。" : "I couldn't complete that selection. Please try another number or search again.";
+  language === "zh"
+    ? "这次选图没有成功，请换个编号或重新搜索试试。"
+    : "I couldn't complete that selection. Please try another number or search again.";
 
 export const selectCardSkill: SkillHandler<SelectCardInput, SelectCardOutput> = async (
   input: SelectCardInput,
@@ -54,23 +62,53 @@ export const selectCardSkill: SkillHandler<SelectCardInput, SelectCardOutput> = 
   });
 
   if (!session || !Array.isArray(session.results)) {
-    throw new Error(t(context.language, "gallery.select.invalid"));
+    throw new UserFacingError(t(context.language, "gallery.select.invalid"), {
+      code: "gallery.select.invalid",
+      stage: "select",
+      metadata: {
+        discordUserId: input.discordUserId,
+        discordChannelId: input.discordChannelId,
+        selectedIndex: input.selectedIndex,
+      },
+    });
   }
 
   if (input.selectedIndex < 1 || input.selectedIndex > session.results.length) {
-    throw new Error(buildOutOfRangeText(context.language, session.results.length));
+    throw new UserFacingError(buildOutOfRangeText(context.language, session.results.length), {
+      code: "gallery.select.out_of_range",
+      stage: "select",
+      metadata: {
+        sessionId: session.id,
+        selectedIndex: input.selectedIndex,
+        maxIndex: session.results.length,
+      },
+    });
   }
 
   const selected = session.results[input.selectedIndex - 1] as { id?: string } | undefined;
   const galleryCardId = selected?.id;
   if (!galleryCardId) {
-    throw new Error(t(context.language, "gallery.select.invalid"));
+    throw new UserFacingError(t(context.language, "gallery.select.invalid"), {
+      code: "gallery.select.invalid",
+      stage: "select",
+      metadata: {
+        sessionId: session.id,
+        selectedIndex: input.selectedIndex,
+      },
+    });
   }
 
   try {
     const card = await galleryService.getGalleryCardById(galleryCardId);
     if (!card) {
-      throw new Error(t(context.language, "gallery.select.invalid"));
+      throw new UserFacingError(t(context.language, "gallery.select.invalid"), {
+        code: "gallery.select.card_not_found",
+        stage: "select",
+        metadata: {
+          sessionId: session.id,
+          galleryCardId,
+        },
+      });
     }
 
     const order = await orderService.createPendingOrder({
@@ -106,6 +144,11 @@ export const selectCardSkill: SkillHandler<SelectCardInput, SelectCardOutput> = 
         orderNumber: order.orderNumber,
         amount: order.amount,
         status: order.status,
+        shopifyProductId: order.shopifyProductId,
+        shopifyCheckoutUrl: order.shopifyCheckoutUrl,
+        shopifyProductUrl: order.shopifyProductUrl,
+        shopifyShareImageUrl: order.shopifyShareImageUrl,
+        shopifyProductHandle: order.shopifyProductHandle,
       },
     };
   } catch (error) {
@@ -119,13 +162,18 @@ export const selectCardSkill: SkillHandler<SelectCardInput, SelectCardOutput> = 
       message,
     });
 
-    if (
-      message === t(context.language, "gallery.select.invalid") ||
-      message === buildOutOfRangeText(context.language, session.results.length)
-    ) {
+    if (isUserFacingError(error)) {
       throw error;
     }
 
-    throw new Error(buildSelectionFailedText(context.language));
+    throw new UserFacingError(buildSelectionFailedText(context.language), {
+      code: "gallery.select.failed",
+      stage: "select",
+      metadata: {
+        sessionId: session.id,
+        galleryCardId,
+        message,
+      },
+    });
   }
 };

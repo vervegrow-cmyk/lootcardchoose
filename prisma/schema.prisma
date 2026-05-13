@@ -40,18 +40,21 @@ model GallerySearchSession {
 }
 
 model Order {
-  id                String   @id @default(cuid())
-  orderNumber       String
-  discordUserId     String
-  galleryCardId     String
-  shopifyProductId  String?
-  shopifyCheckoutUrl String?
-  amount            Decimal
-  status            String
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id                  String   @id @default(cuid())
+  orderNumber         String
+  discordUserId       String
+  galleryCardId       String
+  shopifyProductId    String?
+  shopifyCheckoutUrl  String?
+  shopifyProductUrl   String?
+  shopifyShareImageUrl String?
+  shopifyProductHandle String?
+  amount              Decimal
+  status              String
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
-  galleryCard        GalleryCard @relation(fields: [galleryCardId], references: [id])
+  galleryCard          GalleryCard @relation(fields: [galleryCardId], references: [id])
 }
 
 model ShopifyShop {
