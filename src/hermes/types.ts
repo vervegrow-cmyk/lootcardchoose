@@ -9,6 +9,7 @@ export type SkillId =
   | "gallery.search"
   | "gallery.refresh"
   | "gallery.selectCard"
+  | "gallery.generateProductTitle"
   | "gallery.createCheckoutLink"
   | "gallery.help";
 

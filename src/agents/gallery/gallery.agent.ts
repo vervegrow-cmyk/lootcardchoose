@@ -2,6 +2,7 @@ import { AgentContext, AgentDefinition, HermesInput, HermesOutput, RefreshMode }
 import { gallerySearchSessionRepository } from "../../repositories/gallery-search-session.repository";
 import { CreateCheckoutLinkSkill } from "../../skills/gallery/create-checkout-link.skill";
 import { galleryHelpSkill } from "../../skills/gallery/gallery-help.skill";
+import { generateProductTitleSkill } from "../../skills/gallery/generate-product-title.skill";
 import { refreshGallerySkill } from "../../skills/gallery/refresh-gallery.skill";
 import { searchGallerySkill } from "../../skills/gallery/search-gallery.skill";
 import { selectCardSkill } from "../../skills/gallery/select-card.skill";
@@ -225,10 +226,36 @@ export const GalleryAgent: AgentDefinition = {
             { ...context, skillId: "gallery.selectCard" }
           );
 
+          let marketingTitle: string | undefined;
+          try {
+            const titleResult = await generateProductTitleSkill(
+              {
+                galleryCardId: selectResult.selectedCard.galleryCardId,
+                orderNumber: selectResult.order.orderNumber,
+              },
+              {
+                ...context,
+                skillId: "gallery.generateProductTitle",
+              }
+            );
+
+            marketingTitle = titleResult.marketingTitle;
+          } catch (error) {
+            logger.warn("[GALLERY AGENT] marketing title generation failed", {
+              discordUserId: context.userId ?? "",
+              discordChannelId: context.channelId ?? "",
+              selectedIndex,
+              galleryCardId: selectResult.selectedCard.galleryCardId,
+              orderNumber: selectResult.order.orderNumber,
+              message: error instanceof Error ? error.message : String(error),
+            });
+          }
+
           const checkoutResult = await CreateCheckoutLinkSkill.handle(
             {
               ...selectResult.selectedCard,
               order: selectResult.order,
+              marketingTitle,
             },
             {
               ...context,

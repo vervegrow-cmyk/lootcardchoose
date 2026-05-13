@@ -8,6 +8,7 @@ export type ShopifyGalleryCardInput = {
   imageUrl: string;
   price: string;
   tags: string[];
+  marketingTitle?: string;
 };
 
 export type ShopifyOrderInput = {
@@ -71,10 +72,33 @@ const resolveShopifyApiVersion = (): string => loadEnv().shopifyApiVersion;
 
 const PRODUCT_CODE_PREFIX = "LC";
 
-const normalizeBaseTitle = (title: string): string => {
-  const normalized = title.trim().replace(/\s+/g, " ");
-  return normalized || "Gallery Card";
-};
+const EMERGENCY_MARKETING_TITLE_STOPWORDS = new Set([
+  "anime",
+  "collectible",
+  "card",
+  "premium",
+  "female",
+  "male",
+  "character",
+  "girl",
+  "boy",
+  "beautiful",
+  "beauty",
+  "trading",
+  "luxury",
+]);
+
+const toTitleCase = (value: string): string =>
+  value
+    .split(/([:-])/)
+    .map((part) => {
+      if (part === ":" || part === "-") {
+        return part;
+      }
+      const lower = part.toLowerCase();
+      return lower ? `${lower[0].toUpperCase()}${lower.slice(1)}` : "";
+    })
+    .join("");
 
 const resolveOrderTail = (orderNumber: string): string => {
   const digits = orderNumber.replace(/\D/g, "");
@@ -96,6 +120,69 @@ const slugify = (value: string): string => {
   return normalized || "gallery-card";
 };
 
+const normalizeMarketingTitle = (value: string): string =>
+  value
+    .replace(/[^\x00-\x7F]+/g, " ")
+    .replace(/[^A-Za-z\s:-]+/g, " ")
+    .replace(/\d+/g, " ")
+    .replace(/\b(?:shopify|variant|product|order|sku)\b/gi, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const buildEmergencyMarketingTitle = (card: ShopifyGalleryCardInput): string => {
+  const sourceValues = [card.title, ...card.tags];
+  const descriptorWords: string[] = [];
+  let archetype = "Heroine";
+
+  for (const source of sourceValues) {
+    const normalized = source
+      .replace(/[^A-Za-z\s-]+/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+
+    if (!normalized) {
+      continue;
+    }
+
+    if (/\bqueen\b/i.test(normalized)) {
+      archetype = "Queen";
+    } else if (/\bempress\b/i.test(normalized)) {
+      archetype = "Empress";
+    } else if (/\bvalkyrie\b/i.test(normalized)) {
+      archetype = "Valkyrie";
+    } else if (/\bprincess\b/i.test(normalized)) {
+      archetype = "Princess";
+    } else if (/\bwarrior\b/i.test(normalized)) {
+      archetype = "Warrior";
+    } else if (/\bmale\b|\bboy\b|\bman\b/i.test(normalized)) {
+      archetype = "Champion";
+    }
+
+    const words = normalized
+      .split(/\s+/)
+      .map((word) => word.toLowerCase())
+      .filter((word) => word.length > 2 && !EMERGENCY_MARKETING_TITLE_STOPWORDS.has(word));
+
+    for (const word of words) {
+      const candidate = toTitleCase(word);
+      if (descriptorWords.some((existing) => existing.toLowerCase() === candidate.toLowerCase())) {
+        continue;
+      }
+      descriptorWords.push(candidate);
+      if (descriptorWords.length >= 2) {
+        break;
+      }
+    }
+
+    if (descriptorWords.length >= 2) {
+      break;
+    }
+  }
+
+  const titleWords = [...descriptorWords, archetype].slice(0, 6);
+  return titleWords.join(" ").trim() || "Celestial Heroine";
+};
+
 const buildProductIdentity = (
   card: ShopifyGalleryCardInput,
   order: ShopifyOrderInput
@@ -105,13 +192,14 @@ const buildProductIdentity = (
   productHandle: string;
   sku: string;
 } => {
-  const baseTitle = normalizeBaseTitle(card.title);
+  const providedMarketingTitle = normalizeMarketingTitle(card.marketingTitle ?? "");
+  const marketingTitle = providedMarketingTitle || buildEmergencyMarketingTitle(card);
   const productCode = `${PRODUCT_CODE_PREFIX}-${resolveOrderTail(order.orderNumber)}-${resolveGalleryTail(
     card.galleryCardId
   )}`;
-  const productTitle = `${baseTitle} - ${productCode}`;
+  const productTitle = `${marketingTitle} | ${productCode}`;
   const sku = productCode;
-  const productHandle = slugify(`${baseTitle}-${productCode.toLowerCase()}`);
+  const productHandle = slugify(`${marketingTitle}-${productCode.toLowerCase()}`);
 
   return {
     productTitle,
@@ -171,6 +259,7 @@ export const shopifyService = {
       orderNumber: order.orderNumber,
       galleryCardId: card.galleryCardId,
       title: card.title,
+      marketingTitle: card.marketingTitle ?? null,
       productTitle: identity.productTitle,
       productCode: identity.productCode,
       productHandle: identity.productHandle,
