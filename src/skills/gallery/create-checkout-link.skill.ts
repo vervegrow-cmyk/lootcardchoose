@@ -23,10 +23,13 @@ export type CreateCheckoutLinkOutput = {
     shopifyShareImageUrl: string | null;
     shopifyProductHandle: string | null;
   };
+  productTitle: string;
+  productCode: string;
   productUrl: string;
   purchaseUrl: string;
   shareImageUrl: string;
   productHandle: string;
+  sku: string;
 };
 
 const normalizeSelectedCard = (input: CreateCheckoutLinkInput): ShopifyGalleryCardInput =>
@@ -63,11 +66,14 @@ export const createCheckoutLink: SkillHandler<CreateCheckoutLinkInput, CreateChe
       status: "checkout_created",
     });
 
-    logger.info("[CREATE CHECKOUT LINK SKILL] success", {
+      logger.info("[CREATE CHECKOUT LINK SKILL] success", {
       orderNumber: updatedOrder.orderNumber,
       galleryCardId: result.galleryCardId,
       shopifyProductId: result.shopifyProductId,
+      productTitle: result.productTitle,
+      productCode: result.productCode,
       productHandle: result.productHandle,
+      sku: result.sku,
       productUrl: result.productUrl,
       purchaseUrl: result.purchaseUrl,
       shareImageUrl: result.shareImageUrl,
@@ -86,10 +92,13 @@ export const createCheckoutLink: SkillHandler<CreateCheckoutLinkInput, CreateChe
         shopifyShareImageUrl: updatedOrder.shopifyShareImageUrl,
         shopifyProductHandle: updatedOrder.shopifyProductHandle,
       },
+      productTitle: result.productTitle,
+      productCode: result.productCode,
       productUrl: result.productUrl,
       purchaseUrl: result.purchaseUrl,
       shareImageUrl: result.shareImageUrl,
       productHandle: result.productHandle,
+      sku: result.sku,
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);

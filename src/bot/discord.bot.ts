@@ -101,6 +101,9 @@ const extractDiscordApiCode = (error: unknown): string | number | null => {
   return typeof code === "string" || typeof code === "number" ? code : null;
 };
 
+const resolveCheckoutProductCode = (response: HermesGalleryCheckoutCreatedOutput): string | null =>
+  response.metadata && typeof response.metadata.productCode === "string" ? response.metadata.productCode : null;
+
 export const buildSearchFallbackText = (response: HermesGallerySearchResultsOutput): string => {
   const cardLines = response.cards.slice(0, 10).map((card, index) => {
     const priceLine = response.language === "zh" ? `价格: $${card.price.toFixed(2)}` : `Price: $${card.price.toFixed(2)}`;
@@ -113,14 +116,15 @@ export const buildSearchFallbackText = (response: HermesGallerySearchResultsOutp
 export const buildCheckoutFallbackText = (response: HermesGalleryCheckoutCreatedOutput): string => {
   const viewLabel = response.language === "zh" ? "查看与分享" : "View & share";
   const buyLabel = response.language === "zh" ? "立即购买" : "Buy now";
-  const orderLabel = response.language === "zh" ? "订单" : "Order";
+  const codeLabel = response.language === "zh" ? "编号" : "Code";
   const priceLabel = response.language === "zh" ? "价格" : "Price";
+  const productCode = resolveCheckoutProductCode(response);
 
   return [
     response.text,
-    `${response.title}`,
+    response.title,
+    ...(productCode ? [`${codeLabel}: ${productCode}`] : []),
     `${priceLabel}: $${response.price}`,
-    `${orderLabel}: ${response.orderNumber}`,
     `${viewLabel}: ${response.productUrl}`,
     `${buyLabel}: ${response.purchaseUrl}`,
     response.shareImageUrl,
@@ -198,31 +202,33 @@ export const replyWithFallback = async (
   }
 };
 
-const buildCheckoutEmbed = (response: HermesGalleryCheckoutCreatedOutput): EmbedBuilder =>
-  new EmbedBuilder()
+const buildCheckoutEmbed = (response: HermesGalleryCheckoutCreatedOutput): EmbedBuilder => {
+  const productCode = resolveCheckoutProductCode(response);
+  const codeLabel = response.language === "zh" ? "编号" : "Code";
+  const viewLabel = response.language === "zh" ? "查看与分享" : "View & share";
+  const buyLabel = response.language === "zh" ? "立即购买" : "Buy now";
+  const priceLabel = response.language === "zh" ? "价格" : "Price";
+
+  return new EmbedBuilder()
     .setTitle(response.title)
-    .setDescription(response.text)
+    .setDescription(productCode ? `${response.text}\n\n${codeLabel}: ${productCode}` : response.text)
     .setImage(response.shareImageUrl)
     .addFields(
       {
-        name: response.language === "zh" ? "查看与分享" : "View & share",
+        name: viewLabel,
         value: response.productUrl,
       },
       {
-        name: response.language === "zh" ? "立即购买" : "Buy now",
+        name: buyLabel,
         value: response.purchaseUrl,
       },
       {
-        name: response.language === "zh" ? "价格" : "Price",
+        name: priceLabel,
         value: `$${response.price}`,
-        inline: true,
-      },
-      {
-        name: response.language === "zh" ? "订单" : "Order",
-        value: response.orderNumber,
         inline: true,
       }
     );
+};
 
 export const DiscordBot = {
   start: async (): Promise<void> => {

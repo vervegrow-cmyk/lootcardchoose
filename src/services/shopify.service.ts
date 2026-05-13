@@ -21,7 +21,10 @@ export type ShopifyCreateProductOutput = {
   orderNumber: string;
   galleryCardId: string;
   shopifyProductId: string;
+  productTitle: string;
+  productCode: string;
   productHandle: string;
+  sku: string;
   productUrl: string;
   purchaseUrl: string;
   shareImageUrl: string;
@@ -33,11 +36,13 @@ type ShopifyProductImage = {
 
 type ShopifyVariant = {
   price: string;
+  sku: string;
 };
 
 type ShopifyProductPayload = {
   product: {
     title: string;
+    handle: string;
     body_html: string | null;
     tags: string;
     status: "active";
@@ -64,19 +69,76 @@ const resolveShopifyStoreDomain = (): string => {
 
 const resolveShopifyApiVersion = (): string => loadEnv().shopifyApiVersion;
 
+const PRODUCT_CODE_PREFIX = "LC";
+
+const normalizeBaseTitle = (title: string): string => {
+  const normalized = title.trim().replace(/\s+/g, " ");
+  return normalized || "Gallery Card";
+};
+
+const resolveOrderTail = (orderNumber: string): string => {
+  const digits = orderNumber.replace(/\D/g, "");
+  return digits.slice(-6).padStart(6, "0");
+};
+
+const resolveGalleryTail = (galleryCardId: string): string => {
+  const normalized = galleryCardId.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
+  return normalized.slice(-4).padStart(4, "X");
+};
+
+const slugify = (value: string): string => {
+  const normalized = value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+
+  return normalized || "gallery-card";
+};
+
+const buildProductIdentity = (
+  card: ShopifyGalleryCardInput,
+  order: ShopifyOrderInput
+): {
+  productTitle: string;
+  productCode: string;
+  productHandle: string;
+  sku: string;
+} => {
+  const baseTitle = normalizeBaseTitle(card.title);
+  const productCode = `${PRODUCT_CODE_PREFIX}-${resolveOrderTail(order.orderNumber)}-${resolveGalleryTail(
+    card.galleryCardId
+  )}`;
+  const productTitle = `${baseTitle} - ${productCode}`;
+  const sku = productCode;
+  const productHandle = slugify(`${baseTitle}-${productCode.toLowerCase()}`);
+
+  return {
+    productTitle,
+    productCode,
+    productHandle,
+    sku,
+  };
+};
+
 const buildProductPayload = (
   card: ShopifyGalleryCardInput,
   order: ShopifyOrderInput
-): ShopifyProductPayload => ({
-  product: {
-    title: card.title,
-    body_html: card.description,
-    tags: [...card.tags, `gallery-card:${card.galleryCardId}`, `order:${order.orderNumber}`].join(", "),
-    status: "active",
-    images: card.imageUrl ? [{ src: card.imageUrl }] : undefined,
-    variants: [{ price: card.price }],
-  },
-});
+): ShopifyProductPayload => {
+  const identity = buildProductIdentity(card, order);
+
+  return {
+    product: {
+      title: identity.productTitle,
+      handle: identity.productHandle,
+      body_html: card.description,
+      tags: [...card.tags, `gallery-card:${card.galleryCardId}`, `order:${order.orderNumber}`].join(", "),
+      status: "active",
+      images: card.imageUrl ? [{ src: card.imageUrl }] : undefined,
+      variants: [{ price: card.price, sku: identity.sku }],
+    },
+  };
+};
 
 const resolveProductUrl = (storeDomain: string, handle: string): string =>
   `https://${storeDomain}/products/${handle}`;
@@ -104,10 +166,15 @@ export const shopifyService = {
     const storeDomain = resolveShopifyStoreDomain();
     const apiVersion = resolveShopifyApiVersion();
     const accessToken = await shopifyInstallationService.getAccessTokenForStore();
+    const identity = buildProductIdentity(card, order);
     logger.info("[SHOPIFY SERVICE] create product start", {
       orderNumber: order.orderNumber,
       galleryCardId: card.galleryCardId,
       title: card.title,
+      productTitle: identity.productTitle,
+      productCode: identity.productCode,
+      productHandle: identity.productHandle,
+      sku: identity.sku,
       storeDomain,
     });
 
@@ -142,7 +209,10 @@ export const shopifyService = {
         orderNumber: order.orderNumber,
         galleryCardId: card.galleryCardId,
         shopifyProductId: String(productId),
+        productTitle: identity.productTitle,
+        productCode: identity.productCode,
         productHandle: handle,
+        sku: identity.sku,
         productUrl,
         purchaseUrl,
         shareImageUrl,
@@ -152,7 +222,10 @@ export const shopifyService = {
         orderNumber: order.orderNumber,
         galleryCardId: card.galleryCardId,
         shopifyProductId: String(productId),
+        productTitle: identity.productTitle,
+        productCode: identity.productCode,
         productHandle: handle,
+        sku: identity.sku,
         productUrl,
         purchaseUrl,
         shareImageUrl,
@@ -161,6 +234,10 @@ export const shopifyService = {
       logger.error("[SHOPIFY SERVICE] create product failed", {
         orderNumber: order.orderNumber,
         galleryCardId: card.galleryCardId,
+        productTitle: identity.productTitle,
+        productCode: identity.productCode,
+        productHandle: identity.productHandle,
+        sku: identity.sku,
         message: error instanceof Error ? error.message : String(error),
       });
       throw error;

@@ -69,7 +69,10 @@ const main = async (): Promise<void> => {
     orderNumber: order.orderNumber,
     galleryCardId: selectedCard.galleryCardId,
     shopifyProductId: "mock-shopify-product-id",
+    productTitle: "Red Corseted Female Character Collectible Card - LC-000001-BUEZ",
+    productCode: "LC-000001-BUEZ",
     productHandle: "mock-product-handle",
+    sku: "LC-000001-BUEZ",
     productUrl: "https://example.com/products/mock-product-handle",
     purchaseUrl: "https://example.com/cart/mock-variant:1?note=mock-order",
     shareImageUrl: selectedCard.imageUrl,
@@ -83,10 +86,12 @@ const main = async (): Promise<void> => {
     });
 
     assert.equal(checkoutResponse.type, "gallery_checkout_created");
+    assert.equal(checkoutResponse.title, "Red Corseted Female Character Collectible Card - LC-000001-BUEZ");
     assert.equal(checkoutResponse.productUrl, "https://example.com/products/mock-product-handle");
     assert.equal(checkoutResponse.purchaseUrl, "https://example.com/cart/mock-variant:1?note=mock-order");
     assert.equal(checkoutResponse.productHandle, "mock-product-handle");
     assert.ok(checkoutResponse.shareImageUrl);
+    assert.equal(checkoutResponse.metadata?.productCode, "LC-000001-BUEZ");
 
     const persistedOrder = await orderService.findByOrderNumber(checkoutResponse.orderNumber);
     ensure(persistedOrder, "Expected created order to be persisted");

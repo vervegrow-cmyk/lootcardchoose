@@ -7,7 +7,7 @@ const response: HermesGalleryCheckoutCreatedOutput = {
   type: "gallery_checkout_created",
   language: "en",
   text: "Your card page is ready. You can share it or buy it now.",
-  title: "Anime Female Character in Purple Floral Bra",
+  title: "Anime Female Character in Purple Floral Bra - LC-345678-BRA1",
   price: "150.00",
   productUrl: "https://example.com/products/purple-floral-bra",
   purchaseUrl: "https://example.com/cart/mock-variant:1?note=mock-order",
@@ -15,6 +15,9 @@ const response: HermesGalleryCheckoutCreatedOutput = {
   productHandle: "purple-floral-bra",
   orderNumber: "LC-1234567890",
   orderStatus: "checkout_created",
+  metadata: {
+    productCode: "LC-345678-BRA1",
+  },
 };
 
 const main = async (): Promise<void> => {
