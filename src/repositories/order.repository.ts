@@ -33,6 +33,7 @@ export type OrderRepository = {
     shopifyProductUrl: string;
     shopifyShareImageUrl: string;
     shopifyProductHandle: string;
+    amount?: string;
     status: "checkout_created";
   }) => Promise<OrderRepositoryRecord>;
   updateStatus: (input: {
@@ -43,6 +44,39 @@ export type OrderRepository = {
 };
 
 let ensureOrderColumnsPromise: Promise<void> | null = null;
+
+const formatAmount = (value: { toString(): string } | number | string): string => {
+  const numeric = typeof value === "number" ? value : Number(value.toString());
+  return Number.isFinite(numeric) ? numeric.toFixed(2) : "0.00";
+};
+
+const mapOrderRecord = (record: {
+  id: string;
+  orderNumber: string;
+  discordUserId: string;
+  galleryCardId: string;
+  preferredLanguage: string | null;
+  amount: { toString(): string } | number | string;
+  status: string;
+  shopifyProductId: string | null;
+  shopifyCheckoutUrl: string | null;
+  shopifyProductUrl: string | null;
+  shopifyShareImageUrl: string | null;
+  shopifyProductHandle: string | null;
+}): OrderRepositoryRecord => ({
+  id: record.id,
+  orderNumber: record.orderNumber,
+  discordUserId: record.discordUserId,
+  galleryCardId: record.galleryCardId,
+  preferredLanguage: record.preferredLanguage as SupportedLanguage | null,
+  amount: formatAmount(record.amount),
+  status: record.status as OrderStatus,
+  shopifyProductId: record.shopifyProductId,
+  shopifyCheckoutUrl: record.shopifyCheckoutUrl,
+  shopifyProductUrl: record.shopifyProductUrl,
+  shopifyShareImageUrl: record.shopifyShareImageUrl,
+  shopifyProductHandle: record.shopifyProductHandle,
+});
 
 const ensureOrderColumns = async (): Promise<void> => {
   if (!ensureOrderColumnsPromise) {
@@ -86,20 +120,7 @@ export const orderRepository: OrderRepository = {
       },
     });
 
-    return {
-      id: record.id,
-      orderNumber: record.orderNumber,
-      discordUserId: record.discordUserId,
-      galleryCardId: record.galleryCardId,
-      preferredLanguage: record.preferredLanguage as SupportedLanguage | null,
-      amount: record.amount.toString(),
-      status: record.status as OrderStatus,
-      shopifyProductId: record.shopifyProductId,
-      shopifyCheckoutUrl: record.shopifyCheckoutUrl,
-      shopifyProductUrl: record.shopifyProductUrl,
-      shopifyShareImageUrl: record.shopifyShareImageUrl,
-      shopifyProductHandle: record.shopifyProductHandle,
-    };
+    return mapOrderRecord(record);
   },
   async updateShopifyLink(input) {
     await ensureOrderColumns();
@@ -111,24 +132,12 @@ export const orderRepository: OrderRepository = {
         shopifyProductUrl: input.shopifyProductUrl,
         shopifyShareImageUrl: input.shopifyShareImageUrl,
         shopifyProductHandle: input.shopifyProductHandle,
+        ...(input.amount ? { amount: input.amount } : {}),
         status: input.status,
       },
     });
 
-    return {
-      id: record.id,
-      orderNumber: record.orderNumber,
-      discordUserId: record.discordUserId,
-      galleryCardId: record.galleryCardId,
-      preferredLanguage: record.preferredLanguage as SupportedLanguage | null,
-      amount: record.amount.toString(),
-      status: record.status as OrderStatus,
-      shopifyProductId: record.shopifyProductId,
-      shopifyCheckoutUrl: record.shopifyCheckoutUrl,
-      shopifyProductUrl: record.shopifyProductUrl,
-      shopifyShareImageUrl: record.shopifyShareImageUrl,
-      shopifyProductHandle: record.shopifyProductHandle,
-    };
+    return mapOrderRecord(record);
   },
   async updateStatus(input) {
     await ensureOrderColumns();
@@ -139,20 +148,7 @@ export const orderRepository: OrderRepository = {
       },
     });
 
-    return {
-      id: record.id,
-      orderNumber: record.orderNumber,
-      discordUserId: record.discordUserId,
-      galleryCardId: record.galleryCardId,
-      preferredLanguage: record.preferredLanguage as SupportedLanguage | null,
-      amount: record.amount.toString(),
-      status: record.status as OrderStatus,
-      shopifyProductId: record.shopifyProductId,
-      shopifyCheckoutUrl: record.shopifyCheckoutUrl,
-      shopifyProductUrl: record.shopifyProductUrl,
-      shopifyShareImageUrl: record.shopifyShareImageUrl,
-      shopifyProductHandle: record.shopifyProductHandle,
-    };
+    return mapOrderRecord(record);
   },
   async findByOrderNumber(orderNumber) {
     await ensureOrderColumns();
@@ -164,19 +160,6 @@ export const orderRepository: OrderRepository = {
       return null;
     }
 
-    return {
-      id: record.id,
-      orderNumber: record.orderNumber,
-      discordUserId: record.discordUserId,
-      galleryCardId: record.galleryCardId,
-      preferredLanguage: record.preferredLanguage as SupportedLanguage | null,
-      amount: record.amount.toString(),
-      status: record.status as OrderStatus,
-      shopifyProductId: record.shopifyProductId,
-      shopifyCheckoutUrl: record.shopifyCheckoutUrl,
-      shopifyProductUrl: record.shopifyProductUrl,
-      shopifyShareImageUrl: record.shopifyShareImageUrl,
-      shopifyProductHandle: record.shopifyProductHandle,
-    };
+    return mapOrderRecord(record);
   },
 };

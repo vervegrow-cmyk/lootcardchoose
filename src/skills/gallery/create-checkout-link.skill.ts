@@ -1,4 +1,6 @@
 import { SkillContext, SkillHandler } from "../../hermes/types";
+import { galleryService } from "../../services/gallery.service";
+import { cardPricingService } from "../../services/card-pricing.service";
 import { orderService } from "../../services/order.service";
 import { ShopifyGalleryCardInput, ShopifyOrderInput, shopifyService } from "../../services/shopify.service";
 import { t } from "../../utils/i18n";
@@ -42,6 +44,20 @@ const normalizeSelectedCard = (input: CreateCheckoutLinkInput): ShopifyGalleryCa
     tags: input.tags,
   };
 
+const buildFallbackPricingInput = (selectedCard: ShopifyGalleryCardInput) => ({
+  galleryPrice: selectedCard.price,
+  metadataPrice: null,
+  title: selectedCard.title,
+  description: selectedCard.description,
+  tags: selectedCard.tags,
+  style: null,
+  rarity: null,
+  category: null,
+  character: null,
+  color: null,
+  marketingTitle: null,
+});
+
 export const createCheckoutLink: SkillHandler<CreateCheckoutLinkInput, CreateCheckoutLinkOutput> = async (
   input,
   context: SkillContext
@@ -55,7 +71,25 @@ export const createCheckoutLink: SkillHandler<CreateCheckoutLinkInput, CreateChe
   });
 
   try {
-    const result = await shopifyService.createProductFromGalleryCard(selectedCard, input.order);
+    const pricingInput =
+      (await galleryService.getGalleryCardPricingInput(selectedCard.galleryCardId)) ??
+      buildFallbackPricingInput(selectedCard);
+    const pricing = cardPricingService.calculate(pricingInput);
+    const finalPrice = pricing.finalPrice.toFixed(2);
+    const pricedSelectedCard: ShopifyGalleryCardInput = {
+      ...selectedCard,
+      price: finalPrice,
+    };
+
+    logger.info("[CARD PRICING]", {
+      galleryCardId: selectedCard.galleryCardId,
+      base: pricing.basePrice.toFixed(2),
+      adjustment: pricing.adjustment.toFixed(2),
+      final: finalPrice,
+      tier: pricing.pricingTier,
+    });
+
+    const result = await shopifyService.createProductFromGalleryCard(pricedSelectedCard, input.order);
     const updatedOrder = await orderService.updateShopifyLink({
       orderId: input.order.id,
       shopifyProductId: result.shopifyProductId,
@@ -63,10 +97,11 @@ export const createCheckoutLink: SkillHandler<CreateCheckoutLinkInput, CreateChe
       shopifyProductUrl: result.productUrl,
       shopifyShareImageUrl: result.shareImageUrl,
       shopifyProductHandle: result.productHandle,
+      amount: finalPrice,
       status: "checkout_created",
     });
 
-      logger.info("[CREATE CHECKOUT LINK SKILL] success", {
+    logger.info("[CREATE CHECKOUT LINK SKILL] success", {
       orderNumber: updatedOrder.orderNumber,
       galleryCardId: result.galleryCardId,
       shopifyProductId: result.shopifyProductId,
@@ -80,7 +115,7 @@ export const createCheckoutLink: SkillHandler<CreateCheckoutLinkInput, CreateChe
     });
 
     return {
-      selectedCard,
+      selectedCard: pricedSelectedCard,
       order: {
         id: updatedOrder.id,
         orderNumber: updatedOrder.orderNumber,

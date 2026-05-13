@@ -65,18 +65,22 @@ const main = async (): Promise<void> => {
   assert.equal(activeSessionsAfterSearch.length, 1);
 
   const originalCreateProductFromGalleryCard = shopifyService.createProductFromGalleryCard;
-  shopifyService.createProductFromGalleryCard = async (selectedCard, order) => ({
-    orderNumber: order.orderNumber,
-    galleryCardId: selectedCard.galleryCardId,
-    shopifyProductId: "mock-shopify-product-id",
-    productTitle: "Crimson Neon Valkyrie | LC-000001-BUEZ",
-    productCode: "LC-000001-BUEZ",
-    productHandle: "crimson-neon-valkyrie-lc-000001-buez",
-    sku: "LC-000001-BUEZ",
-    productUrl: "https://example.com/products/crimson-neon-valkyrie-lc-000001-buez",
-    purchaseUrl: "https://example.com/cart/mock-variant:1?note=mock-order",
-    shareImageUrl: selectedCard.imageUrl,
-  });
+  let capturedCheckoutPrice: string | null = null;
+  shopifyService.createProductFromGalleryCard = async (selectedCard, order) => {
+    capturedCheckoutPrice = selectedCard.price;
+    return {
+      orderNumber: order.orderNumber,
+      galleryCardId: selectedCard.galleryCardId,
+      shopifyProductId: "mock-shopify-product-id",
+      productTitle: "Crimson Neon Valkyrie | LC-000001-BUEZ",
+      productCode: "LC-000001-BUEZ",
+      productHandle: "crimson-neon-valkyrie-lc-000001-buez",
+      sku: "LC-000001-BUEZ",
+      productUrl: "https://example.com/products/crimson-neon-valkyrie-lc-000001-buez",
+      purchaseUrl: "https://example.com/cart/mock-variant:1?note=mock-order",
+      shareImageUrl: selectedCard.imageUrl,
+    };
+  };
 
   try {
     const checkoutResponse = await router.handle({
@@ -105,6 +109,8 @@ const main = async (): Promise<void> => {
     assert.equal(persistedOrder.shopifyShareImageUrl, checkoutResponse.shareImageUrl);
     assert.equal(persistedOrder.shopifyProductHandle, checkoutResponse.productHandle);
     assert.equal(persistedOrder.preferredLanguage, "en");
+    assert.equal(persistedOrder.amount, capturedCheckoutPrice);
+    assert.equal(checkoutResponse.price, capturedCheckoutPrice);
 
     console.log(`[TEST GALLERY SELECT] productUrl=${checkoutResponse.productUrl}`);
     console.log(`[TEST GALLERY SELECT] purchaseUrl=${checkoutResponse.purchaseUrl}`);

@@ -32,6 +32,7 @@ export const orderService = {
     shopifyProductUrl: string;
     shopifyShareImageUrl: string;
     shopifyProductHandle: string;
+    amount?: string;
     status: "checkout_created";
   }): Promise<OrderRecord> {
     return orderRepository.updateShopifyLink(input);

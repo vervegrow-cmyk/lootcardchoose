@@ -34,6 +34,20 @@ export type GalleryCardDto = {
   score?: number;
 };
 
+export type GalleryCardPricingInputDto = {
+  galleryPrice: number | string | null;
+  metadataPrice: number | string | null;
+  title: string;
+  description: string | null;
+  tags: string[];
+  style: string | null;
+  rarity: string | null;
+  category: string | null;
+  character: string | null;
+  color: string | null;
+  marketingTitle: string | null;
+};
+
 export type GallerySearchResult = {
   query: string;
   language: SupportedLanguage;
@@ -242,6 +256,28 @@ const sanitizePlannerKeywordList = (values: string[]): string[] =>
 
 const isJsonObject = (value: Prisma.JsonValue): value is Prisma.JsonObject =>
   typeof value === "object" && value !== null && !Array.isArray(value);
+
+const readMetadataString = (metadata: Prisma.JsonValue | null, key: string): string | null => {
+  if (!metadata || !isJsonObject(metadata)) {
+    return null;
+  }
+
+  const value = metadata[key];
+  return typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
+};
+
+const readMetadataPrice = (metadata: Prisma.JsonValue | null): string | number | null => {
+  if (!metadata || !isJsonObject(metadata)) {
+    return null;
+  }
+
+  const value = metadata.price;
+  if (typeof value === "number" || typeof value === "string") {
+    return value;
+  }
+
+  return null;
+};
 
 const readSessionCardSummaries = (results: Prisma.JsonValue): RefreshPlannerCardSummary[] => {
   if (!Array.isArray(results)) {
@@ -794,5 +830,30 @@ export const galleryService = {
     }
     const card = await galleryRepository.findById(cardId);
     return card ? toDto(card) : null;
+  },
+
+  async getGalleryCardPricingInput(cardId: string): Promise<GalleryCardPricingInputDto | null> {
+    if (!isDatabaseReady()) {
+      throw new Error("DATABASE_NOT_READY");
+    }
+
+    const card = await galleryRepository.findById(cardId);
+    if (!card) {
+      return null;
+    }
+
+    return {
+      galleryPrice: Number(card.price),
+      metadataPrice: readMetadataPrice(card.metadata),
+      title: card.title,
+      description: card.description,
+      tags: card.tags,
+      style: card.style,
+      rarity: card.rarity,
+      category: card.category,
+      character: card.character,
+      color: card.color,
+      marketingTitle: readMetadataString(card.metadata, "marketingTitle"),
+    };
   },
 };
