@@ -44,6 +44,7 @@ model Order {
   orderNumber         String
   discordUserId       String
   galleryCardId       String
+  preferredLanguage   String?
   shopifyProductId    String?
   shopifyCheckoutUrl  String?
   shopifyProductUrl   String?

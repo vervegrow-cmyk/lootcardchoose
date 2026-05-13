@@ -135,11 +135,13 @@ export const shopifyWebhookService = {
 
     logger.info("[SHOPIFY WEBHOOK] discord notify start", {
       orderNumber: order.orderNumber,
+      preferredLanguage: order.preferredLanguage,
     });
     await discordNotificationService.notifyOrderPaid({
       discordUserId: order.discordUserId,
       orderNumber: order.orderNumber,
       amount: order.amount,
+      language: order.preferredLanguage,
     });
 
     logger.info("[SHOPIFY WEBHOOK] completed", {

@@ -99,6 +99,7 @@ const main = async (): Promise<void> => {
     assert.equal(persistedOrder.shopifyProductUrl, checkoutResponse.productUrl);
     assert.equal(persistedOrder.shopifyShareImageUrl, checkoutResponse.shareImageUrl);
     assert.equal(persistedOrder.shopifyProductHandle, checkoutResponse.productHandle);
+    assert.equal(persistedOrder.preferredLanguage, "en");
 
     console.log(`[TEST GALLERY SELECT] productUrl=${checkoutResponse.productUrl}`);
     console.log(`[TEST GALLERY SELECT] purchaseUrl=${checkoutResponse.purchaseUrl}`);

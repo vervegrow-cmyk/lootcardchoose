@@ -1,5 +1,6 @@
 import { prisma } from "../services/prisma.service";
 import { logger } from "../utils/logger";
+import { SupportedLanguage } from "../hermes/types";
 
 export type OrderStatus = "pending" | "checkout_created" | "paid" | "cancelled";
 
@@ -8,6 +9,7 @@ export type OrderRepositoryRecord = {
   orderNumber: string;
   discordUserId: string;
   galleryCardId: string;
+  preferredLanguage: SupportedLanguage | null;
   amount: string;
   status: OrderStatus;
   shopifyProductId: string | null;
@@ -22,6 +24,7 @@ export type OrderRepository = {
     discordUserId: string;
     galleryCardId: string;
     amount: string;
+    preferredLanguage?: SupportedLanguage | null;
   }) => Promise<OrderRepositoryRecord>;
   updateShopifyLink: (input: {
     orderId: string;
@@ -54,6 +57,9 @@ const ensureOrderColumns = async (): Promise<void> => {
         await prisma.$executeRawUnsafe(
           'ALTER TABLE "Order" ADD COLUMN IF NOT EXISTS "shopifyProductHandle" TEXT'
         );
+        await prisma.$executeRawUnsafe(
+          'ALTER TABLE "Order" ADD COLUMN IF NOT EXISTS "preferredLanguage" TEXT'
+        );
       } catch (error) {
         logger.warn("[ORDER REPOSITORY] ensure order columns failed", {
           message: error instanceof Error ? error.message : String(error),
@@ -73,6 +79,7 @@ export const orderRepository: OrderRepository = {
       data: {
         discordUserId: input.discordUserId,
         galleryCardId: input.galleryCardId,
+        preferredLanguage: input.preferredLanguage ?? null,
         amount: input.amount,
         orderNumber: `LC-${Date.now()}`,
         status: "pending",
@@ -84,6 +91,7 @@ export const orderRepository: OrderRepository = {
       orderNumber: record.orderNumber,
       discordUserId: record.discordUserId,
       galleryCardId: record.galleryCardId,
+      preferredLanguage: record.preferredLanguage as SupportedLanguage | null,
       amount: record.amount.toString(),
       status: record.status as OrderStatus,
       shopifyProductId: record.shopifyProductId,
@@ -112,6 +120,7 @@ export const orderRepository: OrderRepository = {
       orderNumber: record.orderNumber,
       discordUserId: record.discordUserId,
       galleryCardId: record.galleryCardId,
+      preferredLanguage: record.preferredLanguage as SupportedLanguage | null,
       amount: record.amount.toString(),
       status: record.status as OrderStatus,
       shopifyProductId: record.shopifyProductId,
@@ -135,6 +144,7 @@ export const orderRepository: OrderRepository = {
       orderNumber: record.orderNumber,
       discordUserId: record.discordUserId,
       galleryCardId: record.galleryCardId,
+      preferredLanguage: record.preferredLanguage as SupportedLanguage | null,
       amount: record.amount.toString(),
       status: record.status as OrderStatus,
       shopifyProductId: record.shopifyProductId,
@@ -159,6 +169,7 @@ export const orderRepository: OrderRepository = {
       orderNumber: record.orderNumber,
       discordUserId: record.discordUserId,
       galleryCardId: record.galleryCardId,
+      preferredLanguage: record.preferredLanguage as SupportedLanguage | null,
       amount: record.amount.toString(),
       status: record.status as OrderStatus,
       shopifyProductId: record.shopifyProductId,

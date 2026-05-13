@@ -1,3 +1,4 @@
+import { SupportedLanguage } from "../hermes/types";
 import { OrderRepositoryRecord, OrderStatus, orderRepository } from "../repositories/order.repository";
 
 export type OrderRecord = {
@@ -5,6 +6,7 @@ export type OrderRecord = {
   orderNumber: string;
   discordUserId: string;
   galleryCardId: string;
+  preferredLanguage: SupportedLanguage | null;
   amount: string;
   status: OrderStatus;
   shopifyProductId: string | null;
@@ -19,6 +21,7 @@ export const orderService = {
     discordUserId: string;
     galleryCardId: string;
     amount: string;
+    preferredLanguage?: SupportedLanguage | null;
   }): Promise<OrderRecord> {
     return orderRepository.createPendingOrder(input);
   },

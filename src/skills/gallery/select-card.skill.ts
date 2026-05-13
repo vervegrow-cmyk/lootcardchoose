@@ -34,6 +34,20 @@ export type SelectCardOutput = {
   };
 };
 
+const resolvePreferredLanguage = (
+  session: Awaited<ReturnType<typeof gallerySearchSessionRepository.findLatest>>,
+  fallbackLanguage: SkillContext["language"]
+): SkillContext["language"] => {
+  if (session && Array.isArray(session.results)) {
+    const firstResult = session.results[0] as { language?: unknown } | undefined;
+    if (firstResult?.language === "zh" || firstResult?.language === "en") {
+      return firstResult.language;
+    }
+  }
+
+  return fallbackLanguage;
+};
+
 const buildOutOfRangeText = (language: SkillContext["language"], max: number): string =>
   language === "zh" ? `请选择 1 到 ${max} 之间的编号。` : `Please choose a number from 1 to ${max}.`;
 
@@ -115,6 +129,7 @@ export const selectCardSkill: SkillHandler<SelectCardInput, SelectCardOutput> = 
       discordUserId: input.discordUserId,
       galleryCardId: card.id,
       amount: card.price.toFixed(2),
+      preferredLanguage: resolvePreferredLanguage(session, context.language),
     });
 
     await gallerySearchSessionRepository.updateSelectedCard({
