@@ -1,8 +1,10 @@
 import { AgentDefinition, SkillDefinition, RegisteredSkill } from "./types";
 import { GalleryAgent } from "../agents/gallery/gallery.agent";
+import { createCheckoutLinkSkill } from "../skills/gallery/create-checkout-link.skill";
 import { galleryHelpSkill } from "../skills/gallery/gallery-help.skill";
 import { refreshGallerySkill } from "../skills/gallery/refresh-gallery.skill";
 import { searchGallerySkill } from "../skills/gallery/search-gallery.skill";
+import { selectCardSkill } from "../skills/gallery/select-card.skill";
 
 export class HermesRegistry {
   private agents = new Map<string, AgentDefinition>();
@@ -46,6 +48,16 @@ export const buildHermesRegistry = (): HermesRegistry => {
     id: "gallery.refresh",
     name: "RefreshGallerySkill",
     handler: refreshGallerySkill,
+  });
+  registry.registerSkill({
+    id: "gallery.selectCard",
+    name: "SelectCardSkill",
+    handler: selectCardSkill,
+  });
+  registry.registerSkill({
+    id: "gallery.createCheckoutLink",
+    name: "CreateCheckoutLinkSkill",
+    handler: createCheckoutLinkSkill,
   });
   registry.registerSkill({
     id: "gallery.help",

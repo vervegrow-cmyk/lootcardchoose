@@ -7,12 +7,12 @@ const GALLERY_STOP_WORDS = new Set([
   "来点",
   "来些",
   "一个",
-  "找",
+  "一张",
   "搜索",
   "图库",
   "图片",
   "卡牌",
-  "样式",
+  "风格",
   "show",
   "me",
   "please",
@@ -26,7 +26,7 @@ const GALLERY_STOP_WORDS = new Set([
   "trading card",
 ]);
 
-const MEASURE_WORDS = new Set(["张", "个", "套", "款", "种"]);
+const MEASURE_WORDS = new Set(["张", "个", "款", "种"]);
 
 const CANONICAL_TERM_MAP: Record<string, string> = {
   黑金: "black gold",
@@ -74,7 +74,6 @@ const CANONICAL_TERM_MAP: Record<string, string> = {
   性感: "sexy",
   sexy: "sexy",
   发货: "shipping",
-  shipping: "shipping",
   物流: "tracking",
   跟踪: "tracking",
   tracking: "tracking",
@@ -109,10 +108,14 @@ const NEXT_BATCH_PATTERNS = [
   "can we switch to another batch",
   "show me another batch",
   "next batch",
+  "another batch",
+  "another set",
   "more options",
   "any other options",
   "show me more",
   "more like this",
+  "next",
+  "more",
   "换一批",
   "再来一批",
   "还有别的吗",
@@ -125,6 +128,7 @@ const REFINE_PATTERNS = [
   "i don't like these",
   "not these",
   "these are not what i want",
+  "these are not right",
   "不喜欢这些",
   "不是这种",
   "这些不太对",
@@ -132,11 +136,37 @@ const REFINE_PATTERNS = [
 
 const BROADEN_PATTERNS = [
   "try another style",
+  "show me another style",
+  "different style",
   "something else",
   "换个风格",
 ];
 
+const GALLERY_REFRESH_PATTERNS = [...NEXT_BATCH_PATTERNS, ...REFINE_PATTERNS, ...BROADEN_PATTERNS];
+
+const GALLERY_SELECT_PATTERNS = [
+  /^(?:1|one|first)$/i,
+  /^number\s+one$/i,
+  /^option\s+one$/i,
+  /^i\s+choose\s+one$/i,
+  /^i(?:'ll|\s+will)?\s+take\s+the\s+first\s+one$/i,
+  /^i(?:'ll|\s+will)?\s+take\s+the\s+first$/i,
+  /^choose\s+one$/i,
+  /^select\s+one$/i,
+  /^the\s+first\s+one$/i,
+  /^第一个$/,
+  /^选第一个$/,
+  /^我要第一个$/,
+  /^选择1$/,
+  /^选1$/,
+];
+
 const normalizeText = (value: string): string => value.trim().toLowerCase();
+
+const containsPattern = (message: string, patterns: string[]): boolean => {
+  const normalized = normalizeText(message);
+  return patterns.some((pattern) => normalized.includes(pattern));
+};
 
 export const detectPreferredLanguage = (message: string): SupportedLanguage =>
   /[\u4e00-\u9fff]/.test(message) ? "zh" : "en";
@@ -165,8 +195,8 @@ export const canonicalizeGalleryTerm = (value: string): string => {
 
 const stripMeaninglessText = (value: string): string => {
   let cleaned = value.trim();
-  cleaned = cleaned.replace(/[，。、“”"'‘’！；？！,.:;()[\]{}<>/\\|@#$%^&*_+=~-]+/g, " ");
-  cleaned = cleaned.replace(/\d+\s*(张|个|套|款|种)?/g, " ");
+  cleaned = cleaned.replace(/[，。、“”"'‘’！；？,.:;()[\]{}<>/\\|@#$%^&*_+=~-]+/g, " ");
+  cleaned = cleaned.replace(/\d+\s*(张|个|款|种)/g, " ");
 
   for (const stopWord of GALLERY_STOP_WORDS) {
     cleaned = cleaned.replace(new RegExp(stopWord, "gi"), " ");
@@ -263,22 +293,49 @@ export const expandGalleryKeywords = (values: string[]): string[] => {
 export const normalizeGalleryKeywordsToEnglish = (values: string[]): string[] =>
   expandGalleryKeywords(values.flatMap((value) => extractGalleryKeywordCandidates(value)));
 
+export const isGalleryRefreshMessage = (message: string): boolean => containsPattern(message, GALLERY_REFRESH_PATTERNS);
+
 export const inferRefreshModeFromMessage = (
   message: string
 ): "next_batch" | "refine" | "broaden" => {
-  const normalized = normalizeText(message);
-
-  if (REFINE_PATTERNS.some((pattern) => normalized.includes(pattern))) {
+  if (containsPattern(message, REFINE_PATTERNS)) {
     return "refine";
   }
 
-  if (BROADEN_PATTERNS.some((pattern) => normalized.includes(pattern))) {
+  if (containsPattern(message, BROADEN_PATTERNS)) {
     return "broaden";
   }
 
-  if (NEXT_BATCH_PATTERNS.some((pattern) => normalized.includes(pattern))) {
+  if (containsPattern(message, NEXT_BATCH_PATTERNS)) {
     return "next_batch";
   }
 
   return "next_batch";
 };
+
+export const parseSelectedIndex = (message: string): number | null => {
+  const normalized = normalizeText(message);
+
+  const numericMatch = normalized.match(/\d+/);
+  if (numericMatch) {
+    const selectedIndex = Number.parseInt(numericMatch[0], 10);
+    return Number.isFinite(selectedIndex) && selectedIndex > 0 ? selectedIndex : null;
+  }
+
+  if (GALLERY_SELECT_PATTERNS.some((pattern) => pattern.test(message.trim()))) {
+    return 1;
+  }
+
+  if (
+    normalized.includes("first") ||
+    normalized.includes("one") ||
+    normalized.includes("第一个") ||
+    normalized.includes("选第一个")
+  ) {
+    return 1;
+  }
+
+  return null;
+};
+
+export const isGallerySelectMessage = (message: string): boolean => parseSelectedIndex(message) !== null;

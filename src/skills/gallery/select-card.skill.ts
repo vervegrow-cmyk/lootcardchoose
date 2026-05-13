@@ -11,14 +11,20 @@ export type SelectCardInput = {
 };
 
 export type SelectCardOutput = {
-  orderId: string;
-  orderNumber: string;
-  galleryCardId: string;
-  title: string;
-  description: string | null;
-  imageUrl: string;
-  price: string;
-  tags: string[];
+  selectedCard: {
+    galleryCardId: string;
+    title: string;
+    description: string | null;
+    imageUrl: string;
+    price: string;
+    tags: string[];
+  };
+  order: {
+    id: string;
+    orderNumber: string;
+    amount: string;
+    status: string;
+  };
 };
 
 export const selectCardSkill: SkillHandler<SelectCardInput, SelectCardOutput> = async (
@@ -28,6 +34,7 @@ export const selectCardSkill: SkillHandler<SelectCardInput, SelectCardOutput> = 
   const session = await gallerySearchSessionRepository.findLatest({
     discordUserId: input.discordUserId,
     discordChannelId: input.discordChannelId,
+    status: "active",
   });
 
   if (!session || !Array.isArray(session.results)) {
@@ -45,7 +52,7 @@ export const selectCardSkill: SkillHandler<SelectCardInput, SelectCardOutput> = 
     throw new Error(t(context.language, "gallery.select.invalid"));
   }
 
-  const order = await orderService.createOrder({
+  const order = await orderService.createPendingOrder({
     discordUserId: input.discordUserId,
     galleryCardId: card.id,
     amount: card.price.toFixed(2),
@@ -57,13 +64,19 @@ export const selectCardSkill: SkillHandler<SelectCardInput, SelectCardOutput> = 
   });
 
   return {
-    orderId: order.id,
-    orderNumber: order.orderNumber,
-    galleryCardId: card.id,
-    title: card.title,
-    description: card.description,
-    imageUrl: card.imageUrl,
-    price: card.price.toFixed(2),
-    tags: card.tags,
+    selectedCard: {
+      galleryCardId: card.id,
+      title: card.title,
+      description: card.description,
+      imageUrl: card.imageUrl,
+      price: card.price.toFixed(2),
+      tags: card.tags,
+    },
+    order: {
+      id: order.id,
+      orderNumber: order.orderNumber,
+      amount: order.amount,
+      status: order.status,
+    },
   };
 };

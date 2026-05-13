@@ -21,9 +21,17 @@ export type GallerySearchSessionRepository = {
     results: Prisma.InputJsonValue;
     status: string;
   }) => Promise<GallerySearchSessionRecord>;
-  findLatest: (input: { discordUserId: string; discordChannelId: string }) => Promise<GallerySearchSessionRecord | null>;
+  findLatest: (input: {
+    discordUserId: string;
+    discordChannelId: string;
+    status?: string;
+  }) => Promise<GallerySearchSessionRecord | null>;
   findLatestByUserId: (discordUserId: string) => Promise<GallerySearchSessionRecord | null>;
-  findRecentByUserId: (input: { discordUserId: string; take?: number }) => Promise<GallerySearchSessionRecord[]>;
+  findRecentByUserId: (input: {
+    discordUserId: string;
+    take?: number;
+    status?: string;
+  }) => Promise<GallerySearchSessionRecord[]>;
   updateSelectedCard: (input: { sessionId: string; galleryCardId: string }) => Promise<void>;
 };
 
@@ -44,6 +52,7 @@ export const gallerySearchSessionRepository: GallerySearchSessionRepository = {
       where: {
         discordUserId: input.discordUserId,
         discordChannelId: input.discordChannelId,
+        ...(input.status ? { status: input.status } : {}),
       },
       orderBy: { createdAt: "desc" },
     });
@@ -60,6 +69,7 @@ export const gallerySearchSessionRepository: GallerySearchSessionRepository = {
     return prisma.gallerySearchSession.findMany({
       where: {
         discordUserId: input.discordUserId,
+        ...(input.status ? { status: input.status } : {}),
       },
       orderBy: { createdAt: "desc" },
       take: input.take ?? 20,

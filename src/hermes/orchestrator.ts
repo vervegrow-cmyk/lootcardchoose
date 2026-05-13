@@ -13,7 +13,7 @@ export class HermesOrchestrator {
   }
 
   async run(input: HermesInput, context: Parameters<AgentHandler>[1]): Promise<HermesOutput> {
-    logger.info("[HERMES ORCHESTRATOR] agent=" + context.agentId);
+    logger.info("[HERMES ORCHESTRATOR] agent=" + context.agentId + " intent=" + (context.intent ?? "unknown"));
     return this.agent.handler(input, context);
   }
 }

@@ -6,8 +6,10 @@ dotenv.config({ path: ".env.local", override: true });
 import assert from "node:assert/strict";
 import { buildHermesRegistry } from "../hermes/registry";
 import { HermesRouter } from "../hermes/router";
-import { refreshGallerySkill } from "../skills/gallery/refresh-gallery.skill";
-import { searchGallerySkill } from "../skills/gallery/search-gallery.skill";
+import { gallerySearchSessionRepository } from "../repositories/gallery-search-session.repository";
+import { HermesOutput } from "../hermes/types";
+import { parseSelectedIndex } from "../utils/gallery-language";
+import { logger } from "../utils/logger";
 
 const ensure = (condition: unknown, message: string): void => {
   if (!condition) {
@@ -15,181 +17,158 @@ const ensure = (condition: unknown, message: string): void => {
   }
 };
 
-const hasChinese = (value: string): boolean => /[\u4e00-\u9fff]/.test(value);
+const collectLogs = async (run: () => Promise<void>): Promise<string[]> => {
+  const lines: string[] = [];
+  const originalInfo = logger.info;
+  const originalWarn = logger.warn;
+  const originalError = logger.error;
+
+  logger.info = (message, meta) => {
+    lines.push(meta ? `${message} ${JSON.stringify(meta)}` : message);
+    originalInfo(message, meta);
+  };
+  logger.warn = (message, meta) => {
+    lines.push(meta ? `${message} ${JSON.stringify(meta)}` : message);
+    originalWarn(message, meta);
+  };
+  logger.error = (message, meta) => {
+    lines.push(meta ? `${message} ${JSON.stringify(meta)}` : message);
+    originalError(message, meta);
+  };
+
+  try {
+    await run();
+    return lines;
+  } finally {
+    logger.info = originalInfo;
+    logger.warn = originalWarn;
+    logger.error = originalError;
+  }
+};
 
 const run = async (): Promise<void> => {
   const registry = buildHermesRegistry();
   const router = new HermesRouter(registry);
-  const testSuffix = `${Date.now()}`;
-  const englishUserId = `refresh-en-user-${testSuffix}`;
-  const englishChannelId = `refresh-en-channel-${testSuffix}`;
-  const chineseUserId = `refresh-zh-user-${testSuffix}`;
-  const chineseChannelId = `refresh-zh-channel-${testSuffix}`;
+  const suffix = `${Date.now()}`;
 
-  const englishIntent = await router.determineIntent("Can we switch to another batch?");
-  console.log("[TEST GALLERY REFRESH] english intent=", JSON.stringify(englishIntent));
-  assert.equal(englishIntent.intent, "gallery_refresh");
-  assert.equal(englishIntent.language, "en");
+  const enUserId = `refresh-en-user-${suffix}`;
+  const enChannelId = `refresh-en-channel-${suffix}`;
+  const zhUserId = `refresh-zh-user-${suffix}`;
+  const zhChannelId = `refresh-zh-channel-${suffix}`;
 
-  const englishSearch = await searchGallerySkill(
-    {
-      query: "Show me 10 black gold SSR female cards",
-      discordUserId: englishUserId,
-      discordChannelId: englishChannelId,
-    },
-    {
-      requestId: `refresh-en-search-${Date.now()}`,
-      language: "en",
-      userId: englishUserId,
-      channelId: englishChannelId,
-      intent: "gallery_search",
-      skillId: "gallery.search",
-    }
-  );
+  const firstSearch = await router.handle({
+    text: "girl",
+    userId: enUserId,
+    channelId: enChannelId,
+  });
 
-  ensure(englishSearch.results.length > 0, "Expected initial English search results");
+  assert.equal(firstSearch.type, "gallery_search_results");
+  ensure(firstSearch.cards.length > 0, "Expected first English search results");
+  const firstBatchCardIds = firstSearch.cards.map((card) => card.id);
 
-  const englishRefresh = await refreshGallerySkill(
-    {
-      discordUserId: englishUserId,
-      discordChannelId: englishChannelId,
-      currentMessage: "Can we switch to another batch?",
-    },
-    {
-      requestId: `refresh-en-refresh-${Date.now()}`,
-      language: "en",
-      userId: englishUserId,
-      channelId: englishChannelId,
-      intent: "gallery_refresh",
-      skillId: "gallery.refresh",
-    }
-  );
+  let secondResponse: HermesOutput | undefined;
 
-  console.log(
-    "[TEST GALLERY REFRESH] english refresh=",
-    JSON.stringify({
-      language: englishRefresh.language,
-      refreshMode: englishRefresh.refreshMode,
-      firstBatchCardIds: englishRefresh.firstBatchCardIds,
-      secondBatchCardIds: englishRefresh.secondBatchCardIds,
-    })
-  );
+  const fullChainLogs = await collectLogs(async () => {
+    secondResponse = await router.handle({
+      text: "Can we switch to another batch?",
+      userId: enUserId,
+      channelId: enChannelId,
+    });
+  });
 
-  assert.equal(englishRefresh.language, "en");
-  assert.ok(englishRefresh.results.length <= 10);
-  for (const cardId of englishRefresh.secondBatchCardIds) {
-    assert.ok(!englishRefresh.firstBatchCardIds.includes(cardId), `Expected refreshed batch to exclude ${cardId}`);
+  if (!secondResponse) {
+    throw new Error("Expected refresh response");
   }
+  assert.equal(secondResponse.type, "gallery_search_results");
+  assert.equal(secondResponse.language, "en");
+  assert.equal(secondResponse.refreshMode, "next_batch");
+  assert.equal(secondResponse.text, "Here’s another batch of cards for you. Reply with a number to select one.");
+
+  const secondBatchCardIds = secondResponse.cards.map((card) => card.id);
+  ensure(secondBatchCardIds.length > 0, "Expected second English batch");
+  for (const cardId of secondBatchCardIds) {
+    assert.ok(!firstBatchCardIds.includes(cardId), `Expected refreshed batch to exclude ${cardId}`);
+  }
+
+  assert.ok(fullChainLogs.includes("[HERMES ROUTER] intent=gallery_refresh"));
+  assert.ok(fullChainLogs.includes("[HERMES ORCHESTRATOR] agent=lootcardchoose intent=gallery_refresh"));
+  assert.ok(fullChainLogs.includes("[GALLERY AGENT] handling gallery_refresh"));
+  assert.ok(fullChainLogs.includes("[REFRESH GALLERY SKILL] start"));
+  assert.ok(fullChainLogs.includes("[REFRESH GALLERY SKILL] completed"));
 
   const refineIntent = await router.determineIntent("I don't like these, show me another style");
   console.log("[TEST GALLERY REFRESH] refine intent=", JSON.stringify(refineIntent));
   assert.equal(refineIntent.intent, "gallery_refresh");
 
-  const refineRefresh = await refreshGallerySkill(
-    {
-      discordUserId: englishUserId,
-      discordChannelId: englishChannelId,
-      currentMessage: "I don't like these, show me another style",
-    },
-    {
-      requestId: `refresh-en-refine-${Date.now()}`,
-      language: "en",
-      userId: englishUserId,
-      channelId: englishChannelId,
-      intent: "gallery_refresh",
-      skillId: "gallery.refresh",
-    }
-  );
+  const refineResponse = await router.handle({
+    text: "I don't like these, show me another style",
+    userId: enUserId,
+    channelId: enChannelId,
+  });
 
-  console.log("[TEST GALLERY REFRESH] refine mode=", refineRefresh.refreshMode);
-  assert.ok(["refine", "broaden", "random_fallback"].includes(refineRefresh.refreshMode));
+  assert.equal(refineResponse.type, "gallery_search_results");
+  assert.ok(["refine", "broaden", "random_fallback"].includes(refineResponse.refreshMode ?? ""));
 
-  const chineseIntent = await router.determineIntent("换一批");
-  console.log("[TEST GALLERY REFRESH] chinese intent=", JSON.stringify(chineseIntent));
-  assert.equal(chineseIntent.intent, "gallery_refresh");
-  assert.equal(chineseIntent.language, "zh");
+  const selectIntent = await router.determineIntent("one");
+  console.log("[TEST GALLERY REFRESH] select intent=", JSON.stringify(selectIntent));
+  assert.equal(selectIntent.intent, "gallery_select");
+  assert.equal(parseSelectedIndex("one"), 1);
+  assert.equal(parseSelectedIndex("first"), 1);
+  assert.equal(parseSelectedIndex("第一个"), 1);
 
-  const chineseSearch = await searchGallerySkill(
-    {
-      query: "给我10张黑金SSR女角色卡牌",
-      discordUserId: chineseUserId,
-      discordChannelId: chineseChannelId,
-    },
-    {
-      requestId: `refresh-zh-search-${Date.now()}`,
-      language: "zh",
-      userId: chineseUserId,
-      channelId: chineseChannelId,
-      intent: "gallery_search",
-      skillId: "gallery.search",
-    }
-  );
+  const activeSession = await gallerySearchSessionRepository.findLatest({
+    discordUserId: enUserId,
+    discordChannelId: enChannelId,
+    status: "active",
+  });
+  ensure(activeSession && Array.isArray(activeSession.results) && activeSession.results.length > 0, "Expected active session");
 
-  ensure(chineseSearch.results.length > 0, "Expected initial Chinese search results");
+  const zhSearch = await router.handle({
+    text: "女孩卡牌",
+    userId: zhUserId,
+    channelId: zhChannelId,
+  });
 
-  const chineseRefresh = await refreshGallerySkill(
-    {
-      discordUserId: chineseUserId,
-      discordChannelId: chineseChannelId,
-      currentMessage: "换一批",
-    },
-    {
-      requestId: `refresh-zh-refresh-${Date.now()}`,
-      language: "zh",
-      userId: chineseUserId,
-      channelId: chineseChannelId,
-      intent: "gallery_refresh",
-      skillId: "gallery.refresh",
-    }
+  assert.equal(zhSearch.type, "gallery_search_results");
+  ensure(zhSearch.cards.length > 0, "Expected Chinese search results");
+
+  const zhIntent = await router.determineIntent("换一批");
+  console.log("[TEST GALLERY REFRESH] chinese intent=", JSON.stringify(zhIntent));
+  assert.equal(zhIntent.intent, "gallery_refresh");
+  assert.equal(zhIntent.language, "zh");
+
+  const zhRefresh = await router.handle({
+    text: "换一批",
+    userId: zhUserId,
+    channelId: zhChannelId,
+  });
+
+  assert.equal(zhRefresh.language, "zh");
+  assert.equal(zhRefresh.type, "gallery_search_results");
+  assert.equal(zhRefresh.text, "这是为你换的一批卡牌，请回复编号选择一张。");
+
+  const noHistoryResponse = await router.handle({
+    text: "Show me another batch",
+    userId: `no-history-user-${suffix}`,
+    channelId: `no-history-channel-${suffix}`,
+  });
+
+  assert.equal(noHistoryResponse.type, "text");
+  assert.equal(
+    noHistoryResponse.text,
+    "Please search for a card style first, then I can show you another batch."
   );
 
   console.log(
-    "[TEST GALLERY REFRESH] chinese refresh=",
+    "[TEST GALLERY REFRESH] summary=",
     JSON.stringify({
-      language: chineseRefresh.language,
-      refreshMode: chineseRefresh.refreshMode,
-      firstBatchCardIds: chineseRefresh.firstBatchCardIds,
-      secondBatchCardIds: chineseRefresh.secondBatchCardIds,
+      firstBatchCardIds,
+      secondBatchCardIds,
+      fullChainLogs,
+      englishRefreshReply: secondResponse.text,
+      chineseRefreshReply: zhRefresh.text,
     })
   );
-
-  assert.equal(chineseRefresh.language, "zh");
-  for (const cardId of chineseRefresh.secondBatchCardIds) {
-    assert.ok(!chineseRefresh.firstBatchCardIds.includes(cardId), `Expected zh refreshed batch to exclude ${cardId}`);
-  }
-
-  const noHistoryRefresh = await refreshGallerySkill(
-    {
-      discordUserId: "refresh-empty-user",
-      discordChannelId: "refresh-empty-channel",
-      currentMessage: "Show me another batch",
-    },
-    {
-      requestId: `refresh-empty-${Date.now()}`,
-      language: "en",
-      userId: "refresh-empty-user",
-      channelId: "refresh-empty-channel",
-      intent: "gallery_refresh",
-      skillId: "gallery.refresh",
-    }
-  );
-
-  console.log("[TEST GALLERY REFRESH] no history=", JSON.stringify(noHistoryRefresh));
-  assert.equal(noHistoryRefresh.previousSessionFound, false);
-  assert.equal(noHistoryRefresh.language, "en");
-
-  const agentNoHistory = await router.handle({
-    text: "Show me another batch",
-    userId: "refresh-empty-user-2",
-    channelId: "refresh-empty-channel-2",
-  });
-
-  console.log("[TEST GALLERY REFRESH] no history agent reply=", JSON.stringify(agentNoHistory));
-  assert.equal(agentNoHistory.language, "en");
-  assert.equal(agentNoHistory.type, "text");
-  assert.ok(typeof agentNoHistory.text === "string" && !hasChinese(agentNoHistory.text));
-
-  console.log("[TEST GALLERY REFRESH] all refresh assertions passed");
 };
 
 run().catch((error) => {

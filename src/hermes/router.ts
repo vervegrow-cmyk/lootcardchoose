@@ -11,48 +11,11 @@ import {
 } from "./types";
 import { HermesOrchestrator } from "./orchestrator";
 import { llmIntentClassifierService } from "../services/llm-intent-classifier.service";
+import { isGalleryRefreshMessage, isGallerySelectMessage } from "../utils/gallery-language";
 import { logger } from "../utils/logger";
 
 const detectLanguage = (message: string): SupportedLanguage =>
   /[\u4e00-\u9fff]/.test(message) ? "zh" : "en";
-
-const GALLERY_SELECT_PATTERNS: RegExp[] = [
-  /^\d+$/,
-  /^\u9009\u62e9\s*\d+$/,
-  /^\u9009\u7b2c\s*\d+\s*\u5f20$/,
-  /^\u6211\u8981\u7b2c\s*\d+\s*\u5f20$/,
-  /^choose\s+\d+$/,
-  /^select\s+\d+$/,
-  /^number\s+\d+$/,
-];
-
-const GALLERY_REFRESH_PATTERNS: RegExp[] = [
-  /^\u6362\u4e00\u6279$/,
-  /^\u518d\u6765\u4e00\u6279$/,
-  /^\u8fd8\u6709\u522b\u7684\u5417$/,
-  /^\u4e0b\u4e00\u6279$/,
-  /^\u66f4\u591a\u7c7b\u4f3c\u7684$/,
-  /^\u4e0d\u559c\u6b22\u8fd9\u4e9b$/,
-  /^\u4e0d\u662f\u8fd9\u79cd$/,
-  /^\u6362\u4e2a\u98ce\u683c$/,
-  /^\u8fd8\u6709\u5176\u4ed6\u7684\u5417$/,
-  /^\u8fd9\u4e9b\u4e0d\u592a\u5bf9$/,
-  /^\u66f4\u591a\u7ed3\u679c$/,
-  /^next$/,
-  /^more$/,
-  /^more like this$/,
-  /^next batch$/,
-  /^show me another batch$/,
-  /^more options$/,
-  /^any other options\??$/,
-  /^show me more$/,
-  /^i don't like these$/,
-  /^not these$/,
-  /^try another style$/,
-  /^something else$/,
-  /^these are not what i want$/,
-  /^can we switch to another batch\??$/,
-];
 
 const HELP_PATTERNS = ["help", "\u5e2e\u52a9", "\u600e\u4e48\u7528", "how to use"];
 
@@ -76,11 +39,11 @@ export class HermesRouter {
       return { intent: "ignore", language: fallbackLanguage };
     }
 
-    if (GALLERY_SELECT_PATTERNS.some((pattern) => pattern.test(normalized))) {
+    if (isGallerySelectMessage(text)) {
       return { intent: "gallery_select", language: fallbackLanguage };
     }
 
-    if (GALLERY_REFRESH_PATTERNS.some((pattern) => pattern.test(normalized))) {
+    if (isGalleryRefreshMessage(text)) {
       return { intent: "gallery_refresh", language: fallbackLanguage };
     }
 
@@ -93,7 +56,7 @@ export class HermesRouter {
     }
 
     const classified = await llmIntentClassifierService.classify(text);
-    if (classified.confidence < 0.5) {
+    if (classified.confidence < 0.5 && classified.intent === "ignore") {
       return {
         intent: "gallery_search",
         language: classified.language,

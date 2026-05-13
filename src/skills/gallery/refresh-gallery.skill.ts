@@ -45,11 +45,12 @@ export const refreshGallerySkill: SkillHandler<RefreshGalleryInput, RefreshGalle
   input,
   context
 ) => {
-  logger.info("[REFRESH GALLERY SKILL] refreshing batch");
+  logger.info("[REFRESH GALLERY SKILL] start");
 
   const previousSession = await gallerySearchSessionRepository.findLatest({
     discordUserId: input.discordUserId,
     discordChannelId: input.discordChannelId,
+    status: "active",
   });
 
   if (!previousSession) {
@@ -69,6 +70,7 @@ export const refreshGallerySkill: SkillHandler<RefreshGalleryInput, RefreshGalle
   const recentSessions = await gallerySearchSessionRepository.findRecentByUserId({
     discordUserId: input.discordUserId,
     take: 20,
+    status: "active",
   });
 
   const excludeIds = Array.from(new Set(recentSessions.flatMap(extractCardIds)));
@@ -105,6 +107,8 @@ export const refreshGallerySkill: SkillHandler<RefreshGalleryInput, RefreshGalle
       status: "active",
     });
   }
+
+  logger.info("[REFRESH GALLERY SKILL] completed");
 
   return {
     query: previousSession.query,

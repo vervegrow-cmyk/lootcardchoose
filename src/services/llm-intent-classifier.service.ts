@@ -1,6 +1,10 @@
 import { IntentId, SupportedLanguage } from "../hermes/types";
 import { loadEnv } from "../config/env";
-import { detectPreferredLanguage } from "../utils/gallery-language";
+import {
+  detectPreferredLanguage,
+  isGalleryRefreshMessage,
+  isGallerySelectMessage,
+} from "../utils/gallery-language";
 import { logger } from "../utils/logger";
 
 export type IntentClassificationResult = {
@@ -22,9 +26,6 @@ type DeepSeekResponse = {
 const SEARCH_KEYWORDS = [
   "gallery",
   "search",
-  "show me",
-  "card",
-  "cards",
   "black gold",
   "female",
   "anime",
@@ -35,31 +36,6 @@ const SEARCH_KEYWORDS = [
   "黑金",
   "女角色",
   "动漫",
-];
-
-const REFRESH_KEYWORDS = [
-  "can we switch to another batch",
-  "show me another batch",
-  "next batch",
-  "more options",
-  "any other options",
-  "show me more",
-  "more like this",
-  "i don't like these",
-  "not these",
-  "try another style",
-  "something else",
-  "these are not what i want",
-  "换一批",
-  "再来一批",
-  "还有别的吗",
-  "下一批",
-  "更多类似的",
-  "不喜欢这些",
-  "不是这种",
-  "换个风格",
-  "还有其他的吗",
-  "这些不太对",
 ];
 
 const HELP_KEYWORDS = [
@@ -74,8 +50,7 @@ const HELP_KEYWORDS = [
   "pay",
   "shipping",
   "tracking",
-  "怎么买",
-  "怎么选",
+  "怎么",
   "付款",
   "支付",
   "发货",
@@ -143,27 +118,31 @@ const fallbackIntentClassification = (message: string): IntentClassificationResu
     return { intent: "ignore", language, confidence: 1, reason: "empty message" };
   }
 
-  if (HELP_KEYWORDS.some((keyword) => normalized.includes(keyword))) {
-    return { intent: "help", language, confidence: 0.95, reason: "matched help fallback keyword" };
+  if (isGallerySelectMessage(message)) {
+    return { intent: "gallery_select", language, confidence: 0.99, reason: "matched select fallback keyword" };
+  }
+
+  if (isGalleryRefreshMessage(message)) {
+    return { intent: "gallery_refresh", language, confidence: 0.98, reason: "matched refresh fallback keyword" };
   }
 
   if (ORDER_KEYWORDS.some((keyword) => normalized.includes(keyword))) {
     return { intent: "order_status", language, confidence: 0.95, reason: "matched order fallback keyword" };
   }
 
-  if (REFRESH_KEYWORDS.some((keyword) => normalized.includes(keyword))) {
-    return { intent: "gallery_refresh", language, confidence: 0.9, reason: "matched refresh fallback keyword" };
-  }
-
   if (SEARCH_KEYWORDS.some((keyword) => normalized.includes(keyword))) {
     return { intent: "gallery_search", language, confidence: 0.85, reason: "matched search fallback keyword" };
   }
 
+  if (HELP_KEYWORDS.some((keyword) => normalized.includes(keyword))) {
+    return { intent: "help", language, confidence: 0.8, reason: "matched help fallback keyword" };
+  }
+
   return {
-    intent: "gallery_search",
+    intent: "ignore",
     language,
-    confidence: 0.4,
-    reason: "fallback default for natural language card requests",
+    confidence: 0.3,
+    reason: "fallback default ignore",
   };
 };
 
