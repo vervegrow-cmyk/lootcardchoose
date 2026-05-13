@@ -1,6 +1,6 @@
 import { AgentContext, AgentDefinition, HermesInput, HermesOutput, RefreshMode } from "../../hermes/types";
 import { galleryHelpSkill } from "../../skills/gallery/gallery-help.skill";
-import { createCheckoutLinkSkill } from "../../skills/gallery/create-checkout-link.skill";
+import { CreateCheckoutLinkSkill } from "../../skills/gallery/create-checkout-link.skill";
 import { refreshGallerySkill } from "../../skills/gallery/refresh-gallery.skill";
 import { searchGallerySkill } from "../../skills/gallery/search-gallery.skill";
 import { selectCardSkill } from "../../skills/gallery/select-card.skill";
@@ -193,10 +193,16 @@ export const GalleryAgent: AgentDefinition = {
           { ...context, skillId: "gallery.selectCard" }
         );
 
-        const checkoutResult = await createCheckoutLinkSkill(selectResult, {
-          ...context,
-          skillId: "gallery.createCheckoutLink",
-        });
+        const checkoutResult = await CreateCheckoutLinkSkill.handle(
+          {
+            ...selectResult.selectedCard,
+            order: selectResult.order,
+          },
+          {
+            ...context,
+            skillId: "gallery.createCheckoutLink",
+          }
+        );
 
         return {
           type: "gallery_checkout_created",

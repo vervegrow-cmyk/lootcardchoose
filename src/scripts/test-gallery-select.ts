@@ -6,7 +6,7 @@ dotenv.config({ path: ".env.local", override: true });
 import { gallerySearchSessionRepository } from "../repositories/gallery-search-session.repository";
 import { orderService } from "../services/order.service";
 import { shopifyService } from "../services/shopify.service";
-import { createCheckoutLinkSkill } from "../skills/gallery/create-checkout-link.skill";
+import { CreateCheckoutLinkSkill } from "../skills/gallery/create-checkout-link.skill";
 import { searchGallerySkill } from "../skills/gallery/search-gallery.skill";
 import { selectCardSkill } from "../skills/gallery/select-card.skill";
 
@@ -73,15 +73,22 @@ const main = async (): Promise<void> => {
     ensure(selectResult.selectedCard.galleryCardId, "Expected selected card id to exist");
     ensure(selectResult.order.status === "pending", "Expected selected order to start as pending");
 
-    const checkoutResult = await createCheckoutLinkSkill(selectResult, {
-      requestId: `${Date.now()}`,
-      language: "zh",
-      userId: discordUserId,
-      channelId: discordChannelId,
-      skillId: "gallery.createCheckoutLink",
-    });
+    const checkoutResult = await CreateCheckoutLinkSkill.handle(
+      {
+        ...selectResult.selectedCard,
+        order: selectResult.order,
+      },
+      {
+        requestId: `${Date.now()}`,
+        language: "zh",
+        userId: discordUserId,
+        channelId: discordChannelId,
+        skillId: "gallery.createCheckoutLink",
+      }
+    );
 
     const persistedOrder = await orderService.findByOrderNumber(checkoutResult.order.orderNumber);
+    ensure(checkoutResult.selectedCard.title, "Expected selectedCard.title to be returned");
     ensure(checkoutResult.checkoutUrl, "Expected checkoutUrl to be returned");
     ensure(persistedOrder, "Expected created order to be persisted");
     if (!persistedOrder) {

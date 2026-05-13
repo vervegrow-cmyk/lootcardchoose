@@ -1,6 +1,6 @@
 import { AgentDefinition, SkillDefinition, RegisteredSkill } from "./types";
 import { GalleryAgent } from "../agents/gallery/gallery.agent";
-import { createCheckoutLinkSkill } from "../skills/gallery/create-checkout-link.skill";
+import { CreateCheckoutLinkSkill } from "../skills/gallery/create-checkout-link.skill";
 import { galleryHelpSkill } from "../skills/gallery/gallery-help.skill";
 import { refreshGallerySkill } from "../skills/gallery/refresh-gallery.skill";
 import { searchGallerySkill } from "../skills/gallery/search-gallery.skill";
@@ -57,7 +57,7 @@ export const buildHermesRegistry = (): HermesRegistry => {
   registry.registerSkill({
     id: "gallery.createCheckoutLink",
     name: "CreateCheckoutLinkSkill",
-    handler: createCheckoutLinkSkill,
+    handler: CreateCheckoutLinkSkill.handle,
   });
   registry.registerSkill({
     id: "gallery.help",
