@@ -1,4 +1,4 @@
-import { SupportedLanguage } from "../../hermes/types";
+import { RefreshMode, SupportedLanguage } from "../../hermes/types";
 
 export type GalleryQuery = {
   keywords: string[];
@@ -15,6 +15,6 @@ export type GalleryAgentOutput = {
   summary: string;
   selectedCards: GallerySelection[];
   language?: SupportedLanguage;
-  refreshMode?: "next_batch" | "refine" | "broaden" | "random_fallback";
+  refreshMode?: RefreshMode;
   reason?: string;
 };

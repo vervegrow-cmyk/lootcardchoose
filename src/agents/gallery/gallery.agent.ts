@@ -1,4 +1,4 @@
-import { AgentContext, AgentDefinition, HermesInput, HermesOutput } from "../../hermes/types";
+import { AgentContext, AgentDefinition, HermesInput, HermesOutput, RefreshMode } from "../../hermes/types";
 import { galleryHelpSkill } from "../../skills/gallery/gallery-help.skill";
 import { createCheckoutLinkSkill } from "../../skills/gallery/create-checkout-link.skill";
 import { refreshGallerySkill } from "../../skills/gallery/refresh-gallery.skill";
@@ -25,12 +25,12 @@ const buildCheckoutReadyText = (
   url: string
 ): string =>
   language === "zh"
-    ? `你的卡牌商品已创建，可以通过以下链接查看并购买：\n\n商品：${title}\n价格：$${price}\n链接：${url}`
+    ? `你的卡牌商品已创建，可以通过以下链接查看并购买：\n\n商品：${title}\n价格：${price}\n链接：${url}`
     : `Your card is ready. You can view and purchase it here:\n\nItem: ${title}\nPrice: $${price}\nLink: ${url}`;
 
 const buildRefreshText = (
   language: AgentContext["language"],
-  refreshMode: "next_batch" | "refine" | "broaden" | "random_fallback" | "need_clarification",
+  refreshMode: RefreshMode,
   shortQuestion?: string
 ): string => {
   if (refreshMode === "need_clarification") {
@@ -112,6 +112,14 @@ export const GalleryAgent: AgentDefinition = {
             type: "text",
             language: result.language,
             text: t(result.language, "gallery.refresh.noPreviousSearch"),
+            metadata: {
+              refreshMode: result.refreshMode,
+              reason: result.reason,
+              keep: result.keep,
+              avoid: result.avoid,
+              broaden: result.broaden,
+              searchKeywords: result.searchKeywords,
+            },
           };
         }
 
@@ -124,11 +132,15 @@ export const GalleryAgent: AgentDefinition = {
               refreshMode: result.refreshMode,
               reason: result.reason,
               previousQuery: result.query,
+              keep: result.keep,
+              avoid: result.avoid,
+              broaden: result.broaden,
+              searchKeywords: result.searchKeywords,
             },
           };
         }
 
-        const refreshMode = result.refreshMode as "next_batch" | "refine" | "broaden" | "random_fallback";
+        const refreshMode = result.refreshMode as Exclude<RefreshMode, "need_clarification">;
 
         return {
           type: "gallery_search_results",
@@ -154,6 +166,10 @@ export const GalleryAgent: AgentDefinition = {
             reason: result.reason,
             firstBatchCardIds: result.firstBatchCardIds,
             secondBatchCardIds: result.secondBatchCardIds,
+            keep: result.keep,
+            avoid: result.avoid,
+            broaden: result.broaden,
+            searchKeywords: result.searchKeywords,
           },
         };
       }

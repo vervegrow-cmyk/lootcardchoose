@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import { SupportedLanguage } from "../hermes/types";
+import { RefreshMode, SupportedLanguage } from "../hermes/types";
 import { GallerySearchSessionRecord } from "../repositories/gallery-search-session.repository";
 import { GalleryCardRecord, galleryRepository } from "../repositories/gallery.repository";
 import { loadEnv } from "../config/env";
@@ -41,8 +41,6 @@ export type GallerySearchResult = {
   limit: number;
 };
 
-export type RefreshMode = "next_batch" | "refine" | "broaden" | "random_fallback" | "need_clarification";
-
 export type GalleryRefreshResult = {
   cards: GalleryCardDto[];
   language: SupportedLanguage;
@@ -52,6 +50,10 @@ export type GalleryRefreshResult = {
   limit: number;
   excludedCardIds: string[];
   parsedQuery: ParsedGalleryQuery | null;
+  keep: string[];
+  avoid: string[];
+  broaden: string[];
+  searchKeywords: string[];
 };
 
 type RefreshDecision = {
@@ -460,6 +462,10 @@ export const galleryService = {
         limit,
         excludedCardIds: input.excludeIds,
         parsedQuery: previousParsed,
+        keep: decision.keep,
+        avoid: decision.avoid,
+        broaden: decision.broaden,
+        searchKeywords: decision.searchKeywords,
       };
     }
 
@@ -515,6 +521,10 @@ export const galleryService = {
       limit,
       excludedCardIds: input.excludeIds,
       parsedQuery: previousParsed,
+      keep: decision.keep,
+      avoid: decision.avoid,
+      broaden: decision.broaden,
+      searchKeywords: decision.searchKeywords,
     };
   },
 

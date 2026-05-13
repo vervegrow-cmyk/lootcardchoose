@@ -330,8 +330,7 @@ export const parseSelectedIndex = (message: string): number | null => {
 
   if (
     normalized.includes("first") ||
-    normalized.includes("number one") ||
-    normalized.includes("option one") ||
+    normalized.includes("one") ||
     normalized.includes("第一个") ||
     normalized.includes("选第一个")
   ) {

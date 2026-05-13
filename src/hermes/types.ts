@@ -29,6 +29,8 @@ export type IntentId =
 
 export type SupportedLanguage = "zh" | "en";
 
+export type RefreshMode = "next_batch" | "refine" | "broaden" | "random_fallback" | "need_clarification";
+
 export type HermesContext = {
   requestId: string;
   traceId?: string;
@@ -52,7 +54,7 @@ export type GallerySearchResultCard = {
   price: number;
   tags: string[];
   language?: SupportedLanguage;
-  refreshMode?: "next_batch" | "refine" | "broaden" | "random_fallback";
+  refreshMode?: RefreshMode;
   reason?: string;
 };
 
@@ -69,7 +71,7 @@ export type HermesGallerySearchResultsOutput = {
   text: string;
   cards: GallerySearchResultCard[];
   selectionPrompt: string;
-  refreshMode?: "next_batch" | "refine" | "broaden" | "random_fallback";
+  refreshMode?: RefreshMode;
   reason?: string;
   metadata?: Record<string, unknown>;
 };

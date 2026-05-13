@@ -10,7 +10,7 @@ import {
   SupportedLanguage,
 } from "./types";
 import { HermesOrchestrator } from "./orchestrator";
-import { llmIntentClassifierService } from "../services/llm-intent-classifier.service";
+import { fallbackIntentClassification, llmIntentClassifierService } from "../services/llm-intent-classifier.service";
 import { isGalleryRefreshMessage, isGallerySelectMessage } from "../utils/gallery-language";
 import { logger } from "../utils/logger";
 
@@ -56,7 +56,15 @@ export class HermesRouter {
     }
 
     const classified = await llmIntentClassifierService.classify(text);
-    if (classified.confidence < 0.5 && classified.intent === "ignore") {
+    if (classified.confidence < 0.5) {
+      const fallback = fallbackIntentClassification(text);
+      if (fallback.intent !== "ignore") {
+        return {
+          intent: fallback.intent,
+          language: fallback.language,
+        };
+      }
+
       return {
         intent: "gallery_search",
         language: classified.language,

@@ -41,7 +41,7 @@ const dictionary: Record<SupportedLanguage, Record<string, string>> = {
     "gallery.refresh.refine": "I found another set that better matches your style. Reply with a number to select one.",
     "gallery.refresh.broaden": "I’ve shown the closest matches, so I’m showing some related options you may like.",
     "gallery.refresh.noPreviousSearch": "Please search for a card style first, then I can show you another batch.",
-    "gallery.refresh.needClarification": "What style would you like next — cute, dark, fantasy, or premium?",
+    "gallery.refresh.needClarification": "What style would you like next - cute, dark, fantasy, or premium?",
     "checkout.creating": "Creating your product link. Please wait.",
     "checkout.success": "Your product link is ready.",
     "checkout.failed": "Unable to create a product link right now. Please try again later.",

@@ -85,6 +85,10 @@ const run = async (): Promise<void> => {
   assert.equal(secondResponse.language, "en");
   assert.equal(secondResponse.refreshMode, "next_batch");
   assert.equal(secondResponse.text, "Here’s another batch of cards for you. Reply with a number to select one.");
+  assert.ok(Array.isArray(secondResponse.metadata?.keep));
+  assert.ok(Array.isArray(secondResponse.metadata?.avoid));
+  assert.ok(Array.isArray(secondResponse.metadata?.broaden));
+  assert.ok(Array.isArray(secondResponse.metadata?.searchKeywords));
 
   const secondBatchCardIds = secondResponse.cards.map((card) => card.id);
   ensure(secondBatchCardIds.length > 0, "Expected second English batch");
@@ -132,6 +136,7 @@ const run = async (): Promise<void> => {
   assert.equal(parseSelectedIndex("1"), 1);
   assert.equal(parseSelectedIndex("one"), 1);
   assert.equal(parseSelectedIndex("first"), 1);
+  assert.equal(parseSelectedIndex("number one"), 1);
   assert.equal(parseSelectedIndex("第一个"), 1);
   assert.equal(parseSelectedIndex("选1"), 1);
 
@@ -182,6 +187,12 @@ const run = async (): Promise<void> => {
       fullChainLogs,
       englishRefreshReply: secondResponse.text,
       chineseRefreshReply: zhRefresh.text,
+      refreshMetadata: {
+        keep: secondResponse.metadata?.keep,
+        avoid: secondResponse.metadata?.avoid,
+        broaden: secondResponse.metadata?.broaden,
+        searchKeywords: secondResponse.metadata?.searchKeywords,
+      },
     })
   );
 };

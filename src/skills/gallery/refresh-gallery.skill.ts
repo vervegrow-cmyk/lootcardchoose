@@ -25,6 +25,10 @@ export type RefreshGalleryOutput = {
   previousSessionFound: boolean;
   firstBatchCardIds: string[];
   secondBatchCardIds: string[];
+  keep: string[];
+  avoid: string[];
+  broaden: string[];
+  searchKeywords: string[];
 };
 
 const extractCardIds = (session: GallerySearchSessionRecord): string[] => {
@@ -64,6 +68,10 @@ export const refreshGallerySkill: SkillHandler<RefreshGalleryInput, RefreshGalle
       previousSessionFound: false,
       firstBatchCardIds: [],
       secondBatchCardIds: [],
+      keep: [],
+      avoid: [],
+      broaden: [],
+      searchKeywords: [],
     };
   }
 
@@ -121,5 +129,9 @@ export const refreshGallerySkill: SkillHandler<RefreshGalleryInput, RefreshGalle
     previousSessionFound: true,
     firstBatchCardIds,
     secondBatchCardIds,
+    keep: refreshResult.keep,
+    avoid: refreshResult.avoid,
+    broaden: refreshResult.broaden,
+    searchKeywords: refreshResult.searchKeywords,
   };
 };

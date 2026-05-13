@@ -110,7 +110,7 @@ const safeJsonParse = (raw: string, fallbackLanguage: SupportedLanguage): Intent
   }
 };
 
-const fallbackIntentClassification = (message: string): IntentClassificationResult => {
+export const fallbackIntentClassification = (message: string): IntentClassificationResult => {
   const normalized = message.trim().toLowerCase();
   const language = detectLanguage(message);
 
