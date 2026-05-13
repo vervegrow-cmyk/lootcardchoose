@@ -33,6 +33,8 @@ const ensure = (condition: unknown, message: string): void => {
 const includesKeyword = (keywords: string[], expected: string): boolean =>
   keywords.map((keyword) => keyword.toLowerCase()).includes(expected.toLowerCase());
 
+const isSafeDisplayPrice = (price: number): boolean => price >= 9.0 && price <= 20.1;
+
 const main = async (): Promise<void> => {
   for (const testCase of TEST_CASES) {
     console.log(`[TEST GALLERY SEARCH] query=${JSON.stringify(testCase.query)}`);
@@ -74,9 +76,11 @@ const main = async (): Promise<void> => {
     ensure(result.results.length > 0, `Expected search results > 0 for query=${testCase.query}`);
 
     result.results.forEach((card, index) => {
+      ensure(isSafeDisplayPrice(card.price), `Expected safe display price for ${card.title}, got ${card.price}`);
       console.log(
         `[TEST GALLERY SEARCH] result ${index + 1}=${JSON.stringify({
           title: card.title,
+          price: card.price,
           rarity: card.rarity,
           color: card.color,
           character: card.character,

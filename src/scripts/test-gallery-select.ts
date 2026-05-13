@@ -102,6 +102,13 @@ const main = async (): Promise<void> => {
     if (!persistedOrder) {
       throw new Error("Expected created order to be persisted");
     }
+    ensure(capturedCheckoutPrice !== null, "Expected mocked Shopify checkout price to be captured");
+    const numericCheckoutPrice = Number(capturedCheckoutPrice);
+    ensure(Number.isFinite(numericCheckoutPrice), "Expected checkout price to be numeric");
+    ensure(
+      numericCheckoutPrice >= 9.0 && numericCheckoutPrice <= 20.1,
+      `Expected safe checkout price band, got ${capturedCheckoutPrice}`
+    );
     assert.equal(persistedOrder.status, "checkout_created");
     assert.equal(persistedOrder.shopifyProductId, "mock-shopify-product-id");
     assert.equal(persistedOrder.shopifyCheckoutUrl, checkoutResponse.purchaseUrl);

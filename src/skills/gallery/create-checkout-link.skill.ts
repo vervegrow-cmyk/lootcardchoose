@@ -58,6 +58,15 @@ const buildFallbackPricingInput = (selectedCard: ShopifyGalleryCardInput) => ({
   marketingTitle: null,
 });
 
+const formatPriceForLog = (value: number | string | null | undefined): string | null => {
+  if (value == null || value === "") {
+    return null;
+  }
+
+  const numeric = typeof value === "number" ? value : Number(value);
+  return Number.isFinite(numeric) ? numeric.toFixed(2) : String(value);
+};
+
 export const createCheckoutLink: SkillHandler<CreateCheckoutLinkInput, CreateCheckoutLinkOutput> = async (
   input,
   context: SkillContext
@@ -83,6 +92,11 @@ export const createCheckoutLink: SkillHandler<CreateCheckoutLinkInput, CreateChe
 
     logger.info("[CARD PRICING]", {
       galleryCardId: selectedCard.galleryCardId,
+      galleryPriceRaw: formatPriceForLog(pricingInput.galleryPrice),
+      metadataPriceRaw: formatPriceForLog(pricingInput.metadataPrice),
+      sourceField: pricing.sourceField,
+      trusted: pricing.sourceTrusted,
+      sourcePrice: pricing.sourcePriceRaw == null ? null : pricing.sourcePriceRaw.toFixed(2),
       base: pricing.basePrice.toFixed(2),
       adjustment: pricing.adjustment.toFixed(2),
       final: finalPrice,

@@ -2,7 +2,10 @@ import {
   DEFAULT_BASE_PRICE,
   KEYWORD_ADJUSTMENTS,
   MAX_SINGLE_ADJUSTMENT,
+  MAX_TRUSTED_SOURCE_PRICE,
+  MIN_SINGLE_ADJUSTMENT,
   MIN_FINAL_PRICE,
+  PRICE_DECIMALS,
   RARITY_ADJUSTMENTS,
 } from "../config/pricing.rules";
 
@@ -34,9 +37,19 @@ export type CardPricingResult = {
   finalPrice: number;
   pricingTier: PricingTier;
   breakdown: PricingBreakdownItem[];
+  sourceField: "galleryPrice" | "metadataPrice" | "default";
+  sourceTrusted: boolean;
+  sourcePriceRaw: number | null;
 };
 
-const roundToCents = (value: number): number => Math.round(value * 100) / 100;
+type ResolvedBasePrice = {
+  basePrice: number;
+  sourceField: "galleryPrice" | "metadataPrice" | "default";
+  sourceTrusted: boolean;
+  sourcePriceRaw: number | null;
+};
+
+const roundToCents = (value: number): number => Math.round(value * 10 ** PRICE_DECIMALS) / 10 ** PRICE_DECIMALS;
 
 const normalizeText = (value: string | null | undefined): string =>
   (value ?? "")
@@ -46,19 +59,55 @@ const normalizeText = (value: string | null | undefined): string =>
 
 const normalizePrice = (value: number | string | null | undefined): number | null => {
   if (typeof value === "number") {
-    return Number.isFinite(value) && value > 0 ? roundToCents(value) : null;
+    return Number.isFinite(value) ? roundToCents(value) : null;
   }
 
   if (typeof value === "string") {
     const parsed = Number(value.trim());
-    return Number.isFinite(parsed) && parsed > 0 ? roundToCents(parsed) : null;
+    return Number.isFinite(parsed) ? roundToCents(parsed) : null;
   }
 
   return null;
 };
 
-const resolveBasePrice = (input: CardPricingInput): number =>
-  normalizePrice(input.galleryPrice) ?? normalizePrice(input.metadataPrice) ?? DEFAULT_BASE_PRICE;
+const resolveTrustedBasePrice = (
+  value: number | string | null | undefined,
+  sourceField: "galleryPrice" | "metadataPrice"
+): ResolvedBasePrice | null => {
+  const normalized = normalizePrice(value);
+  if (normalized == null || normalized < 0) {
+    return null;
+  }
+
+  if (normalized < MIN_FINAL_PRICE) {
+    return {
+      basePrice: MIN_FINAL_PRICE,
+      sourceField,
+      sourceTrusted: false,
+      sourcePriceRaw: normalized,
+    };
+  }
+
+  if (normalized <= MAX_TRUSTED_SOURCE_PRICE) {
+    return {
+      basePrice: normalized,
+      sourceField,
+      sourceTrusted: true,
+      sourcePriceRaw: normalized,
+    };
+  }
+
+  return null;
+};
+
+const resolveBasePrice = (input: CardPricingInput): ResolvedBasePrice =>
+  resolveTrustedBasePrice(input.galleryPrice, "galleryPrice") ??
+  resolveTrustedBasePrice(input.metadataPrice, "metadataPrice") ?? {
+    basePrice: DEFAULT_BASE_PRICE,
+    sourceField: "default",
+    sourceTrusted: false,
+    sourcePriceRaw: null,
+  };
 
 const buildMatchText = (input: CardPricingInput): string =>
   [
@@ -77,11 +126,11 @@ const buildMatchText = (input: CardPricingInput): string =>
     .join(" ");
 
 const clampAdjustment = (value: number): number =>
-  Math.max(-MAX_SINGLE_ADJUSTMENT, Math.min(MAX_SINGLE_ADJUSTMENT, value));
+  Math.max(MIN_SINGLE_ADJUSTMENT, Math.min(MAX_SINGLE_ADJUSTMENT, value));
 
 export const cardPricingService = {
   calculate(input: CardPricingInput): CardPricingResult {
-    const basePrice = resolveBasePrice(input);
+    const resolvedBase = resolveBasePrice(input);
     const breakdown: PricingBreakdownItem[] = [];
     const matchText = buildMatchText(input);
     const rarity = normalizeText(input.rarity).toUpperCase() as keyof typeof RARITY_ADJUSTMENTS;
@@ -115,7 +164,7 @@ export const cardPricingService = {
       });
     }
 
-    let finalPrice = roundToCents(basePrice + adjustment);
+    let finalPrice = roundToCents(resolvedBase.basePrice + adjustment);
     if (!Number.isFinite(finalPrice) || finalPrice < 0) {
       finalPrice = DEFAULT_BASE_PRICE;
     }
@@ -132,16 +181,19 @@ export const cardPricingService = {
     const pricingTier: PricingTier =
       finalPrice <= MIN_FINAL_PRICE
         ? "floor"
-        : adjustment >= 0.8
+        : adjustment >= MAX_SINGLE_ADJUSTMENT
           ? "premium"
           : "standard";
 
     return {
-      basePrice: roundToCents(basePrice),
+      basePrice: roundToCents(resolvedBase.basePrice),
       adjustment,
       finalPrice: roundToCents(finalPrice),
       pricingTier,
       breakdown,
+      sourceField: resolvedBase.sourceField,
+      sourceTrusted: resolvedBase.sourceTrusted,
+      sourcePriceRaw: resolvedBase.sourcePriceRaw,
     };
   },
 };

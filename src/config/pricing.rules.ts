@@ -1,6 +1,9 @@
-export const DEFAULT_BASE_PRICE = 9.99;
+export const DEFAULT_BASE_PRICE = 9.0;
 export const MIN_FINAL_PRICE = 9.0;
-export const MAX_SINGLE_ADJUSTMENT = 1.0;
+export const MAX_TRUSTED_SOURCE_PRICE = 20.0;
+export const MAX_SINGLE_ADJUSTMENT = 0.1;
+export const MIN_SINGLE_ADJUSTMENT = -0.1;
+export const PRICE_DECIMALS = 2;
 
 export const RARITY_ADJUSTMENTS = {
   UR: 1.0,

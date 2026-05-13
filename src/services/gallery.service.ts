@@ -13,6 +13,7 @@ import {
 } from "../utils/gallery-language";
 import { t } from "../utils/i18n";
 import { logger } from "../utils/logger";
+import { cardPricingService, CardPricingInput } from "./card-pricing.service";
 import { ParsedGalleryQuery, parseGalleryQuery } from "./llm-query-parser.service";
 import { isDatabaseReady } from "./prisma.service";
 
@@ -159,20 +160,38 @@ const META_ONLY_REFRESH_KEYWORDS = new Set([
 
 const SHORT_KEYWORD_ALLOWLIST = new Set(["ani", "sr", "ur", "ssr", "r", "n"]);
 
-const toDto = (card: GalleryCardRecord): GalleryCardDto => ({
-  id: card.id,
+const buildCardPricingInput = (card: GalleryCardRecord): CardPricingInput => ({
+  galleryPrice: Number(card.price),
+  metadataPrice: readMetadataPrice(card.metadata),
   title: card.title,
   description: card.description,
-  imageUrl: card.imageUrl,
   tags: card.tags,
   style: card.style,
   rarity: card.rarity,
   category: card.category,
   character: card.character,
   color: card.color,
-  price: Number(card.price),
-  score: card.score,
+  marketingTitle: readMetadataString(card.metadata, "marketingTitle"),
 });
+
+const toDto = (card: GalleryCardRecord): GalleryCardDto => {
+  const pricing = cardPricingService.calculate(buildCardPricingInput(card));
+
+  return {
+    id: card.id,
+    title: card.title,
+    description: card.description,
+    imageUrl: card.imageUrl,
+    tags: card.tags,
+    style: card.style,
+    rarity: card.rarity,
+    category: card.category,
+    character: card.character,
+    color: card.color,
+    price: pricing.finalPrice,
+    score: card.score,
+  };
+};
 
 const dedupeCards = (cards: GalleryCardRecord[]): GalleryCardRecord[] => {
   const seen = new Set<string>();
@@ -842,18 +861,19 @@ export const galleryService = {
       return null;
     }
 
+    const pricingInput = buildCardPricingInput(card);
     return {
-      galleryPrice: Number(card.price),
-      metadataPrice: readMetadataPrice(card.metadata),
-      title: card.title,
-      description: card.description,
-      tags: card.tags,
-      style: card.style,
-      rarity: card.rarity,
-      category: card.category,
-      character: card.character,
-      color: card.color,
-      marketingTitle: readMetadataString(card.metadata, "marketingTitle"),
+      galleryPrice: pricingInput.galleryPrice ?? null,
+      metadataPrice: pricingInput.metadataPrice ?? null,
+      title: pricingInput.title ?? card.title,
+      description: pricingInput.description ?? card.description,
+      tags: pricingInput.tags ?? card.tags,
+      style: pricingInput.style ?? card.style,
+      rarity: pricingInput.rarity ?? card.rarity,
+      category: pricingInput.category ?? card.category,
+      character: pricingInput.character ?? card.character,
+      color: pricingInput.color ?? card.color,
+      marketingTitle: pricingInput.marketingTitle ?? null,
     };
   },
 };
