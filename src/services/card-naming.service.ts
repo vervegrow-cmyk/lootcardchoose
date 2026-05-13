@@ -1,14 +1,23 @@
 import { Prisma } from "@prisma/client";
 import { loadEnv } from "../config/env";
-import { GalleryCardRecord, galleryRepository } from "../repositories/gallery.repository";
 import { logger } from "../utils/logger";
 
 export const PRODUCT_TITLE_NAMING_TIMEOUT_MS = 6000;
 
-export type GenerateMarketingTitleInput = {
-  galleryCardId: string;
-  orderNumber: string;
+export type CardNamingSource = {
+  title?: string;
+  description?: string | null;
+  tags?: string[];
+  style?: string | null;
+  rarity?: string | null;
+  category?: string | null;
+  character?: string | null;
+  color?: string | null;
+  metadata?: Prisma.JsonValue | Record<string, unknown> | null;
+  sourceId?: string;
 };
+
+export type GenerateMarketingTitleInput = CardNamingSource;
 
 export type GenerateMarketingTitleOutput = {
   marketingTitle: string;
@@ -26,7 +35,6 @@ type DeepSeekResponse = {
 };
 
 type NamingPayload = {
-  id: string;
   title: string;
   description: string | null;
   tags: string[];
@@ -35,7 +43,8 @@ type NamingPayload = {
   category: string | null;
   character: string | null;
   color: string | null;
-  metadata: Prisma.JsonValue | null;
+  metadata: Prisma.JsonValue | Record<string, unknown> | null;
+  sourceId: string | null;
 };
 
 const TECHNICAL_TERMS = new Set([
@@ -49,19 +58,7 @@ const TECHNICAL_TERMS = new Set([
   "https",
   "admin",
   "graphql",
-]);
-
-const GENERIC_TITLE_TERMS = new Set([
-  "anime",
-  "trading",
-  "collectible",
-  "card",
-  "premium",
-  "female",
-  "male",
-  "character",
-  "girl",
-  "boy",
+  "lootcard",
 ]);
 
 const DESCRIPTOR_STOPWORDS = new Set([
@@ -95,54 +92,68 @@ const DESCRIPTOR_STOPWORDS = new Set([
   "illustration",
   "beautiful",
   "beauty",
-  "collectible",
 ]);
 
-const ARCHETYPE_PATTERNS: Array<{ pattern: RegExp; value: string }> = [
-  { pattern: /\bempress\b/i, value: "Empress" },
-  { pattern: /\bqueen\b/i, value: "Queen" },
-  { pattern: /\bvalkyrie\b/i, value: "Valkyrie" },
-  { pattern: /\bprincess\b/i, value: "Princess" },
-  { pattern: /\bsorceress\b/i, value: "Sorceress" },
-  { pattern: /\bwitch\b/i, value: "Witch" },
-  { pattern: /\bangel\b/i, value: "Angel" },
-  { pattern: /\bdemon\b/i, value: "Demon" },
-  { pattern: /\bgoddess\b/i, value: "Goddess" },
-  { pattern: /\bwarrior\b/i, value: "Warrior" },
-  { pattern: /\bmaiden\b/i, value: "Maiden" },
-  { pattern: /\bphantom\b/i, value: "Phantom" },
-  { pattern: /\bheroine\b/i, value: "Heroine" },
+const GENERIC_TITLE_TERMS = new Set([
+  "anime",
+  "trading",
+  "collectible",
+  "card",
+  "premium",
+  "female",
+  "male",
+  "character",
+  "girl",
+  "boy",
+  "lootcard",
+]);
+
+const ARCHETYPE_PATTERNS: Array<{ pattern: RegExp; values: string[] }> = [
+  { pattern: /\bempress\b/i, values: ["Empress"] },
+  { pattern: /\bqueen\b/i, values: ["Queen"] },
+  { pattern: /\bvalkyrie\b/i, values: ["Valkyrie"] },
+  { pattern: /\bprincess\b/i, values: ["Princess"] },
+  { pattern: /\bsorceress\b|\bwitch\b/i, values: ["Sorceress", "Witch"] },
+  { pattern: /\bangel\b/i, values: ["Angel"] },
+  { pattern: /\bdemon\b/i, values: ["Demon"] },
+  { pattern: /\bgoddess\b/i, values: ["Goddess"] },
+  { pattern: /\bwarrior\b/i, values: ["Warrior", "Valkyrie"] },
+  { pattern: /\bdragon\b/i, values: ["Empress", "Valkyrie"] },
+  { pattern: /\bmecha\b|\brobot\b/i, values: ["Phantom", "Vanguard"] },
+  { pattern: /\bphantom\b/i, values: ["Phantom"] },
+  { pattern: /\bheroine\b/i, values: ["Heroine"] },
 ];
 
-const THEME_PATTERNS: Array<{ pattern: RegExp; value: string }> = [
-  { pattern: /\bcherry blossom\b|\bsakura\b|\bpink roses?\b|\bfloral\b/i, value: "Sakura" },
-  { pattern: /\bcelestial\b|\bstarlit\b|\bstarry\b/i, value: "Celestial" },
-  { pattern: /\bphantom\b|\bshadow\b/i, value: "Phantom" },
-  { pattern: /\bmidnight\b|\bblack\b/i, value: "Midnight" },
-  { pattern: /\bcrimson\b|\bscarlet\b|\bred\b/i, value: "Crimson" },
-  { pattern: /\bneon\b/i, value: "Neon" },
-  { pattern: /\bgolden\b|\bgold\b/i, value: "Golden" },
-  { pattern: /\bemerald\b|\bgreen\b/i, value: "Emerald" },
-  { pattern: /\bsapphire\b|\bblue\b/i, value: "Sapphire" },
-  { pattern: /\bviolet\b|\bpurple\b/i, value: "Purple" },
-  { pattern: /\bivory\b|\bwhite\b/i, value: "Ivory" },
-  { pattern: /\bobsidian\b/i, value: "Obsidian" },
-  { pattern: /\blunar\b|\bmoon\b/i, value: "Lunar" },
-  { pattern: /\bsolar\b|\bsun\b|\bsunset\b/i, value: "Solar" },
-  { pattern: /\bvelvet\b|\blace\b/i, value: "Velvet" },
-  { pattern: /\bmythic\b|\bmystic\b|\bmagical\b/i, value: "Mystic" },
-  { pattern: /\bfantasy\b/i, value: "Fantasy" },
+const COLOR_THEME_PATTERNS: Array<{ pattern: RegExp; values: string[] }> = [
+  { pattern: /\bblack gold\b|\bgold black\b/i, values: ["Shadow", "Obsidian", "Eclipse"] },
+  { pattern: /\bblack\b/i, values: ["Midnight", "Obsidian", "Shadow"] },
+  { pattern: /\bgold\b|\bgolden\b/i, values: ["Golden", "Radiant"] },
+  { pattern: /\bpurple\b|\bviolet\b/i, values: ["Midnight", "Violet"] },
+  { pattern: /\bred\b|\bcrimson\b|\bscarlet\b/i, values: ["Crimson", "Scarlet"] },
+  { pattern: /\bsilver\b|\bchrome\b/i, values: ["Silver", "Lunar"] },
+  { pattern: /\bblue\b|\bsapphire\b/i, values: ["Sapphire", "Azure"] },
+  { pattern: /\bgreen\b|\bemerald\b/i, values: ["Emerald", "Verdant"] },
+  { pattern: /\bwhite\b|\bivory\b/i, values: ["Ivory", "Celestial"] },
 ];
 
-const RARITY_TO_THEME: Record<string, string> = {
-  SSR: "Mythic",
-  UR: "Ultimate",
-  SR: "Radiant",
-  R: "Elite",
-  N: "Classic",
-};
+const STYLE_THEME_PATTERNS: Array<{ pattern: RegExp; values: string[] }> = [
+  { pattern: /\bcyberpunk\b|\bneon\b/i, values: ["Neon", "Neo"] },
+  { pattern: /\bmecha\b|\brobot\b/i, values: ["Core", "Phantom"] },
+  { pattern: /\bfantasy\b|\bmythic\b|\bmystic\b/i, values: ["Mythic", "Celestial"] },
+  { pattern: /\bdragon\b|\bflame\b/i, values: ["Dragon", "Crimson"] },
+  { pattern: /\bgothic\b|\bdark\b/i, values: ["Midnight", "Obsidian"] },
+  { pattern: /\bsakura\b|\bcherry blossom\b|\bfloral\b|\bpink roses?\b/i, values: ["Sakura", "Blossom"] },
+];
 
-const collectMetadataStrings = (value: Prisma.JsonValue | null, result: string[] = []): string[] => {
+const RARITY_VALUES = new Set(["N", "R", "SR", "SSR", "UR"]);
+
+const isJsonObject = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const collectMetadataStrings = (
+  value: Prisma.JsonValue | Record<string, unknown> | null | undefined,
+  result: string[] = []
+): string[] => {
   if (typeof value === "string") {
     result.push(value);
     return result;
@@ -150,12 +161,12 @@ const collectMetadataStrings = (value: Prisma.JsonValue | null, result: string[]
 
   if (Array.isArray(value)) {
     for (const item of value) {
-      collectMetadataStrings(item, result);
+      collectMetadataStrings(item as Prisma.JsonValue, result);
     }
     return result;
   }
 
-  if (value && typeof value === "object") {
+  if (isJsonObject(value)) {
     for (const item of Object.values(value)) {
       collectMetadataStrings(item as Prisma.JsonValue, result);
     }
@@ -163,6 +174,43 @@ const collectMetadataStrings = (value: Prisma.JsonValue | null, result: string[]
 
   return result;
 };
+
+const buildStableSeed = (input: CardNamingSource): string =>
+  [
+    input.sourceId ?? "",
+    input.title ?? "",
+    input.style ?? "",
+    input.rarity ?? "",
+    input.character ?? "",
+    input.color ?? "",
+    ...(input.tags ?? []),
+  ]
+    .join("|")
+    .toLowerCase();
+
+const stableHash = (value: string): number => {
+  let hash = 0;
+  for (let index = 0; index < value.length; index += 1) {
+    hash = (hash * 31 + value.charCodeAt(index)) >>> 0;
+  }
+  return hash;
+};
+
+const pickStable = (values: string[], seed: string): string => values[stableHash(seed) % values.length];
+
+const toTitleCase = (value: string): string =>
+  value
+    .split(/([:-])/)
+    .map((part) => {
+      if (part === ":" || part === "-") {
+        return part;
+      }
+      const lower = part.toLowerCase();
+      return lower ? `${lower[0].toUpperCase()}${lower.slice(1)}` : "";
+    })
+    .join("");
+
+const sanitizeWordToken = (value: string): string => value.trim().toLowerCase();
 
 const extractJsonPayload = (raw: string): string => {
   const trimmed = raw.trim();
@@ -180,30 +228,16 @@ const extractJsonPayload = (raw: string): string => {
   return trimmed;
 };
 
-const toTitleCase = (value: string): string =>
-  value
-    .split(/([:-])/)
-    .map((part) => {
-      if (part === ":" || part === "-") {
-        return part;
-      }
-      const lower = part.toLowerCase();
-      return lower ? `${lower[0].toUpperCase()}${lower.slice(1)}` : "";
-    })
-    .join("");
-
-const sanitizeWordToken = (value: string): string => value.trim().toLowerCase();
-
 const removeTechnicalFragments = (rawTitle: string): string =>
   rawTitle
     .replace(/gid:\/\/[^\s]+/gi, " ")
     .replace(/\bLC-[A-Z0-9-]+\b/gi, " ")
-    .replace(/\b(?:shopify|variant|product|order|sku|handle)\b/gi, " ")
+    .replace(/\b(?:shopify|variant|product|order|sku|handle|lootcard)\b/gi, " ")
     .replace(/[“”"'`]+/g, " ")
     .replace(/\d+/g, " ")
     .replace(/[^\x00-\x7F]+/g, " ");
 
-const sanitizeMarketingTitle = (rawTitle: string): string => {
+export const sanitizeMarketingTitle = (rawTitle: string): string => {
   const cleaned = removeTechnicalFragments(rawTitle)
     .replace(/[^A-Za-z\s:-]+/g, " ")
     .replace(/\s+/g, " ")
@@ -244,16 +278,117 @@ const isWeakMarketingTitle = (title: string): boolean => {
   return meaningfulWords.length === 0;
 };
 
+export const resolveExistingMarketingTitle = (
+  metadata: Prisma.JsonValue | Record<string, unknown> | null | undefined
+): string | null => {
+  if (!isJsonObject(metadata)) {
+    return null;
+  }
+
+  const raw = metadata.marketingTitle;
+  if (typeof raw !== "string") {
+    return null;
+  }
+
+  const sanitized = sanitizeMarketingTitle(raw);
+  return sanitized || null;
+};
+
+const normalizePhrase = (value: string | null | undefined): string =>
+  (value ?? "")
+    .replace(/[^A-Za-z\s-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const normalizeRarity = (value: string | null | undefined): string => {
+  const normalized = normalizePhrase(value).toUpperCase();
+  return RARITY_VALUES.has(normalized) ? normalized : "";
+};
+
+const buildSourceStrings = (input: CardNamingSource): string[] => [
+  input.color ?? "",
+  input.style ?? "",
+  input.character ?? "",
+  input.rarity ?? "",
+  input.category ?? "",
+  input.title ?? "",
+  input.description ?? "",
+  ...(input.tags ?? []),
+  ...collectMetadataStrings(input.metadata),
+];
+
+const pickThemeValue = (
+  patterns: Array<{ pattern: RegExp; values: string[] }>,
+  sources: string[],
+  seed: string
+): string | null => {
+  for (const source of sources) {
+    for (const matcher of patterns) {
+      if (matcher.pattern.test(source)) {
+        return pickStable(matcher.values, `${seed}:${matcher.values.join("-")}`);
+      }
+    }
+  }
+
+  return null;
+};
+
+const resolveThemeWord = (input: CardNamingSource): string => {
+  const sources = buildSourceStrings(input);
+  const seed = buildStableSeed(input);
+
+  return (
+    pickThemeValue(COLOR_THEME_PATTERNS, sources, `${seed}:color`) ??
+    pickThemeValue(STYLE_THEME_PATTERNS, sources, `${seed}:style`) ??
+    pickStable(["Shadow", "Celestial", "Mythic"], `${seed}:fallback-theme`)
+  );
+};
+
+const resolveArchetype = (input: CardNamingSource): string => {
+  const sources = buildSourceStrings(input);
+  const seed = buildStableSeed(input);
+
+  for (const source of sources) {
+    for (const matcher of ARCHETYPE_PATTERNS) {
+      if (matcher.pattern.test(source)) {
+        return pickStable(matcher.values, `${seed}:${matcher.values.join("-")}`);
+      }
+    }
+  }
+
+  const joined = sources.join(" ");
+  if (/\bfemale\b|\bgirl\b|\bwoman\b|\blady\b/i.test(joined)) {
+    return pickStable(["Queen", "Empress", "Valkyrie"], `${seed}:female`);
+  }
+  if (/\bmale\b|\bboy\b|\bman\b/i.test(joined)) {
+    return pickStable(["Champion", "Vanguard"], `${seed}:male`);
+  }
+  if (/\bmecha\b|\brobot\b/i.test(joined)) {
+    return pickStable(["Phantom", "Vanguard"], `${seed}:mecha`);
+  }
+
+  return pickStable(["Heroine", "Valkyrie"], `${seed}:default-archetype`);
+};
+
+export const buildFallbackMarketingTitle = (input: CardNamingSource): string => {
+  const theme = resolveThemeWord(input);
+  const archetype = resolveArchetype(input);
+  const rarity = normalizeRarity(input.rarity);
+  const words = [theme, archetype, rarity].filter(Boolean).slice(0, 6);
+  return words.join(" ").trim() || "Celestial Heroine";
+};
+
 const buildPromptMessages = (payload: NamingPayload): DeepSeekMessage[] => [
   {
     role: "system",
     content:
-      "You are a premium anime collectible product naming expert for Shopify. " +
+      "You are a premium anime collectible product naming expert. " +
       'Return JSON only with this shape: {"marketingTitle":"string"}. ' +
-      "Generate a short, premium, high-conversion English title for an anime collectible card. " +
+      "Generate a short, premium, high-conversion English title for a collectible card. " +
       "Requirements: English only, 3 to 6 words, memorable, premium, collectible feeling, no numbering, " +
       "no product codes, no Shopify technical words, no quotes, no emoji, and no random filler. " +
-      "The title should sound like a real ecommerce collectible item name, not a catalog ID.",
+      "Prefer rarity, color, style, and character archetype cues. " +
+      "The result should sound like a real ecommerce TCG or anime collectible item name.",
   },
   {
     role: "user",
@@ -271,186 +406,10 @@ const extractRawTitle = (rawResponse: string): string => {
       return parsed.title;
     }
   } catch {
-    // fall through to raw content
+    // fall through
   }
 
   return rawResponse.trim();
-};
-
-const titleCasePhrase = (value: string): string =>
-  value
-    .split(/\s+/)
-    .map((word) => toTitleCase(word))
-    .join(" ")
-    .trim();
-
-const normalizePhrase = (value: string | null | undefined): string =>
-  (value ?? "")
-    .replace(/[^A-Za-z\s-]+/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-
-const truncatePhraseWords = (value: string, maxWords: number): string =>
-  value
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, maxWords)
-    .join(" ");
-
-const buildSourceStrings = (card: GalleryCardRecord): string[] => [
-  card.color ?? "",
-  card.style ?? "",
-  card.character ?? "",
-  card.rarity ?? "",
-  card.category ?? "",
-  card.title,
-  card.description ?? "",
-  ...card.tags,
-  ...collectMetadataStrings(card.metadata),
-];
-
-const resolveThemeDescriptor = (card: GalleryCardRecord): string | null => {
-  const sources = [card.style ?? "", card.title, card.description ?? "", ...card.tags, ...collectMetadataStrings(card.metadata)];
-  for (const source of sources) {
-    for (const matcher of THEME_PATTERNS) {
-      if (matcher.pattern.test(source)) {
-        return matcher.value;
-      }
-    }
-  }
-
-  return null;
-};
-
-const resolveColorDescriptor = (card: GalleryCardRecord): string | null => {
-  const normalizedColor = normalizePhrase(card.color);
-  if (normalizedColor) {
-    return titleCasePhrase(truncatePhraseWords(normalizedColor, 2));
-  }
-
-  const sources = [card.title, card.description ?? "", ...card.tags, ...collectMetadataStrings(card.metadata)];
-  for (const source of sources) {
-    for (const matcher of THEME_PATTERNS) {
-      if (
-        ["Golden", "Crimson", "Purple", "Emerald", "Sapphire", "Ivory", "Midnight", "Obsidian"].includes(
-          matcher.value
-        ) &&
-        matcher.pattern.test(source)
-      ) {
-        return matcher.value;
-      }
-    }
-  }
-
-  return null;
-};
-
-const resolveRarityDescriptor = (card: GalleryCardRecord): string | null => {
-  const rarity = normalizePhrase(card.rarity).toUpperCase();
-  if (rarity && RARITY_TO_THEME[rarity]) {
-    return RARITY_TO_THEME[rarity];
-  }
-
-  const sources = [card.rarity ?? "", ...card.tags, ...collectMetadataStrings(card.metadata)];
-  for (const source of sources) {
-    if (/\bSSR\b/i.test(source)) {
-      return RARITY_TO_THEME.SSR;
-    }
-    if (/\bUR\b/i.test(source)) {
-      return RARITY_TO_THEME.UR;
-    }
-    if (/\bSR\b/i.test(source)) {
-      return RARITY_TO_THEME.SR;
-    }
-  }
-
-  return null;
-};
-
-const resolveArchetype = (card: GalleryCardRecord): string => {
-  const sources = buildSourceStrings(card);
-  for (const source of sources) {
-    for (const matcher of ARCHETYPE_PATTERNS) {
-      if (matcher.pattern.test(source)) {
-        return matcher.value;
-      }
-    }
-  }
-
-  const joined = sources.join(" ");
-  if (/\bfemale\b|\bgirl\b|\bwoman\b|\blady\b/i.test(joined)) {
-    return "Heroine";
-  }
-  if (/\bmale\b|\bboy\b|\bman\b/i.test(joined)) {
-    return "Champion";
-  }
-
-  return "Heroine";
-};
-
-const resolveFallbackDescriptorWords = (card: GalleryCardRecord): string[] => {
-  const descriptors: string[] = [];
-  const colorDescriptor = resolveColorDescriptor(card);
-  const themeDescriptor = resolveThemeDescriptor(card);
-  const rarityDescriptor = resolveRarityDescriptor(card);
-
-  for (const candidate of [colorDescriptor, themeDescriptor, rarityDescriptor]) {
-    const normalized = sanitizeWordToken((candidate ?? "").replace(/\s+/g, " "));
-    if (!candidate || !normalized) {
-      continue;
-    }
-    if (descriptors.some((existing) => sanitizeWordToken(existing) === normalized)) {
-      continue;
-    }
-    descriptors.push(candidate);
-  }
-
-  if (descriptors.length >= 2) {
-    return descriptors.slice(0, 2);
-  }
-
-  const extraSources = [card.title, ...card.tags, card.description ?? "", ...collectMetadataStrings(card.metadata)];
-  for (const source of extraSources) {
-    const normalized = normalizePhrase(source);
-    if (!normalized) {
-      continue;
-    }
-
-    const words = normalized
-      .split(/\s+/)
-      .map(sanitizeWordToken)
-      .filter((word) => word.length > 2 && !DESCRIPTOR_STOPWORDS.has(word));
-
-    for (const word of words) {
-      const descriptor = toTitleCase(word);
-      if (descriptors.some((existing) => sanitizeWordToken(existing) === sanitizeWordToken(descriptor))) {
-        continue;
-      }
-      descriptors.push(descriptor);
-      if (descriptors.length >= 2) {
-        return descriptors.slice(0, 2);
-      }
-    }
-  }
-
-  return descriptors.slice(0, 2);
-};
-
-const buildFallbackMarketingTitle = (card: GalleryCardRecord): string => {
-  const descriptors = resolveFallbackDescriptorWords(card);
-  const archetype = resolveArchetype(card);
-  const words = [...descriptors, archetype]
-    .join(" ")
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 6);
-
-  const fallbackTitle = words.join(" ").trim();
-  if (fallbackTitle) {
-    return fallbackTitle;
-  }
-
-  return "Celestial Heroine";
 };
 
 const isAbortError = (error: unknown): boolean =>
@@ -458,32 +417,36 @@ const isAbortError = (error: unknown): boolean =>
 
 const TITLE_NAMING_TIMEOUT_ERROR = "CARD_NAMING_TIMEOUT";
 
+const buildPromptPayload = (input: CardNamingSource): NamingPayload => ({
+  title: input.title ?? "",
+  description: input.description ?? null,
+  tags: input.tags ?? [],
+  style: input.style ?? null,
+  rarity: input.rarity ?? null,
+  category: input.category ?? null,
+  character: input.character ?? null,
+  color: input.color ?? null,
+  metadata: input.metadata ?? null,
+  sourceId: input.sourceId ?? null,
+});
+
 export const cardNamingService = {
   async generateMarketingTitle(input: GenerateMarketingTitleInput): Promise<GenerateMarketingTitleOutput> {
-    const card = await galleryRepository.findById(input.galleryCardId);
-    if (!card) {
-      throw new Error(`Gallery card not found for naming: ${input.galleryCardId}`);
-    }
-
-    const fallbackTitle = buildFallbackMarketingTitle(card);
+    const fallbackTitle = buildFallbackMarketingTitle(input);
     const env = loadEnv();
-    const payload: NamingPayload = {
-      id: card.id,
-      title: card.title,
-      description: card.description,
-      tags: card.tags,
-      style: card.style,
-      rarity: card.rarity,
-      category: card.category,
-      character: card.character,
-      color: card.color,
-      metadata: card.metadata,
+    const payload = buildPromptPayload(input);
+    const logBase = {
+      sourceId: input.sourceId ?? null,
+      title: input.title ?? "",
+      rarity: input.rarity ?? null,
+      color: input.color ?? null,
+      style: input.style ?? null,
+      character: input.character ?? null,
     };
 
     if (!env.enableNaturalLanguageSearch || !env.deepseekApiKey) {
       logger.info("[CARD NAMING SERVICE] fallback", {
-        galleryCardId: input.galleryCardId,
-        orderNumber: input.orderNumber,
+        ...logBase,
         reason: env.enableNaturalLanguageSearch ? "missing_api_key" : "llm_disabled",
         marketingTitle: fallbackTitle,
       });
@@ -536,13 +499,11 @@ export const cardNamingService = {
 
       if (!response.ok) {
         logger.warn("[CARD NAMING SERVICE] fallback", {
-          galleryCardId: input.galleryCardId,
-          orderNumber: input.orderNumber,
+          ...logBase,
           reason: "non_200",
           status: response.status,
           marketingTitle: fallbackTitle,
         });
-
         return {
           marketingTitle: fallbackTitle,
           source: "fallback",
@@ -554,13 +515,11 @@ export const cardNamingService = {
 
       if (!sanitizedTitle || isWeakMarketingTitle(sanitizedTitle)) {
         logger.warn("[CARD NAMING SERVICE] fallback", {
-          galleryCardId: input.galleryCardId,
-          orderNumber: input.orderNumber,
+          ...logBase,
           reason: "sanitize_rejected",
           rawTitle,
           marketingTitle: fallbackTitle,
         });
-
         return {
           marketingTitle: fallbackTitle,
           source: "fallback",
@@ -569,8 +528,7 @@ export const cardNamingService = {
       }
 
       logger.info("[CARD NAMING SERVICE] generated", {
-        galleryCardId: input.galleryCardId,
-        orderNumber: input.orderNumber,
+        ...logBase,
         marketingTitle: sanitizedTitle,
         source: "llm",
       });
@@ -585,9 +543,9 @@ export const cardNamingService = {
         (error instanceof Error && error.message === TITLE_NAMING_TIMEOUT_ERROR) || isAbortError(error)
           ? "timeout"
           : "network_error";
+
       logger.warn("[CARD NAMING SERVICE] fallback", {
-        galleryCardId: input.galleryCardId,
-        orderNumber: input.orderNumber,
+        ...logBase,
         reason,
         message: error instanceof Error ? error.message : String(error),
         marketingTitle: fallbackTitle,

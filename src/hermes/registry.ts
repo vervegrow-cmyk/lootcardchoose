@@ -2,7 +2,6 @@ import { AgentDefinition, SkillDefinition, RegisteredSkill } from "./types";
 import { GalleryAgent } from "../agents/gallery/gallery.agent";
 import { CreateCheckoutLinkSkill } from "../skills/gallery/create-checkout-link.skill";
 import { galleryHelpSkill } from "../skills/gallery/gallery-help.skill";
-import { generateProductTitleSkill } from "../skills/gallery/generate-product-title.skill";
 import { refreshGallerySkill } from "../skills/gallery/refresh-gallery.skill";
 import { searchGallerySkill } from "../skills/gallery/search-gallery.skill";
 import { selectCardSkill } from "../skills/gallery/select-card.skill";
@@ -54,11 +53,6 @@ export const buildHermesRegistry = (): HermesRegistry => {
     id: "gallery.selectCard",
     name: "SelectCardSkill",
     handler: selectCardSkill,
-  });
-  registry.registerSkill({
-    id: "gallery.generateProductTitle",
-    name: "GenerateProductTitleSkill",
-    handler: generateProductTitleSkill,
   });
   registry.registerSkill({
     id: "gallery.createCheckoutLink",

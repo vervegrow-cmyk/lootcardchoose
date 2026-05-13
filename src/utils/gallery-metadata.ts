@@ -1,5 +1,9 @@
 import path from "node:path";
 
+export type GalleryImageMetadataBag = Record<string, unknown> & {
+  marketingTitle?: string;
+};
+
 export type GalleryImageMetadata = {
   title?: string;
   description?: string | null;
@@ -15,7 +19,7 @@ export type GalleryImageMetadata = {
   confidence?: number | null;
   visionSource?: string | null;
   isActive?: boolean;
-  metadata?: Record<string, unknown>;
+  metadata?: GalleryImageMetadataBag;
 };
 
 export const LOCAL_GALLERY_SOURCE_PREFIX = "local-gallery:";

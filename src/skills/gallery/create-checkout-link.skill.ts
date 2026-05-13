@@ -33,20 +33,14 @@ export type CreateCheckoutLinkOutput = {
 };
 
 const normalizeSelectedCard = (input: CreateCheckoutLinkInput): ShopifyGalleryCardInput =>
-  input.selectedCard
-    ? {
-        ...input.selectedCard,
-        marketingTitle: input.marketingTitle ?? input.selectedCard.marketingTitle,
-      }
-    : {
-        galleryCardId: input.galleryCardId,
-        title: input.title,
-        description: input.description,
-        imageUrl: input.imageUrl,
-        price: input.price,
-        tags: input.tags,
-        marketingTitle: input.marketingTitle,
-      };
+  input.selectedCard ?? {
+    galleryCardId: input.galleryCardId,
+    title: input.title,
+    description: input.description,
+    imageUrl: input.imageUrl,
+    price: input.price,
+    tags: input.tags,
+  };
 
 export const createCheckoutLink: SkillHandler<CreateCheckoutLinkInput, CreateCheckoutLinkOutput> = async (
   input,
@@ -58,7 +52,6 @@ export const createCheckoutLink: SkillHandler<CreateCheckoutLinkInput, CreateChe
     orderNumber: input.order.orderNumber,
     galleryCardId: selectedCard.galleryCardId,
     title: selectedCard.title,
-    marketingTitle: selectedCard.marketingTitle ?? null,
   });
 
   try {

@@ -1,4 +1,6 @@
+import { Prisma } from "@prisma/client";
 import { loadEnv } from "../config/env";
+import { GalleryCardRecord, galleryRepository } from "../repositories/gallery.repository";
 import { logger } from "../utils/logger";
 
 export type ShopifyGalleryCardInput = {
@@ -8,7 +10,6 @@ export type ShopifyGalleryCardInput = {
   imageUrl: string;
   price: string;
   tags: string[];
-  marketingTitle?: string;
 };
 
 export type ShopifyOrderInput = {
@@ -60,6 +61,55 @@ type ShopifyProductResponse = {
   };
 };
 
+type ShopifyNamingSource = ShopifyGalleryCardInput & {
+  style?: string | null;
+  rarity?: string | null;
+  category?: string | null;
+  character?: string | null;
+  color?: string | null;
+  metadata?: Prisma.JsonValue | null;
+};
+
+const PRODUCT_CODE_PREFIX = "LC";
+
+const COLOR_THEME_PATTERNS: Array<{ pattern: RegExp; values: string[] }> = [
+  { pattern: /\bblack gold\b|\bgold black\b/i, values: ["Shadow", "Obsidian", "Eclipse"] },
+  { pattern: /\bblack\b/i, values: ["Midnight", "Obsidian", "Shadow"] },
+  { pattern: /\bgold\b|\bgolden\b/i, values: ["Golden", "Radiant"] },
+  { pattern: /\bpurple\b|\bviolet\b/i, values: ["Midnight", "Violet"] },
+  { pattern: /\bred\b|\bcrimson\b|\bscarlet\b/i, values: ["Crimson", "Scarlet"] },
+  { pattern: /\bsilver\b|\bchrome\b/i, values: ["Silver", "Lunar"] },
+  { pattern: /\bblue\b|\bsapphire\b/i, values: ["Sapphire", "Azure"] },
+  { pattern: /\bgreen\b|\bemerald\b/i, values: ["Emerald", "Verdant"] },
+  { pattern: /\bwhite\b|\bivory\b/i, values: ["Ivory", "Celestial"] },
+];
+
+const STYLE_THEME_PATTERNS: Array<{ pattern: RegExp; values: string[] }> = [
+  { pattern: /\bcyberpunk\b|\bneon\b/i, values: ["Neon", "Neo"] },
+  { pattern: /\bmecha\b|\brobot\b/i, values: ["Core", "Phantom"] },
+  { pattern: /\bfantasy\b|\bmythic\b|\bmystic\b/i, values: ["Mythic", "Celestial"] },
+  { pattern: /\bdragon\b|\bflame\b/i, values: ["Dragon", "Crimson"] },
+  { pattern: /\bgothic\b|\bdark\b/i, values: ["Midnight", "Obsidian"] },
+  { pattern: /\bsakura\b|\bcherry blossom\b|\bfloral\b|\bpink roses?\b/i, values: ["Sakura", "Blossom"] },
+];
+
+const ARCHETYPE_PATTERNS: Array<{ pattern: RegExp; values: string[] }> = [
+  { pattern: /\bempress\b/i, values: ["Empress"] },
+  { pattern: /\bqueen\b/i, values: ["Queen"] },
+  { pattern: /\bvalkyrie\b/i, values: ["Valkyrie"] },
+  { pattern: /\bprincess\b/i, values: ["Princess"] },
+  { pattern: /\bsorceress\b|\bwitch\b/i, values: ["Sorceress", "Witch"] },
+  { pattern: /\bangel\b/i, values: ["Angel"] },
+  { pattern: /\bdemon\b/i, values: ["Demon"] },
+  { pattern: /\bgoddess\b/i, values: ["Goddess"] },
+  { pattern: /\bwarrior\b/i, values: ["Warrior", "Valkyrie"] },
+  { pattern: /\bdragon\b/i, values: ["Empress", "Valkyrie"] },
+  { pattern: /\bmecha\b|\brobot\b/i, values: ["Phantom", "Vanguard"] },
+  { pattern: /\bheroine\b/i, values: ["Heroine"] },
+];
+
+const RARITY_VALUES = new Set(["N", "R", "SR", "SSR", "UR"]);
+
 const resolveShopifyStoreDomain = (): string => {
   const env = loadEnv();
   if (!env.shopifyStoreDomain) {
@@ -70,23 +120,30 @@ const resolveShopifyStoreDomain = (): string => {
 
 const resolveShopifyApiVersion = (): string => loadEnv().shopifyApiVersion;
 
-const PRODUCT_CODE_PREFIX = "LC";
+const isJsonObject = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
 
-const EMERGENCY_MARKETING_TITLE_STOPWORDS = new Set([
-  "anime",
-  "collectible",
-  "card",
-  "premium",
-  "female",
-  "male",
-  "character",
-  "girl",
-  "boy",
-  "beautiful",
-  "beauty",
-  "trading",
-  "luxury",
-]);
+const collectMetadataStrings = (value: Prisma.JsonValue | null, result: string[] = []): string[] => {
+  if (typeof value === "string") {
+    result.push(value);
+    return result;
+  }
+
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      collectMetadataStrings(item as Prisma.JsonValue, result);
+    }
+    return result;
+  }
+
+  if (isJsonObject(value)) {
+    for (const item of Object.values(value)) {
+      collectMetadataStrings(item as Prisma.JsonValue, result);
+    }
+  }
+
+  return result;
+};
 
 const toTitleCase = (value: string): string =>
   value
@@ -99,6 +156,31 @@ const toTitleCase = (value: string): string =>
       return lower ? `${lower[0].toUpperCase()}${lower.slice(1)}` : "";
     })
     .join("");
+
+const stableHash = (value: string): number => {
+  let hash = 0;
+  for (let index = 0; index < value.length; index += 1) {
+    hash = (hash * 31 + value.charCodeAt(index)) >>> 0;
+  }
+  return hash;
+};
+
+const pickStable = (values: string[], seed: string): string => values[stableHash(seed) % values.length];
+
+const sanitizeMarketingTitle = (value: string): string =>
+  value
+    .replace(/[^\x00-\x7F]+/g, " ")
+    .replace(/\bLC-[A-Z0-9-]+\b/gi, " ")
+    .replace(/\b(?:shopify|variant|product|order|sku|lootcard|gid)\b/gi, " ")
+    .replace(/[^A-Za-z\s:-]+/g, " ")
+    .replace(/\d+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .split(/\s+/)
+    .slice(0, 6)
+    .map(toTitleCase)
+    .join(" ")
+    .trim();
 
 const resolveOrderTail = (orderNumber: string): string => {
   const digits = orderNumber.replace(/\D/g, "");
@@ -120,88 +202,143 @@ const slugify = (value: string): string => {
   return normalized || "gallery-card";
 };
 
-const normalizeMarketingTitle = (value: string): string =>
-  value
-    .replace(/[^\x00-\x7F]+/g, " ")
-    .replace(/[^A-Za-z\s:-]+/g, " ")
-    .replace(/\d+/g, " ")
-    .replace(/\b(?:shopify|variant|product|order|sku)\b/gi, " ")
-    .replace(/\s+/g, " ")
-    .trim();
+const readMetadataMarketingTitle = (metadata: Prisma.JsonValue | null): string | null => {
+  if (!isJsonObject(metadata)) {
+    return null;
+  }
 
-const buildEmergencyMarketingTitle = (card: ShopifyGalleryCardInput): string => {
-  const sourceValues = [card.title, ...card.tags];
-  const descriptorWords: string[] = [];
-  let archetype = "Heroine";
+  const value = metadata.marketingTitle;
+  if (typeof value !== "string") {
+    return null;
+  }
 
-  for (const source of sourceValues) {
-    const normalized = source
-      .replace(/[^A-Za-z\s-]+/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
+  const sanitized = sanitizeMarketingTitle(value);
+  return sanitized || null;
+};
 
-    if (!normalized) {
-      continue;
-    }
+const buildStableSeed = (card: ShopifyNamingSource): string =>
+  [
+    card.galleryCardId,
+    card.title,
+    card.style ?? "",
+    card.rarity ?? "",
+    card.character ?? "",
+    card.color ?? "",
+    ...card.tags,
+  ]
+    .join("|")
+    .toLowerCase();
 
-    if (/\bqueen\b/i.test(normalized)) {
-      archetype = "Queen";
-    } else if (/\bempress\b/i.test(normalized)) {
-      archetype = "Empress";
-    } else if (/\bvalkyrie\b/i.test(normalized)) {
-      archetype = "Valkyrie";
-    } else if (/\bprincess\b/i.test(normalized)) {
-      archetype = "Princess";
-    } else if (/\bwarrior\b/i.test(normalized)) {
-      archetype = "Warrior";
-    } else if (/\bmale\b|\bboy\b|\bman\b/i.test(normalized)) {
-      archetype = "Champion";
-    }
+const normalizeRarity = (value: string | null | undefined): string => {
+  const normalized = (value ?? "").trim().toUpperCase();
+  return RARITY_VALUES.has(normalized) ? normalized : "";
+};
 
-    const words = normalized
-      .split(/\s+/)
-      .map((word) => word.toLowerCase())
-      .filter((word) => word.length > 2 && !EMERGENCY_MARKETING_TITLE_STOPWORDS.has(word));
+const buildSourceStrings = (card: ShopifyNamingSource): string[] => [
+  card.color ?? "",
+  card.style ?? "",
+  card.character ?? "",
+  card.rarity ?? "",
+  card.category ?? "",
+  card.title,
+  card.description ?? "",
+  ...card.tags,
+  ...collectMetadataStrings(card.metadata ?? null),
+];
 
-    for (const word of words) {
-      const candidate = toTitleCase(word);
-      if (descriptorWords.some((existing) => existing.toLowerCase() === candidate.toLowerCase())) {
-        continue;
+const pickThemeValue = (
+  patterns: Array<{ pattern: RegExp; values: string[] }>,
+  sources: string[],
+  seed: string
+): string | null => {
+  for (const source of sources) {
+    for (const matcher of patterns) {
+      if (matcher.pattern.test(source)) {
+        return pickStable(matcher.values, `${seed}:${matcher.values.join("-")}`);
       }
-      descriptorWords.push(candidate);
-      if (descriptorWords.length >= 2) {
+    }
+  }
+
+  return null;
+};
+
+const buildFallbackMarketingTitle = (card: ShopifyNamingSource): string => {
+  const sources = buildSourceStrings(card);
+  const seed = buildStableSeed(card);
+  const theme =
+    pickThemeValue(COLOR_THEME_PATTERNS, sources, `${seed}:color`) ??
+    pickThemeValue(STYLE_THEME_PATTERNS, sources, `${seed}:style`) ??
+    pickStable(["Shadow", "Celestial", "Mythic"], `${seed}:theme`);
+
+  let archetype: string | null = null;
+  for (const source of sources) {
+    for (const matcher of ARCHETYPE_PATTERNS) {
+      if (matcher.pattern.test(source)) {
+        archetype = pickStable(matcher.values, `${seed}:${matcher.values.join("-")}`);
         break;
       }
     }
-
-    if (descriptorWords.length >= 2) {
+    if (archetype) {
       break;
     }
   }
 
-  const titleWords = [...descriptorWords, archetype].slice(0, 6);
-  return titleWords.join(" ").trim() || "Celestial Heroine";
+  if (!archetype) {
+    const joined = sources.join(" ");
+    if (/\bfemale\b|\bgirl\b|\bwoman\b|\blady\b/i.test(joined)) {
+      archetype = pickStable(["Queen", "Empress", "Valkyrie"], `${seed}:female`);
+    } else if (/\bmale\b|\bboy\b|\bman\b/i.test(joined)) {
+      archetype = pickStable(["Champion", "Vanguard"], `${seed}:male`);
+    } else if (/\bmecha\b|\brobot\b/i.test(joined)) {
+      archetype = pickStable(["Phantom", "Vanguard"], `${seed}:mecha`);
+    } else {
+      archetype = pickStable(["Heroine", "Valkyrie"], `${seed}:default`);
+    }
+  }
+
+  const rarity = normalizeRarity(card.rarity);
+  return [theme, archetype, rarity].filter(Boolean).join(" ").trim() || "Celestial Heroine";
 };
 
+const buildResolvedNamingSource = (
+  selectedCard: ShopifyGalleryCardInput,
+  storedCard: GalleryCardRecord | null
+): ShopifyNamingSource => ({
+  galleryCardId: selectedCard.galleryCardId,
+  title: storedCard?.title ?? selectedCard.title,
+  description: storedCard?.description ?? selectedCard.description,
+  imageUrl: selectedCard.imageUrl,
+  price: selectedCard.price,
+  tags: storedCard?.tags?.length ? storedCard.tags : selectedCard.tags,
+  style: storedCard?.style ?? null,
+  rarity: storedCard?.rarity ?? null,
+  category: storedCard?.category ?? null,
+  character: storedCard?.character ?? null,
+  color: storedCard?.color ?? null,
+  metadata: storedCard?.metadata ?? null,
+});
+
 const buildProductIdentity = (
-  card: ShopifyGalleryCardInput,
+  card: ShopifyNamingSource,
   order: ShopifyOrderInput
 ): {
+  marketingTitle: string;
   productTitle: string;
   productCode: string;
   productHandle: string;
   sku: string;
 } => {
-  const providedMarketingTitle = normalizeMarketingTitle(card.marketingTitle ?? "");
-  const marketingTitle = providedMarketingTitle || buildEmergencyMarketingTitle(card);
+  const persistedMarketingTitle = readMetadataMarketingTitle(card.metadata ?? null);
+  const marketingTitle = persistedMarketingTitle || buildFallbackMarketingTitle(card);
   const productCode = `${PRODUCT_CODE_PREFIX}-${resolveOrderTail(order.orderNumber)}-${resolveGalleryTail(
     card.galleryCardId
   )}`;
-  const productTitle = `${marketingTitle} | ${productCode}`;
+  const productTitle = `${marketingTitle} | LootCard ${productCode}`;
   const sku = productCode;
   const productHandle = slugify(`${marketingTitle}-${productCode.toLowerCase()}`);
 
   return {
+    marketingTitle,
     productTitle,
     productCode,
     productHandle,
@@ -210,23 +347,20 @@ const buildProductIdentity = (
 };
 
 const buildProductPayload = (
-  card: ShopifyGalleryCardInput,
-  order: ShopifyOrderInput
-): ShopifyProductPayload => {
-  const identity = buildProductIdentity(card, order);
-
-  return {
-    product: {
-      title: identity.productTitle,
-      handle: identity.productHandle,
-      body_html: card.description,
-      tags: [...card.tags, `gallery-card:${card.galleryCardId}`, `order:${order.orderNumber}`].join(", "),
-      status: "active",
-      images: card.imageUrl ? [{ src: card.imageUrl }] : undefined,
-      variants: [{ price: card.price, sku: identity.sku }],
-    },
-  };
-};
+  card: ShopifyNamingSource,
+  order: ShopifyOrderInput,
+  identity: ReturnType<typeof buildProductIdentity>
+): ShopifyProductPayload => ({
+  product: {
+    title: identity.productTitle,
+    handle: identity.productHandle,
+    body_html: card.description,
+    tags: [...card.tags, `gallery-card:${card.galleryCardId}`, `order:${order.orderNumber}`].join(", "),
+    status: "active",
+    images: card.imageUrl ? [{ src: card.imageUrl }] : undefined,
+    variants: [{ price: card.price, sku: identity.sku }],
+  },
+});
 
 const resolveProductUrl = (storeDomain: string, handle: string): string =>
   `https://${storeDomain}/products/${handle}`;
@@ -254,12 +388,16 @@ export const shopifyService = {
     const storeDomain = resolveShopifyStoreDomain();
     const apiVersion = resolveShopifyApiVersion();
     const accessToken = await shopifyInstallationService.getAccessTokenForStore();
-    const identity = buildProductIdentity(card, order);
+    const storedCard = await galleryRepository.findById(card.galleryCardId);
+    const namingSource = buildResolvedNamingSource(card, storedCard);
+    const identity = buildProductIdentity(namingSource, order);
+
     logger.info("[SHOPIFY SERVICE] create product start", {
       orderNumber: order.orderNumber,
       galleryCardId: card.galleryCardId,
-      title: card.title,
-      marketingTitle: card.marketingTitle ?? null,
+      title: namingSource.title,
+      marketingTitle: identity.marketingTitle,
+      metadataMarketingTitle: readMetadataMarketingTitle(namingSource.metadata ?? null),
       productTitle: identity.productTitle,
       productCode: identity.productCode,
       productHandle: identity.productHandle,
@@ -274,7 +412,7 @@ export const shopifyService = {
           "Content-Type": "application/json",
           "X-Shopify-Access-Token": accessToken,
         },
-        body: JSON.stringify(buildProductPayload(card, order)),
+        body: JSON.stringify(buildProductPayload(namingSource, order, identity)),
       });
 
       if (!response.ok) {

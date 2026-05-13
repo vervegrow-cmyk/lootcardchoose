@@ -7,7 +7,6 @@ import assert from "node:assert/strict";
 import { buildHermesRegistry } from "../hermes/registry";
 import { HermesRouter } from "../hermes/router";
 import { gallerySearchSessionRepository } from "../repositories/gallery-search-session.repository";
-import { cardNamingService } from "../services/card-naming.service";
 import { orderService } from "../services/order.service";
 import { shopifyService } from "../services/shopify.service";
 import { awaitPendingSearchSessionWrite } from "../skills/gallery/search-gallery.skill";
@@ -65,17 +64,12 @@ const main = async (): Promise<void> => {
   });
   assert.equal(activeSessionsAfterSearch.length, 1);
 
-  const originalGenerateMarketingTitle = cardNamingService.generateMarketingTitle;
   const originalCreateProductFromGalleryCard = shopifyService.createProductFromGalleryCard;
-  cardNamingService.generateMarketingTitle = async () => ({
-    marketingTitle: "Crimson Neon Valkyrie",
-    source: "llm",
-  });
   shopifyService.createProductFromGalleryCard = async (selectedCard, order) => ({
     orderNumber: order.orderNumber,
     galleryCardId: selectedCard.galleryCardId,
     shopifyProductId: "mock-shopify-product-id",
-    productTitle: `${selectedCard.marketingTitle ?? "Fallback Heroine"} | LC-000001-BUEZ`,
+    productTitle: "Crimson Neon Valkyrie | LC-000001-BUEZ",
     productCode: "LC-000001-BUEZ",
     productHandle: "crimson-neon-valkyrie-lc-000001-buez",
     sku: "LC-000001-BUEZ",
@@ -158,7 +152,6 @@ const main = async (): Promise<void> => {
     });
     assert.equal(activeSessionsAfterFailure.length, 1);
   } finally {
-    cardNamingService.generateMarketingTitle = originalGenerateMarketingTitle;
     shopifyService.createProductFromGalleryCard = originalCreateProductFromGalleryCard;
   }
 };
