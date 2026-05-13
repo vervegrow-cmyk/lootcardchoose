@@ -80,6 +80,12 @@ const run = async (): Promise<void> => {
   assert.equal(firstSearch.type, "gallery_search_results");
   ensure(firstSearch.cards.length > 0, "Expected first English search results");
   const firstBatchCardIds = firstSearch.cards.map((card) => card.id);
+  const activeSessionsAfterFirstSearch = await gallerySearchSessionRepository.findRecentByUserId({
+    discordUserId: enUserId,
+    discordChannelId: enChannelId,
+    status: "active",
+  });
+  assert.equal(activeSessionsAfterFirstSearch.length, 1);
 
   let secondResponse: HermesOutput | undefined;
   const fullChainLogs = await collectLogs(async () => {
@@ -108,12 +114,20 @@ const run = async (): Promise<void> => {
   for (const cardId of secondBatchCardIds) {
     assert.ok(!firstBatchCardIds.includes(cardId), `Expected refreshed batch to exclude ${cardId}`);
   }
+  const activeSessionsAfterRefresh = await gallerySearchSessionRepository.findRecentByUserId({
+    discordUserId: enUserId,
+    discordChannelId: enChannelId,
+    status: "active",
+  });
+  assert.equal(activeSessionsAfterRefresh.length, 1);
 
-  assert.ok(fullChainLogs.includes("[HERMES ROUTER] intent=gallery_refresh"));
-  assert.ok(fullChainLogs.includes("[HERMES ORCHESTRATOR] agent=lootcardchoose intent=gallery_refresh"));
-  assert.ok(fullChainLogs.includes("[GALLERY AGENT] handling gallery_refresh"));
-  assert.ok(fullChainLogs.includes("[REFRESH GALLERY SKILL] start"));
-  assert.ok(fullChainLogs.includes("[REFRESH GALLERY SKILL] completed"));
+  assert.ok(fullChainLogs.some((line) => line.includes("[HERMES ROUTER] intent=gallery_refresh")));
+  assert.ok(
+    fullChainLogs.some((line) => line.includes("[HERMES ORCHESTRATOR] agent=lootcardchoose intent=gallery_refresh"))
+  );
+  assert.ok(fullChainLogs.some((line) => line.includes("[GALLERY AGENT] handling gallery_refresh")));
+  assert.ok(fullChainLogs.some((line) => line.includes("[REFRESH GALLERY SKILL] start")));
+  assert.ok(fullChainLogs.some((line) => line.includes("[REFRESH GALLERY SKILL] completed")));
   assert.ok(fullChainLogs.some((line) => line.includes("[REFRESH GALLERY SKILL] session metadata=")));
   assert.ok(fullChainLogs.some((line) => line.includes("[GALLERY SERVICE] refresh prompt context=")));
   assert.ok(fullChainLogs.some((line) => line.includes("\"userFeedback\":\"Can we switch to another batch?\"")));

@@ -2,6 +2,7 @@ import crypto from "crypto";
 import { loadEnv } from "../config/env";
 import { orderService } from "./order.service";
 import { discordNotificationService } from "./discord-notification.service";
+import { logger } from "../utils/logger";
 
 type ShopifyWebhookNoteAttribute = {
   name?: string;
@@ -30,7 +31,7 @@ const computeWebhookDigest = (rawBody: Buffer): string => {
 
 const isValidWebhookHmac = (rawBody: Buffer, providedHmac: string): boolean => {
   const digest = computeWebhookDigest(rawBody);
-  console.log("[SHOPIFY WEBHOOK] verify start", {
+  logger.info("[SHOPIFY WEBHOOK] verify start", {
     topic: WEBHOOK_TOPIC,
     hmacExists: Boolean(providedHmac),
     rawBodyLength: rawBody.length,
@@ -39,7 +40,7 @@ const isValidWebhookHmac = (rawBody: Buffer, providedHmac: string): boolean => {
   const left = Buffer.from(digest, "utf8");
   const right = Buffer.from(providedHmac, "utf8");
   if (left.length !== right.length) {
-    console.warn("[SHOPIFY WEBHOOK] hmac failed", {
+    logger.warn("[SHOPIFY WEBHOOK] hmac failed", {
       expectedDigest: previewDigest(digest),
       receivedDigest: previewDigest(providedHmac),
     });
@@ -48,29 +49,40 @@ const isValidWebhookHmac = (rawBody: Buffer, providedHmac: string): boolean => {
 
   const valid = crypto.timingSafeEqual(left, right);
   if (!valid) {
-    console.warn("[SHOPIFY WEBHOOK] hmac failed", {
+    logger.warn("[SHOPIFY WEBHOOK] hmac failed", {
       expectedDigest: previewDigest(digest),
       receivedDigest: previewDigest(providedHmac),
     });
     return false;
   }
 
-  console.log("[SHOPIFY WEBHOOK] hmac verified");
+  logger.info("[SHOPIFY WEBHOOK] hmac verified", {
+    topic: WEBHOOK_TOPIC,
+    rawBodyLength: rawBody.length,
+  });
   return true;
 };
 
-const extractOrderNumber = (payload: ShopifyOrdersPaidWebhookPayload): string | null => {
+const extractOrderNumber = (
+  payload: ShopifyOrdersPaidWebhookPayload
+): { orderNumber: string | null; source: "note_attributes" | "note" | "tags" | "missing" } => {
   const noteAttributeMatch = payload.note_attributes?.find((attribute) => {
     const name = attribute.name?.trim().toLowerCase();
     return name === "ordernumber" || name === "order_number";
   });
 
   if (noteAttributeMatch?.value) {
-    return noteAttributeMatch.value.trim();
+    return {
+      orderNumber: noteAttributeMatch.value.trim(),
+      source: "note_attributes",
+    };
   }
 
   if (payload.note?.trim()) {
-    return payload.note.trim();
+    return {
+      orderNumber: payload.note.trim(),
+      source: "note",
+    };
   }
 
   const tags = payload.tags ?? "";
@@ -80,10 +92,16 @@ const extractOrderNumber = (payload: ShopifyOrdersPaidWebhookPayload): string | 
     .find((tag) => tag.startsWith("order:"));
 
   if (orderTag) {
-    return orderTag.slice("order:".length).trim();
+    return {
+      orderNumber: orderTag.slice("order:".length).trim(),
+      source: "tags",
+    };
   }
 
-  return null;
+  return {
+    orderNumber: null,
+    source: "missing",
+  };
 };
 
 export const shopifyWebhookService = {
@@ -94,22 +112,28 @@ export const shopifyWebhookService = {
     orderNumber: string;
     status: string;
   }> {
-    console.log("[SHOPIFY WEBHOOK] parsing payload");
+    logger.info("[SHOPIFY WEBHOOK] parsing payload", {
+      rawBodyLength: rawBody.length,
+    });
     const payload = JSON.parse(rawBody.toString("utf8")) as ShopifyOrdersPaidWebhookPayload;
-    const orderNumber = extractOrderNumber(payload);
+    const { orderNumber, source } = extractOrderNumber(payload);
+    logger.info("[SHOPIFY WEBHOOK] extracted order number", {
+      orderNumber,
+      orderNumberSource: source,
+    });
     if (!orderNumber) {
       throw new Error("Shopify orders/paid webhook missing orderNumber");
     }
 
-    console.log("[SHOPIFY WEBHOOK] mark paid start", {
+    logger.info("[SHOPIFY WEBHOOK] mark paid start", {
       orderNumber,
     });
     const order = await orderService.markPaid({ orderNumber });
-    console.log("[SHOPIFY WEBHOOK] mark paid success", {
+    logger.info("[SHOPIFY WEBHOOK] mark paid success", {
       orderNumber: order.orderNumber,
     });
 
-    console.log("[SHOPIFY WEBHOOK] discord notify start", {
+    logger.info("[SHOPIFY WEBHOOK] discord notify start", {
       orderNumber: order.orderNumber,
     });
     await discordNotificationService.notifyOrderPaid({
@@ -118,7 +142,7 @@ export const shopifyWebhookService = {
       amount: order.amount,
     });
 
-    console.log("[SHOPIFY WEBHOOK] completed", {
+    logger.info("[SHOPIFY WEBHOOK] completed", {
       status: 200,
       orderNumber: order.orderNumber,
     });

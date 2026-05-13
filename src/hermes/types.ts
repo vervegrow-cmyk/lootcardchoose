@@ -80,6 +80,14 @@ export type HermesGalleryCheckoutCreatedOutput = {
   type: "gallery_checkout_created";
   language: SupportedLanguage;
   text: string;
+  title: string;
+  price: string;
+  productUrl: string;
+  purchaseUrl: string;
+  shareImageUrl: string;
+  productHandle: string;
+  orderNumber: string;
+  orderStatus: string;
   metadata?: Record<string, unknown>;
 };
 

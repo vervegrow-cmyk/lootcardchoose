@@ -19,15 +19,10 @@ const buildSearchEmptyText = (language: AgentContext["language"]): string =>
     ? "抱歉，暂时没有找到符合要求的卡牌。你可以换一种颜色、稀有度或角色描述再试试。"
     : "Sorry, I couldn't find matching cards. Try describing the style, color, rarity, or character type.";
 
-const buildCheckoutReadyText = (
-  language: AgentContext["language"],
-  title: string,
-  price: string,
-  url: string
-): string =>
+const buildCheckoutReadyText = (language: AgentContext["language"]): string =>
   language === "zh"
-    ? `你的卡牌商品已创建，可以通过以下链接查看并购买：\n\n商品：${title}\n价格：${price}\n链接：${url}`
-    : `Your card is ready. You can view and purchase it here:\n\nItem: ${title}\nPrice: $${price}\nLink: ${url}`;
+    ? "你的卡牌商品页已准备好，可以先分享，也可以直接购买。"
+    : "Your card page is ready. You can share it or buy it now.";
 
 const buildRefreshText = (
   language: AgentContext["language"],
@@ -56,7 +51,11 @@ export const GalleryAgent: AgentDefinition = {
   async handler(input: HermesInput, context: AgentContext): Promise<HermesOutput> {
     switch (context.intent) {
       case "gallery_search": {
-        logger.info("[GALLERY AGENT] handling gallery_search");
+        logger.info("[GALLERY AGENT] handling gallery_search", {
+          discordUserId: context.userId ?? "",
+          discordChannelId: context.channelId ?? "",
+          query: input.text,
+        });
         const result = await searchGallerySkill(
           {
             query: input.text,
@@ -98,7 +97,11 @@ export const GalleryAgent: AgentDefinition = {
         };
       }
       case "gallery_refresh": {
-        logger.info("[GALLERY AGENT] handling gallery_refresh");
+        logger.info("[GALLERY AGENT] handling gallery_refresh", {
+          discordUserId: context.userId ?? "",
+          discordChannelId: context.channelId ?? "",
+          feedback: input.text,
+        });
         const result = await refreshGallerySkill(
           {
             discordUserId: context.userId ?? "",
@@ -175,7 +178,6 @@ export const GalleryAgent: AgentDefinition = {
         };
       }
       case "gallery_select": {
-        logger.info("[GALLERY AGENT] handling gallery_select");
         const activeSession = await gallerySearchSessionRepository.findLatest({
           discordUserId: context.userId ?? "",
           discordChannelId: context.channelId ?? "",
@@ -184,6 +186,15 @@ export const GalleryAgent: AgentDefinition = {
         const selectedIndex = parseSelectedIndex(input.text, {
           hasActiveSession: Boolean(activeSession),
         });
+
+        logger.info("[GALLERY AGENT] handling gallery_select", {
+          discordUserId: context.userId ?? "",
+          discordChannelId: context.channelId ?? "",
+          activeSessionId: activeSession?.id ?? null,
+          selectedIndex,
+          rawInput: input.text,
+        });
+
         if (!selectedIndex) {
           return {
             type: "text",
@@ -192,47 +203,86 @@ export const GalleryAgent: AgentDefinition = {
           };
         }
 
-        const selectResult = await selectCardSkill(
-          {
+        try {
+          const selectResult = await selectCardSkill(
+            {
+              discordUserId: context.userId ?? "",
+              discordChannelId: context.channelId ?? "",
+              selectedIndex,
+            },
+            { ...context, skillId: "gallery.selectCard" }
+          );
+
+          const checkoutResult = await CreateCheckoutLinkSkill.handle(
+            {
+              ...selectResult.selectedCard,
+              order: selectResult.order,
+            },
+            {
+              ...context,
+              skillId: "gallery.createCheckoutLink",
+            }
+          );
+
+          logger.info("[GALLERY AGENT] checkout created", {
             discordUserId: context.userId ?? "",
             discordChannelId: context.channelId ?? "",
             selectedIndex,
-          },
-          { ...context, skillId: "gallery.selectCard" }
-        );
+            galleryCardId: checkoutResult.selectedCard.galleryCardId,
+            orderNumber: checkoutResult.order.orderNumber,
+            productUrl: checkoutResult.productUrl,
+            purchaseUrl: checkoutResult.purchaseUrl,
+          });
 
-        const checkoutResult = await CreateCheckoutLinkSkill.handle(
-          {
-            ...selectResult.selectedCard,
-            order: selectResult.order,
-          },
-          {
-            ...context,
-            skillId: "gallery.createCheckoutLink",
-          }
-        );
-
-        return {
-          type: "gallery_checkout_created",
-          language: context.language,
-          text: buildCheckoutReadyText(
-            context.language,
-            checkoutResult.selectedCard.title,
-            checkoutResult.order.amount,
-            checkoutResult.checkoutUrl
-          ),
-          metadata: {
+          return {
+            type: "gallery_checkout_created",
+            language: context.language,
+            text: buildCheckoutReadyText(context.language),
             title: checkoutResult.selectedCard.title,
             price: checkoutResult.order.amount,
-            checkoutUrl: checkoutResult.checkoutUrl,
+            productUrl: checkoutResult.productUrl,
+            purchaseUrl: checkoutResult.purchaseUrl,
+            shareImageUrl: checkoutResult.shareImageUrl,
+            productHandle: checkoutResult.productHandle,
             orderNumber: checkoutResult.order.orderNumber,
             orderStatus: checkoutResult.order.status,
-          },
-        };
+            metadata: {
+              galleryCardId: checkoutResult.selectedCard.galleryCardId,
+              title: checkoutResult.selectedCard.title,
+              price: checkoutResult.order.amount,
+              productUrl: checkoutResult.productUrl,
+              purchaseUrl: checkoutResult.purchaseUrl,
+              shareImageUrl: checkoutResult.shareImageUrl,
+              productHandle: checkoutResult.productHandle,
+              orderNumber: checkoutResult.order.orderNumber,
+              orderStatus: checkoutResult.order.status,
+            },
+          };
+        } catch (error) {
+          const message = error instanceof Error ? error.message : String(error);
+          logger.warn("[GALLERY AGENT] gallery_select failed", {
+            discordUserId: context.userId ?? "",
+            discordChannelId: context.channelId ?? "",
+            activeSessionId: activeSession?.id ?? null,
+            selectedIndex,
+            message,
+          });
+
+          return {
+            type: "text",
+            language: context.language,
+            text: message || t(context.language, "checkout.failed"),
+          };
+        }
       }
       case "help":
       case "order_status": {
-        logger.info("[GALLERY AGENT] handling help-like inquiry");
+        logger.info("[GALLERY AGENT] handling help-like inquiry", {
+          discordUserId: context.userId ?? "",
+          discordChannelId: context.channelId ?? "",
+          message: input.text,
+          intent: context.intent,
+        });
         const result = await galleryHelpSkill(
           {
             message: input.text,
@@ -247,10 +297,17 @@ export const GalleryAgent: AgentDefinition = {
         };
       }
       case "ignore":
-        logger.info("[GALLERY AGENT] handling ignore");
+        logger.info("[GALLERY AGENT] handling ignore", {
+          discordUserId: context.userId ?? "",
+          discordChannelId: context.channelId ?? "",
+        });
         return { type: "text", language: context.language, text: "" };
       default:
-        logger.info("[GALLERY AGENT] handling unknown");
+        logger.info("[GALLERY AGENT] handling unknown", {
+          discordUserId: context.userId ?? "",
+          discordChannelId: context.channelId ?? "",
+          intent: context.intent ?? "unknown",
+        });
         return {
           type: "text",
           language: context.language,

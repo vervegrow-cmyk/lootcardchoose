@@ -35,6 +35,16 @@ export const searchGallerySkill: SkillHandler<SearchGalleryInput, SearchGalleryO
     }));
 
     try {
+      const archivedCount = await gallerySearchSessionRepository.archiveActiveSessions({
+        discordUserId: input.discordUserId,
+        discordChannelId: input.discordChannelId,
+      });
+      logger.info("[SEARCH GALLERY SKILL] archived active sessions", {
+        discordUserId: input.discordUserId,
+        discordChannelId: input.discordChannelId,
+        archivedCount,
+      });
+
       await gallerySearchSessionRepository.create({
         discordUserId: input.discordUserId,
         discordChannelId: input.discordChannelId,

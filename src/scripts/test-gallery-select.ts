@@ -3,16 +3,12 @@ import dotenv from "dotenv";
 dotenv.config();
 dotenv.config({ path: ".env.local", override: true });
 
+import assert from "node:assert/strict";
+import { buildHermesRegistry } from "../hermes/registry";
+import { HermesRouter } from "../hermes/router";
 import { gallerySearchSessionRepository } from "../repositories/gallery-search-session.repository";
 import { orderService } from "../services/order.service";
 import { shopifyService } from "../services/shopify.service";
-import { CreateCheckoutLinkSkill } from "../skills/gallery/create-checkout-link.skill";
-import { searchGallerySkill } from "../skills/gallery/search-gallery.skill";
-import { selectCardSkill } from "../skills/gallery/select-card.skill";
-
-const discordUserId = "test-user";
-const discordChannelId = "test-channel";
-const query = "给我10张黑金SSR女角色卡牌";
 
 const ensure = (condition: unknown, message: string): void => {
   if (!condition) {
@@ -20,94 +16,125 @@ const ensure = (condition: unknown, message: string): void => {
   }
 };
 
+const createSessionResultCard = (card: {
+  id: string;
+  title: string;
+  description: string | null;
+  imageUrl: string;
+  price: number;
+  tags: string[];
+}) => ({
+  id: card.id,
+  title: card.title,
+  description: card.description,
+  imageUrl: card.imageUrl,
+  price: card.price,
+  tags: card.tags,
+  language: "en" as const,
+});
+
 const main = async (): Promise<void> => {
-  const searchResult = await searchGallerySkill(
-    {
-      query,
-      discordUserId,
-      discordChannelId,
-    },
-    {
-      requestId: `${Date.now()}`,
-      language: "zh",
-      userId: discordUserId,
-      channelId: discordChannelId,
-      skillId: "gallery.search",
-    }
-  );
+  const registry = buildHermesRegistry();
+  const router = new HermesRouter(registry);
+  const suffix = `${Date.now()}`;
+  const discordUserId = `test-select-user-${suffix}`;
+  const discordChannelId = `test-select-channel-${suffix}`;
+  const query = "Show me 10 black gold SSR female cards";
 
-  ensure(searchResult.results.length > 0, "Expected gallery search results for select test");
+  const searchResult = await router.handle({
+    text: query,
+    userId: discordUserId,
+    channelId: discordChannelId,
+  });
 
-  const session = await gallerySearchSessionRepository.findLatest({
+  assert.equal(searchResult.type, "gallery_search_results");
+  ensure(searchResult.cards.length > 0, "Expected gallery search results for select test");
+
+  const activeSessionsAfterSearch = await gallerySearchSessionRepository.findRecentByUserId({
     discordUserId,
     discordChannelId,
+    status: "active",
   });
-  ensure(session, "Expected gallery search session to be created");
-  if (!session) {
-    throw new Error("Expected gallery search session to be created");
-  }
-  ensure(Array.isArray(session.results), "Expected gallery search session results to be an array");
+  assert.equal(activeSessionsAfterSearch.length, 1);
 
   const originalCreateProductFromGalleryCard = shopifyService.createProductFromGalleryCard;
-  shopifyService.createProductFromGalleryCard = async () => ({
+  shopifyService.createProductFromGalleryCard = async (selectedCard, order) => ({
+    orderNumber: order.orderNumber,
+    galleryCardId: selectedCard.galleryCardId,
     shopifyProductId: "mock-shopify-product-id",
-    checkoutUrl: "https://example.com/mock-checkout",
+    productHandle: "mock-product-handle",
+    productUrl: "https://example.com/products/mock-product-handle",
+    purchaseUrl: "https://example.com/cart/mock-variant:1?note=mock-order",
+    shareImageUrl: selectedCard.imageUrl,
   });
 
   try {
-    const selectResult = await selectCardSkill(
-      {
-        discordUserId,
-        discordChannelId,
-        selectedIndex: 1,
-      },
-      {
-        requestId: `${Date.now()}`,
-        language: "zh",
-        userId: discordUserId,
-        channelId: discordChannelId,
-        skillId: "gallery.selectCard",
-      }
-    );
+    const checkoutResponse = await router.handle({
+      text: "1",
+      userId: discordUserId,
+      channelId: discordChannelId,
+    });
 
-    ensure(selectResult.selectedCard.galleryCardId, "Expected selected card id to exist");
-    ensure(selectResult.order.status === "pending", "Expected selected order to start as pending");
+    assert.equal(checkoutResponse.type, "gallery_checkout_created");
+    assert.equal(checkoutResponse.productUrl, "https://example.com/products/mock-product-handle");
+    assert.equal(checkoutResponse.purchaseUrl, "https://example.com/cart/mock-variant:1?note=mock-order");
+    assert.equal(checkoutResponse.productHandle, "mock-product-handle");
+    assert.ok(checkoutResponse.shareImageUrl);
 
-    const checkoutResult = await CreateCheckoutLinkSkill.handle(
-      {
-        ...selectResult.selectedCard,
-        order: selectResult.order,
-      },
-      {
-        requestId: `${Date.now()}`,
-        language: "zh",
-        userId: discordUserId,
-        channelId: discordChannelId,
-        skillId: "gallery.createCheckoutLink",
-      }
-    );
-
-    const persistedOrder = await orderService.findByOrderNumber(checkoutResult.order.orderNumber);
-    ensure(checkoutResult.selectedCard.title, "Expected selectedCard.title to be returned");
-    ensure(checkoutResult.checkoutUrl, "Expected checkoutUrl to be returned");
+    const persistedOrder = await orderService.findByOrderNumber(checkoutResponse.orderNumber);
     ensure(persistedOrder, "Expected created order to be persisted");
     if (!persistedOrder) {
       throw new Error("Expected created order to be persisted");
     }
-    ensure(persistedOrder.status === "checkout_created", "Expected order status to become checkout_created");
+    assert.equal(persistedOrder.status, "checkout_created");
+    assert.equal(persistedOrder.shopifyProductId, "mock-shopify-product-id");
+    assert.equal(persistedOrder.shopifyCheckoutUrl, checkoutResponse.purchaseUrl);
 
-    console.log(`[TEST GALLERY SELECT] selectedCard.title=${checkoutResult.selectedCard.title}`);
-    console.log(`[TEST GALLERY SELECT] order.orderNumber=${checkoutResult.order.orderNumber}`);
-    console.log(`[TEST GALLERY SELECT] order.status=${checkoutResult.order.status}`);
-    console.log(`[TEST GALLERY SELECT] checkoutUrl=${checkoutResult.checkoutUrl}`);
-    console.log(
-      `[TEST GALLERY SELECT] persistedOrder=${JSON.stringify({
-        orderNumber: persistedOrder.orderNumber,
-        status: persistedOrder.status,
-        shopifyProductId: persistedOrder.shopifyProductId,
-        shopifyCheckoutUrl: persistedOrder.shopifyCheckoutUrl,
-      })}`
+    console.log(`[TEST GALLERY SELECT] productUrl=${checkoutResponse.productUrl}`);
+    console.log(`[TEST GALLERY SELECT] purchaseUrl=${checkoutResponse.purchaseUrl}`);
+    console.log(`[TEST GALLERY SELECT] shareImageUrl=${checkoutResponse.shareImageUrl}`);
+
+    await gallerySearchSessionRepository.archiveActiveSessions({
+      discordUserId,
+      discordChannelId,
+    });
+    await gallerySearchSessionRepository.create({
+      discordUserId,
+      discordChannelId,
+      query,
+      results: searchResult.cards.slice(0, 3).map(createSessionResultCard),
+      status: "active",
+    });
+
+    const outOfRangeResponse = await router.handle({
+      text: "5",
+      userId: discordUserId,
+      channelId: discordChannelId,
+    });
+    assert.equal(outOfRangeResponse.type, "text");
+    assert.equal(outOfRangeResponse.text, "Please choose a number from 1 to 3.");
+
+    shopifyService.createProductFromGalleryCard = async () => {
+      throw new Error("Simulated Shopify creation failure");
+    };
+
+    const checkoutFailureResponse = await router.handle({
+      text: "1",
+      userId: discordUserId,
+      channelId: discordChannelId,
+    });
+    assert.equal(checkoutFailureResponse.type, "text");
+    assert.equal(
+      checkoutFailureResponse.text,
+      "Unable to create a product link right now. Please try again later."
     );
+
+    const activeSessionsAfterFailure = await gallerySearchSessionRepository.findRecentByUserId({
+      discordUserId,
+      discordChannelId,
+      status: "active",
+    });
+    assert.equal(activeSessionsAfterFailure.length, 1);
   } finally {
     shopifyService.createProductFromGalleryCard = originalCreateProductFromGalleryCard;
   }

@@ -116,12 +116,13 @@ export const refreshGallerySkill: SkillHandler<RefreshGalleryInput, RefreshGalle
 
   const recentSessions = await gallerySearchSessionRepository.findRecentByUserId({
     discordUserId: input.discordUserId,
+    discordChannelId: input.discordChannelId,
     take: 20,
-    status: "active",
   });
 
   const excludeIds = Array.from(new Set(recentSessions.flatMap(extractCardIds)));
   const firstBatchCardIds = extractCardIds(previousSession);
+  const recentActiveSessionCount = recentSessions.filter((session) => session.status === "active").length;
   const previousSessionMetadata = readSessionResultMetadata(previousSession);
   const recentRefreshModes = Array.from(
     new Set(
@@ -136,7 +137,7 @@ export const refreshGallerySkill: SkillHandler<RefreshGalleryInput, RefreshGalle
     originalQuery: previousSessionMetadata.originalQuery ?? previousSession.query,
     previousBatchSize: firstBatchCardIds.length,
     previousBatchCardIds: firstBatchCardIds,
-    recentActiveSessionCount: recentSessions.length,
+    recentActiveSessionCount,
     totalExcludedCardCount: excludeIds.length,
     latestBatchIndex: previousSessionMetadata.batchIndex ?? recentSessions.length,
     recentRefreshModes,
@@ -156,6 +157,16 @@ export const refreshGallerySkill: SkillHandler<RefreshGalleryInput, RefreshGalle
   const secondBatchCardIds = refreshResult.cards.map((card) => card.id);
 
   if (refreshResult.cards.length > 0) {
+    const archivedCount = await gallerySearchSessionRepository.archiveActiveSessions({
+      discordUserId: input.discordUserId,
+      discordChannelId: input.discordChannelId,
+    });
+    logger.info("[REFRESH GALLERY SKILL] archived active sessions", {
+      discordUserId: input.discordUserId,
+      discordChannelId: input.discordChannelId,
+      archivedCount,
+    });
+
     await gallerySearchSessionRepository.create({
       discordUserId: input.discordUserId,
       discordChannelId: input.discordChannelId,

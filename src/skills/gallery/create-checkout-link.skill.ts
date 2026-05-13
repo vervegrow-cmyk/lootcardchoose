@@ -2,6 +2,7 @@ import { SkillContext, SkillHandler } from "../../hermes/types";
 import { orderService } from "../../services/order.service";
 import { ShopifyGalleryCardInput, ShopifyOrderInput, shopifyService } from "../../services/shopify.service";
 import { t } from "../../utils/i18n";
+import { logger } from "../../utils/logger";
 
 export type CreateCheckoutLinkInput = ShopifyGalleryCardInput & {
   order: ShopifyOrderInput;
@@ -18,7 +19,10 @@ export type CreateCheckoutLinkOutput = {
     shopifyProductId: string | null;
     shopifyCheckoutUrl: string | null;
   };
-  checkoutUrl: string;
+  productUrl: string;
+  purchaseUrl: string;
+  shareImageUrl: string;
+  productHandle: string;
 };
 
 const normalizeSelectedCard = (input: CreateCheckoutLinkInput): ShopifyGalleryCardInput =>
@@ -37,14 +41,29 @@ export const createCheckoutLink: SkillHandler<CreateCheckoutLinkInput, CreateChe
 ) => {
   void t(context.language, "checkout.creating");
   const selectedCard = normalizeSelectedCard(input);
+  logger.info("[CREATE CHECKOUT LINK SKILL] start", {
+    orderNumber: input.order.orderNumber,
+    galleryCardId: selectedCard.galleryCardId,
+    title: selectedCard.title,
+  });
 
   try {
     const result = await shopifyService.createProductFromGalleryCard(selectedCard, input.order);
     const updatedOrder = await orderService.updateShopifyLink({
       orderId: input.order.id,
       shopifyProductId: result.shopifyProductId,
-      shopifyCheckoutUrl: result.checkoutUrl,
+      shopifyCheckoutUrl: result.purchaseUrl,
       status: "checkout_created",
+    });
+
+    logger.info("[CREATE CHECKOUT LINK SKILL] success", {
+      orderNumber: updatedOrder.orderNumber,
+      galleryCardId: result.galleryCardId,
+      shopifyProductId: result.shopifyProductId,
+      productHandle: result.productHandle,
+      productUrl: result.productUrl,
+      purchaseUrl: result.purchaseUrl,
+      shareImageUrl: result.shareImageUrl,
     });
 
     return {
@@ -57,14 +76,19 @@ export const createCheckoutLink: SkillHandler<CreateCheckoutLinkInput, CreateChe
         shopifyProductId: updatedOrder.shopifyProductId,
         shopifyCheckoutUrl: updatedOrder.shopifyCheckoutUrl,
       },
-      checkoutUrl: result.checkoutUrl,
+      productUrl: result.productUrl,
+      purchaseUrl: result.purchaseUrl,
+      shareImageUrl: result.shareImageUrl,
+      productHandle: result.productHandle,
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    if (message.includes("Shopify installation not found")) {
-      throw new Error(t(context.language, "checkout.failed"));
-    }
-    throw error;
+    logger.warn("[CREATE CHECKOUT LINK SKILL] failed", {
+      orderNumber: input.order.orderNumber,
+      galleryCardId: selectedCard.galleryCardId,
+      message,
+    });
+    throw new Error(t(context.language, "checkout.failed"));
   }
 };
 

@@ -4,26 +4,27 @@ export type Logger = {
   error: (message: string, meta?: Record<string, unknown>) => void;
 };
 
+const writeLine = (writer: typeof console.log, message: string, meta?: Record<string, unknown>): void => {
+  if (!meta) {
+    writer(message);
+    return;
+  }
+
+  try {
+    writer(`${message} ${JSON.stringify(meta)}`);
+  } catch {
+    writer(message);
+  }
+};
+
 export const logger: Logger = {
   info: (message, meta) => {
-    if (meta) {
-      console.log(message, meta);
-      return;
-    }
-    console.log(message);
+    writeLine(console.log, message, meta);
   },
   warn: (message, meta) => {
-    if (meta) {
-      console.warn(message, meta);
-      return;
-    }
-    console.warn(message);
+    writeLine(console.warn, message, meta);
   },
   error: (message, meta) => {
-    if (meta) {
-      console.error(message, meta);
-      return;
-    }
-    console.error(message);
+    writeLine(console.error, message, meta);
   },
 };

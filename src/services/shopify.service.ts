@@ -1,4 +1,5 @@
 import { loadEnv } from "../config/env";
+import { logger } from "../utils/logger";
 
 export type ShopifyGalleryCardInput = {
   galleryCardId: string;
@@ -17,8 +18,13 @@ export type ShopifyOrderInput = {
 };
 
 export type ShopifyCreateProductOutput = {
+  orderNumber: string;
+  galleryCardId: string;
   shopifyProductId: string;
-  checkoutUrl: string;
+  productHandle: string;
+  productUrl: string;
+  purchaseUrl: string;
+  shareImageUrl: string;
 };
 
 type ShopifyProductImage = {
@@ -98,35 +104,66 @@ export const shopifyService = {
     const storeDomain = resolveShopifyStoreDomain();
     const apiVersion = resolveShopifyApiVersion();
     const accessToken = await shopifyInstallationService.getAccessTokenForStore();
-
-    const response = await fetch(`https://${storeDomain}/admin/api/${apiVersion}/products.json`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Shopify-Access-Token": accessToken,
-      },
-      body: JSON.stringify(buildProductPayload(card, order)),
+    logger.info("[SHOPIFY SERVICE] create product start", {
+      orderNumber: order.orderNumber,
+      galleryCardId: card.galleryCardId,
+      title: card.title,
+      storeDomain,
     });
 
-    if (!response.ok) {
-      const payload = await response.text();
-      throw new Error(`Shopify create product failed: ${response.status} ${payload}`);
+    try {
+      const response = await fetch(`https://${storeDomain}/admin/api/${apiVersion}/products.json`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Shopify-Access-Token": accessToken,
+        },
+        body: JSON.stringify(buildProductPayload(card, order)),
+      });
+
+      if (!response.ok) {
+        const payload = await response.text();
+        throw new Error(`Shopify create product failed: ${response.status} ${payload}`);
+      }
+
+      const data = (await response.json()) as ShopifyProductResponse;
+      const productId = data.product?.id;
+      const handle = data.product?.handle;
+      if (!productId || !handle) {
+        throw new Error("Shopify create product response missing product id or handle");
+      }
+
+      const variantId = data.product.variants?.[0]?.id;
+      const productUrl = resolveProductUrl(storeDomain, handle);
+      const purchaseUrl = resolveCartUrl(storeDomain, variantId, order.orderNumber) ?? productUrl;
+      const shareImageUrl = card.imageUrl;
+
+      logger.info("[SHOPIFY SERVICE] create product success", {
+        orderNumber: order.orderNumber,
+        galleryCardId: card.galleryCardId,
+        shopifyProductId: String(productId),
+        productHandle: handle,
+        productUrl,
+        purchaseUrl,
+        shareImageUrl,
+      });
+
+      return {
+        orderNumber: order.orderNumber,
+        galleryCardId: card.galleryCardId,
+        shopifyProductId: String(productId),
+        productHandle: handle,
+        productUrl,
+        purchaseUrl,
+        shareImageUrl,
+      };
+    } catch (error) {
+      logger.error("[SHOPIFY SERVICE] create product failed", {
+        orderNumber: order.orderNumber,
+        galleryCardId: card.galleryCardId,
+        message: error instanceof Error ? error.message : String(error),
+      });
+      throw error;
     }
-
-    const data = (await response.json()) as ShopifyProductResponse;
-    const productId = data.product?.id;
-    const handle = data.product?.handle;
-    if (!productId || !handle) {
-      throw new Error("Shopify create product response missing product id or handle");
-    }
-
-    const variantId = data.product.variants?.[0]?.id;
-    const checkoutUrl =
-      resolveCartUrl(storeDomain, variantId, order.orderNumber) ?? resolveProductUrl(storeDomain, handle);
-
-    return {
-      shopifyProductId: String(productId),
-      checkoutUrl,
-    };
   },
 };
