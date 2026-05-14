@@ -40,6 +40,14 @@ const HELP_PATTERNS = [
   "how do i buy",
   "how do i choose",
   "how do i order",
+  "hi",
+  "hello",
+  "good morning",
+  "shopping",
+  "browse",
+  "looking",
+  "help me",
+  "i want to shop",
   "怎么买",
   "怎么购买",
   "如何购买",
@@ -62,7 +70,7 @@ const ORDER_PATTERNS: RegExp[] = [
 const GALLERY_SEARCH_PATTERNS: RegExp[] = [
   /\b(?:show|find|search|recommend|give)\s+me\b/i,
   /\brecommend\b.+\bcards?\b/i,
-  /\bi\s+want\b/i,
+  /\bi\s+want\b(?!\s+to\s+shop\b)/i,
   /\bdo\s+you\s+have\b.+\bcards?\b/i,
   /\bany\b.+\bcards?\b/i,
 ];
@@ -72,6 +80,8 @@ const GALLERY_STYLE_TERMS = [
   "dragon",
   "cyberpunk",
   "ssr",
+  "red",
+  "one piece",
   "sr",
   "ur",
   "female",
@@ -103,7 +113,21 @@ const CUSTOMER_SUPPORT_PATTERNS: RegExp[] = [
   /折扣|包邮|付款|支付|发货|物流|多张|定制|地址/,
 ];
 
+const HELP_WELCOME_EXACT_PATTERNS: RegExp[] = [
+  /^(?:hi|hello|good morning|shopping|browse|looking|help me)$/i,
+  /^i want to shop$/i,
+];
+const NOT_CUSTOMER_SUPPORT_ONLY = ["anime", "cards", "cool", "styles", "ssr", "girl", "red", "one piece", "black gold"];
+
 const detectLanguage = (message: string): SupportedLanguage => (/[\u4e00-\u9fff]/.test(message) ? "zh" : "en");
+
+const hasExplicitCustomerSupportSignal = (text: string): boolean =>
+  CUSTOMER_SUPPORT_PATTERNS.some((pattern) => pattern.test(text));
+
+const matchesAnyPhrase = (normalized: string, phrases: string[]): boolean =>
+  phrases.some((phrase) => normalized.includes(phrase));
+
+const isHelpWelcomeMessage = (text: string): boolean => HELP_WELCOME_EXACT_PATTERNS.some((pattern) => pattern.test(text.trim()));
 
 const computeIntentConfidence = (text: string): {
   gallerySearchConfidence: number;
@@ -259,7 +283,7 @@ export class HermesRouter {
         };
       }
 
-      if (HELP_PATTERNS.some((pattern) => normalized.includes(pattern))) {
+      if (isHelpWelcomeMessage(text) || HELP_PATTERNS.some((pattern) => normalized.includes(pattern))) {
         path = "rule_help";
         resolvedIntent = "help";
         resolvedLanguage = fallbackLanguage;
@@ -292,6 +316,29 @@ export class HermesRouter {
           };
         }
 
+        if (isHelpWelcomeMessage(text)) {
+          resolvedIntent = "help";
+          resolvedLanguage = fallback.language;
+          return {
+            intent: resolvedIntent,
+            language: resolvedLanguage,
+          };
+        }
+
+        if (
+          fallback.intent === "ignore" &&
+          confidence.gallerySearchConfidence === 0 &&
+          confidence.customerSupportConfidence === 0 &&
+          confidence.orderStatusConfidence === 0
+        ) {
+          resolvedIntent = "ignore";
+          resolvedLanguage = fallback.language;
+          return {
+            intent: resolvedIntent,
+            language: resolvedLanguage,
+          };
+        }
+
         resolvedIntent = "gallery_search";
         resolvedLanguage = classified.language;
         return {
@@ -301,7 +348,30 @@ export class HermesRouter {
       }
 
       path = resolveClassifiedPath(classified);
+      const hasExplicitSupportSignal = hasExplicitCustomerSupportSignal(text);
+      const matchesNotCustomerSupportOnly = matchesAnyPhrase(normalized, NOT_CUSTOMER_SUPPORT_ONLY);
+
       if (
+        classified.intent === "customer_support" &&
+        !hasExplicitSupportSignal &&
+        isHelpWelcomeMessage(text)
+      ) {
+        resolvedIntent = "help";
+      } else if (
+        classified.intent === "customer_support" &&
+        !hasExplicitSupportSignal &&
+        matchesNotCustomerSupportOnly
+      ) {
+        const fallback = fallbackIntentClassification(text, {
+          hasActiveGallerySession,
+        });
+        resolvedIntent = fallback.intent === "customer_support" ? "gallery_search" : fallback.intent;
+        resolvedLanguage = fallback.language;
+        return {
+          intent: resolvedIntent,
+          language: resolvedLanguage,
+        };
+      } else if (
         classified.intent === "customer_support" &&
         confidence.gallerySearchConfidence >= confidence.customerSupportConfidence &&
         confidence.gallerySearchConfidence >= 0.85

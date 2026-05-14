@@ -43,6 +43,8 @@ const SEARCH_KEYWORDS = [
   "recommend",
   "dragon",
   "cyberpunk",
+  "red",
+  "one piece",
   "black gold",
   "female",
   "anime",
@@ -89,16 +91,17 @@ const CUSTOMER_SUPPORT_KEYWORDS = [
 
 const HELP_KEYWORDS = [
   "help",
+  "help me",
+  "hi",
+  "hello",
+  "good morning",
+  "shopping",
+  "browse",
+  "looking",
+  "i want to shop",
   "how to use",
   "how do i buy",
   "how do i choose",
-  "buy",
-  "purchase",
-  "checkout",
-  "payment",
-  "pay",
-  "shipping",
-  "tracking",
   "怎么",
   "如何",
   "付款",
@@ -124,8 +127,12 @@ const buildPrompt = (message: string, language: SupportedLanguage): DeepSeekMess
       "gallery_select = the user selects one numbered result. " +
       "gallery_refresh = the user wants another batch, more options, another style, or says the current cards are not right. " +
       "order_status = the user explicitly checks an order status. " +
-      "customer_support = the user asks about discounts, shipping policy, delivery timing, payment, stock, buying multiple cards, customization, or wrong address guidance. " +
-      "help = the user asks how to use the system or how card choosing works. " +
+      "customer_support = the user asks an explicit support or policy question about discounts, shipping policy, delivery timing, payment, stock availability, buying multiple cards, customization, or wrong address guidance. " +
+      "help = the user sends a greeting, asks for lightweight onboarding, or expresses vague shopping or browsing intent without a specific card search or support policy question. " +
+      "Examples of help include hi, hello, good morning, shopping, browse, looking, help me, and I want to shop. " +
+      "Do not classify vague commerce or browsing words such as shopping, browse, looking, or buy cards as customer_support unless there is a clear support question. " +
+      "If the user is browsing cards, describing card preferences, or asking for styles, themes, colors, characters, or recommendations, prefer gallery_search. " +
+      "If the message is only a meaningless or random string with no usable intent, prefer ignore. " +
       "ignore = fully unrelated.",
   },
   {
@@ -235,17 +242,6 @@ export const fallbackIntentClassification = (
     };
   }
 
-  if (SEARCH_KEYWORDS.some((keyword) => normalized.includes(keyword))) {
-    return {
-      intent: "gallery_search",
-      language,
-      confidence: 0.92,
-      reason: "matched search fallback keyword",
-      source: "fallback",
-      fallbackReason,
-    };
-  }
-
   if (CUSTOMER_SUPPORT_KEYWORDS.some((keyword) => normalized.includes(keyword))) {
     return {
       intent: "customer_support",
@@ -263,6 +259,17 @@ export const fallbackIntentClassification = (
       language,
       confidence: 0.8,
       reason: "matched help fallback keyword",
+      source: "fallback",
+      fallbackReason,
+    };
+  }
+
+  if (SEARCH_KEYWORDS.some((keyword) => normalized.includes(keyword))) {
+    return {
+      intent: "gallery_search",
+      language,
+      confidence: 0.92,
+      reason: "matched search fallback keyword",
       source: "fallback",
       fallbackReason,
     };

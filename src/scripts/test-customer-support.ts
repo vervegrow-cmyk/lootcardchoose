@@ -17,6 +17,13 @@ const run = async (): Promise<void> => {
 
   try {
     const galleryCases = [
+      "ssr",
+      "girl",
+      "red",
+      "anime",
+      "one piece",
+      "black gold",
+      "recommend cyberpunk cards",
       "do you have black gold cards?",
       "I want cool cards",
       "recommend some SSR cards",
@@ -57,6 +64,33 @@ const run = async (): Promise<void> => {
         channelId: "test-support-channel",
       });
       assert.equal(result.intent, "customer_support", `Expected customer_support for ${message}`);
+    }
+
+    const helpCases = ["hi", "hello", "good morning", "shopping", "browse", "looking", "help me", "I want to shop"];
+    for (const message of helpCases) {
+      const result = await router.determineIntent(message, {
+        userId: "test-help-user",
+        channelId: "test-help-channel",
+      });
+      assert.equal(result.intent, "help", `Expected help for ${message}`);
+    }
+
+    const ignoreCases = ["asdfgh", "???", "random meaningless text"];
+    for (const message of ignoreCases) {
+      const result = await router.determineIntent(message, {
+        userId: "test-ignore-user",
+        channelId: "test-ignore-channel",
+      });
+      assert.equal(result.intent, "ignore", `Expected ignore for ${message}`);
+    }
+
+    const notCustomerSupportCases = ["hi", "shopping", "browse"];
+    for (const message of notCustomerSupportCases) {
+      const result = await router.determineIntent(message, {
+        userId: "test-not-support-user",
+        channelId: "test-not-support-channel",
+      });
+      assert.notEqual(result.intent, "customer_support", `Expected non-customer_support for ${message}`);
     }
 
     const orderCases = [
