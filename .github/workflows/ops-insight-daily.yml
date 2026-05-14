@@ -41,7 +41,8 @@ jobs:
           fi
           if [ -n "$RAILWAY_PROJECT_ID" ]; then
             echo "RAILWAY_PROJECT_ID present: yes"
-            railway link --project "$RAILWAY_PROJECT_ID" --environment "$RAILWAY_LOG_ENVIRONMENT" --service "$RAILWAY_LOG_SERVICE" || true
+            echo "Skipping service-level link; service selector will be used by ops:daily."
+            railway link --project "$RAILWAY_PROJECT_ID" --environment "$RAILWAY_LOG_ENVIRONMENT" || true
           else
             echo "RAILWAY_PROJECT_ID present: no"
           fi
@@ -55,6 +56,7 @@ jobs:
           else
             echo "RAILWAY_LOG_ENVIRONMENT configured: no"
           fi
+          ls -la .railway || true
           railway status || true
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
