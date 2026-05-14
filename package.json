@@ -6,6 +6,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "start": "echo RAILWAY_START_TEST && tsx src/index.ts",
+    "ops:daily": "tsx src/scripts/daily-ops-insight.ts",
     "gallery:seed": "tsx src/scripts/seed-gallery.ts",
     "gallery:sync": "tsx src/scripts/sync-gallery-r2.ts"
   },

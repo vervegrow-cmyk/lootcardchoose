@@ -1,3 +1,6 @@
+import { existsSync, readFileSync } from "node:fs";
+import path from "node:path";
+
 export type EnvConfig = {
   nodeEnv: string;
   logLevel: string;
@@ -20,9 +23,106 @@ export type EnvConfig = {
   r2Endpoint: string;
   r2PublicUrl: string;
   enableLootcardChoose: boolean;
+  railwayLogSince: string;
+  railwayLogLines: number;
+  railwayLogTimeoutMs: number;
+  railwayLogService: string;
+  railwayLogEnvironment: string;
+};
+
+const DEFAULT_RAILWAY_LOG_SINCE = "24h";
+const DEFAULT_RAILWAY_LOG_LINES = 1000;
+const MAX_RAILWAY_LOG_LINES = 5000;
+const DEFAULT_RAILWAY_LOG_TIMEOUT_MS = 30000;
+const MAX_RAILWAY_LOG_TIMEOUT_MS = 120000;
+
+let hasLoadedEnvFiles = false;
+
+const clampNumber = (value: number, minimum: number, maximum: number): number =>
+  Math.min(Math.max(value, minimum), maximum);
+
+const parseOptionalString = (value: string | undefined): string => (value ?? "").trim();
+
+const parsePositiveInteger = (value: string | undefined, fallback: number, maximum: number): number => {
+  const trimmed = parseOptionalString(value);
+  if (trimmed.length === 0) {
+    return fallback;
+  }
+
+  const parsed = Number.parseInt(trimmed, 10);
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    return fallback;
+  }
+
+  return clampNumber(parsed, 1, maximum);
+};
+
+const parseEnvValue = (value: string): string => {
+  const trimmed = value.trim();
+  if (
+    (trimmed.startsWith("\"") && trimmed.endsWith("\"")) ||
+    (trimmed.startsWith("'") && trimmed.endsWith("'"))
+  ) {
+    return trimmed.slice(1, -1);
+  }
+  return trimmed;
+};
+
+const loadEnvFile = (filePath: string): void => {
+  if (!existsSync(filePath)) {
+    return;
+  }
+
+  const contents = readFileSync(filePath, "utf8");
+  for (const rawLine of contents.split(/\r?\n/)) {
+    const line = rawLine.trim();
+    if (!line || line.startsWith("#")) {
+      continue;
+    }
+
+    const separatorIndex = line.indexOf("=");
+    if (separatorIndex <= 0) {
+      continue;
+    }
+
+    const key = line.slice(0, separatorIndex).trim();
+    const value = parseEnvValue(line.slice(separatorIndex + 1));
+    if (!key || process.env[key] != null) {
+      continue;
+    }
+
+    process.env[key] = value;
+  }
+};
+
+const ensureEnvLoaded = (): void => {
+  if (hasLoadedEnvFiles) {
+    return;
+  }
+
+  const cwd = process.cwd();
+  loadEnvFile(path.resolve(cwd, ".env"));
+  loadEnvFile(path.resolve(cwd, ".env.local"));
+  hasLoadedEnvFiles = true;
 };
 
 export const loadEnv = (): EnvConfig => {
+  ensureEnvLoaded();
+
+  const railwayLogSince = parseOptionalString(process.env.RAILWAY_LOG_SINCE) || DEFAULT_RAILWAY_LOG_SINCE;
+  const railwayLogLines = parsePositiveInteger(
+    process.env.RAILWAY_LOG_LINES,
+    DEFAULT_RAILWAY_LOG_LINES,
+    MAX_RAILWAY_LOG_LINES
+  );
+  const railwayLogTimeoutMs = parsePositiveInteger(
+    process.env.RAILWAY_LOG_TIMEOUT_MS,
+    DEFAULT_RAILWAY_LOG_TIMEOUT_MS,
+    MAX_RAILWAY_LOG_TIMEOUT_MS
+  );
+  const railwayLogService = parseOptionalString(process.env.RAILWAY_LOG_SERVICE);
+  const railwayLogEnvironment = parseOptionalString(process.env.RAILWAY_LOG_ENVIRONMENT);
+
   return {
     nodeEnv: process.env.NODE_ENV ?? "development",
     logLevel: process.env.LOG_LEVEL ?? "info",
@@ -45,5 +145,10 @@ export const loadEnv = (): EnvConfig => {
     r2Endpoint: process.env.R2_ENDPOINT ?? "",
     r2PublicUrl: process.env.R2_PUBLIC_URL ?? "",
     enableLootcardChoose: process.env.ENABLE_LOOTCARD_CHOOSE === "true",
+    railwayLogSince,
+    railwayLogLines,
+    railwayLogTimeoutMs,
+    railwayLogService,
+    railwayLogEnvironment,
   };
 };
