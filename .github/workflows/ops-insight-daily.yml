@@ -31,38 +31,8 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Prepare Railway context
-        run: |
-          railway --version
-          if [ -n "$RAILWAY_TOKEN" ]; then
-            echo "RAILWAY_TOKEN present: yes"
-          else
-            echo "RAILWAY_TOKEN present: no"
-          fi
-          if [ -n "$RAILWAY_PROJECT_ID" ]; then
-            echo "RAILWAY_PROJECT_ID present: yes"
-            echo "Skipping service-level link; service selector will be used by ops:daily."
-            railway link --project "$RAILWAY_PROJECT_ID" --environment "$RAILWAY_LOG_ENVIRONMENT" || true
-          else
-            echo "RAILWAY_PROJECT_ID present: no"
-          fi
-          if [ -n "$RAILWAY_LOG_SERVICE" ]; then
-            echo "RAILWAY_LOG_SERVICE configured: yes"
-          else
-            echo "RAILWAY_LOG_SERVICE configured: no"
-          fi
-          if [ -n "$RAILWAY_LOG_ENVIRONMENT" ]; then
-            echo "RAILWAY_LOG_ENVIRONMENT configured: yes"
-          else
-            echo "RAILWAY_LOG_ENVIRONMENT configured: no"
-          fi
-          ls -la .railway || true
-          railway status || true
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          RAILWAY_PROJECT_ID: ${{ vars.RAILWAY_PROJECT_ID }}
-          RAILWAY_LOG_SERVICE: ${{ vars.RAILWAY_LOG_SERVICE }}
-          RAILWAY_LOG_ENVIRONMENT: ${{ vars.RAILWAY_LOG_ENVIRONMENT }}
+      - name: Optional Railway diagnostics
+        run: railway --version
 
       - name: Generate Ops Insight Report
         run: npm run ops:daily
