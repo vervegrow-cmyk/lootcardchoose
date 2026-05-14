@@ -1,5 +1,6 @@
 export type AgentId =
   | "lootcardchoose"
+  | "customer-support"
   | "lootcarddiy"
   | "support"
   | "orders"
@@ -10,20 +11,25 @@ export type SkillId =
   | "gallery.refresh"
   | "gallery.selectCard"
   | "gallery.createCheckoutLink"
-  | "gallery.help";
+  | "gallery.help"
+  | "customerSupport.loadQa"
+  | "customerSupport.answer";
 
 export type ServiceId =
   | "gallery"
   | "order"
   | "shopify"
   | "r2"
-  | "prisma";
+  | "prisma"
+  | "customerSupportQa"
+  | "customerSupportLlm";
 
 export type IntentId =
   | "gallery_search"
   | "gallery_select"
   | "gallery_refresh"
   | "order_status"
+  | "customer_support"
   | "help"
   | "ignore";
 

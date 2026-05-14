@@ -38,6 +38,11 @@ type DeepSeekResponse = {
 const SEARCH_KEYWORDS = [
   "gallery",
   "search",
+  "cards",
+  "card",
+  "recommend",
+  "dragon",
+  "cyberpunk",
   "black gold",
   "female",
   "anime",
@@ -51,6 +56,35 @@ const SEARCH_KEYWORDS = [
   "搜索",
   "查找",
   "找卡",
+];
+
+const CUSTOMER_SUPPORT_KEYWORDS = [
+  "discount",
+  "free shipping",
+  "delivery",
+  "ship",
+  "shipping",
+  "pay",
+  "payment",
+  "bulk discount",
+  "better price",
+  "buy more",
+  "multiple cards",
+  "customize",
+  "customise",
+  "wrong address",
+  "stock",
+  "in stock",
+  "折扣",
+  "包邮",
+  "付款",
+  "支付",
+  "发货",
+  "物流",
+  "多张",
+  "定制",
+  "地址",
+  "库存",
 ];
 
 const HELP_KEYWORDS = [
@@ -85,12 +119,13 @@ const buildPrompt = (message: string, language: SupportedLanguage): DeepSeekMess
     role: "system",
     content:
       'You are the intent classifier for the LootCardChoose Discord gallery system. Return JSON only in this shape: ' +
-      '{"intent":"gallery_search|gallery_select|gallery_refresh|order_status|help|ignore","language":"zh|en","confidence":0.0,"reason":"short reason"}. ' +
+      '{"intent":"gallery_search|gallery_select|gallery_refresh|order_status|customer_support|help|ignore","language":"zh|en","confidence":0.0,"reason":"short reason"}. ' +
       "gallery_search = the user wants to browse or search cards by style, color, rarity, character, mood, scene, or recommendation. " +
       "gallery_select = the user selects one numbered result. " +
       "gallery_refresh = the user wants another batch, more options, another style, or says the current cards are not right. " +
       "order_status = the user explicitly checks an order status. " +
-      "help = the user asks how to buy, how to choose, payment, shipping, tracking, or how the system works. " +
+      "customer_support = the user asks about discounts, shipping policy, delivery timing, payment, stock, buying multiple cards, customization, or wrong address guidance. " +
+      "help = the user asks how to use the system or how card choosing works. " +
       "ignore = fully unrelated.",
   },
   {
@@ -105,6 +140,7 @@ const normalizeIntent = (value: unknown): IntentId => {
     case "gallery_select":
     case "gallery_refresh":
     case "order_status":
+    case "customer_support":
     case "help":
     case "ignore":
       return value;
@@ -203,8 +239,19 @@ export const fallbackIntentClassification = (
     return {
       intent: "gallery_search",
       language,
-      confidence: 0.85,
+      confidence: 0.92,
       reason: "matched search fallback keyword",
+      source: "fallback",
+      fallbackReason,
+    };
+  }
+
+  if (CUSTOMER_SUPPORT_KEYWORDS.some((keyword) => normalized.includes(keyword))) {
+    return {
+      intent: "customer_support",
+      language,
+      confidence: 0.88,
+      reason: "matched customer support fallback keyword",
       source: "fallback",
       fallbackReason,
     };

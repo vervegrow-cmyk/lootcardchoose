@@ -5,7 +5,7 @@ import {
   llmIntentClassifierService,
 } from "../services/llm-intent-classifier.service";
 import { awaitPendingSearchSessionWrite } from "../skills/gallery/search-gallery.skill";
-import { isGalleryRefreshMessage, isGallerySelectMessage } from "../utils/gallery-language";
+import { extractGalleryKeywordCandidates, isGalleryRefreshMessage, isGallerySelectMessage } from "../utils/gallery-language";
 import { logger } from "../utils/logger";
 import { HermesOrchestrator } from "./orchestrator";
 import { HermesRegistry } from "./registry";
@@ -23,8 +23,10 @@ import {
 type DetermineIntentPath =
   | "rule_select"
   | "rule_refresh"
-  | "rule_help"
+  | "rule_gallery_search"
   | "rule_order"
+  | "rule_customer_support"
+  | "rule_help"
   | "llm"
   | "llm_low_confidence_fallback"
   | "llm_timeout_fallback"
@@ -49,6 +51,7 @@ const ORDER_PATTERNS: RegExp[] = [
   /\bwhere(?:'s| is)\s+my\s+order\b/i,
   /\btrack(?:ing)?(?:\s+my)?\s+order\b/i,
   /\bcheck(?:ing)?\s+(?:my\s+)?order(?:\s+status)?\b/i,
+  /\bhas\s+my\s+order\s+shipped\b/i,
   /我的订单/,
   /查询订单/,
   /订单状态/,
@@ -56,7 +59,79 @@ const ORDER_PATTERNS: RegExp[] = [
   /查订单/,
 ];
 
+const GALLERY_SEARCH_PATTERNS: RegExp[] = [
+  /\b(?:show|find|search|recommend|give)\s+me\b/i,
+  /\brecommend\b.+\bcards?\b/i,
+  /\bi\s+want\b/i,
+  /\bdo\s+you\s+have\b.+\bcards?\b/i,
+  /\bany\b.+\bcards?\b/i,
+];
+
+const GALLERY_STYLE_TERMS = [
+  "anime",
+  "dragon",
+  "cyberpunk",
+  "ssr",
+  "sr",
+  "ur",
+  "female",
+  "girl",
+  "warrior",
+  "fantasy",
+  "black gold",
+  "dark",
+  "cute",
+  "mecha",
+  "premium",
+  "character",
+];
+
+const CUSTOMER_SUPPORT_PATTERNS: RegExp[] = [
+  /\bwhen\s+will\s+it\s+ship\b/i,
+  /\bhow\s+long\s+does\s+delivery\s+take\b/i,
+  /\bcan\s+i\s+get\s+a\s+discount\b/i,
+  /\bdo\s+you\s+offer\s+free\s+shipping\b/i,
+  /\bhow\s+do\s+i\s+pay\b/i,
+  /\bcan\s+i\s+buy\s+multiple\s+cards\b/i,
+  /\bcan\s+i\s+customi[sz]e\s+a\s+card\b/i,
+  /\bwhat\s+if\s+i\s+entered\s+the\s+wrong\s+address\b/i,
+  /\bis\s+there\s+a\s+bulk\s+discount\b/i,
+  /\bcan\s+i\s+get\s+a\s+better\s+price\s+if\s+i\s+buy\s+more\b/i,
+  /\bfree shipping\b/i,
+  /\bbulk discount\b/i,
+  /\bwrong address\b/i,
+  /折扣|包邮|付款|支付|发货|物流|多张|定制|地址/,
+];
+
 const detectLanguage = (message: string): SupportedLanguage => (/[\u4e00-\u9fff]/.test(message) ? "zh" : "en");
+
+const computeIntentConfidence = (text: string): {
+  gallerySearchConfidence: number;
+  orderStatusConfidence: number;
+  customerSupportConfidence: number;
+} => {
+  const normalized = text.trim().toLowerCase();
+  const galleryKeywordCandidates = extractGalleryKeywordCandidates(text);
+  const galleryStyleMatch = GALLERY_STYLE_TERMS.some((term) => normalized.includes(term));
+  const hasGalleryPattern = GALLERY_SEARCH_PATTERNS.some((pattern) => pattern.test(text));
+  const hasOrderPattern = ORDER_PATTERNS.some((pattern) => pattern.test(text));
+  const hasSupportPattern = CUSTOMER_SUPPORT_PATTERNS.some((pattern) => pattern.test(text));
+  const shortKeywordBrowsePrompt =
+    galleryKeywordCandidates.length > 0 &&
+    galleryKeywordCandidates.length <= 4 &&
+    normalized.split(/\s+/).length <= 5 &&
+    !hasOrderPattern &&
+    !hasSupportPattern;
+
+  return {
+    gallerySearchConfidence:
+      (hasGalleryPattern ? 0.92 : 0) +
+      (galleryStyleMatch ? 0.12 : 0) +
+      (shortKeywordBrowsePrompt ? (galleryStyleMatch ? 0.82 : 0.72) : 0),
+    orderStatusConfidence: hasOrderPattern ? 0.97 : 0,
+    customerSupportConfidence: hasSupportPattern ? 0.9 : 0,
+  };
+};
 
 const resolveClassifiedPath = (classification: IntentClassificationResult): DetermineIntentPath => {
   if (classification.source !== "fallback") {
@@ -138,9 +213,45 @@ export class HermesRouter {
         };
       }
 
-      if (isGalleryRefreshMessage(text)) {
+      const confidence = computeIntentConfidence(text);
+
+      if (
+        isGalleryRefreshMessage(text) &&
+        confidence.customerSupportConfidence === 0 &&
+        confidence.orderStatusConfidence === 0
+      ) {
         path = "rule_refresh";
         resolvedIntent = "gallery_refresh";
+        resolvedLanguage = fallbackLanguage;
+        return {
+          intent: resolvedIntent,
+          language: resolvedLanguage,
+        };
+      }
+
+      if (confidence.gallerySearchConfidence >= confidence.customerSupportConfidence && confidence.gallerySearchConfidence >= 0.92) {
+        path = "rule_gallery_search";
+        resolvedIntent = "gallery_search";
+        resolvedLanguage = fallbackLanguage;
+        return {
+          intent: resolvedIntent,
+          language: resolvedLanguage,
+        };
+      }
+
+      if (confidence.orderStatusConfidence >= 0.97) {
+        path = "rule_order";
+        resolvedIntent = "order_status";
+        resolvedLanguage = fallbackLanguage;
+        return {
+          intent: resolvedIntent,
+          language: resolvedLanguage,
+        };
+      }
+
+      if (confidence.customerSupportConfidence > 0) {
+        path = "rule_customer_support";
+        resolvedIntent = "customer_support";
         resolvedLanguage = fallbackLanguage;
         return {
           intent: resolvedIntent,
@@ -151,16 +262,6 @@ export class HermesRouter {
       if (HELP_PATTERNS.some((pattern) => normalized.includes(pattern))) {
         path = "rule_help";
         resolvedIntent = "help";
-        resolvedLanguage = fallbackLanguage;
-        return {
-          intent: resolvedIntent,
-          language: resolvedLanguage,
-        };
-      }
-
-      if (ORDER_PATTERNS.some((pattern) => pattern.test(text.trim()))) {
-        path = "rule_order";
-        resolvedIntent = "order_status";
         resolvedLanguage = fallbackLanguage;
         return {
           intent: resolvedIntent,
@@ -200,7 +301,21 @@ export class HermesRouter {
       }
 
       path = resolveClassifiedPath(classified);
-      resolvedIntent = classified.intent;
+      if (
+        classified.intent === "customer_support" &&
+        confidence.gallerySearchConfidence >= confidence.customerSupportConfidence &&
+        confidence.gallerySearchConfidence >= 0.85
+      ) {
+        resolvedIntent = "gallery_search";
+      } else if (
+        classified.intent === "customer_support" &&
+        confidence.orderStatusConfidence >= confidence.customerSupportConfidence &&
+        confidence.orderStatusConfidence >= 0.9
+      ) {
+        resolvedIntent = "order_status";
+      } else {
+        resolvedIntent = classified.intent;
+      }
       resolvedLanguage = classified.language;
       return {
         intent: resolvedIntent,
@@ -221,8 +336,14 @@ export class HermesRouter {
   }
 
   resolveAgent(intent: IntentId, channelId: string): RoutingDecision {
-    void intent;
     void channelId;
+    if (intent === "customer_support") {
+      return {
+        agentId: "customer-support",
+        intent,
+      };
+    }
+
     return {
       agentId: "lootcardchoose",
       intent,

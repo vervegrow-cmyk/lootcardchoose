@@ -18,8 +18,8 @@ const containsChinese = (value: string): boolean => /[\u4e00-\u9fff]/.test(value
 
 const run = async (): Promise<void> => {
   const router = new HermesRouter(buildHermesRegistry());
-  const englishMessage = "How do I buy this card?";
-  const chineseMessage = "怎么买这张卡？";
+  const englishMessage = "How do I choose a card?";
+  const chineseMessage = "怎么选卡？";
 
   const englishPurchaseIntent = await router.determineIntent("How do I order this card?");
   assert.equal(englishPurchaseIntent.intent, "help");
@@ -42,7 +42,7 @@ const run = async (): Promise<void> => {
   console.log("[TEST GALLERY HELP] english reply=", JSON.stringify(englishReply));
   assert.equal(englishReply.language, "en");
   assert.ok(!containsChinese(englishReply.text));
-  assert.ok(/buy|checkout|product page|search/i.test(englishReply.text));
+  assert.ok(/choose|style|color|rarity|search/i.test(englishReply.text));
 
   const chineseIntent = await llmIntentClassifierService.classify(chineseMessage);
   console.log("[TEST GALLERY HELP] chinese intent=", JSON.stringify(chineseIntent));
@@ -53,7 +53,7 @@ const run = async (): Promise<void> => {
   console.log("[TEST GALLERY HELP] chinese reply=", JSON.stringify(chineseReply));
   assert.equal(chineseReply.language, "zh");
   assert.ok(containsChinese(chineseReply.text));
-  assert.ok(/购买|搜索|编号|卡/.test(chineseReply.text));
+  assert.ok(/选卡|搜索|风格|颜色|卡/.test(chineseReply.text));
 
   console.log("[TEST GALLERY HELP] all bilingual help assertions passed");
 };

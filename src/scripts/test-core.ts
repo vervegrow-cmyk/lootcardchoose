@@ -7,6 +7,7 @@ const COMMANDS = [
   "npm run gallery:test-refresh",
   "npm run gallery:test-select",
   "npm run gallery:test-discord",
+  "npm run customer-support:test",
   "npm run shopify:webhook:test",
 ];
 
