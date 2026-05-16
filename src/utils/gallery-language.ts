@@ -92,6 +92,16 @@ const CANONICAL_TERM_MAP: Record<string, string> = {
   怎么: "help",
 };
 
+Object.assign(CANONICAL_TERM_MAP, {
+  robotic: "robotic",
+  robot: "robotic",
+  android: "robotic",
+  mechanical: "robotic",
+  "sci-fi": "sci-fi",
+  "sci fi": "sci-fi",
+  "science fiction": "sci-fi",
+});
+
 const KEYWORD_EXPANSIONS: Record<string, string[]> = {
   "black gold": ["SSR", "female character", "anime"],
   "female character": ["female", "girl", "anime girl", "anime", "beauty"],
@@ -105,6 +115,11 @@ const KEYWORD_EXPANSIONS: Record<string, string[]> = {
   fantasy: ["premium", "anime"],
   elegant: ["premium", "beauty"],
 };
+
+Object.assign(KEYWORD_EXPANSIONS, {
+  robotic: ["robot", "android", "mechanical", "collectible card"],
+  "sci-fi": ["futuristic", "cyberpunk", "collectible card"],
+});
 
 const NEXT_BATCH_PATTERNS = [
   "can we switch to another batch",
@@ -293,7 +308,12 @@ const stripMeaninglessText = (value: string): string => {
   cleaned = cleaned.replace(/\d+\s*(张|个|款|种)?/g, " ");
 
   for (const stopWord of GALLERY_STOP_WORDS) {
-    cleaned = cleaned.replace(new RegExp(stopWord, "gi"), " ");
+    const escaped = stopWord.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    if (/^[a-z0-9 ]+$/i.test(stopWord)) {
+      cleaned = cleaned.replace(new RegExp(`\\b${escaped}\\b`, "gi"), " ");
+      continue;
+    }
+    cleaned = cleaned.replace(new RegExp(escaped, "gi"), " ");
   }
 
   return cleaned.replace(/\s+/g, " ").trim();

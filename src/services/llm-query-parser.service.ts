@@ -878,6 +878,16 @@ const buildRuleBasedIntelligenceQuery = (
     query = addSignal(query, { safetyIntent: "adult" });
   }
 
+  if (containsAny(userMessage, [/(mecha|機甲|鏈虹敳)/i])) {
+    query = addSignal(query, { visualStyle: "mecha", genreTags: "mecha", visualIntent: "mecha" });
+  }
+  if (containsAny(userMessage, [/(robotic|robot|android|mechanical)/i])) {
+    query = addSignal(query, { visualStyle: "robotic", genreTags: "robotic", visualIntent: "robotic" });
+  }
+  if (containsAny(userMessage, [/(sci[\s_-]*fi|science fiction|futuristic|未來感|鏈潵鎰?)/i])) {
+    query = addSignal(query, { visualStyle: "sci-fi", genreTags: "sci-fi", visualIntent: "sci-fi" });
+  }
+
   return finalizeIntelligenceQuery(query, userMessage, language);
 };
 
