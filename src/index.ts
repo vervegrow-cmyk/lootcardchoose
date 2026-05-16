@@ -351,10 +351,21 @@ const startHealthServer = (): void => {
 
 const main = async (): Promise<void> => {
   startHealthServer();
-  await DiscordBot.start();
+  try {
+    await DiscordBot.start();
+  } catch (error) {
+    console.error("[DISCORD] login failed", {
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
+    throw error;
+  }
 };
 
 main().catch((error) => {
-  console.error(error);
+  console.error("[BOOT] startup failed", {
+    message: error instanceof Error ? error.message : String(error),
+    stack: error instanceof Error ? error.stack : undefined,
+  });
   process.exit(1);
 });

@@ -233,6 +233,15 @@ const buildCheckoutEmbed = (response: HermesGalleryCheckoutCreatedOutput): Embed
 export const DiscordBot = {
   start: async (): Promise<void> => {
     const env = loadEnv();
+    logger.info("[DISCORD] starting bot");
+
+    if (!env.discordBotToken.trim()) {
+      logger.error("[DISCORD] token missing", {
+        envKey: "DISCORD_BOT_TOKEN",
+      });
+      return;
+    }
+
     if (!env.databaseUrl) {
       logger.warn("[DISCORD] DATABASE_URL missing - bot will start with limited features");
     }
@@ -246,6 +255,18 @@ export const DiscordBot = {
 
     client.on("clientReady", () => {
       logger.info("[DISCORD] bot ready");
+    });
+
+    client.on("error", (error) => {
+      logger.error("[DISCORD] client error", {
+        message: error instanceof Error ? error.message : String(error),
+      });
+    });
+
+    client.on("shardError", (error) => {
+      logger.error("[DISCORD] shard error", {
+        message: error instanceof Error ? error.message : String(error),
+      });
     });
 
     client.on("messageCreate", async (message: Message) => {
@@ -392,6 +413,14 @@ export const DiscordBot = {
       }
     });
 
-    await client.login(env.discordBotToken);
+    try {
+      await client.login(env.discordBotToken);
+    } catch (error) {
+      logger.error("[DISCORD] login failed", {
+        message: error instanceof Error ? error.message : String(error),
+        discordApiCode: extractDiscordApiCode(error),
+      });
+      throw error;
+    }
   },
 };
