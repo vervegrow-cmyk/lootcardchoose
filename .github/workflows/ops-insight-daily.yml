@@ -31,10 +31,16 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Optional Railway diagnostics
+        run: railway --version
+
       - name: Generate Ops Insight Report
         run: npm run ops:daily
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_PROJECT_ID: ${{ vars.RAILWAY_PROJECT_ID }}
+          RAILWAY_LOG_SERVICE: ${{ vars.RAILWAY_LOG_SERVICE }}
+          RAILWAY_LOG_ENVIRONMENT: ${{ vars.RAILWAY_LOG_ENVIRONMENT }}
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           DEEPSEEK_BASE_URL: ${{ secrets.DEEPSEEK_BASE_URL }}
           DEEPSEEK_MODEL: ${{ secrets.DEEPSEEK_MODEL }}

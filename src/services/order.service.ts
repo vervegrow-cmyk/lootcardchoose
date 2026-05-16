@@ -1,5 +1,6 @@
 import { SupportedLanguage } from "../hermes/types";
 import { OrderRepositoryRecord, OrderStatus, orderRepository } from "../repositories/order.repository";
+import { recommendationFeedbackService } from "./recommendation-feedback.service";
 
 export type OrderRecord = {
   id: string;
@@ -47,10 +48,16 @@ export const orderService = {
       return order;
     }
 
-    return orderRepository.updateStatus({
+    const updatedOrder = await orderRepository.updateStatus({
       orderId: order.id,
       status: "paid",
     });
+
+    await recommendationFeedbackService.recordPurchaseCompleted({
+      order: updatedOrder,
+    });
+
+    return updatedOrder;
   },
   async findByOrderNumber(orderNumber: string): Promise<OrderRecord | null> {
     return orderRepository.findByOrderNumber(orderNumber);

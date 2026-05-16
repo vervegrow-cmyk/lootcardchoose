@@ -3,8 +3,9 @@ import { gallerySearchSessionRepository } from "../../repositories/gallery-searc
 import { CreateCheckoutLinkSkill } from "../../skills/gallery/create-checkout-link.skill";
 import { galleryHelpSkill } from "../../skills/gallery/gallery-help.skill";
 import { refreshGallerySkill } from "../../skills/gallery/refresh-gallery.skill";
-import { searchGallerySkill } from "../../skills/gallery/search-gallery.skill";
+import { awaitPendingSearchSessionWrite, searchGallerySkill } from "../../skills/gallery/search-gallery.skill";
 import { selectCardSkill } from "../../skills/gallery/select-card.skill";
+import { recommendationFeedbackService } from "../../services/recommendation-feedback.service";
 import { parseSelectedIndex } from "../../utils/gallery-language";
 import { t } from "../../utils/i18n";
 import { logger } from "../../utils/logger";
@@ -68,6 +69,23 @@ export const GalleryAgent: AgentDefinition = {
             text: buildSearchEmptyText(result.language),
           };
         }
+
+        await awaitPendingSearchSessionWrite({
+          discordUserId: context.userId ?? "",
+          discordChannelId: context.channelId ?? "",
+          timeoutMs: 2000,
+        });
+
+        const activeSessionAfterSearch = await gallerySearchSessionRepository.findLatest({
+          discordUserId: context.userId ?? "",
+          discordChannelId: context.channelId ?? "",
+          status: "active",
+        });
+
+        await recommendationFeedbackService.recordSearch({
+          sessionId: activeSessionAfterSearch?.id ?? null,
+          query: result.query,
+        });
 
         return {
           type: "gallery_search_results",
@@ -225,6 +243,12 @@ export const GalleryAgent: AgentDefinition = {
             { ...context, skillId: "gallery.selectCard" }
           );
 
+          await recommendationFeedbackService.recordSelection({
+            sessionId: activeSession?.id ?? null,
+            query: activeSession?.query ?? null,
+            selectedCardId: selectResult.selectedCard.galleryCardId,
+          });
+
           const checkoutResult = await CreateCheckoutLinkSkill.handle(
             {
               ...selectResult.selectedCard,
@@ -235,6 +259,14 @@ export const GalleryAgent: AgentDefinition = {
               skillId: "gallery.createCheckoutLink",
             }
           );
+
+          await recommendationFeedbackService.recordCheckoutCreated({
+            sessionId: activeSession?.id ?? null,
+            orderNumber: checkoutResult.order.orderNumber,
+            query: activeSession?.query ?? null,
+            selectedCardId: checkoutResult.selectedCard.galleryCardId,
+            discordUserId: context.userId ?? null,
+          });
 
           logger.info("[GALLERY AGENT] checkout created", {
             discordUserId: context.userId ?? "",

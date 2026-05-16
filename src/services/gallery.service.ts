@@ -13,12 +13,21 @@ import {
 } from "../utils/gallery-language";
 import { t } from "../utils/i18n";
 import { logger } from "../utils/logger";
+import { recommendationFeedbackService } from "./recommendation-feedback.service";
+import type { RecommendationDebugEntry } from "../types/gallery-recommendation.types";
+import type { RecommendationFeedbackDebugSummary } from "../types/recommendation-feedback.types";
 import { cardPricingService, CardPricingInput } from "./card-pricing.service";
+import { galleryRecommendationService } from "./gallery-recommendation.service";
 import { ParsedGalleryQuery, parseGalleryQuery } from "./llm-query-parser.service";
 import { isDatabaseReady } from "./prisma.service";
 
 export const DEFAULT_GALLERY_RESULT_LIMIT = 10;
 export const REFRESH_PLANNER_TIMEOUT_MS = 8000;
+const RECOMMENDATION_CANDIDATE_LIMIT = 30;
+const RECOMMENDATION_SEARCH_SLICE_LIMIT = 10;
+const RECOMMENDATION_DEBUG_LIMIT = 10;
+
+let lastRecommendationDebugSnapshot: RecommendationDebugSnapshot | null = null;
 
 export type GalleryCardDto = {
   id: string;
@@ -56,6 +65,47 @@ export type GallerySearchResult = {
   structuredKeywords: string[];
   results: GalleryCardDto[];
   limit: number;
+};
+
+export type RecommendationDebugCardSummary = {
+  id: string;
+  title: string;
+  scoreTotal: number;
+  scoreReasons: string[];
+};
+
+export type RecommendationDebugSnapshot = {
+  rawQuery: string;
+  parsedOldFields: {
+    language: SupportedLanguage;
+    keywords: string[];
+    tags: string[];
+    style: string;
+    rarity: string;
+    category: string;
+    character: string;
+    color: string;
+    mood: string;
+    scene: string;
+    limit: number;
+  };
+  intelligenceQuery: ParsedGalleryQuery["intelligenceQuery"];
+  candidateCount: number;
+  usedFallback: boolean;
+  top10BeforeRerank: RecommendationDebugCardSummary[];
+  top10AfterRerank: RecommendationDebugCardSummary[];
+  scoreBreakdowns: RecommendationDebugCardSummary[];
+};
+
+type RecommendationDebugLogPayload = {
+  rawQuery: string;
+  parsedOldFields: RecommendationDebugSnapshot["parsedOldFields"];
+  intelligenceQuery: Partial<ParsedGalleryQuery["intelligenceQuery"]> | undefined;
+  candidateCount: number;
+  usedFallback: boolean;
+  top10BeforeRerank: RecommendationDebugCardSummary[];
+  top10AfterRerank: RecommendationDebugCardSummary[];
+  scoreBreakdowns: RecommendationDebugCardSummary[];
 };
 
 export type GalleryRefreshResult = {
@@ -208,6 +258,162 @@ const dedupeCards = (cards: GalleryCardRecord[]): GalleryCardRecord[] => {
   return result;
 };
 
+const compactScoreReasons = (entry: RecommendationDebugEntry): string[] => {
+  const { breakdown } = entry;
+  const reasons: string[] = [];
+  if (breakdown.color) reasons.push(`color:+${breakdown.color}`);
+  if (breakdown.rarity) reasons.push(`rarity:+${breakdown.rarity}`);
+  if (breakdown.character) reasons.push(`character:+${breakdown.character}`);
+  if (breakdown.visualStyle) reasons.push(`visualStyle:+${breakdown.visualStyle}`);
+  if (breakdown.setting) reasons.push(`setting:+${breakdown.setting}`);
+  if (breakdown.mood) reasons.push(`mood:+${breakdown.mood}`);
+  if (breakdown.keyword) reasons.push(`keyword:+${breakdown.keyword}`);
+  if (breakdown.safetyPenalty) reasons.push(`safetyPenalty:${breakdown.safetyPenalty}`);
+  return reasons;
+};
+
+const buildRecommendationDebugCardSummary = (
+  card: Pick<GalleryCardRecord, "id" | "title">,
+  scoreBreakdown?: RecommendationDebugEntry
+): RecommendationDebugCardSummary => ({
+  id: card.id,
+  title: card.title,
+  scoreTotal: scoreBreakdown?.breakdown.total ?? 0,
+  scoreReasons: scoreBreakdown ? compactScoreReasons(scoreBreakdown) : [],
+});
+
+const buildRecommendationDebugSnapshot = (input: {
+  rawQuery: string;
+  parsedQuery: ParsedGalleryQuery;
+  candidateCards: GalleryCardRecord[];
+  resultsSource: GalleryCardRecord[];
+  rerankedCards: GalleryCardRecord[];
+  scoreBreakdowns: RecommendationDebugEntry[];
+  usedFallback: boolean;
+}): RecommendationDebugSnapshot => {
+  const scoreByCardId = new Map(input.scoreBreakdowns.map((entry) => [entry.cardId, entry]));
+
+  return {
+    rawQuery: input.rawQuery,
+    parsedOldFields: {
+      language: input.parsedQuery.language,
+      keywords: input.parsedQuery.keywords,
+      tags: input.parsedQuery.tags,
+      style: input.parsedQuery.style,
+      rarity: input.parsedQuery.rarity,
+      category: input.parsedQuery.category,
+      character: input.parsedQuery.character,
+      color: input.parsedQuery.color,
+      mood: input.parsedQuery.mood,
+      scene: input.parsedQuery.scene,
+      limit: input.parsedQuery.limit,
+    },
+    intelligenceQuery: input.parsedQuery.intelligenceQuery,
+    candidateCount: input.candidateCards.length,
+    usedFallback: input.usedFallback,
+    top10BeforeRerank: input.resultsSource.slice(0, RECOMMENDATION_DEBUG_LIMIT).map((card) =>
+      buildRecommendationDebugCardSummary(card, scoreByCardId.get(card.id))
+    ),
+    top10AfterRerank: input.rerankedCards.slice(0, RECOMMENDATION_DEBUG_LIMIT).map((card) =>
+      buildRecommendationDebugCardSummary(card, scoreByCardId.get(card.id))
+    ),
+    scoreBreakdowns: input.rerankedCards.slice(0, RECOMMENDATION_DEBUG_LIMIT).map((card) =>
+      buildRecommendationDebugCardSummary(card, scoreByCardId.get(card.id))
+    ),
+  };
+};
+
+const buildRecommendationLogPayload = (
+  snapshot: RecommendationDebugSnapshot
+): RecommendationDebugLogPayload => {
+  const intelligenceQuery = snapshot.intelligenceQuery;
+
+  const compactIntelligenceQuery = intelligenceQuery
+    ? {
+        ...(intelligenceQuery.visualStyle.length > 0 ? { visualStyle: intelligenceQuery.visualStyle } : {}),
+        ...(intelligenceQuery.moodTags.length > 0 ? { moodTags: intelligenceQuery.moodTags } : {}),
+        ...(intelligenceQuery.toneTags.length > 0 ? { toneTags: intelligenceQuery.toneTags } : {}),
+        ...(intelligenceQuery.characterTypes.length > 0 ? { characterTypes: intelligenceQuery.characterTypes } : {}),
+        ...(intelligenceQuery.archetypeTags.length > 0 ? { archetypeTags: intelligenceQuery.archetypeTags } : {}),
+        ...(intelligenceQuery.settingTags.length > 0 ? { settingTags: intelligenceQuery.settingTags } : {}),
+        ...(intelligenceQuery.genreTags.length > 0 ? { genreTags: intelligenceQuery.genreTags } : {}),
+        ...(intelligenceQuery.colorHints.length > 0 ? { colorHints: intelligenceQuery.colorHints } : {}),
+        ...(intelligenceQuery.rarityHints.length > 0 ? { rarityHints: intelligenceQuery.rarityHints } : {}),
+        ...(intelligenceQuery.commerceIntent.length > 0 ? { commerceIntent: intelligenceQuery.commerceIntent } : {}),
+        safetyIntent: intelligenceQuery.safetyIntent,
+      }
+    : undefined;
+
+  return {
+    rawQuery: snapshot.rawQuery,
+    parsedOldFields: snapshot.parsedOldFields,
+    intelligenceQuery: compactIntelligenceQuery,
+    candidateCount: snapshot.candidateCount,
+    usedFallback: snapshot.usedFallback,
+    top10BeforeRerank: snapshot.top10BeforeRerank.slice(0, RECOMMENDATION_DEBUG_LIMIT),
+    top10AfterRerank: snapshot.top10AfterRerank.slice(0, RECOMMENDATION_DEBUG_LIMIT),
+    scoreBreakdowns: snapshot.scoreBreakdowns.slice(0, RECOMMENDATION_DEBUG_LIMIT),
+  };
+};
+
+export const getLastRecommendationDebugSnapshot = (): RecommendationDebugSnapshot | null =>
+  lastRecommendationDebugSnapshot;
+
+export const getLastRecommendationFeedbackSummary = (): RecommendationFeedbackDebugSummary | null => {
+  if (!lastRecommendationDebugSnapshot) {
+    return null;
+  }
+
+  const intelligenceQuery = lastRecommendationDebugSnapshot.intelligenceQuery ?? {
+    visualStyle: [],
+    moodTags: [],
+    toneTags: [],
+    characterTypes: [],
+    archetypeTags: [],
+    settingTags: [],
+    genreTags: [],
+    colorHints: [],
+    rarityHints: [],
+    commerceIntent: [],
+    safetyIntent: "unknown" as const,
+  };
+
+  return {
+    parsedOldFields: {
+      ...lastRecommendationDebugSnapshot.parsedOldFields,
+      keywords: [...lastRecommendationDebugSnapshot.parsedOldFields.keywords],
+      tags: [...lastRecommendationDebugSnapshot.parsedOldFields.tags],
+    },
+    intelligenceQuery: {
+      ...intelligenceQuery,
+      visualStyle: [...intelligenceQuery.visualStyle],
+      moodTags: [...intelligenceQuery.moodTags],
+      toneTags: [...intelligenceQuery.toneTags],
+      characterTypes: [...intelligenceQuery.characterTypes],
+      archetypeTags: [...intelligenceQuery.archetypeTags],
+      settingTags: [...intelligenceQuery.settingTags],
+      genreTags: [...intelligenceQuery.genreTags],
+      colorHints: [...intelligenceQuery.colorHints],
+      rarityHints: [...intelligenceQuery.rarityHints],
+      commerceIntent: [...intelligenceQuery.commerceIntent],
+    },
+    candidateCount: lastRecommendationDebugSnapshot.candidateCount,
+    usedFallback: lastRecommendationDebugSnapshot.usedFallback,
+    top10BeforeRerank: lastRecommendationDebugSnapshot.top10BeforeRerank.map((item) => ({
+      id: item.id,
+      title: item.title,
+      scoreTotal: item.scoreTotal,
+      scoreReasons: [...item.scoreReasons],
+    })),
+    top10AfterRerank: lastRecommendationDebugSnapshot.top10AfterRerank.map((item) => ({
+      id: item.id,
+      title: item.title,
+      scoreTotal: item.scoreTotal,
+      scoreReasons: [...item.scoreReasons],
+    })),
+  };
+};
+
 const buildFallbackParsedQuery = (query: string, language: SupportedLanguage): ParsedGalleryQuery => ({
   language,
   keywords: normalizeGalleryKeywordsToEnglish([query]),
@@ -220,6 +426,7 @@ const buildFallbackParsedQuery = (query: string, language: SupportedLanguage): P
   mood: "",
   scene: "",
   limit: DEFAULT_GALLERY_RESULT_LIMIT,
+  intelligenceQuery: undefined,
 });
 
 const safeArray = (value: unknown): string[] =>
@@ -497,6 +704,39 @@ export const buildStructuredGalleryKeywords = (parsedQuery: ParsedGalleryQuery):
   return expandGalleryKeywords(rawValues.map((value) => canonicalizeGalleryTerm(value)));
 };
 
+const buildRecommendationKeywordHeavyInput = (
+  parsedQuery: ParsedGalleryQuery,
+  keywords: string[],
+  tags: string[]
+) => ({
+  keywords,
+  tags,
+  style: "",
+  rarity: parsedQuery.rarity,
+  category: "",
+  character: "",
+  color: "",
+  mood: "",
+  scene: "",
+  limit: RECOMMENDATION_SEARCH_SLICE_LIMIT,
+});
+
+const buildRecommendationStructuredHeavyInput = (
+  parsedQuery: ParsedGalleryQuery,
+  keywords: string[]
+) => ({
+  keywords: keywords.slice(0, Math.min(5, keywords.length)),
+  tags: [],
+  style: parsedQuery.style,
+  rarity: parsedQuery.rarity,
+  category: parsedQuery.category,
+  character: parsedQuery.character,
+  color: parsedQuery.color,
+  mood: "",
+  scene: parsedQuery.scene,
+  limit: RECOMMENDATION_SEARCH_SLICE_LIMIT,
+});
+
 const buildAppliedRefreshKeywords = (
   decision: RefreshDecision,
   previousParsed: ParsedGalleryQuery
@@ -593,7 +833,51 @@ export const galleryService = {
       limit,
     });
 
-    const results = dedupeCards(resultsSource).slice(0, limit).map(toDto);
+    let candidateCards = resultsSource;
+
+    try {
+      const [keywordHeavyResults, structuredHeavyResults] = await Promise.all([
+        galleryRepository.search(buildRecommendationKeywordHeavyInput(parsedQuery, finalKeywords, finalTags)),
+        galleryRepository.search(buildRecommendationStructuredHeavyInput(parsedQuery, finalKeywords)),
+      ]);
+
+      candidateCards = dedupeCards([...resultsSource, ...keywordHeavyResults, ...structuredHeavyResults]).slice(
+        0,
+        RECOMMENDATION_CANDIDATE_LIMIT
+      );
+    } catch (error) {
+      candidateCards = resultsSource;
+      logger.warn("[GALLERY SERVICE] recommendation candidate fallback", {
+        query,
+        message: error instanceof Error ? error.message : String(error),
+      });
+    }
+
+    const recommendationResult = galleryRecommendationService.rerank({
+      parsedQuery,
+      intelligenceQuery: parsedQuery.intelligenceQuery,
+      candidates: candidateCards,
+    });
+    const rerankedCards = recommendationResult.cards;
+
+    lastRecommendationDebugSnapshot = buildRecommendationDebugSnapshot({
+      rawQuery: query,
+      parsedQuery,
+      candidateCards,
+      resultsSource,
+      rerankedCards,
+      scoreBreakdowns: recommendationResult.scoreBreakdowns,
+      usedFallback: recommendationResult.usedFallback,
+    });
+
+    recommendationFeedbackService.captureLatestSearchSnapshot({
+      query,
+      summary: getLastRecommendationFeedbackSummary()!,
+    });
+
+    logger.debug("[GALLERY SERVICE] recommendation debug", buildRecommendationLogPayload(lastRecommendationDebugSnapshot));
+
+    const results = dedupeCards(rerankedCards).slice(0, limit).map(toDto);
     logger.info("[GALLERY SERVICE] final result count", { count: results.length, query });
 
     return {

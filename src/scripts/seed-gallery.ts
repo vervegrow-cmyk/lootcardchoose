@@ -148,6 +148,10 @@ const extraCards = Array.from({ length: 10 }).map((_, index) => ({
 }));
 
 const seed = async (): Promise<void> => {
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("seed-gallery is disabled in production");
+  }
+
   const data = [...cards, ...extraCards];
 
   await prisma.galleryCard.createMany({

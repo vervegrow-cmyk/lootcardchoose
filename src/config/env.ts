@@ -26,6 +26,36 @@ export type EnvConfig = {
   siliconflowBaseUrl: string;
   siliconflowVisionModel: string;
   enableGalleryVisionMetadata: boolean;
+  railwayLogSince: string;
+  railwayLogLines: number;
+  railwayLogTimeoutMs: number;
+  railwayLogService: string;
+  railwayLogEnvironment: string;
+};
+
+const DEFAULT_RAILWAY_LOG_SINCE = "24h";
+const DEFAULT_RAILWAY_LOG_LINES = 1000;
+const MAX_RAILWAY_LOG_LINES = 5000;
+const DEFAULT_RAILWAY_LOG_TIMEOUT_MS = 30000;
+const MAX_RAILWAY_LOG_TIMEOUT_MS = 120000;
+
+const clampNumber = (value: number, minimum: number, maximum: number): number =>
+  Math.min(Math.max(value, minimum), maximum);
+
+const parseOptionalString = (value: string | undefined): string => (value ?? "").trim();
+
+const parsePositiveInteger = (value: string | undefined, fallback: number, maximum: number): number => {
+  const trimmed = parseOptionalString(value);
+  if (trimmed.length === 0) {
+    return fallback;
+  }
+
+  const parsed = Number.parseInt(trimmed, 10);
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    return fallback;
+  }
+
+  return clampNumber(parsed, 1, maximum);
 };
 
 let hasLoadedEnvFiles = false;
@@ -86,6 +116,19 @@ export const loadEnv = (): EnvConfig => {
   const deepseekBaseUrl =
     process.env.DEEPSEEK_BASE_URL ?? process.env.SILICONFLOW_BASE_URL ?? "https://api.deepseek.com/v1";
   const deepseekModel = process.env.DEEPSEEK_MODEL ?? "deepseek-chat";
+  const railwayLogSince = parseOptionalString(process.env.RAILWAY_LOG_SINCE) || DEFAULT_RAILWAY_LOG_SINCE;
+  const railwayLogLines = parsePositiveInteger(
+    process.env.RAILWAY_LOG_LINES,
+    DEFAULT_RAILWAY_LOG_LINES,
+    MAX_RAILWAY_LOG_LINES
+  );
+  const railwayLogTimeoutMs = parsePositiveInteger(
+    process.env.RAILWAY_LOG_TIMEOUT_MS,
+    DEFAULT_RAILWAY_LOG_TIMEOUT_MS,
+    MAX_RAILWAY_LOG_TIMEOUT_MS
+  );
+  const railwayLogService = parseOptionalString(process.env.RAILWAY_LOG_SERVICE);
+  const railwayLogEnvironment = parseOptionalString(process.env.RAILWAY_LOG_ENVIRONMENT);
 
   return {
     nodeEnv: process.env.NODE_ENV ?? "development",
@@ -112,5 +155,10 @@ export const loadEnv = (): EnvConfig => {
     siliconflowBaseUrl: process.env.SILICONFLOW_BASE_URL ?? "https://api.siliconflow.cn/v1",
     siliconflowVisionModel: process.env.SILICONFLOW_VISION_MODEL ?? "Qwen/Qwen3-VL-8B-Instruct",
     enableGalleryVisionMetadata: process.env.ENABLE_GALLERY_VISION_METADATA !== "false",
+    railwayLogSince,
+    railwayLogLines,
+    railwayLogTimeoutMs,
+    railwayLogService,
+    railwayLogEnvironment,
   };
 };

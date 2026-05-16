@@ -75,19 +75,40 @@ const inferContentType = (filePath: string): string => {
 const normalizeKey = (key: string): string => key.replace(/\\/g, "/").replace(/^\/+/, "");
 
 export const r2Service: R2Service = {
-  async listObjects(prefix) {
+  async listObjects(prefix = "gallery/") {
     const env = resolveR2Config();
     const client = createClient();
-    const response = await client.send(
-      new ListObjectsV2Command({
-        Bucket: env.r2Bucket,
-        Prefix: prefix,
-      })
-    );
+    try {
+      const response = await client.send(
+        new ListObjectsV2Command({
+          Bucket: env.r2Bucket,
+          Prefix: prefix,
+        })
+      );
 
-    return (response.Contents ?? [])
-      .map((object) => object.Key)
-      .filter((key): key is string => typeof key === "string");
+      return (response.Contents ?? [])
+        .map((object: { Key?: string }) => object.Key)
+        .filter((key: string | undefined): key is string => typeof key === "string");
+    } catch (error) {
+      const err = error as {
+        name?: string;
+        Code?: string;
+        message?: string;
+        $metadata?: { httpStatusCode?: number };
+      };
+
+      if (
+        err.name === "NoSuchKey" ||
+        err.Code === "NoSuchKey" ||
+        err.$metadata?.httpStatusCode === 404 ||
+        String(err.message ?? "").includes("NoSuchKey")
+      ) {
+        console.warn("[R2] listObjects returned empty or missing prefix, continue as empty bucket");
+        return [];
+      }
+
+      throw error;
+    }
   },
 
   async uploadFile(input) {
