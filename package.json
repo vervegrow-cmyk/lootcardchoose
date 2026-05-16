@@ -7,7 +7,7 @@
     "dev": "tsx src/index.ts",
     "start": "echo RAILWAY_START_TEST && tsx src/index.ts",
     "build": "tsc --noEmit",
-    "prisma:generate": "prisma generate",
+    "prisma:generate": "node ./node_modules/prisma/build/index.js generate",
     "gallery:analyze": "tsx src/scripts/analyze-gallery-images.ts",
     "gallery:analyze:force": "tsx src/scripts/analyze-gallery-images.ts --force",
     "gallery:metadata:audit": "tsx src/scripts/audit-gallery-metadata.ts --mode audit",
@@ -21,6 +21,7 @@
     "gallery:test-recommendation": "tsx src/scripts/test-gallery-recommendation.ts",
     "gallery:test-recommendation-feedback": "tsx src/scripts/test-recommendation-feedback.ts",
     "gallery:feedback:analyze": "tsx src/scripts/analyze-recommendation-feedback.ts",
+    "recommendation:report": "tsx src/scripts/generate-recommendation-report.ts",
     "gallery:test-help": "tsx src/scripts/test-gallery-help.ts",
     "gallery:test-refresh": "tsx src/scripts/test-gallery-refresh.ts",
     "gallery:test-select": "tsx src/scripts/test-gallery-select.ts",
@@ -28,6 +29,7 @@
     "customer-support:test": "tsx src/scripts/test-customer-support.ts",
     "ops:daily": "tsx src/scripts/daily-ops-insight.ts",
     "shopify:webhook:test": "tsx src/scripts/test-shopify-webhook.ts",
+    "shopify:webhook:retry": "tsx src/scripts/retry-shopify-webhooks.ts",
     "test:core": "tsx src/scripts/test-core.ts"
   },
   "dependencies": {

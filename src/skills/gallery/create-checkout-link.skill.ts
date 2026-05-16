@@ -20,6 +20,7 @@ export type CreateCheckoutLinkOutput = {
     amount: string;
     status: string;
     shopifyProductId: string | null;
+    productCode: string | null;
     shopifyCheckoutUrl: string | null;
     shopifyProductUrl: string | null;
     shopifyShareImageUrl: string | null;
@@ -107,6 +108,7 @@ export const createCheckoutLink: SkillHandler<CreateCheckoutLinkInput, CreateChe
     const updatedOrder = await orderService.updateShopifyLink({
       orderId: input.order.id,
       shopifyProductId: result.shopifyProductId,
+      productCode: result.productCode,
       shopifyCheckoutUrl: result.purchaseUrl,
       shopifyProductUrl: result.productUrl,
       shopifyShareImageUrl: result.shareImageUrl,
@@ -136,6 +138,7 @@ export const createCheckoutLink: SkillHandler<CreateCheckoutLinkInput, CreateChe
         amount: updatedOrder.amount,
         status: updatedOrder.status,
         shopifyProductId: updatedOrder.shopifyProductId,
+        productCode: updatedOrder.productCode,
         shopifyCheckoutUrl: updatedOrder.shopifyCheckoutUrl,
         shopifyProductUrl: updatedOrder.shopifyProductUrl,
         shopifyShareImageUrl: updatedOrder.shopifyShareImageUrl,

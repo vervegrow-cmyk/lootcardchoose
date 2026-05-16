@@ -175,11 +175,13 @@ const startHealthServer = (): void => {
     async (request, response) => {
       try {
         const topic = request.header("x-shopify-topic") ?? "";
+        const shopifyWebhookId = request.header("x-shopify-webhook-id") ?? "";
         const providedHmac = request.header("x-shopify-hmac-sha256") ?? "";
         const rawBody = Buffer.isBuffer(request.body) ? request.body : Buffer.from([]);
         console.log("[SHOPIFY WEBHOOK] route hit", {
           route: SHOPIFY_ORDERS_PAID_WEBHOOK_ROUTE,
           topic,
+          shopifyWebhookId: shopifyWebhookId || null,
           hmacExists: Boolean(providedHmac),
           rawBodyLength: rawBody.length,
         });
@@ -188,6 +190,7 @@ const startHealthServer = (): void => {
           console.warn("[SHOPIFY WEBHOOK] hmac failed", {
             route: SHOPIFY_ORDERS_PAID_WEBHOOK_ROUTE,
             topic,
+            shopifyWebhookId: shopifyWebhookId || null,
             hmacExists: Boolean(providedHmac),
             rawBodyLength: rawBody.length,
           });
@@ -198,9 +201,13 @@ const startHealthServer = (): void => {
         console.log("[SHOPIFY WEBHOOK] hmac verified", {
           route: SHOPIFY_ORDERS_PAID_WEBHOOK_ROUTE,
           topic,
+          shopifyWebhookId: shopifyWebhookId || null,
           rawBodyLength: rawBody.length,
         });
-        const result = await shopifyWebhookService.handleOrdersPaidWebhook(rawBody);
+        const result = await shopifyWebhookService.handleOrdersPaidWebhook(rawBody, {
+          topic,
+          shopifyWebhookId,
+        });
         response.status(200).json({ ok: true, orderNumber: result.orderNumber, status: result.status });
       } catch (error) {
         response.status(500).json({

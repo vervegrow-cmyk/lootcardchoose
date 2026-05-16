@@ -46,6 +46,7 @@ model Order {
   galleryCardId       String
   preferredLanguage   String?
   shopifyProductId    String?
+  productCode         String?
   shopifyCheckoutUrl  String?
   shopifyProductUrl   String?
   shopifyShareImageUrl String?
@@ -56,6 +57,51 @@ model Order {
   updatedAt           DateTime @updatedAt
 
   galleryCard          GalleryCard @relation(fields: [galleryCardId], references: [id])
+}
+
+model ShopifyWebhookEvent {
+  id                  String   @id @default(cuid())
+  topic               String
+  shopifyWebhookId    String?
+  shopifyOrderId      String?
+  payload             Json
+  resolvedOrderNumber String?
+  resolvedMethod      String?
+  status              String
+  failureReason       String?
+  processedAt         DateTime?
+  createdAt           DateTime @default(now())
+}
+
+model RecommendationAnalyticsDaily {
+  id                String   @id @default(cuid())
+  dateKey           String
+  timezone          String
+  sourceFile        String
+  sourceWindowStart DateTime?
+  sourceWindowEnd   DateTime?
+  searchCount       Int
+  impressions       Int
+  selections        Int
+  checkoutCreated   Int
+  purchases         Int
+  selectionRate     Float
+  checkoutRate      Float
+  purchaseRate      Float
+  reportPayload     Json
+  generatedAt       DateTime @default(now())
+
+  @@unique([dateKey, timezone, sourceFile])
+}
+
+model RecommendationAnalyticsSnapshot {
+  id                String   @id @default(cuid())
+  sourceFile        String
+  timezone          String
+  sourceWindowStart DateTime?
+  sourceWindowEnd   DateTime?
+  summaryPayload    Json
+  generatedAt       DateTime @default(now())
 }
 
 model ShopifyShop {

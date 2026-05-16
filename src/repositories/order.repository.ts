@@ -13,6 +13,7 @@ export type OrderRepositoryRecord = {
   amount: string;
   status: OrderStatus;
   shopifyProductId: string | null;
+  productCode: string | null;
   shopifyCheckoutUrl: string | null;
   shopifyProductUrl: string | null;
   shopifyShareImageUrl: string | null;
@@ -29,6 +30,7 @@ export type OrderRepository = {
   updateShopifyLink: (input: {
     orderId: string;
     shopifyProductId: string;
+    productCode: string;
     shopifyCheckoutUrl: string;
     shopifyProductUrl: string;
     shopifyShareImageUrl: string;
@@ -41,6 +43,8 @@ export type OrderRepository = {
     status: OrderStatus;
   }) => Promise<OrderRepositoryRecord>;
   findByOrderNumber: (orderNumber: string) => Promise<OrderRepositoryRecord | null>;
+  findByShopifyProductId: (shopifyProductId: string) => Promise<OrderRepositoryRecord | null>;
+  findByProductCode: (productCode: string) => Promise<OrderRepositoryRecord | null>;
 };
 
 let ensureOrderColumnsPromise: Promise<void> | null = null;
@@ -59,6 +63,7 @@ const mapOrderRecord = (record: {
   amount: { toString(): string } | number | string;
   status: string;
   shopifyProductId: string | null;
+  productCode: string | null;
   shopifyCheckoutUrl: string | null;
   shopifyProductUrl: string | null;
   shopifyShareImageUrl: string | null;
@@ -72,6 +77,7 @@ const mapOrderRecord = (record: {
   amount: formatAmount(record.amount),
   status: record.status as OrderStatus,
   shopifyProductId: record.shopifyProductId,
+  productCode: record.productCode,
   shopifyCheckoutUrl: record.shopifyCheckoutUrl,
   shopifyProductUrl: record.shopifyProductUrl,
   shopifyShareImageUrl: record.shopifyShareImageUrl,
@@ -94,6 +100,7 @@ const ensureOrderColumns = async (): Promise<void> => {
         await prisma.$executeRawUnsafe(
           'ALTER TABLE "Order" ADD COLUMN IF NOT EXISTS "preferredLanguage" TEXT'
         );
+        await prisma.$executeRawUnsafe('ALTER TABLE "Order" ADD COLUMN IF NOT EXISTS "productCode" TEXT');
       } catch (error) {
         logger.warn("[ORDER REPOSITORY] ensure order columns failed", {
           message: error instanceof Error ? error.message : String(error),
@@ -128,6 +135,7 @@ export const orderRepository: OrderRepository = {
       where: { id: input.orderId },
       data: {
         shopifyProductId: input.shopifyProductId,
+        productCode: input.productCode,
         shopifyCheckoutUrl: input.shopifyCheckoutUrl,
         shopifyProductUrl: input.shopifyProductUrl,
         shopifyShareImageUrl: input.shopifyShareImageUrl,
@@ -154,6 +162,32 @@ export const orderRepository: OrderRepository = {
     await ensureOrderColumns();
     const record = await prisma.order.findFirst({
       where: { orderNumber },
+    });
+
+    if (!record) {
+      return null;
+    }
+
+    return mapOrderRecord(record);
+  },
+  async findByShopifyProductId(shopifyProductId) {
+    await ensureOrderColumns();
+    const record = await prisma.order.findFirst({
+      where: { shopifyProductId },
+      orderBy: { updatedAt: "desc" },
+    });
+
+    if (!record) {
+      return null;
+    }
+
+    return mapOrderRecord(record);
+  },
+  async findByProductCode(productCode) {
+    await ensureOrderColumns();
+    const record = await prisma.order.findFirst({
+      where: { productCode },
+      orderBy: { updatedAt: "desc" },
     });
 
     if (!record) {
