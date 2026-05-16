@@ -1,4 +1,5 @@
 import path from "node:path";
+import { access, readFile } from "node:fs/promises";
 import { Prisma } from "@prisma/client";
 import type {
   RecommendationAnalyticsCardPerformance,
@@ -17,6 +18,7 @@ import type {
   RecommendationAnalyticsSparseFamily,
   RecommendationAnalyticsTopPurchasedMetadata,
   RecommendationAnalyticsWeakMatchItem,
+  RecommendationCommerceOptimizationInsights,
 } from "../types/recommendation-analytics.types";
 import type { RecommendationFeedbackEvent } from "../types/recommendation-feedback.types";
 import {
@@ -29,6 +31,7 @@ const DEFAULT_TIMEZONE = "Asia/Shanghai";
 const DEFAULT_LOW_PERFORMANCE_IMPRESSIONS = 10;
 const DEFAULT_TOP_LIMIT = 10;
 const DEFAULT_FEEDBACK_FILE = path.join(process.cwd(), "reports", "recommendation-feedback.jsonl");
+const REPORTS_ROOT = path.join(process.cwd(), "reports", "recommendation-analytics");
 const DIMENSION_KEYS: RecommendationAnalyticsDimensionKey[] = [
   "rarity",
   "style",
@@ -57,6 +60,8 @@ const FIELD_COVERAGE_KEYS = [
 ] as const;
 const SPARSE_FAMILIES = ["cyberpunk", "mecha", "holy", "divine", "boss_like", "queen", "empress", "goddess", "warrior", "priestess"];
 const ARCHETYPE_FAMILIES = ["queen", "empress", "goddess", "priestess", "warrior", "paladin", "commander", "mecha girl"];
+let cachedCommerceInsights: RecommendationCommerceOptimizationInsights | null = null;
+let cachedCommerceInsightsDateKey: string | null = null;
 
 type AnalyticsCounter = {
   impressions: number;
@@ -1002,6 +1007,36 @@ const resolveDateKey = (events: RecommendationFeedbackEvent[], timeZone: string)
   return toDateKey(timestamps[0], timeZone);
 };
 
+const buildCommerceOptimizationInsights = (
+  report: RecommendationAnalyticsReport
+): RecommendationCommerceOptimizationInsights => {
+  const sparseFamilies = report.metadataCoverageAnalytics.sparseFamilies
+    .filter((item) => !item.insufficientData && (item.coverageRate ?? 0) < 0.2)
+    .map((item) => normalizeText(item.family));
+
+  const weakMatchFamilies = report.weakMatchAnalytics.archetypes
+    .filter((item) => item.searchCount > 0 && item.checkoutCount === 0)
+    .map((item) => normalizeText(item.bucket));
+
+  const lowConversionThemes = report.weakMatchAnalytics.queries
+    .flatMap((item) =>
+      ["cyberpunk", "mecha", "boss_like", "priestess", "holy", "divine"].filter((family) =>
+        normalizeText(item.bucket).includes(family.replace(/_/g, " "))
+      )
+    )
+    .map((item) => normalizeText(item));
+
+  return {
+    dateKey: report.summary.dateKey,
+    sparseFamilies: uniqueNormalized(sparseFamilies),
+    weakMatchFamilies: uniqueNormalized(weakMatchFamilies),
+    lowConversionThemes: uniqueNormalized(lowConversionThemes),
+  };
+};
+
+const resolveGeneratedReportPath = (dateKey: string): string =>
+  path.join(REPORTS_ROOT, dateKey, "report.json");
+
 export const recommendationAnalyticsService = {
   async loadSource(input?: {
     file?: string | null;
@@ -1106,5 +1141,47 @@ export const recommendationAnalyticsService = {
     });
 
     return report;
+  },
+
+  async getCommerceOptimizationInsights(input?: {
+    date?: string | null;
+    timezone?: string;
+  }): Promise<RecommendationCommerceOptimizationInsights> {
+    const timezone = input?.timezone ?? DEFAULT_TIMEZONE;
+    const dateKey = input?.date ?? toDateKey(new Date(), timezone);
+
+    if (cachedCommerceInsights && cachedCommerceInsightsDateKey === dateKey) {
+      return cachedCommerceInsights;
+    }
+
+    const fallbackInsights: RecommendationCommerceOptimizationInsights = {
+      dateKey,
+      sparseFamilies: [],
+      weakMatchFamilies: [],
+      lowConversionThemes: [],
+    };
+
+    try {
+      const reportPath = resolveGeneratedReportPath(dateKey);
+      await access(reportPath);
+      const raw = await readFile(reportPath, "utf8");
+      const parsed = JSON.parse(raw) as RecommendationAnalyticsReport;
+      const insights = buildCommerceOptimizationInsights(parsed);
+      cachedCommerceInsights = insights;
+      cachedCommerceInsightsDateKey = dateKey;
+      return insights;
+    } catch {
+      try {
+        const report = await this.generateReport({ date: dateKey, timezone });
+        const insights = buildCommerceOptimizationInsights(report);
+        cachedCommerceInsights = insights;
+        cachedCommerceInsightsDateKey = dateKey;
+        return insights;
+      } catch {
+        cachedCommerceInsights = fallbackInsights;
+        cachedCommerceInsightsDateKey = dateKey;
+        return fallbackInsights;
+      }
+    }
   },
 };

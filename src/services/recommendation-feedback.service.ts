@@ -63,12 +63,26 @@ const normalizeSummary = (
       title: item.title,
       scoreTotal: item.scoreTotal,
       scoreReasons: [...item.scoreReasons],
+      commerceIntelligence: item.commerceIntelligence ? { ...item.commerceIntelligence } : undefined,
+      commercePresentation: item.commercePresentation
+        ? {
+            ...item.commercePresentation,
+            commerceReasons: [...item.commercePresentation.commerceReasons],
+          }
+        : undefined,
     })),
     top10AfterRerank: limitItems(summary.top10AfterRerank).map((item) => ({
       id: item.id,
       title: item.title,
       scoreTotal: item.scoreTotal,
       scoreReasons: [...item.scoreReasons],
+      commerceIntelligence: item.commerceIntelligence ? { ...item.commerceIntelligence } : undefined,
+      commercePresentation: item.commercePresentation
+        ? {
+            ...item.commercePresentation,
+            commerceReasons: [...item.commercePresentation.commerceReasons],
+          }
+        : undefined,
     })),
   };
 };

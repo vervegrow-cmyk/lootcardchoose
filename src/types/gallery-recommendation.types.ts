@@ -14,6 +14,21 @@ export type RecommendationScore = {
   reasons: string[];
 };
 
+export type RecommendationCommerceIntelligence = {
+  collectorScore: number;
+  impulseBuyScore: number;
+  luxuryAura: string;
+  rarityWeight: number;
+  mainstreamAppeal: number;
+};
+
+export type RecommendationCommercePresentation = {
+  collectorPositioning: string;
+  rarityFraming: string;
+  auraPresentation: string;
+  commerceReasons: string[];
+};
+
 export type RecommendationScoreBreakdown = {
   visualMatch: number;
   moodEmotionalMatch: number;
@@ -32,6 +47,8 @@ export type RecommendationDebugEntry = {
   hasUsableIntelligence: boolean;
   breakdown: RecommendationScoreBreakdown;
   recommendationScore: RecommendationScore;
+  commerceIntelligence?: RecommendationCommerceIntelligence;
+  commercePresentation?: RecommendationCommercePresentation;
 };
 
 export type RecommendationInput = {

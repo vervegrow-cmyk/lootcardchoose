@@ -11,6 +11,19 @@ export type RecommendationFeedbackCardSummary = {
   title: string;
   scoreTotal: number;
   scoreReasons: string[];
+  commerceIntelligence?: {
+    collectorScore: number;
+    impulseBuyScore: number;
+    luxuryAura: string;
+    rarityWeight: number;
+    mainstreamAppeal: number;
+  };
+  commercePresentation?: {
+    collectorPositioning: string;
+    rarityFraming: string;
+    auraPresentation: string;
+    commerceReasons: string[];
+  };
 };
 
 export type RecommendationFeedbackParsedOldFields = {

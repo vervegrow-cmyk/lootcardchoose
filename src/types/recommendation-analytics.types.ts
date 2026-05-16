@@ -199,6 +199,13 @@ export type RecommendationAnalyticsCliOptions = {
   outputPath: string | null;
 };
 
+export type RecommendationCommerceOptimizationInsights = {
+  dateKey: string | null;
+  sparseFamilies: string[];
+  weakMatchFamilies: string[];
+  lowConversionThemes: string[];
+};
+
 export type RecommendationAnalyticsParsedLine =
   | {
       ok: true;

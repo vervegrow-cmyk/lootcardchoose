@@ -2,6 +2,7 @@ import { Prisma } from "@prisma/client";
 import { loadEnv } from "../config/env";
 import { GalleryCardRecord, galleryRepository } from "../repositories/gallery.repository";
 import { logger } from "../utils/logger";
+import { recommendationAnalyticsService } from "./recommendation-analytics.service";
 
 export type ShopifyGalleryCardInput = {
   galleryCardId: string;
@@ -30,6 +31,18 @@ export type ShopifyCreateProductOutput = {
   productUrl: string;
   purchaseUrl: string;
   shareImageUrl: string;
+};
+
+export type ShopifyProductPresentationPreview = {
+  marketingTitle: string;
+  productTitle: string;
+  productCode: string;
+  productHandle: string;
+  sku: string;
+  subtitle: string;
+  rarityFraming: string;
+  collectorPositioning: string;
+  bodyHtml: string;
 };
 
 type ShopifyProductImage = {
@@ -234,6 +247,37 @@ const normalizeRarity = (value: string | null | undefined): string => {
   return RARITY_VALUES.has(normalized) ? normalized : "";
 };
 
+const normalizeText = (value: string | null | undefined): string =>
+  (value ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/[_-]+/g, " ")
+    .replace(/\s+/g, " ");
+
+const uniqueNormalized = (values: Array<string | null | undefined>): string[] => {
+  const seen = new Set<string>();
+  const result: string[] = [];
+
+  for (const value of values) {
+    const normalized = normalizeText(value);
+    if (!normalized || seen.has(normalized)) {
+      continue;
+    }
+    seen.add(normalized);
+    result.push(normalized);
+  }
+
+  return result;
+};
+
+const escapeHtml = (value: string): string =>
+  value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+
 const buildSourceStrings = (card: ShopifyNamingSource): string[] => [
   card.color ?? "",
   card.style ?? "",
@@ -300,6 +344,151 @@ const buildFallbackMarketingTitle = (card: ShopifyNamingSource): string => {
   return [theme, archetype, rarity].filter(Boolean).join(" ").trim() || "Celestial Heroine";
 };
 
+const buildCommerceSignals = (card: ShopifyNamingSource): string[] =>
+  uniqueNormalized([
+    card.title,
+    card.description,
+    card.style,
+    card.rarity,
+    card.category,
+    card.character,
+    card.color,
+    ...card.tags,
+    ...collectMetadataStrings(card.metadata ?? null),
+  ]);
+
+const hasSignal = (signals: string[], term: string): boolean =>
+  signals.some((signal) => signal === term || signal.includes(term) || term.includes(signal));
+
+const buildDescriptorTheme = (signals: string[]): string => {
+  if (hasSignal(signals, "black gold")) return "Black Gold";
+  if (hasSignal(signals, "cyberpunk") && hasSignal(signals, "mecha")) return "Cyberpunk Mecha";
+  if (hasSignal(signals, "divine") || hasSignal(signals, "holy")) return "Divine";
+  if (hasSignal(signals, "gothic")) return "Gothic";
+  if (hasSignal(signals, "dark fantasy")) return "Dark Fantasy";
+  if (hasSignal(signals, "white gold")) return "White Gold";
+  return "Collector";
+};
+
+const buildDescriptorNoun = (
+  signals: string[],
+  insights: Awaited<ReturnType<typeof recommendationAnalyticsService.getCommerceOptimizationInsights>>
+): string => {
+  if (
+    (hasSignal(signals, "queen") || hasSignal(signals, "empress") || hasSignal(signals, "boss like")) &&
+    insights.sparseFamilies.some((family) => family === "boss like" || family === "empress")
+  ) {
+    return "Relic Card";
+  }
+  if (
+    (hasSignal(signals, "priestess") || hasSignal(signals, "divine") || hasSignal(signals, "holy")) &&
+    insights.sparseFamilies.some((family) => family === "priestess" || family === "holy" || family === "divine")
+  ) {
+    return "Archive Card";
+  }
+  if (
+    (hasSignal(signals, "cyberpunk") || hasSignal(signals, "mecha")) &&
+    insights.sparseFamilies.some((family) => family === "cyberpunk" || family === "mecha")
+  ) {
+    return "Collector Card";
+  }
+  if (hasSignal(signals, "queen") || hasSignal(signals, "empress") || hasSignal(signals, "goddess")) {
+    return "Crown Card";
+  }
+  return "Collectible Card";
+};
+
+const buildRarityFraming = (rarity: string): string => {
+  switch (rarity) {
+    case "UR":
+      return "UR apex collectible with crown-tier pull appeal.";
+    case "SSR":
+      return "SSR collector-tier drop with premium relic energy.";
+    case "SR":
+      return "SR signature edition with curated collector appeal.";
+    case "R":
+      return "R curated collectible with mainstream display appeal.";
+    default:
+      return "Curated collectible presentation for casual and collector buyers.";
+  }
+};
+
+const buildSubtitle = (
+  signals: string[],
+  insights: Awaited<ReturnType<typeof recommendationAnalyticsService.getCommerceOptimizationInsights>>
+): string => {
+  if (
+    (hasSignal(signals, "cyberpunk") || hasSignal(signals, "mecha")) &&
+    insights.sparseFamilies.some((family) => family === "cyberpunk" || family === "mecha")
+  ) {
+    return "Genre-led collector piece for buyers chasing standout cyberpunk and mecha coverage.";
+  }
+  if (
+    (hasSignal(signals, "priestess") || hasSignal(signals, "divine") || hasSignal(signals, "holy")) &&
+    insights.sparseFamilies.some((family) => family === "priestess" || family === "holy" || family === "divine")
+  ) {
+    return "Sacred aura positioning for collectors who respond to ritual, divine, and priestess-led presentation.";
+  }
+  if (hasSignal(signals, "queen") || hasSignal(signals, "empress") || hasSignal(signals, "boss like")) {
+    return "Luxury-forward positioning built for ruler, relic, and throne-room collectible energy.";
+  }
+  return "Premium collectible presentation tuned for quick visual appeal and stronger checkout intent.";
+};
+
+const buildCollectorPositioning = (signals: string[], rarity: string): string => {
+  const theme = buildDescriptorTheme(signals);
+  if (rarity === "SSR" || rarity === "UR") {
+    return `${theme} ${rarity} positioning for premium collector demand.`;
+  }
+  if (hasSignal(signals, "cyberpunk") || hasSignal(signals, "mecha")) {
+    return `${theme} positioning that leads with genre identity over generic anime framing.`;
+  }
+  if (hasSignal(signals, "divine") || hasSignal(signals, "holy") || hasSignal(signals, "priestess")) {
+    return `${theme} positioning that reinforces sacred collectible value.`;
+  }
+  return `${theme} positioning for polished collectible browsing.`;
+};
+
+const buildProductPresentation = (
+  card: ShopifyNamingSource,
+  identity: {
+    marketingTitle: string;
+    productCode: string;
+    productHandle: string;
+    sku: string;
+  },
+  insights: Awaited<ReturnType<typeof recommendationAnalyticsService.getCommerceOptimizationInsights>>
+): ShopifyProductPresentationPreview => {
+  const signals = buildCommerceSignals(card);
+  const rarity = normalizeRarity(card.rarity);
+  const descriptorTheme = buildDescriptorTheme(signals);
+  const descriptorNoun = buildDescriptorNoun(signals, insights);
+  const rarityToken = rarity ? `${rarity} ` : "";
+  const productTitle = `${identity.marketingTitle} — ${descriptorTheme} ${rarityToken}${descriptorNoun}`.replace(/\s+/g, " ").trim();
+  const subtitle = buildSubtitle(signals, insights);
+  const rarityFraming = buildRarityFraming(rarity);
+  const collectorPositioning = buildCollectorPositioning(signals, rarity);
+  const originalDescription = card.description?.trim() || "Premium collectible card presentation with curated visual appeal.";
+  const bodyHtml = [
+    `<h2>${escapeHtml(identity.marketingTitle)}</h2>`,
+    `<p>${escapeHtml(subtitle)}</p>`,
+    `<p><strong>${escapeHtml(rarityFraming)}</strong> ${escapeHtml(collectorPositioning)}</p>`,
+    `<p>${escapeHtml(originalDescription)}</p>`,
+  ].join("");
+
+  return {
+    marketingTitle: identity.marketingTitle,
+    productTitle,
+    productCode: identity.productCode,
+    productHandle: identity.productHandle,
+    sku: identity.sku,
+    subtitle,
+    rarityFraming,
+    collectorPositioning,
+    bodyHtml,
+  };
+};
+
 const buildResolvedNamingSource = (
   selectedCard: ShopifyGalleryCardInput,
   storedCard: GalleryCardRecord | null
@@ -349,16 +538,16 @@ const buildProductIdentity = (
 const buildProductPayload = (
   card: ShopifyNamingSource,
   order: ShopifyOrderInput,
-  identity: ReturnType<typeof buildProductIdentity>
+  preview: ShopifyProductPresentationPreview
 ): ShopifyProductPayload => ({
   product: {
-    title: identity.productTitle,
-    handle: identity.productHandle,
-    body_html: card.description,
+    title: preview.productTitle,
+    handle: preview.productHandle,
+    body_html: preview.bodyHtml,
     tags: [...card.tags, `gallery-card:${card.galleryCardId}`, `order:${order.orderNumber}`].join(", "),
     status: "active",
     images: card.imageUrl ? [{ src: card.imageUrl }] : undefined,
-    variants: [{ price: card.price, sku: identity.sku }],
+    variants: [{ price: card.price, sku: preview.sku }],
   },
 });
 
@@ -380,6 +569,22 @@ const resolveCartUrl = (
 };
 
 export const shopifyService = {
+  async previewProductPresentationFromGalleryCard(
+    card: ShopifyGalleryCardInput,
+    order: ShopifyOrderInput
+  ): Promise<ShopifyProductPresentationPreview> {
+    const storedCard = await galleryRepository.findById(card.galleryCardId);
+    const namingSource = buildResolvedNamingSource(card, storedCard);
+    const identity = buildProductIdentity(namingSource, order);
+    const insights = await recommendationAnalyticsService.getCommerceOptimizationInsights().catch(() => ({
+      dateKey: null,
+      sparseFamilies: [],
+      weakMatchFamilies: [],
+      lowConversionThemes: [],
+    }));
+    return buildProductPresentation(namingSource, identity, insights);
+  },
+
   async createProductFromGalleryCard(
     card: ShopifyGalleryCardInput,
     order: ShopifyOrderInput
@@ -391,6 +596,13 @@ export const shopifyService = {
     const storedCard = await galleryRepository.findById(card.galleryCardId);
     const namingSource = buildResolvedNamingSource(card, storedCard);
     const identity = buildProductIdentity(namingSource, order);
+    const insights = await recommendationAnalyticsService.getCommerceOptimizationInsights().catch(() => ({
+      dateKey: null,
+      sparseFamilies: [],
+      weakMatchFamilies: [],
+      lowConversionThemes: [],
+    }));
+    const presentation = buildProductPresentation(namingSource, identity, insights);
 
     logger.info("[SHOPIFY SERVICE] create product start", {
       orderNumber: order.orderNumber,
@@ -398,7 +610,7 @@ export const shopifyService = {
       title: namingSource.title,
       marketingTitle: identity.marketingTitle,
       metadataMarketingTitle: readMetadataMarketingTitle(namingSource.metadata ?? null),
-      productTitle: identity.productTitle,
+      productTitle: presentation.productTitle,
       productCode: identity.productCode,
       productHandle: identity.productHandle,
       sku: identity.sku,
@@ -412,7 +624,7 @@ export const shopifyService = {
           "Content-Type": "application/json",
           "X-Shopify-Access-Token": accessToken,
         },
-        body: JSON.stringify(buildProductPayload(namingSource, order, identity)),
+        body: JSON.stringify(buildProductPayload(namingSource, order, presentation)),
       });
 
       if (!response.ok) {
@@ -436,7 +648,7 @@ export const shopifyService = {
         orderNumber: order.orderNumber,
         galleryCardId: card.galleryCardId,
         shopifyProductId: String(productId),
-        productTitle: identity.productTitle,
+        productTitle: presentation.productTitle,
         productCode: identity.productCode,
         productHandle: handle,
         sku: identity.sku,
@@ -449,7 +661,7 @@ export const shopifyService = {
         orderNumber: order.orderNumber,
         galleryCardId: card.galleryCardId,
         shopifyProductId: String(productId),
-        productTitle: identity.productTitle,
+        productTitle: presentation.productTitle,
         productCode: identity.productCode,
         productHandle: handle,
         sku: identity.sku,
@@ -461,7 +673,7 @@ export const shopifyService = {
       logger.error("[SHOPIFY SERVICE] create product failed", {
         orderNumber: order.orderNumber,
         galleryCardId: card.galleryCardId,
-        productTitle: identity.productTitle,
+        productTitle: presentation.productTitle,
         productCode: identity.productCode,
         productHandle: identity.productHandle,
         sku: identity.sku,

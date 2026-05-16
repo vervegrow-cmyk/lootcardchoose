@@ -16,9 +16,14 @@ import { logger } from "../utils/logger";
 import { recommendationFeedbackService } from "./recommendation-feedback.service";
 import type { RecommendationDebugEntry } from "../types/gallery-recommendation.types";
 import type { RecommendationScore } from "../types/gallery-recommendation.types";
+import type {
+  RecommendationCommerceIntelligence,
+  RecommendationCommercePresentation,
+} from "../types/gallery-recommendation.types";
 import type { RecommendationFeedbackDebugSummary } from "../types/recommendation-feedback.types";
 import { cardPricingService, CardPricingInput } from "./card-pricing.service";
 import { galleryRecommendationService } from "./gallery-recommendation.service";
+import { recommendationAnalyticsService } from "./recommendation-analytics.service";
 import {
   ParsedGalleryQuery,
   getLastQueryParserTelemetry,
@@ -48,6 +53,8 @@ export type GalleryCardDto = {
   color: string | null;
   price: number;
   score?: number;
+  commerceIntelligence?: RecommendationCommerceIntelligence;
+  commercePresentation?: RecommendationCommercePresentation;
 };
 
 export type GalleryCardPricingInputDto = {
@@ -79,6 +86,8 @@ export type RecommendationDebugCardSummary = {
   scoreTotal: number;
   scoreReasons: string[];
   recommendationScore?: RecommendationScore;
+  commerceIntelligence?: RecommendationCommerceIntelligence;
+  commercePresentation?: RecommendationCommercePresentation;
 };
 
 export type RecommendationDebugSnapshot = {
@@ -254,6 +263,51 @@ const toDto = (card: GalleryCardRecord): GalleryCardDto => {
   };
 };
 
+const buildCommerceTags = (
+  entry: RecommendationDebugEntry | undefined,
+  analyticsHints: Awaited<ReturnType<typeof recommendationAnalyticsService.getCommerceOptimizationInsights>>
+): string[] => {
+  if (!entry?.commercePresentation) {
+    return [];
+  }
+
+  const lines = [
+    entry.commercePresentation.collectorPositioning,
+    entry.commercePresentation.rarityFraming,
+    entry.commercePresentation.auraPresentation,
+  ];
+
+  if (
+    analyticsHints.sparseFamilies.some((family) =>
+      ["cyberpunk", "mecha", "boss like", "priestess", "holy", "divine"].includes(family)
+    )
+  ) {
+    const emphasized = analyticsHints.sparseFamilies
+      .filter((family) => ["cyberpunk", "mecha", "boss like", "priestess", "holy", "divine"].includes(family))
+      .slice(0, 2)
+      .join(" / ");
+    lines.push(`Analytics signal: ${emphasized} collectible themes need stronger commerce framing`);
+  }
+
+  return lines.map((line) => `commerce:${line}`);
+};
+
+const decorateDtoWithCommerce = (
+  card: GalleryCardRecord,
+  entry: RecommendationDebugEntry | undefined,
+  analyticsHints: Awaited<ReturnType<typeof recommendationAnalyticsService.getCommerceOptimizationInsights>>
+): GalleryCardDto => {
+  const dto = toDto(card);
+  const commerceTags = buildCommerceTags(entry, analyticsHints);
+
+  return {
+    ...dto,
+    tags: [...dto.tags, ...commerceTags],
+    commerceIntelligence: entry?.commerceIntelligence,
+    commercePresentation: entry?.commercePresentation,
+  };
+};
+
 const dedupeCards = (cards: GalleryCardRecord[]): GalleryCardRecord[] => {
   const seen = new Set<string>();
   const result: GalleryCardRecord[] = [];
@@ -293,6 +347,8 @@ const buildRecommendationDebugCardSummary = (
   scoreTotal: scoreBreakdown?.breakdown.total ?? 0,
   scoreReasons: scoreBreakdown ? compactScoreReasons(scoreBreakdown) : ["legacy-order"],
   recommendationScore: scoreBreakdown?.recommendationScore,
+  commerceIntelligence: scoreBreakdown?.commerceIntelligence,
+  commercePresentation: scoreBreakdown?.commercePresentation,
 });
 
 const buildRecommendationDebugSnapshot = (input: {
@@ -439,6 +495,13 @@ export const getLastRecommendationFeedbackSummary = (): RecommendationFeedbackDe
       title: item.title,
       scoreTotal: item.scoreTotal,
       scoreReasons: [...item.scoreReasons],
+      commerceIntelligence: item.commerceIntelligence ? { ...item.commerceIntelligence } : undefined,
+      commercePresentation: item.commercePresentation
+        ? {
+            ...item.commercePresentation,
+            commerceReasons: [...item.commercePresentation.commerceReasons],
+          }
+        : undefined,
       recommendationScore: item.recommendationScore ? { ...item.recommendationScore, reasons: [...item.recommendationScore.reasons] } : undefined,
     })),
     top10AfterRerank: lastRecommendationDebugSnapshot.top10AfterRerank.map((item) => ({
@@ -446,6 +509,13 @@ export const getLastRecommendationFeedbackSummary = (): RecommendationFeedbackDe
       title: item.title,
       scoreTotal: item.scoreTotal,
       scoreReasons: [...item.scoreReasons],
+      commerceIntelligence: item.commerceIntelligence ? { ...item.commerceIntelligence } : undefined,
+      commercePresentation: item.commercePresentation
+        ? {
+            ...item.commercePresentation,
+            commerceReasons: [...item.commercePresentation.commerceReasons],
+          }
+        : undefined,
       recommendationScore: item.recommendationScore ? { ...item.recommendationScore, reasons: [...item.recommendationScore.reasons] } : undefined,
     })),
   };
@@ -925,7 +995,16 @@ export const galleryService = {
 
     logger.debug("[GALLERY SERVICE] recommendation debug", buildRecommendationLogPayload(lastRecommendationDebugSnapshot));
 
-    const results = dedupeCards(rerankedCards).slice(0, limit).map(toDto);
+    const scoreByCardId = new Map(recommendationResult.scoreBreakdowns.map((entry) => [entry.cardId, entry]));
+    const analyticsHints = await recommendationAnalyticsService.getCommerceOptimizationInsights().catch(() => ({
+      dateKey: null,
+      sparseFamilies: [],
+      weakMatchFamilies: [],
+      lowConversionThemes: [],
+    }));
+    const results = dedupeCards(rerankedCards)
+      .slice(0, limit)
+      .map((card) => decorateDtoWithCommerce(card, scoreByCardId.get(card.id), analyticsHints));
     logger.info("[GALLERY SERVICE] final result count", { count: results.length, query });
 
     return {
