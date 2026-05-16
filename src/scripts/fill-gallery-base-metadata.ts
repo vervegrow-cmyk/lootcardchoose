@@ -165,12 +165,6 @@ const main = async (): Promise<void> => {
     }
 
     try {
-      const metadataContainer = getMetadataContainer(metadata);
-      if (metadataContainer.source !== "filename-fallback") {
-        summary.skipped += 1;
-        continue;
-      }
-
       const audit = auditStructure(metadata);
       if (audit.needsHumanReview) {
         summary.skipped += 1;
@@ -192,7 +186,7 @@ const main = async (): Promise<void> => {
 
       if (!fill.eligible) {
         summary.skipped += 1;
-        issues.push({ file: relativePath, reason: fill.reasons.join("; ") || "not eligible" });
+        issues.push({ file: relativePath, reason: fill.reasons.join("; ") || "non fallback-like metadata" });
         continue;
       }
 
