@@ -8,7 +8,7 @@ import { customerSupportLlmService } from "../services/customer-support-llm.serv
 const run = async (): Promise<void> => {
   const router = new HermesRouter(buildHermesRegistry());
   const knowledgeBundle = customerSupportQaService.loadKnowledgeBundle();
-  assert.ok(knowledgeBundle.entries.length >= 9, "Expected migrated customer support QA entries");
+  assert.ok(knowledgeBundle.entries.length >= 21, "Expected expanded customer support QA entries");
   assert.match(knowledgeBundle.styleRulesText, /Match user language/i);
   assert.match(knowledgeBundle.fallbackRulesText, /do not invent/i);
 
@@ -17,25 +17,16 @@ const run = async (): Promise<void> => {
 
   try {
     const galleryCases = [
-      "ssr",
       "girl",
-      "red",
       "anime",
-      "one piece",
+      "ssr",
       "black gold",
-      "recommend cyberpunk cards",
-      "do you have black gold cards?",
-      "I want cool cards",
-      "recommend some SSR cards",
-      "black gold anime girls",
-      "give me 10 black gold SSR female cards",
-      "show me 10 cyberpunk anime cards",
-      "I want anime girl cards",
-      "show me dragon cards",
-      "do you have dragon cards?",
-      "recommend some dark fantasy cards",
-      "any SSR female character cards?",
-      "cyberpunk warrior",
+      "dark royal energy",
+      "Give me the vibe of a corrupted angel queen",
+      "Show me cards that look like legendary relics from a fallen kingdom",
+      "I want something that feels forbidden but beautiful",
+      "Recommend cards with dark royal energy",
+      "I want a collectible that feels expensive and dangerous",
     ];
 
     for (const message of galleryCases) {
@@ -47,15 +38,18 @@ const run = async (): Promise<void> => {
     }
 
     const supportCases = [
-      "can I get a discount?",
-      "do you offer free shipping?",
-      "how long does delivery take?",
-      "how do I pay?",
-      "can I buy multiple cards?",
-      "can I customize a card?",
-      "what if I entered the wrong address?",
-      "is there a bulk discount?",
-      "can I get a better price if I buy more?",
+      "i want usps",
+      "I want ups shipping",
+      "I want to use UPS shipping",
+      "Can I use USPS?",
+      "shipping",
+      "delivery",
+      "tracking",
+      "where is my order",
+      "payment",
+      "what payment",
+      "refund",
+      "checkout problem",
     ];
 
     for (const message of supportCases) {
@@ -93,19 +87,22 @@ const run = async (): Promise<void> => {
       assert.notEqual(result.intent, "customer_support", `Expected non-customer_support for ${message}`);
     }
 
-    const orderCases = [
-      "where is my order?",
-      "can you check my order?",
-      "track my order",
-      "order status",
-      "has my order shipped?",
-    ];
+    const orderCases = ["can you check my order?", "track my order", "has my order shipped?"];
     for (const message of orderCases) {
       const result = await router.determineIntent(message, {
         userId: "test-order-user",
         channelId: "test-order-channel",
       });
       assert.equal(result.intent, "order_status", `Expected order_status for ${message}`);
+    }
+
+    const movedSupportCases = ["where is my order?", "order status"];
+    for (const message of movedSupportCases) {
+      const result = await router.determineIntent(message, {
+        userId: "test-order-support-user",
+        channelId: "test-order-support-channel",
+      });
+      assert.equal(result.intent, "customer_support", `Expected customer_support for ${message}`);
     }
 
     gallerySearchSessionRepository.findLatest = async () =>

@@ -101,6 +101,126 @@ After you choose the card you want, you can continue through the checkout flow s
 
 ---
 
+## UPS Shipping
+
+Q:
+I want UPS shipping
+
+A:
+Yes, we can help with shipping questions. If you prefer UPS, please tell us before checkout or share your order number after purchase. Available shipping options may depend on checkout and order details.
+
+---
+
+## UPS Carrier Choice
+
+Q:
+Can I use UPS?
+
+A:
+We can help check whether UPS is available for your order. Please tell us before checkout or send your order number after purchase so we can confirm the details.
+
+---
+
+## USPS Shipping
+
+Q:
+Do you ship with USPS?
+
+A:
+We can help check whether USPS is available for your order. Shipping options may depend on checkout and order details.
+
+---
+
+## USPS Preference
+
+Q:
+I want USPS
+
+A:
+No problem. Please tell us before checkout or send your order number after purchase, and we can help confirm whether USPS is available.
+
+---
+
+## Shipping Options
+
+Q:
+What shipping options do you offer?
+
+A:
+Available shipping options can depend on checkout and order details. Tell us your preference and we can help confirm the best available option.
+
+---
+
+## Shipping Carrier
+
+Q:
+Can I choose the shipping carrier?
+
+A:
+You can tell us your preferred carrier and we can help check the available option. Final availability may depend on checkout and order details.
+
+---
+
+## Order Tracking
+
+Q:
+Where is my order?
+
+A:
+Please send your order number and we'll help check the tracking or shipping status.
+
+---
+
+## Package Tracking
+
+Q:
+How can I track my package?
+
+A:
+Please send your order number and we'll help check the tracking details for you.
+
+---
+
+## Payment Methods
+
+Q:
+What payment methods do you accept?
+
+A:
+You can pay through the checkout link after selecting a card. If you have a payment issue, please send your order number or a screenshot and we can help.
+
+---
+
+## Checkout Problem
+
+Q:
+I have a checkout problem
+
+A:
+Please send your order number or a screenshot of the issue. We'll help review the checkout problem and guide you on the next step.
+
+---
+
+## Refund
+
+Q:
+Can I get a refund?
+
+A:
+Please send your order number and a short description of the issue. We'll review the order and help with the next step.
+
+---
+
+## Returns
+
+Q:
+How do returns work?
+
+A:
+Please send your order number and a short description of the issue. We'll review the order and help explain the next step.
+
+---
+
 ## Stock
 
 Q:

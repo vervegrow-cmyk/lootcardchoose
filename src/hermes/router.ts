@@ -54,9 +54,6 @@ const HELP_PATTERNS = [
 ];
 
 const ORDER_PATTERNS: RegExp[] = [
-  /\bmy order\b/i,
-  /\border status\b/i,
-  /\bwhere(?:'s| is)\s+my\s+order\b/i,
   /\btrack(?:ing)?(?:\s+my)?\s+order\b/i,
   /\bcheck(?:ing)?\s+(?:my\s+)?order(?:\s+status)?\b/i,
   /\bhas\s+my\s+order\s+shipped\b/i,
@@ -97,6 +94,24 @@ const GALLERY_STYLE_TERMS = [
 ];
 
 const CUSTOMER_SUPPORT_PATTERNS: RegExp[] = [
+  /\bshipping\b/i,
+  /\bship\b/i,
+  /\bdelivery\b/i,
+  /\busps\b/i,
+  /\bups\b/i,
+  /\bfedex\b/i,
+  /\bcarrier\b/i,
+  /\btracking\b/i,
+  /\bpackage\b/i,
+  /\border status\b/i,
+  /\bwhere(?:'s| is)\s+my\s+order\b/i,
+  /\bpayment\b/i,
+  /\bpay\b/i,
+  /\bcheckout\b/i,
+  /\brefund\b/i,
+  /\breturn\b/i,
+  /\bcancel\b/i,
+  /\baddress\b/i,
   /\bwhen\s+will\s+it\s+ship\b/i,
   /\bhow\s+long\s+does\s+delivery\s+take\b/i,
   /\bcan\s+i\s+get\s+a\s+discount\b/i,
@@ -253,6 +268,16 @@ export class HermesRouter {
         };
       }
 
+      if (confidence.customerSupportConfidence > 0) {
+        path = "rule_customer_support";
+        resolvedIntent = "customer_support";
+        resolvedLanguage = fallbackLanguage;
+        return {
+          intent: resolvedIntent,
+          language: resolvedLanguage,
+        };
+      }
+
       if (confidence.gallerySearchConfidence >= confidence.customerSupportConfidence && confidence.gallerySearchConfidence >= 0.92) {
         path = "rule_gallery_search";
         resolvedIntent = "gallery_search";
@@ -266,16 +291,6 @@ export class HermesRouter {
       if (confidence.orderStatusConfidence >= 0.97) {
         path = "rule_order";
         resolvedIntent = "order_status";
-        resolvedLanguage = fallbackLanguage;
-        return {
-          intent: resolvedIntent,
-          language: resolvedLanguage,
-        };
-      }
-
-      if (confidence.customerSupportConfidence > 0) {
-        path = "rule_customer_support";
-        resolvedIntent = "customer_support";
         resolvedLanguage = fallbackLanguage;
         return {
           intent: resolvedIntent,

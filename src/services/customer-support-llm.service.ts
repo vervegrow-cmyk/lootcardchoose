@@ -14,33 +14,46 @@ type DeepSeekResponse = {
 
 const LLM_TIMEOUT_MS = 7000;
 
-const fallbackText = (language: SupportedLanguage, topic: CustomerSupportTopic): string => {
-  if (language === "zh") {
-    switch (topic) {
-      case "shipping":
-        return "我想尽量给你准确的信息。一般发货和配送时间会以现有客服说明为准；如果你愿意，我也可以继续根据你的具体问题帮你说明。";
-      case "pricing":
-        return "关于价格、折扣或包邮，我不想在信息不完整时随意承诺。你可以告诉我想买的卡牌类型，我会尽量按现有说明帮你判断。";
-      case "payment":
-        return "付款相关我可以继续帮你说明，但为了避免误导，我会只按现有客服信息来回答。";
-      case "product":
-        return "关于库存、定制或多张购买，我不想随意猜测。你可以告诉我你想要的卡牌方向，我会按现有说明帮你判断。";
-      default:
-        return "为了避免给你不准确的信息，我不想在这里随意猜测。你可以联系人工客服进一步确认，我们会更稳妥地帮你核实。";
-    }
+const fallbackText = (language: SupportedLanguage, topic: CustomerSupportTopic, message: string): string => {
+  const normalized = message.trim().toLowerCase();
+
+  if (/\b(ups|usps|fedex|carrier|shipping|ship|delivery)\b/i.test(normalized)) {
+    return "Yes, we can help with shipping questions. If you prefer UPS or USPS, please tell us before checkout or share your order number after purchase. Available shipping options may depend on checkout and order details.";
+  }
+
+  if (/\b(tracking|track|package|where(?:'s| is) my order|order status)\b/i.test(normalized)) {
+    return "Please send your order number and we'll help check the tracking or shipping status.";
+  }
+
+  if (/\b(payment|pay|checkout)\b/i.test(normalized)) {
+    return "You can pay through the checkout link after selecting a card. If you run into a payment issue, please send your order number or a screenshot of the issue.";
+  }
+
+  if (/\b(refund|return|cancel)\b/i.test(normalized)) {
+    return "Please send your order number and a short description of the issue. We'll review the order and help with the next step.";
   }
 
   switch (topic) {
     case "shipping":
-      return "I want to make sure I give you accurate information. Shipping and delivery timing should follow the current support guidance, and I can help explain it more clearly if you share your specific question.";
+      return language === "zh"
+        ? "Please share your shipping question and we will help based on the current support guidance."
+        : "I want to make sure I give you accurate information. Shipping and delivery timing should follow the current support guidance, and I can help explain it more clearly if you share your specific question.";
     case "pricing":
-      return "I do not want to promise anything inaccurate about pricing, discounts, or free shipping. If you tell me what cards you want, I can help based on the current support guidance.";
+      return language === "zh"
+        ? "Please share your pricing question and we will help based on the current support guidance."
+        : "I do not want to promise anything inaccurate about pricing, discounts, or free shipping. If you tell me what cards you want, I can help based on the current support guidance.";
     case "payment":
-      return "I can help explain the payment flow, but I do not want to guess beyond the current support information.";
+      return language === "zh"
+        ? "Please share your payment question and we will help based on the current support guidance."
+        : "I can help explain the payment flow, but I do not want to guess beyond the current support information.";
     case "product":
-      return "I do not want to guess about stock, customization, or multi-card purchase details. If you share what you want to buy, I can help using the current support guidance.";
+      return language === "zh"
+        ? "Please share the product details you need and we will help based on the current support guidance."
+        : "I do not want to guess about stock, customization, or multi-card purchase details. If you share what you want to buy, I can help using the current support guidance.";
     default:
-      return "I want to make sure I give you accurate information, so I do not want to guess here. You can contact human support and we can help confirm the details.";
+      return language === "zh"
+        ? "Please share a bit more detail and we will help based on the current support guidance."
+        : "I want to make sure I give you accurate information, so I do not want to guess here. You can contact human support and we can help confirm the details.";
   }
 };
 
@@ -93,7 +106,7 @@ export const customerSupportLlmService = {
   }): Promise<{ text: string; usedFallback: boolean }> {
     if (input.qaEntries.length === 0) {
       return {
-        text: fallbackText(input.language, input.topic),
+        text: fallbackText(input.language, input.topic, input.message),
         usedFallback: true,
       };
     }
@@ -101,7 +114,7 @@ export const customerSupportLlmService = {
     const env = loadEnv();
     if (!env.deepseekApiKey) {
       return {
-        text: fallbackText(input.language, input.topic),
+        text: fallbackText(input.language, input.topic, input.message),
         usedFallback: true,
       };
     }
@@ -130,7 +143,7 @@ export const customerSupportLlmService = {
           topic: input.topic,
         });
         return {
-          text: fallbackText(input.language, input.topic),
+          text: fallbackText(input.language, input.topic, input.message),
           usedFallback: true,
         };
       }
@@ -139,7 +152,7 @@ export const customerSupportLlmService = {
       const text = payload.choices?.[0]?.message?.content?.trim();
       if (!text) {
         return {
-          text: fallbackText(input.language, input.topic),
+          text: fallbackText(input.language, input.topic, input.message),
           usedFallback: true,
         };
       }
@@ -155,7 +168,7 @@ export const customerSupportLlmService = {
         message: error instanceof Error ? error.message : String(error),
       });
       return {
-        text: fallbackText(input.language, input.topic),
+        text: fallbackText(input.language, input.topic, input.message),
         usedFallback: true,
       };
     } finally {

@@ -15,13 +15,25 @@ const FALLBACK_RULES_HEADING = "# Fallback Rules";
 
 const mapTitleToTopic = (title: string): CustomerSupportTopic => {
   const normalized = title.trim().toLowerCase();
-  if (normalized.includes("shipping") || normalized.includes("delivery") || normalized.includes("address")) {
+  if (
+    normalized.includes("shipping") ||
+    normalized.includes("delivery") ||
+    normalized.includes("address") ||
+    normalized.includes("tracking") ||
+    normalized.includes("carrier") ||
+    normalized.includes("order")
+  ) {
     return "shipping";
   }
   if (normalized.includes("pricing") || normalized.includes("discount") || normalized.includes("free shipping")) {
     return "pricing";
   }
-  if (normalized.includes("payment")) {
+  if (
+    normalized.includes("payment") ||
+    normalized.includes("checkout") ||
+    normalized.includes("refund") ||
+    normalized.includes("return")
+  ) {
     return "payment";
   }
   if (normalized.includes("product") || normalized.includes("stock") || normalized.includes("custom")) {

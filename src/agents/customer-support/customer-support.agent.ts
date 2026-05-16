@@ -11,27 +11,22 @@ const inferSupportTopic = (message: string): CustomerSupportTopic => {
   const normalized = message.trim().toLowerCase();
 
   if (
-    /\b(ship|shipping|delivery|deliver|wrong address|address)\b/i.test(normalized) ||
-    /发货|物流|地址/.test(message)
+    /\b(ship|shipping|delivery|deliver|carrier|ups|usps|fedex|tracking|track|package|order status|where(?:'s| is) my order|wrong address|address)\b/i.test(
+      normalized
+    )
   ) {
     return "shipping";
   }
 
-  if (
-    /\b(discount|free shipping|bulk discount|better price|buy more|price)\b/i.test(normalized) ||
-    /折扣|包邮|优惠|价格/.test(message)
-  ) {
+  if (/\b(discount|free shipping|bulk discount|better price|buy more|price)\b/i.test(normalized)) {
     return "pricing";
   }
 
-  if (/\b(pay|payment|checkout)\b/i.test(normalized) || /付款|支付|结账/.test(message)) {
+  if (/\b(pay|payment|checkout|refund|return|cancel)\b/i.test(normalized)) {
     return "payment";
   }
 
-  if (
-    /\b(stock|multiple cards|customize|custom|item)\b/i.test(normalized) ||
-    /库存|多张|定制/.test(message)
-  ) {
+  if (/\b(stock|multiple cards|customize|custom|item)\b/i.test(normalized)) {
     return "product";
   }
 
