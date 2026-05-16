@@ -29,6 +29,14 @@ export type ParsedGalleryQuery = {
   language: SupportedLanguage;
   keywords: string[];
   tags: string[];
+  visualStyle: string[];
+  moodTags: string[];
+  toneTags: string[];
+  characterTypes: string[];
+  archetypeTags: string[];
+  settingTags: string[];
+  genreTags: string[];
+  colorHints: string[];
   style: string;
   rarity: string;
   category: string;

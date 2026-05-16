@@ -86,6 +86,14 @@ const defaultParsedQuery = (language: SupportedLanguage): ParsedGalleryQuery => 
   language,
   keywords: [],
   tags: [],
+  visualStyle: [],
+  moodTags: [],
+  toneTags: [],
+  characterTypes: [],
+  archetypeTags: [],
+  settingTags: [],
+  genreTags: [],
+  colorHints: [],
   style: "",
   rarity: "",
   category: "",
@@ -95,6 +103,17 @@ const defaultParsedQuery = (language: SupportedLanguage): ParsedGalleryQuery => 
   scene: "",
   limit: 10,
   intelligenceQuery: EMPTY_INTELLIGENCE_QUERY(),
+});
+
+const buildFlattenedIntelligenceFields = (intelligenceQuery: IntelligenceQuery) => ({
+  visualStyle: [...intelligenceQuery.visualStyle],
+  moodTags: [...intelligenceQuery.moodTags],
+  toneTags: [...intelligenceQuery.toneTags],
+  characterTypes: [...intelligenceQuery.characterTypes],
+  archetypeTags: [...intelligenceQuery.archetypeTags],
+  settingTags: [...intelligenceQuery.settingTags],
+  genreTags: [...intelligenceQuery.genreTags],
+  colorHints: [...intelligenceQuery.colorHints],
 });
 
 const detectLanguage = (message: string): SupportedLanguage => detectPreferredLanguage(message);
@@ -230,7 +249,7 @@ const normalizeSearchTerm = (value: string): string => {
   if (/(queen|女王)/i.test(normalized)) return "queen";
   if (/(goddess|女神)/i.test(normalized)) return "goddess";
   if (/(warrior|战士)/i.test(normalized)) return "warrior";
-  if (/(priestess|祭司|神官)/i.test(normalized)) return "priestess";
+  if (/(priestess|saintess|saint girl|圣女|祭司|神官)/i.test(normalized)) return "priestess";
   if (/(angel|天使)/i.test(normalized)) return "angel";
   if (/(villain|反派)/i.test(normalized)) return "villain";
   if (/(dragon[\s_-]*lord|龙王|龙主)/i.test(normalized)) return "dragon lord";
@@ -300,7 +319,7 @@ const normalizeCharacterType = (value: string): string => {
   if (/(queen|女王)/i.test(normalized)) return "queen";
   if (/(goddess|女神)/i.test(normalized)) return "goddess";
   if (/(warrior|战士)/i.test(normalized)) return "warrior";
-  if (/(priestess|祭司|神官)/i.test(normalized)) return "priestess";
+  if (/(priestess|saintess|saint girl|圣女|祭司|神官)/i.test(normalized)) return "priestess";
   if (/(angel|天使)/i.test(normalized)) return "angel";
   if (/(dragon[\s_-]*lord|龙王|龙主)/i.test(normalized)) return "dragon lord";
   return normalizeSearchTerm(value);
@@ -311,7 +330,7 @@ const normalizeArchetype = (value: string): string => {
   if (/(queen|女王)/i.test(normalized)) return "queen";
   if (/(goddess|女神)/i.test(normalized)) return "goddess";
   if (/(warrior|战士)/i.test(normalized)) return "warrior";
-  if (/(priestess|祭司|神官)/i.test(normalized)) return "priestess";
+  if (/(priestess|saintess|saint girl|圣女|祭司|神官)/i.test(normalized)) return "priestess";
   if (/(angel|天使)/i.test(normalized)) return "angel";
   if (/(villain|反派)/i.test(normalized)) return "villain";
   if (/(dragon[\s_-]*lord|龙王|龙主)/i.test(normalized)) return "dragon lord";
@@ -669,6 +688,7 @@ const applyMinimalHybrid = (
     language: partial.language === "zh" || partial.language === "en" ? partial.language : language,
     keywords,
     tags,
+    ...buildFlattenedIntelligenceFields(intelligenceQuery),
     style,
     rarity,
     category,
@@ -779,7 +799,7 @@ const buildRuleBasedIntelligenceQuery = (
   if (containsAny(userMessage, [/(dragon[\s_-]*lord|龙王|龙主)/i])) {
     query = addSignal(query, { archetypeTags: "dragon lord", characterIntent: "dragon_lord" });
   }
-  if (containsAny(userMessage, [/(priestess|祭司|神官)/i])) {
+  if (containsAny(userMessage, [/(priestess|saintess|saint girl|圣女|祭司|神官)/i])) {
     query = addSignal(query, { characterTypes: "priestess", archetypeTags: "priestess", characterIntent: "priestess" });
   }
   if (containsAny(userMessage, [/(angel|天使)/i])) {

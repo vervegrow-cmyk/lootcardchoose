@@ -1,22 +1,37 @@
 import type { GalleryCardRecord } from "../repositories/gallery.repository";
 import type { IntelligenceGalleryQuery, ParsedGalleryQuery } from "../services/llm-query-parser.service";
 
+export type RecommendationScore = {
+  visualMatch: number;
+  moodMatch: number;
+  characterMatch: number;
+  archetypeMatch: number;
+  settingMatch: number;
+  genreMatch: number;
+  commerceMatch: number;
+  diversityPenalty: number;
+  finalScore: number;
+  reasons: string[];
+};
+
 export type RecommendationScoreBreakdown = {
-  color: number;
-  rarity: number;
-  character: number;
-  visualStyle: number;
-  setting: number;
-  mood: number;
-  keyword: number;
-  safetyPenalty: number;
+  visualMatch: number;
+  moodEmotionalMatch: number;
+  characterMatch: number;
+  worldbuildingMatch: number;
+  commerceMatch: number;
+  keywordFallback: number;
+  availableWeight: number;
+  matchedWeight: number;
   total: number;
 };
 
 export type RecommendationDebugEntry = {
   cardId: string;
   title: string;
+  hasUsableIntelligence: boolean;
   breakdown: RecommendationScoreBreakdown;
+  recommendationScore: RecommendationScore;
 };
 
 export type RecommendationInput = {
@@ -28,5 +43,6 @@ export type RecommendationInput = {
 export type RecommendationResult = {
   cards: GalleryCardRecord[];
   usedFallback: boolean;
+  rerankHappened: boolean;
   scoreBreakdowns: RecommendationDebugEntry[];
 };

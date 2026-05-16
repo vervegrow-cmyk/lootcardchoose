@@ -15,6 +15,7 @@ import { t } from "../utils/i18n";
 import { logger } from "../utils/logger";
 import { recommendationFeedbackService } from "./recommendation-feedback.service";
 import type { RecommendationDebugEntry } from "../types/gallery-recommendation.types";
+import type { RecommendationScore } from "../types/gallery-recommendation.types";
 import type { RecommendationFeedbackDebugSummary } from "../types/recommendation-feedback.types";
 import { cardPricingService, CardPricingInput } from "./card-pricing.service";
 import { galleryRecommendationService } from "./gallery-recommendation.service";
@@ -72,6 +73,7 @@ export type RecommendationDebugCardSummary = {
   title: string;
   scoreTotal: number;
   scoreReasons: string[];
+  recommendationScore?: RecommendationScore;
 };
 
 export type RecommendationDebugSnapshot = {
@@ -92,6 +94,7 @@ export type RecommendationDebugSnapshot = {
   intelligenceQuery: ParsedGalleryQuery["intelligenceQuery"];
   candidateCount: number;
   usedFallback: boolean;
+  rerankHappened: boolean;
   top10BeforeRerank: RecommendationDebugCardSummary[];
   top10AfterRerank: RecommendationDebugCardSummary[];
   scoreBreakdowns: RecommendationDebugCardSummary[];
@@ -103,6 +106,7 @@ type RecommendationDebugLogPayload = {
   intelligenceQuery: Partial<ParsedGalleryQuery["intelligenceQuery"]> | undefined;
   candidateCount: number;
   usedFallback: boolean;
+  rerankHappened: boolean;
   top10BeforeRerank: RecommendationDebugCardSummary[];
   top10AfterRerank: RecommendationDebugCardSummary[];
   scoreBreakdowns: RecommendationDebugCardSummary[];
@@ -259,16 +263,17 @@ const dedupeCards = (cards: GalleryCardRecord[]): GalleryCardRecord[] => {
 };
 
 const compactScoreReasons = (entry: RecommendationDebugEntry): string[] => {
+  if (entry.recommendationScore.reasons.length > 0) {
+    return [...entry.recommendationScore.reasons];
+  }
+
   const { breakdown } = entry;
   const reasons: string[] = [];
-  if (breakdown.color) reasons.push(`color:+${breakdown.color}`);
-  if (breakdown.rarity) reasons.push(`rarity:+${breakdown.rarity}`);
-  if (breakdown.character) reasons.push(`character:+${breakdown.character}`);
-  if (breakdown.visualStyle) reasons.push(`visualStyle:+${breakdown.visualStyle}`);
-  if (breakdown.setting) reasons.push(`setting:+${breakdown.setting}`);
-  if (breakdown.mood) reasons.push(`mood:+${breakdown.mood}`);
-  if (breakdown.keyword) reasons.push(`keyword:+${breakdown.keyword}`);
-  if (breakdown.safetyPenalty) reasons.push(`safetyPenalty:${breakdown.safetyPenalty}`);
+  if (breakdown.visualMatch) reasons.push(`visual:+${breakdown.visualMatch}`);
+  if (breakdown.moodEmotionalMatch) reasons.push(`mood:+${breakdown.moodEmotionalMatch}`);
+  if (breakdown.characterMatch) reasons.push(`character:+${breakdown.characterMatch}`);
+  if (breakdown.worldbuildingMatch) reasons.push(`world:+${breakdown.worldbuildingMatch}`);
+  if (breakdown.commerceMatch) reasons.push(`commerce:+${breakdown.commerceMatch}`);
   return reasons;
 };
 
@@ -279,7 +284,8 @@ const buildRecommendationDebugCardSummary = (
   id: card.id,
   title: card.title,
   scoreTotal: scoreBreakdown?.breakdown.total ?? 0,
-  scoreReasons: scoreBreakdown ? compactScoreReasons(scoreBreakdown) : [],
+  scoreReasons: scoreBreakdown ? compactScoreReasons(scoreBreakdown) : ["legacy-order"],
+  recommendationScore: scoreBreakdown?.recommendationScore,
 });
 
 const buildRecommendationDebugSnapshot = (input: {
@@ -290,6 +296,7 @@ const buildRecommendationDebugSnapshot = (input: {
   rerankedCards: GalleryCardRecord[];
   scoreBreakdowns: RecommendationDebugEntry[];
   usedFallback: boolean;
+  rerankHappened: boolean;
 }): RecommendationDebugSnapshot => {
   const scoreByCardId = new Map(input.scoreBreakdowns.map((entry) => [entry.cardId, entry]));
 
@@ -311,6 +318,7 @@ const buildRecommendationDebugSnapshot = (input: {
     intelligenceQuery: input.parsedQuery.intelligenceQuery,
     candidateCount: input.candidateCards.length,
     usedFallback: input.usedFallback,
+    rerankHappened: input.rerankHappened,
     top10BeforeRerank: input.resultsSource.slice(0, RECOMMENDATION_DEBUG_LIMIT).map((card) =>
       buildRecommendationDebugCardSummary(card, scoreByCardId.get(card.id))
     ),
@@ -350,6 +358,7 @@ const buildRecommendationLogPayload = (
     intelligenceQuery: compactIntelligenceQuery,
     candidateCount: snapshot.candidateCount,
     usedFallback: snapshot.usedFallback,
+    rerankHappened: snapshot.rerankHappened,
     top10BeforeRerank: snapshot.top10BeforeRerank.slice(0, RECOMMENDATION_DEBUG_LIMIT),
     top10AfterRerank: snapshot.top10AfterRerank.slice(0, RECOMMENDATION_DEBUG_LIMIT),
     scoreBreakdowns: snapshot.scoreBreakdowns.slice(0, RECOMMENDATION_DEBUG_LIMIT),
@@ -375,6 +384,13 @@ export const getLastRecommendationFeedbackSummary = (): RecommendationFeedbackDe
     colorHints: [],
     rarityHints: [],
     commerceIntent: [],
+    visualIntent: [],
+    emotionalIntent: [],
+    characterIntent: [],
+    worldbuildingIntent: [],
+    confidence: 0,
+    language: "unknown" as const,
+    reason: "",
     safetyIntent: "unknown" as const,
   };
 
@@ -404,12 +420,14 @@ export const getLastRecommendationFeedbackSummary = (): RecommendationFeedbackDe
       title: item.title,
       scoreTotal: item.scoreTotal,
       scoreReasons: [...item.scoreReasons],
+      recommendationScore: item.recommendationScore ? { ...item.recommendationScore, reasons: [...item.recommendationScore.reasons] } : undefined,
     })),
     top10AfterRerank: lastRecommendationDebugSnapshot.top10AfterRerank.map((item) => ({
       id: item.id,
       title: item.title,
       scoreTotal: item.scoreTotal,
       scoreReasons: [...item.scoreReasons],
+      recommendationScore: item.recommendationScore ? { ...item.recommendationScore, reasons: [...item.recommendationScore.reasons] } : undefined,
     })),
   };
 };
@@ -418,6 +436,14 @@ const buildFallbackParsedQuery = (query: string, language: SupportedLanguage): P
   language,
   keywords: normalizeGalleryKeywordsToEnglish([query]),
   tags: [],
+  visualStyle: [],
+  moodTags: [],
+  toneTags: [],
+  characterTypes: [],
+  archetypeTags: [],
+  settingTags: [],
+  genreTags: [],
+  colorHints: [],
   style: "",
   rarity: "",
   category: "",
@@ -868,6 +894,7 @@ export const galleryService = {
       rerankedCards,
       scoreBreakdowns: recommendationResult.scoreBreakdowns,
       usedFallback: recommendationResult.usedFallback,
+      rerankHappened: recommendationResult.rerankHappened,
     });
 
     recommendationFeedbackService.captureLatestSearchSnapshot({
