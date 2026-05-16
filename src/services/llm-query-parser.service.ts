@@ -12,6 +12,23 @@ import { logger } from "../utils/logger";
 export type { IntelligenceQuery, IntelligenceQueryLanguage, ParsedGalleryQuery, QuerySafetyIntent };
 export type IntelligenceGalleryQuery = IntelligenceQuery;
 
+export type QueryParserOutcome =
+  | "llm_success"
+  | "timeout_fallback"
+  | "json_parse_fallback"
+  | "missing_api_key_fallback"
+  | "network_fallback"
+  | "non_200_fallback"
+  | "disabled"
+  | "unknown";
+
+export type QueryParserTelemetry = {
+  parserOutcome: QueryParserOutcome;
+  parserTimedOut: boolean;
+  parserUsedFallback: boolean;
+  parserFallbackReason: string | null;
+};
+
 export const QUERY_PARSER_TIMEOUT_MS = 6000;
 
 type DeepSeekMessage = {
@@ -25,9 +42,61 @@ type DeepSeekResponse = {
 
 type PartialIntelligenceQuery = Partial<IntelligenceQuery>;
 
+type ArchetypeSynonymDefinition = {
+  aliases: string[];
+  characterTypes?: string[];
+  archetypeTags?: string[];
+  moodTags?: string[];
+  toneTags?: string[];
+  visualStyle?: string[];
+  characterIntent?: string[];
+  emotionalIntent?: string[];
+};
+
 const QUERY_PARSER_TIMEOUT_ERROR = "LLM_QUERY_PARSER_TIMEOUT";
 const SEARCHABLE_MOOD_VALUES = new Set(["dark", "cute", "elegant", "battle", "magic", "futuristic"]);
 const ABSTRACT_KEYWORDS = new Set(["boss_like", "oppressive", "divine", "mysterious"]);
+const ARCHETYPE_SYNONYM_MAP: Record<string, ArchetypeSynonymDefinition> = {
+  empress: {
+    aliases: ["empress"],
+    archetypeTags: ["empress", "queen"],
+    characterIntent: ["queen", "ruler"],
+    emotionalIntent: ["boss_like"],
+  },
+  goddess: {
+    aliases: ["goddess"],
+    archetypeTags: ["goddess"],
+    characterTypes: ["divine_female", "holy_female"],
+    visualStyle: ["divine"],
+    moodTags: ["divine"],
+    emotionalIntent: ["divine"],
+    characterIntent: ["goddess"],
+  },
+  paladin: {
+    aliases: ["paladin"],
+    characterTypes: ["paladin", "warrior"],
+    archetypeTags: ["holy_warrior", "warrior"],
+    visualStyle: ["divine"],
+    moodTags: ["divine"],
+    emotionalIntent: ["divine"],
+    characterIntent: ["warrior"],
+  },
+  commander: {
+    aliases: ["commander"],
+    characterTypes: ["commander", "warrior"],
+    archetypeTags: ["leader", "ruler"],
+    characterIntent: ["leader", "warrior", "ruler"],
+  },
+  priestess: {
+    aliases: ["priestess", "saintess", "saint girl", "saint maiden"],
+    characterTypes: ["priestess", "holy_female"],
+    archetypeTags: ["priestess"],
+    visualStyle: ["divine"],
+    moodTags: ["divine"],
+    emotionalIntent: ["divine"],
+    characterIntent: ["priestess"],
+  },
+} as const;
 const KEYWORD_BLACKLIST = new Set([
   "card",
   "cards",
@@ -183,6 +252,21 @@ const uniqueStrings = (values: string[]): string[] => {
 
 const addUnique = (values: string[], next: string): string[] => uniqueStrings([...values, next].filter(Boolean));
 
+const lookupArchetypeSynonym = (value: string): ArchetypeSynonymDefinition | null => {
+  const normalized = normalizeLower(value);
+
+  for (const definition of Object.values(ARCHETYPE_SYNONYM_MAP)) {
+    if (definition.aliases.some((alias) => normalizeLower(alias) === normalized)) {
+      return definition;
+    }
+  }
+
+  return null;
+};
+
+const appendUnique = (target: string[], values: string[] | undefined): string[] =>
+  values && values.length > 0 ? uniqueStrings([...target, ...values]) : target;
+
 const containsAny = (message: string, patterns: RegExp[]): boolean => patterns.some((pattern) => pattern.test(message));
 
 const isQuantifierKeyword = (value: string): boolean => {
@@ -337,6 +421,26 @@ const normalizeArchetype = (value: string): string => {
   return normalizeSearchTerm(value);
 };
 
+const normalizeCharacterTypeWithSynonyms = (value: string): string[] => {
+  const synonym = lookupArchetypeSynonym(value);
+  if (synonym?.characterTypes?.length) {
+    return synonym.characterTypes;
+  }
+
+  const normalized = normalizeCharacterType(value);
+  return normalized ? [normalized] : [];
+};
+
+const normalizeArchetypeWithSynonyms = (value: string): string[] => {
+  const synonym = lookupArchetypeSynonym(value);
+  if (synonym?.archetypeTags?.length) {
+    return synonym.archetypeTags;
+  }
+
+  const normalized = normalizeArchetype(value);
+  return normalized ? [normalized] : [];
+};
+
 const normalizeSetting = (value: string): string => {
   const normalized = normalizeLower(value);
   if (/(cathedral|大教堂)/i.test(normalized)) return "cathedral";
@@ -481,8 +585,21 @@ const inferCharacterIntent = (query: IntelligenceQuery): string[] => {
     result = addUnique(result, "queen");
     result = addUnique(result, "ruler");
   }
+  if (query.archetypeTags.includes("empress")) {
+    result = addUnique(result, "queen");
+    result = addUnique(result, "ruler");
+    result = addUnique(result, "boss_like");
+  }
   if (query.archetypeTags.includes("goddess")) result = addUnique(result, "goddess");
   if (query.characterTypes.includes("warrior") || query.archetypeTags.includes("warrior")) result = addUnique(result, "warrior");
+  if (query.characterTypes.includes("commander") || query.archetypeTags.includes("leader")) {
+    result = addUnique(result, "leader");
+    result = addUnique(result, "ruler");
+  }
+  if (query.characterTypes.includes("paladin") || query.archetypeTags.includes("holy_warrior")) {
+    result = addUnique(result, "warrior");
+    result = addUnique(result, "divine");
+  }
   if (query.characterTypes.includes("mecha girl")) result = addUnique(result, "mecha_girl");
   if (query.characterTypes.includes("female character") && query.visualStyle.includes("anime")) result = addUnique(result, "anime_girl");
   if (query.archetypeTags.includes("dragon lord")) result = addUnique(result, "dragon_lord");
@@ -511,6 +628,32 @@ const inferWorldbuildingIntent = (query: IntelligenceQuery): string[] => {
   if (query.settingTags.includes("arena") || query.genreTags.includes("battle")) result = addUnique(result, "battle_arena");
   if (query.settingTags.includes("empire")) result = addUnique(result, "void_empire");
   return result;
+};
+
+const applyArchetypeSynonymSignals = (query: IntelligenceQuery): IntelligenceQuery => {
+  const next = { ...query };
+  const synonymKeys = uniqueStrings([...query.characterTypes, ...query.archetypeTags, ...query.characterIntent]);
+
+  for (const key of synonymKeys) {
+    const synonym = lookupArchetypeSynonym(key);
+    if (!synonym) {
+      continue;
+    }
+
+    next.characterTypes = appendUnique(next.characterTypes, synonym.characterTypes);
+    next.archetypeTags = appendUnique(next.archetypeTags, synonym.archetypeTags);
+    next.moodTags = appendUnique(next.moodTags, synonym.moodTags);
+    next.toneTags = appendUnique(next.toneTags, synonym.toneTags);
+    next.visualStyle = appendUnique(next.visualStyle, synonym.visualStyle);
+    next.characterIntent = appendUnique(next.characterIntent, synonym.characterIntent);
+    next.emotionalIntent = appendUnique(next.emotionalIntent, synonym.emotionalIntent);
+  }
+
+  if (next.archetypeTags.includes("empress") && !next.archetypeTags.includes("queen")) {
+    next.archetypeTags = appendUnique(next.archetypeTags, ["queen"]);
+  }
+
+  return next;
 };
 
 const inferConfidence = (query: IntelligenceQuery): number => {
@@ -564,8 +707,8 @@ const finalizeIntelligenceQuery = (
     visualStyle: normalizeMappedArray(partial?.visualStyle, normalizeVisualStyle),
     moodTags: normalizeMappedArray(partial?.moodTags, normalizeMoodTag),
     toneTags: normalizeMappedArray(partial?.toneTags, normalizeToneTag),
-    characterTypes: normalizeMappedArray(partial?.characterTypes, normalizeCharacterType),
-    archetypeTags: normalizeMappedArray(partial?.archetypeTags, normalizeArchetype),
+    characterTypes: normalizeMappedArray(partial?.characterTypes, normalizeCharacterTypeWithSynonyms),
+    archetypeTags: normalizeMappedArray(partial?.archetypeTags, normalizeArchetypeWithSynonyms),
     settingTags: normalizeMappedArray(partial?.settingTags, normalizeSetting),
     genreTags: normalizeMappedArray(partial?.genreTags, normalizeGenreTag),
     colorHints: normalizeMappedArray(partial?.colorHints, normalizeColorHint),
@@ -581,28 +724,30 @@ const finalizeIntelligenceQuery = (
     reason: typeof partial?.reason === "string" ? normalizeText(partial.reason) : "",
   };
 
-  base.visualIntent = inferVisualIntent(base);
-  base.emotionalIntent = inferEmotionalIntent(base);
-  base.characterIntent = inferCharacterIntent(base);
-  base.worldbuildingIntent = inferWorldbuildingIntent(base);
-  base.language = language;
-  base.confidence = base.confidence > 0 ? base.confidence : inferConfidence(base);
-  base.reason = base.reason || buildReason(base);
+  const enriched = applyArchetypeSynonymSignals(base);
 
-  if (base.safetyIntent === "unknown") {
+  enriched.visualIntent = inferVisualIntent(enriched);
+  enriched.emotionalIntent = inferEmotionalIntent(enriched);
+  enriched.characterIntent = inferCharacterIntent(enriched);
+  enriched.worldbuildingIntent = inferWorldbuildingIntent(enriched);
+  enriched.language = language;
+  enriched.confidence = enriched.confidence > 0 ? enriched.confidence : inferConfidence(enriched);
+  enriched.reason = enriched.reason || buildReason(enriched);
+
+  if (enriched.safetyIntent === "unknown") {
     if (/(adult|nsfw|hentai|erotic|lingerie|bikini|sexy)/i.test(userMessage)) {
-      base.safetyIntent = "adult";
+      enriched.safetyIntent = "adult";
     } else if (
-      base.emotionalIntent.length > 0 ||
-      base.visualIntent.length > 0 ||
-      base.characterIntent.length > 0 ||
-      base.worldbuildingIntent.length > 0
+      enriched.emotionalIntent.length > 0 ||
+      enriched.visualIntent.length > 0 ||
+      enriched.characterIntent.length > 0 ||
+      enriched.worldbuildingIntent.length > 0
     ) {
-      base.safetyIntent = "neutral";
+      enriched.safetyIntent = "neutral";
     }
   }
 
-  return base;
+  return enriched;
 };
 
 const mergeIntelligenceQuery = (primary: IntelligenceQuery, fallback: IntelligenceQuery): IntelligenceQuery =>
@@ -752,6 +897,23 @@ const addSignal = (
   }
 
   return next;
+};
+
+const applyArchetypeRuleSignals = (query: IntelligenceQuery, key: string): IntelligenceQuery => {
+  const synonym = lookupArchetypeSynonym(key);
+  if (!synonym) {
+    return query;
+  }
+
+  return addSignal(query, {
+    characterTypes: synonym.characterTypes,
+    archetypeTags: synonym.archetypeTags,
+    moodTags: synonym.moodTags,
+    toneTags: synonym.toneTags,
+    visualStyle: synonym.visualStyle,
+    characterIntent: synonym.characterIntent,
+    emotionalIntent: synonym.emotionalIntent,
+  });
 };
 
 const buildRuleBasedIntelligenceQuery = (
@@ -908,6 +1070,14 @@ const buildRuleBasedIntelligenceQuery = (
     query = addSignal(query, { visualStyle: "sci-fi", genreTags: "sci-fi", visualIntent: "sci-fi" });
   }
 
+  const normalizedMessage = normalizeLower(userMessage);
+  for (const [key, definition] of Object.entries(ARCHETYPE_SYNONYM_MAP)) {
+    if (!definition.aliases.some((alias) => normalizedMessage.includes(normalizeLower(alias)))) {
+      continue;
+    }
+    query = applyArchetypeRuleSignals(query, key);
+  }
+
   return finalizeIntelligenceQuery(query, userMessage, language);
 };
 
@@ -942,6 +1112,19 @@ const logFallback = (
   language: SupportedLanguage,
   reason: "timeout" | "non_200" | "json_parse_failed" | "network_error" | "missing_api_key"
 ): ParsedGalleryQuery => {
+  const outcomeMap: Record<typeof reason, QueryParserOutcome> = {
+    timeout: "timeout_fallback",
+    non_200: "non_200_fallback",
+    json_parse_failed: "json_parse_fallback",
+    network_error: "network_fallback",
+    missing_api_key: "missing_api_key_fallback",
+  };
+  setLastQueryParserTelemetry({
+    parserOutcome: outcomeMap[reason],
+    parserTimedOut: reason === "timeout",
+    parserUsedFallback: true,
+    parserFallbackReason: reason,
+  });
   const fallback = fallbackParsedQuery(query, language);
   logger.warn("[LLM QUERY PARSER] fallback", {
     query,
@@ -964,6 +1147,12 @@ export const parseGalleryQuery = async (
   logger.info("[LLM QUERY PARSER] enabled", { enabled });
 
   if (!enabled) {
+    setLastQueryParserTelemetry({
+      parserOutcome: "disabled",
+      parserTimedOut: false,
+      parserUsedFallback: false,
+      parserFallbackReason: "disabled",
+    });
     return null;
   }
 
@@ -1019,6 +1208,12 @@ export const parseGalleryQuery = async (
     ]);
 
     if (!response.ok) {
+      setLastQueryParserTelemetry({
+        parserOutcome: "non_200_fallback",
+        parserTimedOut: false,
+        parserUsedFallback: true,
+        parserFallbackReason: "non_200",
+      });
       const fallback = fallbackParsedQuery(userMessage, resolvedLanguage);
       logger.warn("[LLM QUERY PARSER] fallback", {
         query: userMessage,
@@ -1035,10 +1230,22 @@ export const parseGalleryQuery = async (
       return logFallback(userMessage, resolvedLanguage, "json_parse_failed");
     }
 
+    setLastQueryParserTelemetry({
+      parserOutcome: "llm_success",
+      parserTimedOut: false,
+      parserUsedFallback: false,
+      parserFallbackReason: null,
+    });
     logger.info("[LLM QUERY PARSER] parsed", parsed);
     return parsed;
   } catch (error) {
     if ((error instanceof Error && error.message === QUERY_PARSER_TIMEOUT_ERROR) || isAbortError(error)) {
+      setLastQueryParserTelemetry({
+        parserOutcome: "timeout_fallback",
+        parserTimedOut: true,
+        parserUsedFallback: true,
+        parserFallbackReason: "timeout",
+      });
       const fallback = fallbackParsedQuery(userMessage, resolvedLanguage);
       logger.warn("[LLM QUERY PARSER] timeout", {
         query: userMessage,
@@ -1048,6 +1255,12 @@ export const parseGalleryQuery = async (
       return fallback;
     }
 
+    setLastQueryParserTelemetry({
+      parserOutcome: "network_fallback",
+      parserTimedOut: false,
+      parserUsedFallback: true,
+      parserFallbackReason: "network_error",
+    });
     const fallback = fallbackParsedQuery(userMessage, resolvedLanguage);
     logger.warn("[LLM QUERY PARSER] fallback", {
       query: userMessage,
@@ -1062,3 +1275,15 @@ export const parseGalleryQuery = async (
     }
   }
 };
+let lastQueryParserTelemetry: QueryParserTelemetry = {
+  parserOutcome: "unknown",
+  parserTimedOut: false,
+  parserUsedFallback: false,
+  parserFallbackReason: null,
+};
+
+const setLastQueryParserTelemetry = (telemetry: QueryParserTelemetry): void => {
+  lastQueryParserTelemetry = telemetry;
+};
+
+export const getLastQueryParserTelemetry = (): QueryParserTelemetry => ({ ...lastQueryParserTelemetry });

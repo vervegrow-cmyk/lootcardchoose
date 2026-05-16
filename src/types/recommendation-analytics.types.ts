@@ -6,7 +6,15 @@ export type RecommendationAnalyticsDimensionKey =
   | "character"
   | "color"
   | "title"
-  | "priceTier";
+  | "priceTier"
+  | "visualStyle"
+  | "moodTags"
+  | "toneTags"
+  | "characterTypes"
+  | "archetypeTags"
+  | "settingTags"
+  | "genreTags"
+  | "colorHints";
 
 export type RecommendationAnalyticsSource = {
   file: string;
@@ -77,6 +85,83 @@ export type RecommendationAnalyticsSummary = {
   invalidLineCount: number;
 };
 
+export type RecommendationAnalyticsRateMetric = {
+  numerator: number;
+  denominator: number;
+  rate: number | null;
+  insufficientData: boolean;
+};
+
+export type RecommendationAnalyticsSelectionMetrics = {
+  totalSelections: number;
+  rankedSelections: number;
+  top1SelectionRate: RecommendationAnalyticsRateMetric;
+  top3SelectionRate: RecommendationAnalyticsRateMetric;
+  top5SelectionRate: RecommendationAnalyticsRateMetric;
+};
+
+export type RecommendationAnalyticsConversionMetrics = {
+  searchCount: number;
+  selectionCount: number;
+  checkoutCreatedCount: number;
+  paidCount: number;
+  searchToSelect: RecommendationAnalyticsRateMetric;
+  selectToCheckout: RecommendationAnalyticsRateMetric;
+  checkoutToPaid: RecommendationAnalyticsRateMetric;
+};
+
+export type RecommendationAnalyticsWeakMatchItem = {
+  bucketType: "query" | "archetype";
+  bucket: string;
+  searchCount: number;
+  selectionCount: number;
+  checkoutCount: number;
+  paidCount: number;
+  top1MissCount: number;
+  top3MissCount: number;
+  observation: string;
+};
+
+export type RecommendationAnalyticsFieldCoverage = {
+  field: string;
+  totalActiveCards: number;
+  cardsWithAnyIntelligence: number;
+  cardsWithField: number;
+  coverageRate: number | null;
+  insufficientData: boolean;
+};
+
+export type RecommendationAnalyticsSparseFamily = {
+  family: string;
+  cardsMatched: number;
+  totalActiveCards: number;
+  coverageRate: number | null;
+  insufficientData: boolean;
+};
+
+export type RecommendationAnalyticsMetadataCoverage = {
+  totalActiveCards: number;
+  cardsWithAnyIntelligence: number;
+  fieldCoverage: RecommendationAnalyticsFieldCoverage[];
+  sparseFamilies: RecommendationAnalyticsSparseFamily[];
+};
+
+export type RecommendationAnalyticsOutcomeCount = {
+  outcome: string;
+  count: number;
+};
+
+export type RecommendationAnalyticsParserStability = {
+  searchEvents: number;
+  telemetryKnownEvents: number;
+  unknownTelemetryEvents: number;
+  timeoutRatio: RecommendationAnalyticsRateMetric;
+  fallbackRatio: RecommendationAnalyticsRateMetric;
+  rerankEffectivenessRatio: RecommendationAnalyticsRateMetric;
+  outcomeBreakdown: RecommendationAnalyticsOutcomeCount[];
+  fallbackReasonBreakdown: RecommendationAnalyticsOutcomeCount[];
+};
+
 export type RecommendationAnalyticsReport = {
   summary: RecommendationAnalyticsSummary;
   funnel: {
@@ -93,6 +178,14 @@ export type RecommendationAnalyticsReport = {
   topPurchasedMetadata: RecommendationAnalyticsTopPurchasedMetadata;
   checkoutDropoff: RecommendationAnalyticsCheckoutDropoffItem[];
   lowPerformingRecommendations: RecommendationAnalyticsCardPerformance[];
+  selectionAnalytics: RecommendationAnalyticsSelectionMetrics;
+  conversionAnalytics: RecommendationAnalyticsConversionMetrics;
+  weakMatchAnalytics: {
+    queries: RecommendationAnalyticsWeakMatchItem[];
+    archetypes: RecommendationAnalyticsWeakMatchItem[];
+  };
+  metadataCoverageAnalytics: RecommendationAnalyticsMetadataCoverage;
+  parserStabilityAnalytics: RecommendationAnalyticsParserStability;
   generation: {
     generatedAt: string;
     minimumLowPerformanceImpressions: number;

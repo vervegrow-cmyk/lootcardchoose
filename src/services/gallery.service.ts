@@ -19,7 +19,12 @@ import type { RecommendationScore } from "../types/gallery-recommendation.types"
 import type { RecommendationFeedbackDebugSummary } from "../types/recommendation-feedback.types";
 import { cardPricingService, CardPricingInput } from "./card-pricing.service";
 import { galleryRecommendationService } from "./gallery-recommendation.service";
-import { ParsedGalleryQuery, parseGalleryQuery } from "./llm-query-parser.service";
+import {
+  ParsedGalleryQuery,
+  getLastQueryParserTelemetry,
+  parseGalleryQuery,
+  QueryParserTelemetry,
+} from "./llm-query-parser.service";
 import { isDatabaseReady } from "./prisma.service";
 
 export const DEFAULT_GALLERY_RESULT_LIMIT = 10;
@@ -95,6 +100,7 @@ export type RecommendationDebugSnapshot = {
   candidateCount: number;
   usedFallback: boolean;
   rerankHappened: boolean;
+  parserTelemetry?: QueryParserTelemetry;
   top10BeforeRerank: RecommendationDebugCardSummary[];
   top10AfterRerank: RecommendationDebugCardSummary[];
   scoreBreakdowns: RecommendationDebugCardSummary[];
@@ -107,6 +113,7 @@ type RecommendationDebugLogPayload = {
   candidateCount: number;
   usedFallback: boolean;
   rerankHappened: boolean;
+  parserTelemetry?: QueryParserTelemetry;
   top10BeforeRerank: RecommendationDebugCardSummary[];
   top10AfterRerank: RecommendationDebugCardSummary[];
   scoreBreakdowns: RecommendationDebugCardSummary[];
@@ -297,6 +304,7 @@ const buildRecommendationDebugSnapshot = (input: {
   scoreBreakdowns: RecommendationDebugEntry[];
   usedFallback: boolean;
   rerankHappened: boolean;
+  parserTelemetry?: QueryParserTelemetry;
 }): RecommendationDebugSnapshot => {
   const scoreByCardId = new Map(input.scoreBreakdowns.map((entry) => [entry.cardId, entry]));
 
@@ -319,6 +327,7 @@ const buildRecommendationDebugSnapshot = (input: {
     candidateCount: input.candidateCards.length,
     usedFallback: input.usedFallback,
     rerankHappened: input.rerankHappened,
+    parserTelemetry: input.parserTelemetry,
     top10BeforeRerank: input.resultsSource.slice(0, RECOMMENDATION_DEBUG_LIMIT).map((card) =>
       buildRecommendationDebugCardSummary(card, scoreByCardId.get(card.id))
     ),
@@ -359,6 +368,7 @@ const buildRecommendationLogPayload = (
     candidateCount: snapshot.candidateCount,
     usedFallback: snapshot.usedFallback,
     rerankHappened: snapshot.rerankHappened,
+    ...(snapshot.parserTelemetry ? { parserTelemetry: snapshot.parserTelemetry } : {}),
     top10BeforeRerank: snapshot.top10BeforeRerank.slice(0, RECOMMENDATION_DEBUG_LIMIT),
     top10AfterRerank: snapshot.top10AfterRerank.slice(0, RECOMMENDATION_DEBUG_LIMIT),
     scoreBreakdowns: snapshot.scoreBreakdowns.slice(0, RECOMMENDATION_DEBUG_LIMIT),
@@ -415,6 +425,15 @@ export const getLastRecommendationFeedbackSummary = (): RecommendationFeedbackDe
     },
     candidateCount: lastRecommendationDebugSnapshot.candidateCount,
     usedFallback: lastRecommendationDebugSnapshot.usedFallback,
+    rerankHappened: lastRecommendationDebugSnapshot.rerankHappened,
+    ...(lastRecommendationDebugSnapshot.parserTelemetry
+      ? {
+          parserOutcome: lastRecommendationDebugSnapshot.parserTelemetry.parserOutcome,
+          parserTimedOut: lastRecommendationDebugSnapshot.parserTelemetry.parserTimedOut,
+          parserUsedFallback: lastRecommendationDebugSnapshot.parserTelemetry.parserUsedFallback,
+          parserFallbackReason: lastRecommendationDebugSnapshot.parserTelemetry.parserFallbackReason,
+        }
+      : {}),
     top10BeforeRerank: lastRecommendationDebugSnapshot.top10BeforeRerank.map((item) => ({
       id: item.id,
       title: item.title,
@@ -822,6 +841,7 @@ export const galleryService = {
 
     const preferredLanguage = language ?? detectPreferredLanguage(query);
     const parsed = await parseGalleryQuery(query, preferredLanguage);
+    const parserTelemetry = getLastQueryParserTelemetry();
     const limit = normalizeGalleryLimit(parsed?.limit, DEFAULT_GALLERY_RESULT_LIMIT);
     const parsedQuery = parsed
       ? {
@@ -895,6 +915,7 @@ export const galleryService = {
       scoreBreakdowns: recommendationResult.scoreBreakdowns,
       usedFallback: recommendationResult.usedFallback,
       rerankHappened: recommendationResult.rerankHappened,
+      parserTelemetry,
     });
 
     recommendationFeedbackService.captureLatestSearchSnapshot({

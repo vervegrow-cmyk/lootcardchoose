@@ -53,6 +53,11 @@ const normalizeSummary = (
     },
     candidateCount: summary.candidateCount,
     usedFallback: summary.usedFallback,
+    rerankHappened: summary.rerankHappened,
+    parserOutcome: summary.parserOutcome,
+    parserTimedOut: summary.parserTimedOut,
+    parserUsedFallback: summary.parserUsedFallback,
+    parserFallbackReason: summary.parserFallbackReason ?? null,
     top10BeforeRerank: limitItems(summary.top10BeforeRerank).map((item) => ({
       id: item.id,
       title: item.title,
@@ -112,6 +117,11 @@ const buildEvent = (input: {
   checkoutCreated: input.checkoutCreated,
   purchased: input.purchased,
   orphan: input.orphan,
+  parserOutcome: input.recommendationDebugSummary?.parserOutcome,
+  parserTimedOut: input.recommendationDebugSummary?.parserTimedOut,
+  parserUsedFallback: input.recommendationDebugSummary?.parserUsedFallback,
+  parserFallbackReason: input.recommendationDebugSummary?.parserFallbackReason ?? null,
+  rerankHappened: input.recommendationDebugSummary?.rerankHappened,
   recommendationDebugSummary: normalizeSummary(input.recommendationDebugSummary),
 });
 

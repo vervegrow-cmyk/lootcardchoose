@@ -25,6 +25,7 @@
     "gallery:test-recommendation": "tsx src/scripts/test-gallery-recommendation.ts",
     "gallery:test-recommendation-feedback": "tsx src/scripts/test-recommendation-feedback.ts",
     "gallery:feedback:analyze": "tsx src/scripts/analyze-recommendation-feedback.ts",
+    "gallery:recommendation:analytics": "tsx src/scripts/analyze-recommendation-analytics.ts",
     "recommendation:report": "tsx src/scripts/generate-recommendation-report.ts",
     "gallery:test-help": "tsx src/scripts/test-gallery-help.ts",
     "gallery:test-refresh": "tsx src/scripts/test-gallery-refresh.ts",

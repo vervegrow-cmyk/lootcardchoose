@@ -9,11 +9,15 @@ import { logger } from "../utils/logger";
 export type RecommendationAnalyticsGalleryRecord = {
   id: string;
   title: string;
+  description: string | null;
+  tags: string[];
   rarity: string | null;
   style: string | null;
   character: string | null;
   color: string | null;
   price: number;
+  metadata: Prisma.JsonValue | null;
+  isActive: boolean;
 };
 
 export type RecommendationAnalyticsOrderRecord = {
@@ -58,6 +62,7 @@ export type RecommendationAnalyticsRepository = {
     invalidLineCount: number;
   }>;
   findGalleryCardsByIds: (cardIds: string[]) => Promise<Map<string, RecommendationAnalyticsGalleryRecord>>;
+  findActiveGalleryCardsForCoverage: () => Promise<RecommendationAnalyticsGalleryRecord[]>;
   findOrdersByOrderNumbers: (orderNumbers: string[]) => Promise<Map<string, RecommendationAnalyticsOrderRecord>>;
   upsertDailyAnalytics: (input: RecommendationAnalyticsDailyWrite) => Promise<void>;
   createSnapshot: (input: RecommendationAnalyticsSnapshotWrite) => Promise<void>;
@@ -177,11 +182,15 @@ export const recommendationAnalyticsRepository: RecommendationAnalyticsRepositor
       select: {
         id: true,
         title: true,
+        description: true,
+        tags: true,
         rarity: true,
         style: true,
         character: true,
         color: true,
         price: true,
+        metadata: true,
+        isActive: true,
       },
     });
 
@@ -191,14 +200,52 @@ export const recommendationAnalyticsRepository: RecommendationAnalyticsRepositor
         {
           id: record.id,
           title: record.title,
+          description: record.description,
+          tags: record.tags,
           rarity: record.rarity,
           style: record.style,
           character: record.character,
           color: record.color,
           price: Number(record.price),
+          metadata: record.metadata,
+          isActive: record.isActive,
         },
       ])
     );
+  },
+  async findActiveGalleryCardsForCoverage() {
+    const records = await prisma.galleryCard.findMany({
+      where: {
+        isActive: true,
+      },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        tags: true,
+        rarity: true,
+        style: true,
+        character: true,
+        color: true,
+        price: true,
+        metadata: true,
+        isActive: true,
+      },
+    });
+
+    return records.map((record) => ({
+      id: record.id,
+      title: record.title,
+      description: record.description,
+      tags: record.tags,
+      rarity: record.rarity,
+      style: record.style,
+      character: record.character,
+      color: record.color,
+      price: Number(record.price),
+      metadata: record.metadata,
+      isActive: record.isActive,
+    }));
   },
   async findOrdersByOrderNumbers(orderNumbers) {
     if (orderNumbers.length === 0) {

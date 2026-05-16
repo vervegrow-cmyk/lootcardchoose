@@ -46,6 +46,19 @@ export type RecommendationFeedbackDebugSummary = {
   intelligenceQuery: RecommendationFeedbackIntelligenceQuery;
   candidateCount: number;
   usedFallback: boolean;
+  rerankHappened?: boolean;
+  parserOutcome?:
+    | "llm_success"
+    | "timeout_fallback"
+    | "json_parse_fallback"
+    | "missing_api_key_fallback"
+    | "network_fallback"
+    | "non_200_fallback"
+    | "disabled"
+    | "unknown";
+  parserTimedOut?: boolean;
+  parserUsedFallback?: boolean;
+  parserFallbackReason?: string | null;
   top10BeforeRerank: RecommendationFeedbackCardSummary[];
   top10AfterRerank: RecommendationFeedbackCardSummary[];
 };
@@ -60,6 +73,19 @@ export type RecommendationFeedbackEvent = {
   checkoutCreated: boolean;
   purchased: boolean;
   orphan: boolean;
+  parserOutcome?:
+    | "llm_success"
+    | "timeout_fallback"
+    | "json_parse_fallback"
+    | "missing_api_key_fallback"
+    | "network_fallback"
+    | "non_200_fallback"
+    | "disabled"
+    | "unknown";
+  parserTimedOut?: boolean;
+  parserUsedFallback?: boolean;
+  parserFallbackReason?: string | null;
+  rerankHappened?: boolean;
   recommendationDebugSummary: RecommendationFeedbackDebugSummary | null;
 };
 
