@@ -1,44 +1,18 @@
 import { SupportedLanguage } from "../hermes/types";
 import { loadEnv } from "../config/env";
-import {
-  canonicalizeGalleryTerm,
-  detectPreferredLanguage,
-  normalizeGalleryLimit,
-} from "../utils/gallery-language";
+import type {
+  IntelligenceQuery,
+  IntelligenceQueryLanguage,
+  ParsedGalleryQuery,
+  QuerySafetyIntent,
+} from "../types/gallery-query.types";
+import { canonicalizeGalleryTerm, detectPreferredLanguage, normalizeGalleryLimit } from "../utils/gallery-language";
 import { logger } from "../utils/logger";
 
+export type { IntelligenceQuery, IntelligenceQueryLanguage, ParsedGalleryQuery, QuerySafetyIntent };
+export type IntelligenceGalleryQuery = IntelligenceQuery;
+
 export const QUERY_PARSER_TIMEOUT_MS = 6000;
-
-export type QuerySafetyIntent = "safe" | "neutral" | "adult" | "unknown";
-
-export type IntelligenceGalleryQuery = {
-  visualStyle: string[];
-  moodTags: string[];
-  toneTags: string[];
-  characterTypes: string[];
-  archetypeTags: string[];
-  settingTags: string[];
-  genreTags: string[];
-  colorHints: string[];
-  rarityHints: string[];
-  commerceIntent: string[];
-  safetyIntent: QuerySafetyIntent;
-};
-
-export type ParsedGalleryQuery = {
-  language: SupportedLanguage;
-  keywords: string[];
-  tags: string[];
-  style: string;
-  rarity: string;
-  category: string;
-  character: string;
-  color: string;
-  mood: string;
-  scene: string;
-  limit: number;
-  intelligenceQuery?: IntelligenceGalleryQuery;
-};
 
 type DeepSeekMessage = {
   role: "system" | "user" | "assistant";
@@ -49,26 +23,45 @@ type DeepSeekResponse = {
   choices?: Array<{ message?: { content?: string } }>;
 };
 
+type PartialIntelligenceQuery = Partial<IntelligenceQuery>;
+
 const QUERY_PARSER_TIMEOUT_ERROR = "LLM_QUERY_PARSER_TIMEOUT";
-const SEARCHABLE_MOOD_VALUES = new Set(["dark", "cute", "elegant", "futuristic", "battle", "magic"]);
-const ABSTRACT_INTELLIGENCE_TERMS = new Set(["boss_like", "oppressive", "holy", "mysterious"]);
+const SEARCHABLE_MOOD_VALUES = new Set(["dark", "cute", "elegant", "battle", "magic", "futuristic"]);
+const ABSTRACT_KEYWORDS = new Set(["boss_like", "oppressive", "divine", "mysterious"]);
 const KEYWORD_BLACKLIST = new Set([
-  "cards",
   "card",
+  "cards",
+  "show",
   "show me",
+  "give",
   "give me",
-  "gallery",
-  "image",
-  "images",
+  "find",
+  "find me",
+  "want",
+  "i want",
+  "something",
+  "a",
+  "an",
+  "the",
+  "one",
+  "some",
   "张",
   "个",
-  "boss_like",
-  "oppressive",
-  "holy",
-  "mysterious",
+  "些",
+  "一下",
+  "一张",
+  "一个",
+  "一套",
+  "量词",
 ]);
+const QUANTIFIER_PATTERNS = [
+  /^\d+$/,
+  /^\d+\s*(card|cards|pcs|pieces)$/i,
+  /^(one|two|three|four|five|six|seven|eight|nine|ten)$/i,
+  /^(张|个|些|套|份)$/,
+];
 
-const EMPTY_INTELLIGENCE_QUERY = (): IntelligenceGalleryQuery => ({
+const EMPTY_INTELLIGENCE_QUERY = (): IntelligenceQuery => ({
   visualStyle: [],
   moodTags: [],
   toneTags: [],
@@ -80,6 +73,13 @@ const EMPTY_INTELLIGENCE_QUERY = (): IntelligenceGalleryQuery => ({
   rarityHints: [],
   commerceIntent: [],
   safetyIntent: "unknown",
+  visualIntent: [],
+  emotionalIntent: [],
+  characterIntent: [],
+  worldbuildingIntent: [],
+  confidence: 0,
+  language: "unknown",
+  reason: "",
 });
 
 const defaultParsedQuery = (language: SupportedLanguage): ParsedGalleryQuery => ({
@@ -99,17 +99,24 @@ const defaultParsedQuery = (language: SupportedLanguage): ParsedGalleryQuery => 
 
 const detectLanguage = (message: string): SupportedLanguage => detectPreferredLanguage(message);
 
+const detectIntelligenceLanguage = (message: string): IntelligenceQueryLanguage => {
+  if (!message.trim()) {
+    return "unknown";
+  }
+  return /[\u4e00-\u9fff]/.test(message) ? "zh" : "en";
+};
+
 const buildPrompt = (userMessage: string, language: SupportedLanguage): DeepSeekMessage[] => [
   {
     role: "system",
     content:
       "You are a gallery search parser for LootCardChoose. Return strict JSON only with no markdown and no explanation. " +
       "Use exactly this shape: " +
-      '{"language":"zh|en","keywords":string[],"tags":string[],"style":string,"rarity":string,"category":string,"character":string,"color":string,"mood":string,"scene":string,"limit":number,"intelligenceQuery":{"visualStyle":string[],"moodTags":string[],"toneTags":string[],"characterTypes":string[],"archetypeTags":string[],"settingTags":string[],"genreTags":string[],"colorHints":string[],"rarityHints":string[],"commerceIntent":string[],"safetyIntent":"safe|neutral|adult|unknown"}}. ' +
+      '{"language":"zh|en","keywords":string[],"tags":string[],"style":string,"rarity":string,"category":string,"character":string,"color":string,"mood":string,"scene":string,"limit":number,"intelligenceQuery":{"visualStyle":string[],"moodTags":string[],"toneTags":string[],"characterTypes":string[],"archetypeTags":string[],"settingTags":string[],"genreTags":string[],"colorHints":string[],"rarityHints":string[],"commerceIntent":string[],"safetyIntent":"safe|neutral|adult|unknown","visualIntent":string[],"emotionalIntent":string[],"characterIntent":string[],"worldbuildingIntent":string[],"confidence":number,"language":"en|zh|unknown","reason":string}}. ' +
       "The language field must reflect the user's original input language. If unclear, use en. " +
       "Legacy searchable fields should prefer concise English terms even when the user writes in Chinese. " +
-      "Keywords must stay short and searchable. Good keywords: black gold, SSR, female character, queen, goddess, maid, warrior, kimono, cyberpunk, gothic, blue hair. " +
-      "Do not include quantity words, numbers, classifiers, filler like cards/show me/give me, or abstract mood words like boss_like, oppressive, holy, mysterious in keywords. " +
+      "Use canonical English-first tokens in intelligenceQuery such as black_gold, cyberpunk, dark_fantasy, queen, goddess, collectible, boss_like, divine. " +
+      "Do not include pure numbers, quantity words, classifiers, or filler words in keywords. " +
       "Only put high-certainty searchable cues into keywords. Put richer semantics into intelligenceQuery. " +
       "Limit must always be an integer between 1 and 10. If missing, use 10.",
   },
@@ -141,25 +148,41 @@ const normalizeLower = (value: string): string => normalizeText(value).toLowerCa
 const uniqueStrings = (values: string[]): string[] => {
   const seen = new Set<string>();
   const result: string[] = [];
+
   for (const value of values) {
-    const normalized = normalizeLower(value);
-    if (!normalized || seen.has(normalized)) {
+    const trimmed = normalizeText(value);
+    const normalized = normalizeLower(trimmed);
+    if (!trimmed || seen.has(normalized)) {
       continue;
     }
     seen.add(normalized);
-    result.push(value.trim());
+    result.push(trimmed);
   }
+
   return result;
 };
 
 const addUnique = (values: string[], next: string): string[] => uniqueStrings([...values, next].filter(Boolean));
+
+const containsAny = (message: string, patterns: RegExp[]): boolean => patterns.some((pattern) => pattern.test(message));
+
+const isQuantifierKeyword = (value: string): boolean => {
+  const normalized = normalizeLower(value);
+  return QUANTIFIER_PATTERNS.some((pattern) => pattern.test(normalized));
+};
 
 const normalizeRarity = (value: unknown): string => {
   if (typeof value !== "string") {
     return "";
   }
   const normalized = normalizeText(value).toUpperCase();
-  return ["N", "R", "SR", "SSR", "UR"].includes(normalized) ? normalized : "";
+  if (["N", "R", "SR", "SSR", "UR"].includes(normalized)) {
+    return normalized;
+  }
+  if (normalized === "RARE") {
+    return "R";
+  }
+  return "";
 };
 
 const detectLimit = (message: string): number => {
@@ -168,50 +191,63 @@ const detectLimit = (message: string): number => {
     return normalizeGalleryLimit(Number.parseInt(digitMatch[1], 10), 10);
   }
 
-  if (/[十10]\s*[张個个]/.test(message)) return 10;
-  if (/[一1]\s*[张個个]/.test(message)) return 1;
-  if (/[二2两]\s*[张個个]/.test(message)) return 2;
-  if (/[三3]\s*[张個个]/.test(message)) return 3;
-  if (/[四4]\s*[张個个]/.test(message)) return 4;
-  if (/[五5]\s*[张個个]/.test(message)) return 5;
-  if (/[六6]\s*[张個个]/.test(message)) return 6;
-  if (/[七7]\s*[张個个]/.test(message)) return 7;
-  if (/[八8]\s*[张個个]/.test(message)) return 8;
-  if (/[九9]\s*[张個个]/.test(message)) return 9;
+  const chineseDigitPatterns: Array<[RegExp, number]> = [
+    [/十\s*(张|个)/, 10],
+    [/(一|1)\s*(张|个)/, 1],
+    [/(两|二|2)\s*(张|个)/, 2],
+    [/(三|3)\s*(张|个)/, 3],
+    [/(四|4)\s*(张|个)/, 4],
+    [/(五|5)\s*(张|个)/, 5],
+    [/(六|6)\s*(张|个)/, 6],
+    [/(七|7)\s*(张|个)/, 7],
+    [/(八|8)\s*(张|个)/, 8],
+    [/(九|9)\s*(张|个)/, 9],
+  ];
+
+  for (const [pattern, limit] of chineseDigitPatterns) {
+    if (pattern.test(message)) {
+      return limit;
+    }
+  }
+
   return 10;
 };
 
-const containsAny = (message: string, patterns: RegExp[]): boolean => patterns.some((pattern) => pattern.test(message));
-
 const normalizeSearchTerm = (value: string): string => {
   const normalized = normalizeLower(value);
-  if (!normalized || KEYWORD_BLACKLIST.has(normalized) || /^\d+$/.test(normalized)) {
+  if (!normalized || KEYWORD_BLACKLIST.has(normalized) || isQuantifierKeyword(normalized) || /^\d+$/.test(normalized)) {
     return "";
   }
-  if (/(black gold|黑金|榛戦噾)/i.test(normalized)) return "black gold";
-  if (/(white gold|白金)/i.test(normalized)) return "white gold";
-  if (/(blue hair|蓝发|藍髮)/i.test(normalized)) return "blue hair";
+
+  if (/(black[\s_-]*gold|黑金)/i.test(normalized)) return "black gold";
+  if (/(white[\s_-]*gold|白金)/i.test(normalized)) return "white gold";
+  if (/(black(?:\s+and\s+|[\s_-]*)red|黑红)/i.test(normalized)) return "black red";
+  if (/(blue[\s_-]*hair|蓝发)/i.test(normalized)) return "blue hair";
   if (/\bssr\b/i.test(normalized)) return "SSR";
   if (/\bur\b/i.test(normalized)) return "UR";
   if (/\bsr\b/i.test(normalized)) return "SR";
-  if (/(female character|女角色|女性角色|girl|female|anime girl|美女|濂宠鑹?|濂虫€ц鑹?)/i.test(normalized)) return "female character";
+  if (/\br\b/i.test(normalized)) return "R";
   if (/(queen|女王)/i.test(normalized)) return "queen";
   if (/(goddess|女神)/i.test(normalized)) return "goddess";
-  if (/(maid|女仆)/i.test(normalized)) return "maid";
-  if (/(warrior|战士|戰士)/i.test(normalized)) return "warrior";
-  if (/(heroine|女英雄)/i.test(normalized)) return "heroine";
-  if (/(attendant|侍从|侍從)/i.test(normalized)) return "attendant";
-  if (/(kimono|和服)/i.test(normalized)) return "kimono";
-  if (/(cyberpunk|赛博朋克|賽博朋克|璧涘崥鏈嬪厠)/i.test(normalized)) return "cyberpunk";
+  if (/(warrior|战士)/i.test(normalized)) return "warrior";
+  if (/(priestess|祭司|神官)/i.test(normalized)) return "priestess";
+  if (/(angel|天使)/i.test(normalized)) return "angel";
+  if (/(villain|反派)/i.test(normalized)) return "villain";
+  if (/(dragon[\s_-]*lord|龙王|龙主)/i.test(normalized)) return "dragon lord";
+  if (/(mecha[\s_-]*girl|机甲少女)/i.test(normalized)) return "mecha girl";
+  if (/(anime[\s_-]*girl|动漫女孩|二次元女孩)/i.test(normalized)) return "female character";
+  if (/(girl|female|女角色|女性角色)/i.test(normalized)) return "female character";
+  if (/(cyberpunk|赛博朋克)/i.test(normalized)) return "cyberpunk";
+  if (/(dark[\s_-]*fantasy|暗黑幻想)/i.test(normalized)) return "dark fantasy";
   if (/(gothic|哥特)/i.test(normalized)) return "gothic";
-  if (/(beach|海边|海滨|娴疯竟|娴锋哗)/i.test(normalized)) return "beach";
-  if (/(bedroom|卧室|寢室|luxury bedroom)/i.test(normalized)) return "bedroom";
-  if (/(shrine|神社)/i.test(normalized)) return "shrine";
-  if (/(palace|宫殿|宮殿)/i.test(normalized)) return "palace";
-  if (/(mecha|机甲|鏈虹敳)/i.test(normalized)) return "mecha";
-  if (/(vampire|吸血鬼)/i.test(normalized)) return "vampire";
-  if (/(anime|动画|動漫|动漫|鍔ㄦ极|浜屾鍏?)/i.test(normalized)) return "anime";
-  if (/(one piece style|海贼王风格|海賊王風格)/i.test(normalized)) return "one piece style";
+  if (/(anime|动漫|动画|二次元)/i.test(normalized)) return "anime";
+  if (/(holy|divine|神圣|神性)/i.test(normalized)) return "divine";
+  if (/(collectible|收藏|收藏级)/i.test(normalized)) return "collectible";
+  if (/(premium|高端|高级感)/i.test(normalized)) return "premium";
+  if (/(high[\s_-]*value|高价值)/i.test(normalized)) return "high value";
+  if (/(display[\s_-]*piece|展示卡|展示向)/i.test(normalized)) return "display piece";
+  if (/(battle[\s_-]*arena|竞技场|战场)/i.test(normalized)) return "battle arena";
+  if (/(fantasy[\s_-]*kingdom|王国奇幻|皇家幻想)/i.test(normalized)) return "fantasy kingdom";
   return canonicalizeGalleryTerm(value).trim();
 };
 
@@ -219,11 +255,13 @@ const normalizeKeywordArray = (value: unknown): string[] => {
   if (!Array.isArray(value)) {
     return [];
   }
+
   return uniqueStrings(
     value
       .filter((item): item is string => typeof item === "string")
       .map(normalizeSearchTerm)
       .filter(Boolean)
+      .filter((item) => !isQuantifierKeyword(item))
   );
 };
 
@@ -241,26 +279,30 @@ const normalizeMappedArray = (value: unknown, mapper: (item: string) => string |
 
 const normalizeColorHint = (value: string): string | string[] => {
   const normalized = normalizeLower(value);
-  if (/(black gold|黑金|榛戦噾)/i.test(normalized)) return ["black", "gold"];
-  if (/(white gold|白金)/i.test(normalized)) return ["white", "gold"];
-  if (/(blue hair|蓝发|藍髮)/i.test(normalized)) return "blue hair";
+  if (/(black[\s_-]*gold|黑金)/i.test(normalized)) return ["black", "gold"];
+  if (/(white[\s_-]*gold|白金)/i.test(normalized)) return ["white", "gold"];
+  if (/(black(?:\s+and\s+|[\s_-]*)red|黑红)/i.test(normalized)) return ["black", "red"];
+  if (/(blue[\s_-]*hair|蓝发)/i.test(normalized)) return ["blue", "blue hair"];
+  if (/(neon|霓虹)/i.test(normalized)) return "neon";
   if (/(black|黑)/i.test(normalized)) return "black";
   if (/(gold|金)/i.test(normalized)) return "gold";
   if (/(white|白)/i.test(normalized)) return "white";
-  if (/(blue|蓝|藍)/i.test(normalized)) return "blue";
+  if (/(red|红)/i.test(normalized)) return "red";
+  if (/(blue|蓝)/i.test(normalized)) return "blue";
   return normalizeSearchTerm(value);
 };
 
 const normalizeCharacterType = (value: string): string => {
   const normalized = normalizeLower(value);
-  if (/(female character|女角色|女性角色|girl|female)/i.test(normalized)) return "female character";
-  if (/(maid|女仆)/i.test(normalized)) return "maid";
-  if (/(warrior|战士|戰士)/i.test(normalized)) return "warrior";
-  if (/(heroine|女英雄)/i.test(normalized)) return "heroine";
-  if (/(attendant|侍从|侍從)/i.test(normalized)) return "attendant";
+  if (/(mecha[\s_-]*girl|机甲少女)/i.test(normalized)) return "mecha girl";
+  if (/(anime[\s_-]*girl|动漫女孩|二次元女孩)/i.test(normalized)) return "female character";
+  if (/(girl|female|女角色|女性角色)/i.test(normalized)) return "female character";
   if (/(queen|女王)/i.test(normalized)) return "queen";
   if (/(goddess|女神)/i.test(normalized)) return "goddess";
-  if (/(mecha girl|机甲少女)/i.test(normalized)) return "mecha girl";
+  if (/(warrior|战士)/i.test(normalized)) return "warrior";
+  if (/(priestess|祭司|神官)/i.test(normalized)) return "priestess";
+  if (/(angel|天使)/i.test(normalized)) return "angel";
+  if (/(dragon[\s_-]*lord|龙王|龙主)/i.test(normalized)) return "dragon lord";
   return normalizeSearchTerm(value);
 };
 
@@ -268,70 +310,83 @@ const normalizeArchetype = (value: string): string => {
   const normalized = normalizeLower(value);
   if (/(queen|女王)/i.test(normalized)) return "queen";
   if (/(goddess|女神)/i.test(normalized)) return "goddess";
-  if (/(maid|女仆)/i.test(normalized)) return "maid";
-  if (/(warrior|战士|戰士)/i.test(normalized)) return "warrior";
-  if (/(vampire|吸血鬼)/i.test(normalized)) return "vampire";
+  if (/(warrior|战士)/i.test(normalized)) return "warrior";
+  if (/(priestess|祭司|神官)/i.test(normalized)) return "priestess";
+  if (/(angel|天使)/i.test(normalized)) return "angel";
+  if (/(villain|反派)/i.test(normalized)) return "villain";
+  if (/(dragon[\s_-]*lord|龙王|龙主)/i.test(normalized)) return "dragon lord";
   return normalizeSearchTerm(value);
 };
 
 const normalizeSetting = (value: string): string => {
   const normalized = normalizeLower(value);
-  if (/(beach|海边|海滨)/i.test(normalized)) return "beach";
-  if (/(bedroom|卧室|寢室|luxury bedroom)/i.test(normalized)) return "bedroom";
-  if (/(shrine|神社)/i.test(normalized)) return "shrine";
+  if (/(cathedral|大教堂)/i.test(normalized)) return "cathedral";
+  if (/(palace|宫殿)/i.test(normalized)) return "palace";
+  if (/(shrine|神社|圣殿)/i.test(normalized)) return "shrine";
+  if (/(arena|竞技场|战场)/i.test(normalized)) return "arena";
+  if (/(kingdom|王国)/i.test(normalized)) return "kingdom";
+  if (/(empire|帝国)/i.test(normalized)) return "empire";
   if (/(gothic|哥特)/i.test(normalized)) return "gothic";
-  if (/(fast food|快餐)/i.test(normalized)) return "fast food";
-  if (/(palace|宫殿|宮殿)/i.test(normalized)) return "palace";
-  if (/(kimono|和服)/i.test(normalized)) return "kimono";
   return normalizeSearchTerm(value);
 };
 
 const normalizeVisualStyle = (value: string): string => {
   const normalized = normalizeLower(value);
-  if (/(cyberpunk|赛博朋克|賽博朋克|璧涘崥鏈嬪厠)/i.test(normalized)) return "cyberpunk";
+  if (/(cyberpunk|赛博朋克)/i.test(normalized)) return "cyberpunk";
+  if (/(dark[\s_-]*fantasy|暗黑幻想)/i.test(normalized)) return "dark fantasy";
   if (/(gothic|哥特)/i.test(normalized)) return "gothic";
-  if (/(anime|动画|動漫|动漫|鍔ㄦ极)/i.test(normalized)) return "anime";
-  if (/(one piece style|海贼王风格|海賊王風格)/i.test(normalized)) return "one piece style";
-  if (/(kimono|和服)/i.test(normalized)) return "kimono";
+  if (/(anime|动漫|动画|二次元)/i.test(normalized)) return "anime";
   if (/(elegant|优雅)/i.test(normalized)) return "elegant";
+  if (/(holy|divine|神圣|神性)/i.test(normalized)) return "divine";
   return canonicalizeGalleryTerm(value).trim();
 };
 
 const normalizeGenreTag = (value: string): string => {
   const normalized = normalizeLower(value);
-  if (/(mecha|机甲|鏈虹敳)/i.test(normalized)) return "mecha";
-  if (/(vampire|吸血鬼)/i.test(normalized)) return "vampire";
+  if (/(cyberpunk|赛博朋克)/i.test(normalized)) return "cyberpunk";
+  if (/(dark[\s_-]*fantasy|暗黑幻想)/i.test(normalized)) return "dark fantasy";
   if (/(fantasy|奇幻)/i.test(normalized)) return "fantasy";
-  if (/(cyberpunk|赛博朋克|賽博朋克)/i.test(normalized)) return "cyberpunk";
+  if (/(mecha|机甲)/i.test(normalized)) return "mecha";
   if (/(gothic|哥特)/i.test(normalized)) return "gothic";
+  if (/(battle|战斗)/i.test(normalized)) return "battle";
   return canonicalizeGalleryTerm(value).trim();
 };
 
 const normalizeMoodTag = (value: string): string => {
   const normalized = normalizeLower(value);
-  if (/(最终boss|最终 boss|final boss|boss like|boss_like|boss)/i.test(normalized)) return "boss_like";
-  if (/(压迫|压迫感|壓迫|oppressive)/i.test(normalized)) return "oppressive";
-  if (/(圣洁|神圣|holy)/i.test(normalized)) return "holy";
-  if (/(神秘|mysterious)/i.test(normalized)) return "mysterious";
-  if (/(dark|黑暗|暗黑|鏆楅粦)/i.test(normalized)) return "dark";
+  if (/(boss[\s_-]*like|boss|最终\s*boss|最终boss)/i.test(normalized)) return "boss_like";
+  if (/(oppressive|压迫感|威压)/i.test(normalized)) return "oppressive";
+  if (/(holy|divine|神圣|神性)/i.test(normalized)) return "divine";
+  if (/(mysterious|神秘)/i.test(normalized)) return "mysterious";
+  if (/(dark|黑暗)/i.test(normalized)) return "dark";
   if (/(elegant|优雅)/i.test(normalized)) return "elegant";
+  if (/(cute|可爱)/i.test(normalized)) return "cute";
+  if (/(battle|战斗)/i.test(normalized)) return "battle";
+  if (/(magic|魔法)/i.test(normalized)) return "magic";
   return canonicalizeGalleryTerm(value).trim();
 };
 
 const normalizeToneTag = (value: string): string => {
   const normalized = normalizeLower(value);
-  if (/(dark|黑暗|暗黑)/i.test(normalized)) return "dark";
-  if (/(holy|神圣|圣洁)/i.test(normalized)) return "holy";
-  if (/(mysterious|神秘)/i.test(normalized)) return "mysterious";
+  if (/(dark|黑暗)/i.test(normalized)) return "dark";
   if (/(elegant|优雅)/i.test(normalized)) return "elegant";
+  if (/(cute|可爱)/i.test(normalized)) return "cute";
+  if (/(battle|战斗)/i.test(normalized)) return "battle";
+  if (/(magic|魔法)/i.test(normalized)) return "magic";
+  if (/(holy|divine|神圣|神性)/i.test(normalized)) return "divine";
   return canonicalizeGalleryTerm(value).trim();
 };
 
 const normalizeCommerceIntent = (value: string): string => {
   const normalized = normalizeLower(value);
   if (/(collect|collectible|收藏)/i.test(normalized)) return "collectible";
-  if (/(gift|送礼|送禮)/i.test(normalized)) return "giftable";
-  if (/(buy|purchase|购买|購買|checkout)/i.test(normalized)) return "buy";
+  if (/(premium|高端|高级感)/i.test(normalized)) return "premium";
+  if (/(rare|稀有)/i.test(normalized)) return "rare";
+  if (/(high[\s_-]*value|高价值)/i.test(normalized)) return "high_value";
+  if (/(display[\s_-]*piece|展示)/i.test(normalized)) return "display_piece";
+  if (/(waifu|老婆向)/i.test(normalized)) return "waifu";
+  if (/(battle|战斗)/i.test(normalized)) return "battle";
+  if (/(buy|purchase|checkout|购买)/i.test(normalized)) return "buy";
   return canonicalizeGalleryTerm(value).trim();
 };
 
@@ -346,52 +401,221 @@ const normalizeSafetyIntent = (value: unknown): QuerySafetyIntent => {
   return "unknown";
 };
 
-const normalizeIntelligenceQuery = (value: Partial<IntelligenceGalleryQuery> | undefined): IntelligenceGalleryQuery => ({
-  visualStyle: normalizeMappedArray(value?.visualStyle, normalizeVisualStyle),
-  moodTags: normalizeMappedArray(value?.moodTags, normalizeMoodTag),
-  toneTags: normalizeMappedArray(value?.toneTags, normalizeToneTag),
-  characterTypes: normalizeMappedArray(value?.characterTypes, normalizeCharacterType),
-  archetypeTags: normalizeMappedArray(value?.archetypeTags, normalizeArchetype),
-  settingTags: normalizeMappedArray(value?.settingTags, normalizeSetting),
-  genreTags: normalizeMappedArray(value?.genreTags, normalizeGenreTag),
-  colorHints: normalizeMappedArray(value?.colorHints, normalizeColorHint),
-  rarityHints: normalizeMappedArray(value?.rarityHints, (item) => normalizeRarity(item)),
-  commerceIntent: normalizeMappedArray(value?.commerceIntent, normalizeCommerceIntent),
-  safetyIntent: normalizeSafetyIntent(value?.safetyIntent),
-});
+const clampConfidence = (value: number): number => Math.max(0, Math.min(1, Number(value.toFixed(2))));
 
-const buildLegacyCharacter = (intelligenceQuery: IntelligenceGalleryQuery): string => {
+const buildLegacyColor = (intelligenceQuery: IntelligenceQuery): string => {
+  const hints = intelligenceQuery.colorHints;
+  if (hints.includes("black") && hints.includes("gold")) return "black gold";
+  if (hints.includes("white") && hints.includes("gold")) return "white gold";
+  if (hints.includes("black") && hints.includes("red")) return "black red";
+  if (hints.includes("blue hair")) return "blue hair";
+  return hints[0] ?? "";
+};
+
+const buildLegacyCharacter = (intelligenceQuery: IntelligenceQuery): string => {
   if (intelligenceQuery.characterTypes.includes("female character")) {
     return "female character";
   }
   return intelligenceQuery.characterTypes[0] ?? intelligenceQuery.archetypeTags[0] ?? "";
 };
 
-const buildLegacyColor = (intelligenceQuery: IntelligenceGalleryQuery): string => {
-  const hints = intelligenceQuery.colorHints;
-  if (hints.includes("black") && hints.includes("gold")) return "black gold";
-  if (hints.includes("white") && hints.includes("gold")) return "white gold";
-  if (hints.includes("blue hair")) return "blue hair";
-  return hints[0] ?? "";
-};
-
-const buildLegacyStyle = (intelligenceQuery: IntelligenceGalleryQuery): string =>
+const buildLegacyStyle = (intelligenceQuery: IntelligenceQuery): string =>
   intelligenceQuery.visualStyle[0] ?? intelligenceQuery.genreTags[0] ?? "";
 
-const buildLegacyScene = (intelligenceQuery: IntelligenceGalleryQuery): string => intelligenceQuery.settingTags[0] ?? "";
+const buildLegacyScene = (intelligenceQuery: IntelligenceQuery): string => intelligenceQuery.settingTags[0] ?? "";
 
-const buildLegacyMood = (intelligenceQuery: IntelligenceGalleryQuery): string => {
-  const mood = intelligenceQuery.moodTags.find((value) => SEARCHABLE_MOOD_VALUES.has(value));
-  if (mood) {
-    return mood;
+const buildLegacyMood = (intelligenceQuery: IntelligenceQuery): string => {
+  const searchableMood = intelligenceQuery.moodTags.find((item) => SEARCHABLE_MOOD_VALUES.has(item));
+  if (searchableMood) {
+    return searchableMood;
   }
-  return intelligenceQuery.toneTags.find((value) => SEARCHABLE_MOOD_VALUES.has(value)) ?? "";
+  return intelligenceQuery.toneTags.find((item) => SEARCHABLE_MOOD_VALUES.has(item)) ?? "";
 };
+
+const inferVisualIntent = (query: IntelligenceQuery): string[] => {
+  let result = uniqueStrings(query.visualIntent);
+  const color = query.colorHints;
+
+  if (color.includes("black") && color.includes("gold")) result = addUnique(result, "black_gold");
+  if (query.visualStyle.includes("cyberpunk") || query.genreTags.includes("cyberpunk")) result = addUnique(result, "cyberpunk");
+  if (query.visualStyle.includes("dark fantasy") || query.genreTags.includes("dark fantasy")) result = addUnique(result, "dark_fantasy");
+  if (query.visualStyle.includes("anime")) result = addUnique(result, "anime");
+  if (query.visualStyle.includes("gothic")) result = addUnique(result, "gothic");
+  if (query.visualStyle.includes("divine")) result = addUnique(result, "divine");
+
+  return result;
+};
+
+const inferEmotionalIntent = (query: IntelligenceQuery): string[] => {
+  let result = uniqueStrings(query.emotionalIntent);
+  for (const tag of [...query.moodTags, ...query.toneTags]) {
+    if (["boss_like", "oppressive", "mysterious", "elegant", "divine", "cute", "dark", "battle", "magic"].includes(tag)) {
+      result = addUnique(result, tag);
+    }
+  }
+  return result;
+};
+
+const inferCharacterIntent = (query: IntelligenceQuery): string[] => {
+  let result = uniqueStrings(query.characterIntent);
+  if (query.archetypeTags.includes("queen")) {
+    result = addUnique(result, "queen");
+    result = addUnique(result, "ruler");
+  }
+  if (query.archetypeTags.includes("goddess")) result = addUnique(result, "goddess");
+  if (query.characterTypes.includes("warrior") || query.archetypeTags.includes("warrior")) result = addUnique(result, "warrior");
+  if (query.characterTypes.includes("mecha girl")) result = addUnique(result, "mecha_girl");
+  if (query.characterTypes.includes("female character") && query.visualStyle.includes("anime")) result = addUnique(result, "anime_girl");
+  if (query.archetypeTags.includes("dragon lord")) result = addUnique(result, "dragon_lord");
+  if (query.archetypeTags.includes("priestess") || query.characterTypes.includes("priestess")) result = addUnique(result, "priestess");
+  if (query.archetypeTags.includes("angel") || query.characterTypes.includes("angel")) result = addUnique(result, "angel");
+  if (query.archetypeTags.includes("villain")) result = addUnique(result, "villain");
+  return result;
+};
+
+const inferWorldbuildingIntent = (query: IntelligenceQuery): string[] => {
+  let result = uniqueStrings(query.worldbuildingIntent);
+  if (
+    (query.visualStyle.includes("cyberpunk") || query.genreTags.includes("cyberpunk")) &&
+    (query.settingTags.includes("cathedral") || query.settingTags.includes("shrine"))
+  ) {
+    result = addUnique(result, "cyber_cathedral");
+  }
+  if (
+    query.visualStyle.includes("dark fantasy") ||
+    query.genreTags.includes("dark fantasy") ||
+    (query.toneTags.includes("dark") && query.genreTags.includes("fantasy"))
+  ) {
+    result = addUnique(result, "dark_fantasy");
+  }
+  if (query.settingTags.includes("kingdom") || query.settingTags.includes("palace")) result = addUnique(result, "fantasy_kingdom");
+  if (query.settingTags.includes("arena") || query.genreTags.includes("battle")) result = addUnique(result, "battle_arena");
+  if (query.settingTags.includes("empire")) result = addUnique(result, "void_empire");
+  return result;
+};
+
+const inferConfidence = (query: IntelligenceQuery): number => {
+  const categoryHits = [
+    query.visualIntent.length > 0 || query.visualStyle.length > 0 || query.colorHints.length > 0,
+    query.emotionalIntent.length > 0 || query.moodTags.length > 0 || query.toneTags.length > 0,
+    query.characterIntent.length > 0 || query.characterTypes.length > 0 || query.archetypeTags.length > 0,
+    query.worldbuildingIntent.length > 0 || query.settingTags.length > 0 || query.genreTags.length > 0,
+    query.commerceIntent.length > 0 || query.rarityHints.length > 0,
+  ].filter(Boolean).length;
+
+  const signalCount =
+    query.visualIntent.length +
+    query.emotionalIntent.length +
+    query.characterIntent.length +
+    query.worldbuildingIntent.length +
+    query.commerceIntent.length +
+    query.rarityHints.length;
+
+  return clampConfidence(0.32 + categoryHits * 0.09 + Math.min(signalCount, 8) * 0.04);
+};
+
+const buildReason = (query: IntelligenceQuery): string => {
+  const parts: string[] = [];
+  const visual = query.visualIntent[0] ?? query.visualStyle[0];
+  const emotion = query.emotionalIntent[0] ?? query.moodTags[0] ?? query.toneTags[0];
+  const character = query.characterIntent[0] ?? query.archetypeTags[0] ?? query.characterTypes[0];
+  const world = query.worldbuildingIntent[0] ?? query.settingTags[0] ?? query.genreTags[0];
+  const commerce = query.commerceIntent[0] ?? query.rarityHints[0];
+
+  if (visual) parts.push(`visual cue ${visual}`);
+  if (emotion) parts.push(`emotion ${emotion}`);
+  if (character) parts.push(`character ${character}`);
+  if (world) parts.push(`world ${world}`);
+  if (commerce) parts.push(`commerce ${commerce}`);
+
+  if (parts.length === 0) {
+    return "The parser found only weak signals, so the query stayed broad.";
+  }
+
+  return `The parser matched ${parts.slice(0, 3).join(", ")} from the user message.`;
+};
+
+const finalizeIntelligenceQuery = (
+  partial: PartialIntelligenceQuery | undefined,
+  userMessage: string,
+  language: IntelligenceQueryLanguage
+): IntelligenceQuery => {
+  const base: IntelligenceQuery = {
+    ...EMPTY_INTELLIGENCE_QUERY(),
+    visualStyle: normalizeMappedArray(partial?.visualStyle, normalizeVisualStyle),
+    moodTags: normalizeMappedArray(partial?.moodTags, normalizeMoodTag),
+    toneTags: normalizeMappedArray(partial?.toneTags, normalizeToneTag),
+    characterTypes: normalizeMappedArray(partial?.characterTypes, normalizeCharacterType),
+    archetypeTags: normalizeMappedArray(partial?.archetypeTags, normalizeArchetype),
+    settingTags: normalizeMappedArray(partial?.settingTags, normalizeSetting),
+    genreTags: normalizeMappedArray(partial?.genreTags, normalizeGenreTag),
+    colorHints: normalizeMappedArray(partial?.colorHints, normalizeColorHint),
+    rarityHints: normalizeMappedArray(partial?.rarityHints, (item) => normalizeRarity(item)),
+    commerceIntent: normalizeMappedArray(partial?.commerceIntent, normalizeCommerceIntent),
+    safetyIntent: normalizeSafetyIntent(partial?.safetyIntent),
+    visualIntent: normalizeMappedArray(partial?.visualIntent, (item) => item),
+    emotionalIntent: normalizeMappedArray(partial?.emotionalIntent, (item) => item),
+    characterIntent: normalizeMappedArray(partial?.characterIntent, (item) => item),
+    worldbuildingIntent: normalizeMappedArray(partial?.worldbuildingIntent, (item) => item),
+    confidence: typeof partial?.confidence === "number" ? clampConfidence(partial.confidence) : 0,
+    language: partial?.language === "en" || partial?.language === "zh" || partial?.language === "unknown" ? partial.language : language,
+    reason: typeof partial?.reason === "string" ? normalizeText(partial.reason) : "",
+  };
+
+  base.visualIntent = inferVisualIntent(base);
+  base.emotionalIntent = inferEmotionalIntent(base);
+  base.characterIntent = inferCharacterIntent(base);
+  base.worldbuildingIntent = inferWorldbuildingIntent(base);
+  base.language = language;
+  base.confidence = base.confidence > 0 ? base.confidence : inferConfidence(base);
+  base.reason = base.reason || buildReason(base);
+
+  if (base.safetyIntent === "unknown") {
+    if (/(adult|nsfw|hentai|erotic|lingerie|bikini|sexy)/i.test(userMessage)) {
+      base.safetyIntent = "adult";
+    } else if (
+      base.emotionalIntent.length > 0 ||
+      base.visualIntent.length > 0 ||
+      base.characterIntent.length > 0 ||
+      base.worldbuildingIntent.length > 0
+    ) {
+      base.safetyIntent = "neutral";
+    }
+  }
+
+  return base;
+};
+
+const mergeIntelligenceQuery = (primary: IntelligenceQuery, fallback: IntelligenceQuery): IntelligenceQuery =>
+  finalizeIntelligenceQuery(
+    {
+      visualStyle: uniqueStrings([...primary.visualStyle, ...fallback.visualStyle]),
+      moodTags: uniqueStrings([...primary.moodTags, ...fallback.moodTags]),
+      toneTags: uniqueStrings([...primary.toneTags, ...fallback.toneTags]),
+      characterTypes: uniqueStrings([...primary.characterTypes, ...fallback.characterTypes]),
+      archetypeTags: uniqueStrings([...primary.archetypeTags, ...fallback.archetypeTags]),
+      settingTags: uniqueStrings([...primary.settingTags, ...fallback.settingTags]),
+      genreTags: uniqueStrings([...primary.genreTags, ...fallback.genreTags]),
+      colorHints: uniqueStrings([...primary.colorHints, ...fallback.colorHints]),
+      rarityHints: uniqueStrings([...primary.rarityHints, ...fallback.rarityHints]),
+      commerceIntent: uniqueStrings([...primary.commerceIntent, ...fallback.commerceIntent]),
+      safetyIntent: primary.safetyIntent === "unknown" ? fallback.safetyIntent : primary.safetyIntent,
+      visualIntent: uniqueStrings([...primary.visualIntent, ...fallback.visualIntent]),
+      emotionalIntent: uniqueStrings([...primary.emotionalIntent, ...fallback.emotionalIntent]),
+      characterIntent: uniqueStrings([...primary.characterIntent, ...fallback.characterIntent]),
+      worldbuildingIntent: uniqueStrings([...primary.worldbuildingIntent, ...fallback.worldbuildingIntent]),
+      confidence: Math.max(primary.confidence, fallback.confidence),
+      language: primary.language === "unknown" ? fallback.language : primary.language,
+      reason: primary.reason || fallback.reason,
+    },
+    "",
+    primary.language === "unknown" ? fallback.language : primary.language
+  );
 
 const buildMinimalHybridKeywords = (
   baseKeywords: string[],
-  intelligenceQuery: IntelligenceGalleryQuery,
-  legacy: Pick<ParsedGalleryQuery, "style" | "rarity" | "character" | "color" | "scene">
+  intelligenceQuery: IntelligenceQuery,
+  legacy: Pick<ParsedGalleryQuery, "style" | "rarity" | "character" | "color" | "scene" | "mood">
 ): string[] => {
   const raw = [
     ...baseKeywords,
@@ -402,25 +626,28 @@ const buildMinimalHybridKeywords = (
     ...intelligenceQuery.settingTags,
     ...intelligenceQuery.visualStyle,
     ...intelligenceQuery.genreTags,
+    ...intelligenceQuery.commerceIntent,
     legacy.style,
     legacy.rarity,
     legacy.character,
     legacy.color,
     legacy.scene,
+    legacy.mood,
   ]
     .map(normalizeSearchTerm)
     .filter(Boolean)
-    .filter((value) => !ABSTRACT_INTELLIGENCE_TERMS.has(value));
+    .filter((value) => !ABSTRACT_KEYWORDS.has(normalizeLower(value)))
+    .filter((value) => !isQuantifierKeyword(value));
 
   return uniqueStrings(raw).filter((value) => {
     const normalized = normalizeLower(value);
-    return normalized && !KEYWORD_BLACKLIST.has(normalized) && !ABSTRACT_INTELLIGENCE_TERMS.has(normalized);
+    return normalized && !KEYWORD_BLACKLIST.has(normalized) && !ABSTRACT_KEYWORDS.has(normalized);
   });
 };
 
 const applyMinimalHybrid = (
   partial: Partial<ParsedGalleryQuery>,
-  intelligenceQuery: IntelligenceGalleryQuery,
+  intelligenceQuery: IntelligenceQuery,
   language: SupportedLanguage,
   userMessage: string
 ): ParsedGalleryQuery => {
@@ -435,7 +662,7 @@ const applyMinimalHybrid = (
   const category = typeof partial.category === "string" ? canonicalizeGalleryTerm(partial.category).trim() : "";
   const tags = normalizeKeywordArray(partial.tags);
   const baseKeywords = normalizeKeywordArray(partial.keywords);
-  const keywords = buildMinimalHybridKeywords(baseKeywords, intelligenceQuery, { style, rarity, character, color, scene });
+  const keywords = buildMinimalHybridKeywords(baseKeywords, intelligenceQuery, { style, rarity, character, color, scene, mood });
 
   return {
     ...defaultParsedQuery(language),
@@ -454,158 +681,226 @@ const applyMinimalHybrid = (
   };
 };
 
-const buildRuleBasedIntelligenceQuery = (userMessage: string): IntelligenceGalleryQuery => {
-  const query = EMPTY_INTELLIGENCE_QUERY();
+const addSignal = (
+  query: IntelligenceQuery,
+  fields: Partial<Record<keyof IntelligenceQuery, string | string[] | QuerySafetyIntent>>
+): IntelligenceQuery => {
+  const next = { ...query };
 
-  if (containsAny(userMessage, [/(black gold|黑金|榛戦噾)/i])) {
-    query.colorHints = addUnique(query.colorHints, "black");
-    query.colorHints = addUnique(query.colorHints, "gold");
-  }
-  if (containsAny(userMessage, [/(white gold|白金)/i])) {
-    query.colorHints = addUnique(query.colorHints, "white");
-    query.colorHints = addUnique(query.colorHints, "gold");
-  }
-  if (containsAny(userMessage, [/(blue hair|蓝发|藍髮)/i])) {
-    query.colorHints = addUnique(query.colorHints, "blue hair");
+  const push = (key: keyof Pick<
+    IntelligenceQuery,
+    | "visualStyle"
+    | "moodTags"
+    | "toneTags"
+    | "characterTypes"
+    | "archetypeTags"
+    | "settingTags"
+    | "genreTags"
+    | "colorHints"
+    | "rarityHints"
+    | "commerceIntent"
+    | "visualIntent"
+    | "emotionalIntent"
+    | "characterIntent"
+    | "worldbuildingIntent"
+  >) => {
+    const value = fields[key];
+    if (!value) {
+      return;
+    }
+    const list = Array.isArray(value) ? value : [value];
+    next[key] = uniqueStrings([...(next[key] as string[]), ...list]);
+  };
+
+  push("visualStyle");
+  push("moodTags");
+  push("toneTags");
+  push("characterTypes");
+  push("archetypeTags");
+  push("settingTags");
+  push("genreTags");
+  push("colorHints");
+  push("rarityHints");
+  push("commerceIntent");
+  push("visualIntent");
+  push("emotionalIntent");
+  push("characterIntent");
+  push("worldbuildingIntent");
+
+  if (fields.safetyIntent) {
+    next.safetyIntent = fields.safetyIntent as QuerySafetyIntent;
   }
 
-  if (containsAny(userMessage, [/\bSSR\b/i])) query.rarityHints = addUnique(query.rarityHints, "SSR");
-  if (containsAny(userMessage, [/\bUR\b/i])) query.rarityHints = addUnique(query.rarityHints, "UR");
-  if (containsAny(userMessage, [/\bSR\b/i])) query.rarityHints = addUnique(query.rarityHints, "SR");
+  return next;
+};
 
-  if (containsAny(userMessage, [/(女角色|女性角色|girl|female|anime girl|濂宠鑹?|濂虫€ц鑹?)/i])) {
-    query.characterTypes = addUnique(query.characterTypes, "female character");
+const buildRuleBasedIntelligenceQuery = (
+  userMessage: string,
+  language: IntelligenceQueryLanguage = detectIntelligenceLanguage(userMessage)
+): IntelligenceQuery => {
+  let query = EMPTY_INTELLIGENCE_QUERY();
+
+  if (containsAny(userMessage, [/(black[\s_-]*gold|黑金)/i])) {
+    query = addSignal(query, { colorHints: ["black", "gold"], visualIntent: "black_gold" });
   }
+  if (containsAny(userMessage, [/(white[\s_-]*gold|白金)/i])) {
+    query = addSignal(query, { colorHints: ["white", "gold"] });
+  }
+  if (containsAny(userMessage, [/(black(?:\s+and\s+|[\s_-]*)red|黑红)/i])) {
+    query = addSignal(query, { colorHints: ["black", "red"] });
+  }
+  if (containsAny(userMessage, [/(blue[\s_-]*hair|蓝发)/i])) {
+    query = addSignal(query, { colorHints: ["blue", "blue hair"] });
+  }
+  if (containsAny(userMessage, [/(gold|金色|金)/i])) {
+    query = addSignal(query, { colorHints: "gold" });
+  }
+  if (containsAny(userMessage, [/(neon|霓虹)/i])) {
+    query = addSignal(query, { colorHints: "neon" });
+  }
+
+  if (containsAny(userMessage, [/\bSSR\b/i])) query = addSignal(query, { rarityHints: "SSR" });
+  if (containsAny(userMessage, [/\bUR\b/i])) query = addSignal(query, { rarityHints: "UR" });
+  if (containsAny(userMessage, [/\bSR\b/i])) query = addSignal(query, { rarityHints: "SR" });
+  if (containsAny(userMessage, [/(rare|稀有)/i])) query = addSignal(query, { commerceIntent: "rare" });
+
   if (containsAny(userMessage, [/(queen|女王)/i])) {
-    query.archetypeTags = addUnique(query.archetypeTags, "queen");
-    query.characterTypes = addUnique(query.characterTypes, "female character");
+    query = addSignal(query, { archetypeTags: "queen", characterIntent: ["queen", "ruler"] });
   }
   if (containsAny(userMessage, [/(goddess|女神)/i])) {
-    query.archetypeTags = addUnique(query.archetypeTags, "goddess");
+    query = addSignal(query, { archetypeTags: "goddess", characterIntent: "goddess" });
   }
-  if (containsAny(userMessage, [/(maid|女仆)/i])) {
-    query.characterTypes = addUnique(query.characterTypes, "maid");
-    query.archetypeTags = addUnique(query.archetypeTags, "maid");
+  if (containsAny(userMessage, [/(warrior|战士)/i])) {
+    query = addSignal(query, { characterTypes: "warrior", archetypeTags: "warrior", characterIntent: "warrior" });
   }
-  if (containsAny(userMessage, [/(warrior|战士|戰士)/i])) {
-    query.characterTypes = addUnique(query.characterTypes, "warrior");
-    query.archetypeTags = addUnique(query.archetypeTags, "warrior");
+  if (containsAny(userMessage, [/(mecha[\s_-]*girl|机甲少女)/i])) {
+    query = addSignal(query, { characterTypes: "mecha girl", characterIntent: "mecha_girl", genreTags: "mecha" });
   }
-  if (containsAny(userMessage, [/(heroine|女英雄)/i])) {
-    query.characterTypes = addUnique(query.characterTypes, "heroine");
+  if (containsAny(userMessage, [/(dragon[\s_-]*lord|龙王|龙主)/i])) {
+    query = addSignal(query, { archetypeTags: "dragon lord", characterIntent: "dragon_lord" });
   }
-  if (containsAny(userMessage, [/(attendant|侍从|侍從)/i])) {
-    query.characterTypes = addUnique(query.characterTypes, "attendant");
+  if (containsAny(userMessage, [/(priestess|祭司|神官)/i])) {
+    query = addSignal(query, { characterTypes: "priestess", archetypeTags: "priestess", characterIntent: "priestess" });
+  }
+  if (containsAny(userMessage, [/(angel|天使)/i])) {
+    query = addSignal(query, { characterTypes: "angel", archetypeTags: "angel", characterIntent: "angel" });
+  }
+  if (containsAny(userMessage, [/(villain|反派)/i])) {
+    query = addSignal(query, { archetypeTags: "villain", characterIntent: "villain" });
+  }
+  if (containsAny(userMessage, [/(girl|female|女角色|女性角色|动漫女孩|anime[\s_-]*girl)/i])) {
+    query = addSignal(query, { characterTypes: "female character" });
+  }
+  if (containsAny(userMessage, [/(waifu|老婆向)/i])) {
+    query = addSignal(query, { commerceIntent: "waifu" });
   }
 
-  if (containsAny(userMessage, [/(mecha|机甲|鏈虹敳)/i])) {
-    query.genreTags = addUnique(query.genreTags, "mecha");
+  if (containsAny(userMessage, [/(cyberpunk|赛博朋克)/i])) {
+    query = addSignal(query, { visualStyle: "cyberpunk", genreTags: "cyberpunk", visualIntent: "cyberpunk" });
   }
-  if (containsAny(userMessage, [/(vampire|吸血鬼)/i])) {
-    query.genreTags = addUnique(query.genreTags, "vampire");
-    query.archetypeTags = addUnique(query.archetypeTags, "vampire");
+  if (containsAny(userMessage, [/(dark[\s_-]*fantasy|暗黑幻想)/i])) {
+    query = addSignal(query, { visualStyle: "dark fantasy", genreTags: "dark fantasy", visualIntent: "dark_fantasy" });
   }
-
-  if (containsAny(userMessage, [/(beach|海边|海滨|娴疯竟|娴锋哗)/i])) query.settingTags = addUnique(query.settingTags, "beach");
-  if (containsAny(userMessage, [/(bedroom|卧室|寢室|luxury bedroom)/i])) query.settingTags = addUnique(query.settingTags, "bedroom");
-  if (containsAny(userMessage, [/(shrine|神社)/i])) query.settingTags = addUnique(query.settingTags, "shrine");
-  if (containsAny(userMessage, [/(gothic|哥特)/i])) query.settingTags = addUnique(query.settingTags, "gothic");
-  if (containsAny(userMessage, [/(fast food|快餐)/i])) query.settingTags = addUnique(query.settingTags, "fast food");
-  if (containsAny(userMessage, [/(palace|宫殿|宮殿)/i])) query.settingTags = addUnique(query.settingTags, "palace");
-  if (containsAny(userMessage, [/(kimono|和服)/i])) query.settingTags = addUnique(query.settingTags, "kimono");
-
-  if (containsAny(userMessage, [/(cyberpunk|赛博朋克|賽博朋克|璧涘崥鏈嬪厠)/i])) {
-    query.visualStyle = addUnique(query.visualStyle, "cyberpunk");
-    query.genreTags = addUnique(query.genreTags, "cyberpunk");
+  if (containsAny(userMessage, [/(anime|动漫|动画|二次元)/i])) {
+    query = addSignal(query, { visualStyle: "anime" });
   }
   if (containsAny(userMessage, [/(gothic|哥特)/i])) {
-    query.visualStyle = addUnique(query.visualStyle, "gothic");
-    query.genreTags = addUnique(query.genreTags, "gothic");
-  }
-  if (containsAny(userMessage, [/(anime|动画|動漫|动漫|鍔ㄦ极|浜屾鍏?)/i])) {
-    query.visualStyle = addUnique(query.visualStyle, "anime");
-  }
-  if (containsAny(userMessage, [/(kimono|和服)/i])) {
-    query.visualStyle = addUnique(query.visualStyle, "kimono");
-  }
-  if (containsAny(userMessage, [/(one piece style|海贼王风格|海賊王風格)/i])) {
-    query.visualStyle = addUnique(query.visualStyle, "one piece style");
+    query = addSignal(query, { visualStyle: "gothic", genreTags: "gothic" });
   }
   if (containsAny(userMessage, [/(elegant|优雅)/i])) {
-    query.visualStyle = addUnique(query.visualStyle, "elegant");
+    query = addSignal(query, { visualStyle: "elegant", toneTags: "elegant", emotionalIntent: "elegant" });
+  }
+  if (containsAny(userMessage, [/(holy|divine|神圣|神性)/i])) {
+    query = addSignal(query, { visualStyle: "divine", moodTags: "divine", toneTags: "divine", emotionalIntent: "divine" });
   }
 
-  if (containsAny(userMessage, [/(圣洁|神圣|holy)/i])) {
-    query.moodTags = addUnique(query.moodTags, "holy");
-    query.toneTags = addUnique(query.toneTags, "holy");
+  if (containsAny(userMessage, [/(mysterious|神秘)/i])) {
+    query = addSignal(query, { moodTags: "mysterious", toneTags: "mysterious", emotionalIntent: "mysterious" });
   }
-  if (containsAny(userMessage, [/(神秘|mysterious)/i])) {
-    query.moodTags = addUnique(query.moodTags, "mysterious");
-    query.toneTags = addUnique(query.toneTags, "mysterious");
+  if (containsAny(userMessage, [/(boss[\s_-]*like|boss|最终\s*boss|最终boss)/i])) {
+    query = addSignal(query, { moodTags: "boss_like", emotionalIntent: "boss_like" });
   }
-  if (containsAny(userMessage, [/(最终boss|最终 boss|final boss|boss like|boss_like|boss)/i])) {
-    query.moodTags = addUnique(query.moodTags, "boss_like");
+  if (containsAny(userMessage, [/(oppressive|压迫感|威压|压力感|pressure)/i])) {
+    query = addSignal(query, { moodTags: "oppressive", emotionalIntent: "oppressive" });
   }
-  if (containsAny(userMessage, [/(压迫|压迫感|壓迫|oppressive)/i])) {
-    query.moodTags = addUnique(query.moodTags, "oppressive");
+  if (containsAny(userMessage, [/(dark|黑暗)/i])) {
+    query = addSignal(query, { toneTags: "dark", emotionalIntent: "dark" });
   }
-  if (containsAny(userMessage, [/(dark|黑暗|暗黑|鏆楅粦)/i])) {
-    query.toneTags = addUnique(query.toneTags, "dark");
+  if (containsAny(userMessage, [/(cute|可爱)/i])) {
+    query = addSignal(query, { moodTags: "cute", toneTags: "cute", emotionalIntent: "cute" });
+  }
+  if (containsAny(userMessage, [/(battle|battle-ready|战斗|战斗感)/i])) {
+    query = addSignal(query, { moodTags: "battle", toneTags: "battle", genreTags: "battle", commerceIntent: "battle" });
+  }
+  if (containsAny(userMessage, [/(magic|magical|魔法)/i])) {
+    query = addSignal(query, { moodTags: "magic", toneTags: "magic" });
+  }
+  if (containsAny(userMessage, [/(powerful|强大|强势)/i])) {
+    query = addSignal(query, { emotionalIntent: "boss_like" });
   }
 
-  if (containsAny(userMessage, [/(collect|collectible|收藏)/i])) {
-    query.commerceIntent = addUnique(query.commerceIntent, "collectible");
+  if (containsAny(userMessage, [/(cathedral|大教堂)/i])) {
+    query = addSignal(query, { settingTags: "cathedral" });
   }
-  if (containsAny(userMessage, [/(buy|purchase|购买|購買|checkout)/i])) {
-    query.commerceIntent = addUnique(query.commerceIntent, "buy");
+  if (containsAny(userMessage, [/(palace|宫殿)/i])) {
+    query = addSignal(query, { settingTags: "palace", worldbuildingIntent: "fantasy_kingdom" });
+  }
+  if (containsAny(userMessage, [/(shrine|神社|圣殿)/i])) {
+    query = addSignal(query, { settingTags: "shrine" });
+  }
+  if (containsAny(userMessage, [/(arena|竞技场|战场)/i])) {
+    query = addSignal(query, { settingTags: "arena", worldbuildingIntent: "battle_arena" });
+  }
+  if (containsAny(userMessage, [/(kingdom|王国|皇家幻想|royal fantasy)/i])) {
+    query = addSignal(query, { settingTags: "kingdom", genreTags: "fantasy", worldbuildingIntent: "fantasy_kingdom" });
+  }
+  if (containsAny(userMessage, [/(empire|帝国|虚空帝国)/i])) {
+    query = addSignal(query, { settingTags: "empire", worldbuildingIntent: "void_empire" });
+  }
+
+  if (containsAny(userMessage, [/(collectible|收藏|收藏价值)/i])) {
+    query = addSignal(query, { commerceIntent: "collectible" });
+  }
+  if (containsAny(userMessage, [/(premium|高端|高级感|贵气)/i])) {
+    query = addSignal(query, { commerceIntent: "premium" });
+  }
+  if (containsAny(userMessage, [/(high[\s_-]*value|高价值|价值高)/i])) {
+    query = addSignal(query, { commerceIntent: "high_value" });
+  }
+  if (containsAny(userMessage, [/(display(?:[\s_-]*piece)?|展示卡|展示向)/i])) {
+    query = addSignal(query, { commerceIntent: "display_piece" });
+  }
+  if (containsAny(userMessage, [/(expensive|奢华|luxury)/i])) {
+    query = addSignal(query, { commerceIntent: ["premium", "high_value"] });
   }
 
   if (containsAny(userMessage, [/(adult|nsfw|hentai|erotic|lingerie|bikini|sexy)/i])) {
-    query.safetyIntent = "adult";
-  } else if (query.moodTags.length > 0 || query.toneTags.length > 0) {
-    query.safetyIntent = "neutral";
+    query = addSignal(query, { safetyIntent: "adult" });
   }
 
-  return query;
+  return finalizeIntelligenceQuery(query, userMessage, language);
 };
-
-const mergeIntelligenceQuery = (
-  primary: IntelligenceGalleryQuery,
-  fallback: IntelligenceGalleryQuery
-): IntelligenceGalleryQuery => ({
-  visualStyle: uniqueStrings([...primary.visualStyle, ...fallback.visualStyle]),
-  moodTags: uniqueStrings([...primary.moodTags, ...fallback.moodTags]),
-  toneTags: uniqueStrings([...primary.toneTags, ...fallback.toneTags]),
-  characterTypes: uniqueStrings([...primary.characterTypes, ...fallback.characterTypes]),
-  archetypeTags: uniqueStrings([...primary.archetypeTags, ...fallback.archetypeTags]),
-  settingTags: uniqueStrings([...primary.settingTags, ...fallback.settingTags]),
-  genreTags: uniqueStrings([...primary.genreTags, ...fallback.genreTags]),
-  colorHints: uniqueStrings([...primary.colorHints, ...fallback.colorHints]),
-  rarityHints: uniqueStrings([...primary.rarityHints, ...fallback.rarityHints]),
-  commerceIntent: uniqueStrings([...primary.commerceIntent, ...fallback.commerceIntent]),
-  safetyIntent: primary.safetyIntent === "unknown" ? fallback.safetyIntent : primary.safetyIntent,
-});
 
 const safeJsonParse = (raw: string, fallbackLanguage: SupportedLanguage, userMessage: string): ParsedGalleryQuery | null => {
   try {
     const parsed = JSON.parse(extractJsonPayload(raw)) as Partial<ParsedGalleryQuery> & {
-      intelligenceQuery?: Partial<IntelligenceGalleryQuery>;
+      intelligenceQuery?: PartialIntelligenceQuery;
     };
-    const intelligenceQuery = mergeIntelligenceQuery(
-      normalizeIntelligenceQuery(parsed.intelligenceQuery),
-      buildRuleBasedIntelligenceQuery(userMessage)
-    );
-    return applyMinimalHybrid(parsed, intelligenceQuery, fallbackLanguage, userMessage);
+
+    const resolvedLanguage = parsed.language === "zh" || parsed.language === "en" ? parsed.language : fallbackLanguage;
+    const intelligenceLanguage = detectIntelligenceLanguage(userMessage) ?? resolvedLanguage;
+    const parsedIntelligence = finalizeIntelligenceQuery(parsed.intelligenceQuery, userMessage, intelligenceLanguage);
+    const fallbackIntelligence = buildRuleBasedIntelligenceQuery(userMessage, intelligenceLanguage);
+    const intelligenceQuery = mergeIntelligenceQuery(parsedIntelligence, fallbackIntelligence);
+
+    return applyMinimalHybrid(parsed, intelligenceQuery, resolvedLanguage, userMessage);
   } catch {
     return null;
   }
 };
 
-export const buildRuleBasedGalleryQuery = (
-  userMessage: string,
-  language: SupportedLanguage
-): ParsedGalleryQuery => {
-  const intelligenceQuery = buildRuleBasedIntelligenceQuery(userMessage);
+export const buildRuleBasedGalleryQuery = (userMessage: string, language: SupportedLanguage): ParsedGalleryQuery => {
+  const intelligenceQuery = buildRuleBasedIntelligenceQuery(userMessage, detectIntelligenceLanguage(userMessage));
   return applyMinimalHybrid({}, intelligenceQuery, language, userMessage);
 };
 

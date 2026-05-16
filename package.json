@@ -20,6 +20,7 @@
     "gallery:test-query-understanding": "tsx src/scripts/test-query-understanding.ts",
     "gallery:test-recommendation": "tsx src/scripts/test-gallery-recommendation.ts",
     "gallery:test-recommendation-feedback": "tsx src/scripts/test-recommendation-feedback.ts",
+    "gallery:test-query-intelligence": "tsx src/scripts/test-query-intelligence.ts",
     "gallery:feedback:analyze": "tsx src/scripts/analyze-recommendation-feedback.ts",
     "recommendation:report": "tsx src/scripts/generate-recommendation-report.ts",
     "gallery:test-help": "tsx src/scripts/test-gallery-help.ts",
