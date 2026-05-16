@@ -6,6 +6,7 @@ dotenv.config({ path: ".env.local", override: true });
 import { Prisma } from "@prisma/client";
 import { galleryIntelligenceService } from "../services/gallery-intelligence.service";
 import { prisma } from "../services/prisma.service";
+import type { GalleryImageMetadata } from "../utils/gallery-metadata";
 
 type GalleryCardBatchRecord = {
   id: string;
@@ -38,12 +39,32 @@ const parseArgs = (): { force: boolean } => ({
 
 const buildNextMetadata = (
   metadata: Prisma.JsonValue | null,
-  intelligence: ReturnType<typeof galleryIntelligenceService.buildMetadata>
+  intelligence: Awaited<ReturnType<typeof galleryIntelligenceService.buildCandidates>>["intelligence"]
 ): Prisma.InputJsonValue => {
   const next: Record<string, unknown> = isPlainObject(metadata) ? { ...metadata } : {};
   next.intelligence = intelligence;
   return next as Prisma.InputJsonValue;
 };
+
+const buildCandidatesInput = (card: GalleryCardBatchRecord): {
+  imagePath: string;
+  relativePath: string;
+  metadata: GalleryImageMetadata;
+} => ({
+  imagePath: `gallery-card:${card.id}`,
+  relativePath: `${card.id}.json`,
+  metadata: {
+    title: card.title,
+    description: card.description,
+    tags: card.tags,
+    style: card.style,
+    rarity: card.rarity,
+    category: card.category,
+    character: card.character,
+    color: card.color,
+    metadata: isPlainObject(card.metadata) ? (card.metadata as GalleryImageMetadata["metadata"]) : undefined,
+  },
+});
 
 const hasExistingIntelligence = (metadata: Prisma.JsonValue | null): boolean => {
   if (!isPlainObject(metadata)) {
@@ -105,17 +126,7 @@ const main = async (): Promise<void> => {
             continue;
           }
 
-          const intelligence = galleryIntelligenceService.buildMetadata({
-            title: card.title,
-            description: card.description,
-            tags: card.tags,
-            style: card.style,
-            rarity: card.rarity,
-            category: card.category,
-            character: card.character,
-            color: card.color,
-            metadata: card.metadata,
-          });
+          const { intelligence } = await galleryIntelligenceService.buildCandidates(buildCandidatesInput(card));
 
           const nextMetadata = buildNextMetadata(card.metadata, intelligence);
           await prisma.galleryCard.update({
