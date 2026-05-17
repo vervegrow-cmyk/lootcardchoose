@@ -114,7 +114,7 @@ const run = async (): Promise<void> => {
       assert.equal(result.intent, "ignore", `Expected DM ignore for ${message}`);
     }
 
-    const dmGalleryCases = ["show me 10 cyberpunk cards", "recommend black gold anime cards"];
+    const dmGalleryCases = ["girl", "show me 10 cyberpunk cards", "recommend black gold anime cards"];
     for (const message of dmGalleryCases) {
       const result = await router.determineIntent(message, {
         userId: "test-dm-gallery-user",

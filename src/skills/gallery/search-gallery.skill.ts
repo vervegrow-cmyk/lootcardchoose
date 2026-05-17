@@ -18,6 +18,11 @@ export type SearchGalleryOutput = {
   results: GalleryCardDto[];
   limit: number;
   summaryText?: string;
+  exactResultCount: number;
+  recoveryTriggered: boolean;
+  recoveryResultCount: number;
+  curatorNarrationUsed: boolean;
+  responseTextSource: "curator_summary" | "recovery_summary" | "legacy_success" | "legacy_empty";
 };
 
 type SearchSessionWriteTask = {
@@ -190,6 +195,11 @@ export const searchGallerySkill: SkillHandler<SearchGalleryInput, SearchGalleryO
         results: [],
         limit: searchResult.limit,
         summaryText: searchResult.summaryText,
+        exactResultCount: searchResult.exactResultCount,
+        recoveryTriggered: searchResult.recoveryTriggered,
+        recoveryResultCount: searchResult.recoveryResultCount,
+        curatorNarrationUsed: searchResult.curatorNarrationUsed,
+        responseTextSource: searchResult.responseTextSource,
       };
     }
 
@@ -222,6 +232,11 @@ export const searchGallerySkill: SkillHandler<SearchGalleryInput, SearchGalleryO
       results: searchResult.results,
       limit: searchResult.limit,
       summaryText: searchResult.summaryText,
+      exactResultCount: searchResult.exactResultCount,
+      recoveryTriggered: searchResult.recoveryTriggered,
+      recoveryResultCount: searchResult.recoveryResultCount,
+      curatorNarrationUsed: searchResult.curatorNarrationUsed,
+      responseTextSource: searchResult.responseTextSource,
     };
   } catch (error) {
     logger.error("[SEARCH GALLERY SKILL] search failed", {

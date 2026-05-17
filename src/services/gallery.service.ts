@@ -81,6 +81,11 @@ export type GallerySearchResult = {
   results: GalleryCardDto[];
   limit: number;
   summaryText?: string;
+  exactResultCount: number;
+  recoveryTriggered: boolean;
+  recoveryResultCount: number;
+  curatorNarrationUsed: boolean;
+  responseTextSource: "curator_summary" | "recovery_summary" | "legacy_success" | "legacy_empty";
 };
 
 export type RecommendationDebugCardSummary = {
@@ -327,6 +332,15 @@ const decorateDtoWithNarration = (
       intelligenceQuery: parsedQuery.intelligenceQuery,
     }),
 });
+
+const buildSummaryFromCardNarration = (cards: GalleryCardDto[]): string | null => {
+  const narrationLines = cards[0]?.curatorNarration?.embedLines?.map((line) => line.trim()).filter(Boolean) ?? [];
+  if (narrationLines.length === 0) {
+    return null;
+  }
+
+  return narrationLines.slice(0, 2).join(" ");
+};
 
 const dedupeCards = (cards: GalleryCardRecord[]): GalleryCardRecord[] => {
   const seen = new Set<string>();
@@ -1026,13 +1040,36 @@ export const galleryService = {
     const results = rankedCards
       .map((card) => decorateDtoWithCommerce(card, scoreByCardId.get(card.id), analyticsHints))
       .map((dto, index) => decorateDtoWithNarration(rankedCards[index], dto, parsedQuery, scoreByCardId.get(rankedCards[index].id)));
-    const summaryText = galleryRecommendationService.buildCuratorSummary({
-      cards: rankedCards,
-      parsedQuery,
-      intelligenceQuery: parsedQuery.intelligenceQuery,
-      language: parsedQuery.language,
+    const summaryText =
+      galleryRecommendationService.buildCuratorSummary({
+        cards: rankedCards,
+        parsedQuery,
+        intelligenceQuery: parsedQuery.intelligenceQuery,
+        language: parsedQuery.language,
+      }) ?? buildSummaryFromCardNarration(results);
+    const exactResultCount = resultsSource.length;
+    const recoveryTriggered = exactResultCount === 0 && rankedCards.length > 0;
+    const recoveryResultCount = recoveryTriggered ? rankedCards.length : 0;
+    const curatorNarrationUsed = Boolean(summaryText?.trim());
+    const responseTextSource: GallerySearchResult["responseTextSource"] = recoveryTriggered
+      ? curatorNarrationUsed
+        ? "recovery_summary"
+        : "legacy_success"
+      : curatorNarrationUsed
+        ? "curator_summary"
+        : results.length > 0
+          ? "legacy_success"
+          : "legacy_empty";
+
+    logger.info("[GALLERY SERVICE] final result count", {
+      count: results.length,
+      query,
+      exactResultCount,
+      recoveryTriggered,
+      recoveryResultCount,
+      curatorNarrationUsed,
+      responseTextSource,
     });
-    logger.info("[GALLERY SERVICE] final result count", { count: results.length, query });
 
     return {
       query,
@@ -1042,6 +1079,11 @@ export const galleryService = {
       results,
       limit,
       summaryText: summaryText ?? undefined,
+      exactResultCount,
+      recoveryTriggered,
+      recoveryResultCount,
+      curatorNarrationUsed,
+      responseTextSource,
     };
   },
 

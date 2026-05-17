@@ -8,6 +8,7 @@ import { buildHermesRegistry } from "../hermes/registry";
 import { HermesRouter } from "../hermes/router";
 import { gallerySearchSessionRepository } from "../repositories/gallery-search-session.repository";
 import { guildConfigRepository } from "../repositories/guild-config.repository";
+import { galleryRepository } from "../repositories/gallery.repository";
 import { orderService } from "../services/order.service";
 import { shopifyService } from "../services/shopify.service";
 import { awaitPendingSearchSessionWrite } from "../skills/gallery/search-gallery.skill";
@@ -23,7 +24,9 @@ const LEGACY_CHANNEL_DENIAL_TEXT = "Please use #lootcardchoose to search and cho
 const CONFIGURED_CHANNEL_DENIAL_TEXT =
   "This bot is not enabled in this channel. Please use the configured card channel.";
 const EMPTY_GALLERY_TEXT = "Sorry, I couldn't find matching cards.";
+const LEGACY_SUCCESS_PREFIX = "I found 10 cards for you.";
 const ZERO_RESULT_QUERY = "show me 10 qwertyuiop cards";
+const RECOVERY_QUERY = "show me 10 cyberpunk cards";
 
 const createSessionResultCard = (card: {
   id: string;
@@ -70,6 +73,12 @@ const main = async (): Promise<void> => {
   const staleSessionUserId = `test-stale-user-${suffix}`;
   const staleSessionChannelId = `test-stale-channel-${suffix}`;
   const staleSessionGuildId = `test-stale-guild-${suffix}`;
+  const recoveryUserId = `test-recovery-user-${suffix}`;
+  const recoveryChannelId = `test-recovery-channel-${suffix}`;
+  const recoveryGuildId = `test-recovery-guild-${suffix}`;
+  const narrationUserId = `test-narration-user-${suffix}`;
+  const narrationChannelId = `test-narration-channel-${suffix}`;
+  const narrationGuildId = `test-narration-guild-${suffix}`;
 
   const legacyGuildId = `test-legacy-guild-${suffix}`;
   const configuredGuildId = `test-configured-guild-${suffix}`;
@@ -271,6 +280,84 @@ const main = async (): Promise<void> => {
     assert.notEqual(zeroResultSelectResponse.type, "gallery_checkout_created");
     if (zeroResultSelectResponse.type === "text") {
       assert.notEqual(zeroResultSelectResponse.text, "Please choose a number from 1 to 0.");
+    }
+
+    const girlNarrationResponse = await router.handle({
+      text: "girl",
+      discordGuildId: narrationGuildId,
+      userId: narrationUserId,
+      channelId: narrationChannelId,
+      channelName: discordChannelName,
+    });
+    assert.equal(girlNarrationResponse.type, "gallery_search_results");
+    assert.ok(girlNarrationResponse.text.trim().length > 0);
+    assert.notEqual(girlNarrationResponse.text, LEGACY_SUCCESS_PREFIX);
+    assert.equal(girlNarrationResponse.metadata?.curatorNarrationUsed, true);
+    assert.equal(girlNarrationResponse.metadata?.responseTextSource, "curator_summary");
+    assert.ok((girlNarrationResponse.cards[0]?.curatorNarration?.embedLines?.length ?? 0) >= 2);
+
+    const originalGallerySearch = galleryRepository.search;
+    let recoveryPrimarySearchConsumed = false;
+    galleryRepository.search = async (query) => {
+      const normalizedKeywords = query.keywords.map((keyword) => keyword.trim().toLowerCase());
+      const isRecoveryTarget = normalizedKeywords.includes("cyberpunk");
+
+      if (isRecoveryTarget && !recoveryPrimarySearchConsumed) {
+        recoveryPrimarySearchConsumed = true;
+        return [];
+      }
+
+      if (isRecoveryTarget) {
+        return originalGallerySearch({
+          ...query,
+          keywords: ["girl"],
+          tags: [],
+          style: "",
+          rarity: "",
+          category: "",
+          character: "female character",
+          color: "",
+          mood: "",
+          scene: "",
+        });
+      }
+
+      return originalGallerySearch(query);
+    };
+
+    try {
+      const recoveryResponse = await router.handle({
+        text: RECOVERY_QUERY,
+        discordGuildId: recoveryGuildId,
+        userId: recoveryUserId,
+        channelId: recoveryChannelId,
+        channelName: discordChannelName,
+      });
+      assert.equal(recoveryResponse.type, "gallery_search_results");
+      assert.match(recoveryResponse.text, /similar vibe/i);
+      assert.equal(recoveryResponse.metadata?.recoveryTriggered, true);
+      assert.ok(Number(recoveryResponse.metadata?.recoveryResultCount) > 0);
+      assert.notEqual(recoveryResponse.metadata?.responseTextSource, "legacy_empty");
+
+      await awaitPendingSearchSessionWrite({
+        discordGuildId: recoveryGuildId,
+        discordUserId: recoveryUserId,
+        discordChannelId: recoveryChannelId,
+        timeoutMs: 5000,
+      });
+
+      const recoveryActiveSession = await gallerySearchSessionRepository.findLatest({
+        discordGuildId: recoveryGuildId,
+        discordUserId: recoveryUserId,
+        discordChannelId: recoveryChannelId,
+        status: "active",
+      });
+      ensure(recoveryActiveSession, "Expected recovery session to be persisted");
+      assert.ok((recoveryResponse.cards.length ?? 0) > 0);
+      assert.equal(Array.isArray(recoveryActiveSession?.results), true);
+      assert.equal(getFirstSessionCardId(recoveryActiveSession), recoveryResponse.cards[0]?.id ?? null);
+    } finally {
+      galleryRepository.search = originalGallerySearch;
     }
 
   const originalCreateProductFromGalleryCard = shopifyService.createProductFromGalleryCard;

@@ -223,6 +223,22 @@ const hasExplicitDmGalleryIntent = (text: string): boolean => {
   return hasSearchVerb && hasCardTarget;
 };
 
+const isDMGallerySearchAllowed = (text: string): boolean => {
+  if (hasExplicitDmGalleryIntent(text)) {
+    return true;
+  }
+
+  const normalized = text.trim().toLowerCase();
+  if (!normalized || isHelpWelcomeMessage(text) || hasExplicitDmCustomerSupportSignal(text) || ORDER_PATTERNS.some((pattern) => pattern.test(text))) {
+    return false;
+  }
+
+  const keywordCandidates = extractGalleryKeywordCandidates(text);
+  const isShortBrowsePrompt = keywordCandidates.length > 0 && keywordCandidates.length <= 4 && normalized.split(/\s+/).length <= 5;
+
+  return isShortBrowsePrompt && hasTrustedGallerySignal(text);
+};
+
 const matchesAnyPhrase = (normalized: string, phrases: string[]): boolean =>
   phrases.some((phrase) => normalized.includes(phrase));
 
@@ -288,6 +304,7 @@ export class HermesRouter {
     let resolvedIntent: IntentId = "ignore";
     let resolvedLanguage: SupportedLanguage = fallbackLanguage;
     let path: DetermineIntentPath = "llm";
+    let dmGallerySearchAllowed: boolean | null = null;
 
     logger.info("[ROUTER] determineIntent start", {
       userId: context?.userId ?? "",
@@ -342,6 +359,9 @@ export class HermesRouter {
       }
 
       const confidence = computeIntentConfidence(text);
+      if (isDM) {
+        dmGallerySearchAllowed = isDMGallerySearchAllowed(text);
+      }
 
       if (isDM && hasExplicitDmCustomerSupportSignal(text)) {
         path = "rule_customer_support";
@@ -378,7 +398,7 @@ export class HermesRouter {
       }
 
       if (confidence.gallerySearchConfidence >= confidence.customerSupportConfidence && confidence.gallerySearchConfidence >= 0.92) {
-        if (isDM && !hasExplicitDmGalleryIntent(text)) {
+        if (isDM && !dmGallerySearchAllowed) {
           resolvedIntent = "ignore";
           resolvedLanguage = fallbackLanguage;
           return {
@@ -471,7 +491,7 @@ export class HermesRouter {
           };
         }
 
-        if (isDM && !hasExplicitDmGalleryIntent(text)) {
+        if (isDM && !dmGallerySearchAllowed) {
           resolvedIntent = "ignore";
           resolvedLanguage = fallback.language;
           return {
@@ -492,7 +512,7 @@ export class HermesRouter {
       const hasExplicitSupportSignal = hasExplicitCustomerSupportSignal(text);
       const matchesNotCustomerSupportOnly = matchesAnyPhrase(normalized, NOT_CUSTOMER_SUPPORT_ONLY);
 
-      if (isDM && classified.intent === "gallery_search" && !hasExplicitDmGalleryIntent(text)) {
+      if (isDM && classified.intent === "gallery_search" && !dmGallerySearchAllowed) {
         resolvedIntent = "ignore";
         resolvedLanguage = classified.language;
         return {
@@ -550,6 +570,7 @@ export class HermesRouter {
         language: resolvedLanguage,
         hasActiveGallerySession,
         path,
+        isDMGallerySearchAllowed: dmGallerySearchAllowed,
         latencyMs: Date.now() - startedAt,
       });
     }

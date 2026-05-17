@@ -11,8 +11,31 @@ import { t } from "../../utils/i18n";
 import { logger } from "../../utils/logger";
 import { isUserFacingError } from "../../utils/user-facing-error";
 
-const buildSearchSuccessText = (language: AgentContext["language"], count: number, summaryText?: string): string =>
-  summaryText?.trim() || t(language, "gallery.search.success", { count });
+const buildSearchRecoveryText = (language: AgentContext["language"]): string =>
+  language === "zh"
+    ? "我没有找到完全一致的卡，但找到了气质相近的选择。"
+    : "I couldn't find exact matches, but I found cards with a similar vibe.";
+
+const buildSearchSuccessText = (
+  language: AgentContext["language"],
+  count: number,
+  summaryText?: string,
+  recoveryTriggered?: boolean
+): string => {
+  if (recoveryTriggered && summaryText?.trim()) {
+    return `${buildSearchRecoveryText(language)}\n\n${summaryText}`;
+  }
+
+  if (summaryText?.trim()) {
+    return summaryText;
+  }
+
+  if (recoveryTriggered) {
+    return buildSearchRecoveryText(language);
+  }
+
+  return t(language, "gallery.search.success", { count });
+};
 
 const buildSearchEmptyText = (language: AgentContext["language"]): string => t(language, "gallery.search.empty");
 
@@ -68,10 +91,32 @@ export const GalleryAgent: AgentDefinition = {
         );
 
         if (result.results.length === 0) {
+          logger.info("[GALLERY AGENT] gallery_search empty", {
+            discordUserId: context.userId ?? "",
+            discordChannelId: context.channelId ?? "",
+            query: input.text,
+            exactResultCount: result.exactResultCount,
+            recoveryTriggered: result.recoveryTriggered,
+            recoveryResultCount: result.recoveryResultCount,
+            curatorNarrationUsed: result.curatorNarrationUsed,
+            responseTextSource: result.responseTextSource,
+          });
           return {
             type: "text",
             language: result.language,
             text: buildSearchEmptyText(result.language),
+            metadata: {
+              query: result.query,
+              parsedQuery: result.parsedQuery ?? undefined,
+              structuredKeywords: result.parsedQuery?.keywords ?? undefined,
+              limit: result.limit,
+              language: result.language,
+              exactResultCount: result.exactResultCount,
+              recoveryTriggered: result.recoveryTriggered,
+              recoveryResultCount: result.recoveryResultCount,
+              curatorNarrationUsed: result.curatorNarrationUsed,
+              responseTextSource: result.responseTextSource,
+            },
           };
         }
 
@@ -94,10 +139,27 @@ export const GalleryAgent: AgentDefinition = {
           query: result.query,
         });
 
+        logger.info("[GALLERY AGENT] gallery_search results", {
+          discordUserId: context.userId ?? "",
+          discordChannelId: context.channelId ?? "",
+          query: result.query,
+          resultCount: result.results.length,
+          exactResultCount: result.exactResultCount,
+          recoveryTriggered: result.recoveryTriggered,
+          recoveryResultCount: result.recoveryResultCount,
+          curatorNarrationUsed: result.curatorNarrationUsed,
+          responseTextSource: result.responseTextSource,
+        });
+
         return {
           type: "gallery_search_results",
           language: result.language,
-          text: buildSearchSuccessText(result.language, result.results.length, result.summaryText),
+          text: buildSearchSuccessText(
+            result.language,
+            result.results.length,
+            result.summaryText,
+            result.recoveryTriggered
+          ),
           cards: result.results.map((card) => ({
             id: card.id,
             title: card.title,
@@ -117,6 +179,11 @@ export const GalleryAgent: AgentDefinition = {
             structuredKeywords: result.parsedQuery?.keywords ?? undefined,
             limit: result.limit,
             language: result.language,
+            exactResultCount: result.exactResultCount,
+            recoveryTriggered: result.recoveryTriggered,
+            recoveryResultCount: result.recoveryResultCount,
+            curatorNarrationUsed: result.curatorNarrationUsed,
+            responseTextSource: result.responseTextSource,
           },
         };
       }
