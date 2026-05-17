@@ -29,6 +29,15 @@ export type RecommendationCommercePresentation = {
   commerceReasons: string[];
 };
 
+export type RecommendationCuratorNarration = {
+  vibeNarration?: string;
+  atmosphereNarration?: string;
+  collectorFantasy?: string;
+  rarityStory?: string;
+  worldbuildingFlavor?: string;
+  embedLines: string[];
+};
+
 export type RecommendationScoreBreakdown = {
   visualMatch: number;
   moodEmotionalMatch: number;
@@ -49,6 +58,7 @@ export type RecommendationDebugEntry = {
   recommendationScore: RecommendationScore;
   commerceIntelligence?: RecommendationCommerceIntelligence;
   commercePresentation?: RecommendationCommercePresentation;
+  curatorNarration?: RecommendationCuratorNarration;
 };
 
 export type RecommendationInput = {

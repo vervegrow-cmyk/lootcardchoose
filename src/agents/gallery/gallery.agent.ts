@@ -11,8 +11,8 @@ import { t } from "../../utils/i18n";
 import { logger } from "../../utils/logger";
 import { isUserFacingError } from "../../utils/user-facing-error";
 
-const buildSearchSuccessText = (language: AgentContext["language"], count: number): string =>
-  t(language, "gallery.search.success", { count });
+const buildSearchSuccessText = (language: AgentContext["language"], count: number, summaryText?: string): string =>
+  summaryText?.trim() || t(language, "gallery.search.success", { count });
 
 const buildSearchEmptyText = (language: AgentContext["language"]): string => t(language, "gallery.search.empty");
 
@@ -23,10 +23,15 @@ const buildRefreshText = (
   language: AgentContext["language"],
   refreshMode: RefreshMode,
   shortQuestion?: string,
-  poolExhausted?: boolean
+  poolExhausted?: boolean,
+  summaryText?: string
 ): string => {
   if (refreshMode === "need_clarification") {
     return shortQuestion || (poolExhausted ? t(language, "gallery.refresh.poolExhausted") : t(language, "gallery.refresh.needClarification"));
+  }
+
+  if (summaryText?.trim()) {
+    return summaryText;
   }
 
   if (refreshMode === "refine") {
@@ -92,7 +97,7 @@ export const GalleryAgent: AgentDefinition = {
         return {
           type: "gallery_search_results",
           language: result.language,
-          text: buildSearchSuccessText(result.language, result.results.length),
+          text: buildSearchSuccessText(result.language, result.results.length, result.summaryText),
           cards: result.results.map((card) => ({
             id: card.id,
             title: card.title,
@@ -101,6 +106,7 @@ export const GalleryAgent: AgentDefinition = {
             price: card.price,
             tags: card.tags,
             language: result.language,
+            curatorNarration: card.curatorNarration,
           })),
           selectionPrompt: t(result.language, "gallery.search.chooseHint", {
             count: Math.min(result.results.length, 10),
@@ -154,7 +160,7 @@ export const GalleryAgent: AgentDefinition = {
           return {
             type: "text",
             language: result.language,
-            text: buildRefreshText(result.language, result.refreshMode, result.shortQuestion, result.poolExhausted),
+            text: buildRefreshText(result.language, result.refreshMode, result.shortQuestion, result.poolExhausted, result.summaryText),
             metadata: {
               refreshMode: result.refreshMode,
               reason: result.reason,
@@ -175,7 +181,7 @@ export const GalleryAgent: AgentDefinition = {
         return {
           type: "gallery_search_results",
           language: result.language,
-          text: buildRefreshText(result.language, refreshMode, result.shortQuestion, result.poolExhausted),
+          text: buildRefreshText(result.language, refreshMode, result.shortQuestion, result.poolExhausted, result.summaryText),
           cards: result.results.map((card) => ({
             id: card.id,
             title: card.title,
@@ -186,6 +192,7 @@ export const GalleryAgent: AgentDefinition = {
             language: result.language,
             refreshMode,
             reason: result.reason,
+            curatorNarration: card.curatorNarration,
           })),
           selectionPrompt: t(result.language, "gallery.search.chooseHint", {
             count: Math.min(result.results.length, 10),

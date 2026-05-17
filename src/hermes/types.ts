@@ -64,6 +64,14 @@ export type GallerySearchResultCard = {
   language?: SupportedLanguage;
   refreshMode?: RefreshMode;
   reason?: string;
+  curatorNarration?: {
+    vibeNarration?: string;
+    atmosphereNarration?: string;
+    collectorFantasy?: string;
+    rarityStory?: string;
+    worldbuildingFlavor?: string;
+    embedLines: string[];
+  };
 };
 
 export type HermesTextOutput = {

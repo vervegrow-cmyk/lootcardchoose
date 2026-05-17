@@ -37,6 +37,7 @@ export type RefreshGalleryOutput = {
   anchorSessionId: string | null;
   displaySessionId: string | null;
   poolExhausted: boolean;
+  summaryText?: string;
 };
 
 const extractCardIds = (session: GallerySearchSessionRecord): string[] => {
@@ -148,6 +149,7 @@ export const refreshGallerySkill: SkillHandler<RefreshGalleryInput, RefreshGalle
       anchorSessionId: null,
       displaySessionId: null,
       poolExhausted: false,
+      summaryText: undefined,
     };
   }
 
@@ -262,5 +264,6 @@ export const refreshGallerySkill: SkillHandler<RefreshGalleryInput, RefreshGalle
     anchorSessionId: planningAnchorSession.id,
     displaySessionId: displaySession.id,
     poolExhausted: refreshResult.poolExhausted,
+    summaryText: refreshResult.summaryText,
   };
 };

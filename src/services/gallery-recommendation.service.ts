@@ -1,14 +1,17 @@
 import { Prisma } from "@prisma/client";
 import type { GalleryCardRecord } from "../repositories/gallery.repository";
+import type { IntelligenceGalleryQuery, ParsedGalleryQuery } from "../services/llm-query-parser.service";
 import type {
   RecommendationCommerceIntelligence,
   RecommendationCommercePresentation,
+  RecommendationCuratorNarration,
   RecommendationDebugEntry,
   RecommendationInput,
   RecommendationResult,
   RecommendationScore,
   RecommendationScoreBreakdown,
 } from "../types/gallery-recommendation.types";
+import type { SupportedLanguage } from "../hermes/types";
 
 type WeightProfile = {
   visualMatch: number;
@@ -36,6 +39,27 @@ type SignalCollection = {
 type NormalizedCardIntelligence = {
   metadataSignals: SignalCollection;
   fallbackSignals: SignalCollection;
+};
+
+type NarrationMetadata = {
+  primaryColors: string[];
+  styleTags: string[];
+  subjectFocus: string;
+  raritySignals: string[];
+  moodTags: string[];
+  toneTags: string[];
+  energyLevel: string;
+  archetypeTags: string[];
+  entityType: string;
+  settingTags: string[];
+  genreTags: string[];
+  factionTags: string[];
+  propTags: string[];
+  powerSystemTags: string[];
+  collectorHooks: string[];
+  marketingAngles: string[];
+  rarity: string;
+  pricingTier: string;
 };
 
 type QuerySignals = {
@@ -122,6 +146,31 @@ const WARRIOR_MISMATCH_PENALTY = 5;
 const ROLE_FAMILY_TERMS = ["queen", "empress", "goddess", "priestess", "warrior", "paladin", "commander", "mecha girl"];
 const THEME_FAMILY_TERMS = ["cyberpunk", "mecha", "gothic", "dark fantasy", "holy", "divine"];
 const COLLECTOR_THEME_FAMILIES = ["black gold", "divine", "holy", "gothic", "dark fantasy", "cyberpunk", "mecha", "queen", "empress", "priestess"];
+
+const VISUAL_NARRATION_TERMS = [
+  "cyberpunk",
+  "neon",
+  "mecha",
+  "futuristic",
+  "sci-fi",
+  "dark fantasy",
+  "gothic",
+  "divine",
+  "holy",
+  "black gold",
+] as const;
+
+const MOOD_NARRATION_TERMS = [
+  "dark",
+  "elegant",
+  "mysterious",
+  "oppressive",
+  "divine",
+  "holy",
+  "battle",
+  "futuristic",
+  "cute",
+] as const;
 
 const roundScore = (value: number): number => Math.round(value * 100) / 100;
 
@@ -382,6 +431,36 @@ const buildMetadataSignals = (metadata: Prisma.JsonValue | null): SignalCollecti
   };
 };
 
+const buildNarrationMetadata = (metadata: Prisma.JsonValue | null, card: GalleryCardRecord): NarrationMetadata => {
+  const source = extractIntelligenceSource(metadata);
+  const visualLayer = readObject(source?.visualLayer);
+  const emotionalLayer = readObject(source?.emotionalLayer);
+  const characterLayer = readObject(source?.characterLayer);
+  const worldbuildingLayer = readObject(source?.worldbuildingLayer);
+  const commerceLayer = readObject(source?.commerceLayer);
+
+  return {
+    primaryColors: readStringArray(visualLayer?.primaryColors),
+    styleTags: readStringArray(visualLayer?.styleTags),
+    subjectFocus: readString(visualLayer?.subjectFocus),
+    raritySignals: readStringArray(visualLayer?.raritySignals),
+    moodTags: readStringArray(emotionalLayer?.moodTags),
+    toneTags: readStringArray(emotionalLayer?.toneTags),
+    energyLevel: readString(emotionalLayer?.energyLevel),
+    archetypeTags: readStringArray(characterLayer?.archetypeTags),
+    entityType: readString(characterLayer?.entityType),
+    settingTags: readStringArray(worldbuildingLayer?.settingTags),
+    genreTags: readStringArray(worldbuildingLayer?.genreTags),
+    factionTags: readStringArray(worldbuildingLayer?.factionTags),
+    propTags: readStringArray(worldbuildingLayer?.propTags),
+    powerSystemTags: readStringArray(worldbuildingLayer?.powerSystemTags),
+    collectorHooks: readStringArray(commerceLayer?.collectorHooks),
+    marketingAngles: readStringArray(commerceLayer?.marketingAngles),
+    rarity: readString(commerceLayer?.rarity) || normalizeText(card.rarity),
+    pricingTier: readString(commerceLayer?.pricingTier),
+  };
+};
+
 const buildFallbackSignals = (card: GalleryCardRecord): SignalCollection => ({
   visualStyle: normalizeSignalArray([card.style, card.color, ...card.tags, card.title]),
   moodTags: normalizeSignalArray([card.description, ...card.tags, card.title]),
@@ -399,6 +478,283 @@ const normalizeCardIntelligence = (card: GalleryCardRecord): NormalizedCardIntel
   metadataSignals: buildMetadataSignals(card.metadata),
   fallbackSignals: buildFallbackSignals(card),
 });
+
+const findFirstMatching = (values: string[], candidates: readonly string[]): string | null => {
+  const normalizedValues = uniqueNormalized(values);
+  for (const candidate of candidates) {
+    if (normalizedValues.some((value) => termMatches(value, candidate))) {
+      return candidate;
+    }
+  }
+  return normalizedValues[0] ?? null;
+};
+
+const titleCaseToken = (value: string): string =>
+  value
+    .split(" ")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+
+const formatAtmosphereToken = (value: string | null): string | null => {
+  if (!value) {
+    return null;
+  }
+
+  const normalized = normalizeText(value);
+  switch (normalized) {
+    case "cyberpunk":
+      return "cyberpunk";
+    case "neon":
+      return "neon";
+    case "mecha":
+      return "mechanized";
+    case "futuristic":
+      return "futuristic";
+    case "sci-fi":
+      return "sci-fi";
+    case "dark fantasy":
+      return "dark-fantasy";
+    case "gothic":
+      return "gothic";
+    case "divine":
+    case "holy":
+      return "sacred";
+    case "black gold":
+      return "black-gold";
+    default:
+      return normalized.replace(/\s+/g, " ");
+  }
+};
+
+const formatMoodToken = (value: string | null): string | null => {
+  if (!value) {
+    return null;
+  }
+
+  const normalized = normalizeText(value);
+  switch (normalized) {
+    case "battle":
+      return "battle-lit";
+    case "divine":
+    case "holy":
+      return "sacred";
+    case "cute":
+      return "playful";
+    default:
+      return normalized.replace(/\s+/g, " ");
+  }
+};
+
+const resolveRoleAtmosphere = (values: string[]): string | null => {
+  const normalized = uniqueNormalized(values);
+  if (normalized.some((value) => termMatches(value, "queen") || termMatches(value, "empress") || termMatches(value, "ruler"))) {
+    return "imperial";
+  }
+  if (normalized.some((value) => termMatches(value, "priestess") || termMatches(value, "holy female") || termMatches(value, "goddess"))) {
+    return "sacred";
+  }
+  if (normalized.some((value) => termMatches(value, "warrior") || termMatches(value, "paladin") || termMatches(value, "commander"))) {
+    return "martial";
+  }
+  if (normalized.some((value) => termMatches(value, "mecha"))) {
+    return "mechanized";
+  }
+  return null;
+};
+
+const withIndefiniteArticle = (phrase: string): string => (/^[aeiou]/i.test(phrase) ? `an ${phrase}` : `a ${phrase}`);
+
+const buildCuratorNarration = (
+  card: GalleryCardRecord,
+  signals: QuerySignals,
+  cardSignals: CardSignals,
+  commercePresentation: RecommendationCommercePresentation | undefined
+): RecommendationCuratorNarration => {
+  const narrationMetadata = buildNarrationMetadata(card.metadata, card);
+  const visualCue = formatAtmosphereToken(
+    findFirstMatching(
+      [
+        ...signals.visualStyle,
+        ...signals.genreTags,
+        ...cardSignals.visualStyle,
+        ...cardSignals.genreTags,
+        ...narrationMetadata.styleTags,
+      ],
+      VISUAL_NARRATION_TERMS
+    )
+  );
+  const moodCue = formatMoodToken(
+    findFirstMatching(
+      [
+        ...signals.moodTags,
+        ...signals.toneTags,
+        ...cardSignals.moodTags,
+        ...narrationMetadata.moodTags,
+        ...narrationMetadata.toneTags,
+      ],
+      MOOD_NARRATION_TERMS
+    )
+  );
+  const roleCue = resolveRoleAtmosphere([
+    ...signals.archetypeTags,
+    ...signals.characterTypes,
+    ...cardSignals.archetypeTags,
+    ...cardSignals.characterTypes,
+    ...narrationMetadata.archetypeTags,
+    narrationMetadata.entityType,
+  ]);
+  const worldCue =
+    findFirstMatching(
+      [
+        ...cardSignals.settingTags,
+        ...cardSignals.genreTags,
+        ...narrationMetadata.settingTags,
+        ...narrationMetadata.genreTags,
+        ...narrationMetadata.factionTags,
+      ],
+      ["dynasty", "court", "cathedral", "temple", "citadel", "ruins", "mecha", "cyberpunk", "sci-fi", "divine", "gothic"]
+    ) ??
+    narrationMetadata.factionTags[0] ??
+    narrationMetadata.settingTags[0] ??
+    narrationMetadata.genreTags[0] ??
+    null;
+  const rarity = normalizeText(card.rarity) || narrationMetadata.rarity;
+  const pricingTier = narrationMetadata.pricingTier;
+  const collectorHook = narrationMetadata.collectorHooks[0] ?? narrationMetadata.marketingAngles[0] ?? null;
+  const embedLines: string[] = [];
+
+  const normalizedMoodCue = visualCue?.includes("dark") && moodCue === "dark" ? null : moodCue;
+  const atmosphereParts = [normalizedMoodCue, visualCue, roleCue].filter(
+    (value, index, array): value is string => Boolean(value) && array.indexOf(value) === index
+  );
+  const atmosphereNarration =
+    atmosphereParts.length >= 2
+      ? `Carries ${withIndefiniteArticle(atmosphereParts.slice(0, 3).join(" "))} atmosphere.`
+      : atmosphereParts.length === 1
+        ? `Carries ${withIndefiniteArticle(atmosphereParts[0])} collector atmosphere.`
+        : undefined;
+
+  const worldbuildingFlavor = (() => {
+    if (!worldCue) {
+      return undefined;
+    }
+    if (roleCue === "imperial" && (visualCue === "cyberpunk" || visualCue === "neon" || visualCue === "sci-fi")) {
+      return "Feels like a relic from a fallen cyberpunk court.";
+    }
+    if (roleCue === "sacred") {
+      return `Feels anchored in a ${worldCue.replace(/\s+/g, " ")} mythos.`;
+    }
+    if (roleCue === "martial") {
+      return `Feels forged for a ${worldCue.replace(/\s+/g, " ")} campaign.`;
+    }
+    return `Feels grounded in a ${worldCue.replace(/\s+/g, " ")} world.`;
+  })();
+
+  const collectorFantasy = (() => {
+    if (rarity === "ur") {
+      return "Collector-wise, it reads like a UR crown piece.";
+    }
+    if (rarity === "ssr") {
+      return "Collector-wise, it reads like an SSR showcase piece.";
+    }
+    if (rarity === "sr") {
+      return "Collector-wise, it lands like an SR signature piece.";
+    }
+    if (pricingTier === "collector" || pricingTier === "premium" || collectorHook) {
+      return "Collector-wise, it lands like a curated display piece.";
+    }
+    return undefined;
+  })();
+
+  const rarityStory = (() => {
+    if (!rarity && narrationMetadata.raritySignals.length === 0) {
+      return undefined;
+    }
+    if (rarity === "ur") {
+      return "Its rarity framing leans apex-tier and display-first.";
+    }
+    if (rarity === "ssr") {
+      return "Its rarity framing leans collector-tier and display-ready.";
+    }
+    if (rarity === "sr") {
+      return "Its rarity framing feels like a signature edition drop.";
+    }
+    if (narrationMetadata.raritySignals.length > 0) {
+      return `Its rarity framing follows ${titleCaseToken(narrationMetadata.raritySignals[0])} cues.`;
+    }
+    return undefined;
+  })();
+
+  const vibeNarration = (() => {
+    if (visualCue && moodCue) {
+      return `${titleCaseToken(moodCue)} ${visualCue} styling leads the vibe.`;
+    }
+    if (visualCue) {
+      return `${titleCaseToken(visualCue)} styling leads the vibe.`;
+    }
+    return undefined;
+  })();
+
+  if (atmosphereNarration) {
+    embedLines.push(atmosphereNarration);
+  } else if (vibeNarration) {
+    embedLines.push(vibeNarration);
+  }
+
+  const secondLine = collectorFantasy ?? worldbuildingFlavor ?? rarityStory ?? commercePresentation?.auraPresentation;
+  if (secondLine) {
+    embedLines.push(secondLine);
+  }
+
+  return {
+    vibeNarration,
+    atmosphereNarration,
+    collectorFantasy,
+    rarityStory,
+    worldbuildingFlavor,
+    embedLines: embedLines.slice(0, 2),
+  };
+};
+
+const buildBatchCuratorSummary = (
+  cards: GalleryCardRecord[],
+  signals: QuerySignals,
+  language: SupportedLanguage
+): string | null => {
+  if (language !== "en" || cards.length === 0) {
+    return null;
+  }
+
+  const visualCue = formatAtmosphereToken(findFirstMatching([...signals.visualStyle, ...signals.genreTags], VISUAL_NARRATION_TERMS));
+  const moodCue = formatMoodToken(findFirstMatching([...signals.moodTags, ...signals.toneTags], MOOD_NARRATION_TERMS));
+  const roleCue = resolveRoleAtmosphere([...signals.archetypeTags, ...signals.characterTypes]);
+
+  const firstCardMetadata = buildNarrationMetadata(cards[0]?.metadata ?? null, cards[0]);
+  const worldCue =
+    firstCardMetadata.factionTags[0] ??
+    firstCardMetadata.settingTags[0] ??
+    firstCardMetadata.genreTags[0] ??
+    null;
+
+  const atmosphereParts = [moodCue, visualCue, roleCue].filter(
+    (value, index, array): value is string => Boolean(value) && array.indexOf(value) === index
+  );
+
+  if (atmosphereParts.length < 2) {
+    return null;
+  }
+
+  if (roleCue === "imperial" && (visualCue === "cyberpunk" || visualCue === "neon" || visualCue === "sci-fi")) {
+    return "These cards carry a dark neon imperial atmosphere, like relics from a fallen cyberpunk court.";
+  }
+
+  const atmosphereText = `These cards carry a ${atmosphereParts.slice(0, 3).join(" ")} atmosphere.`;
+  if (worldCue) {
+    return `${atmosphereText} They feel curated from a ${worldCue.replace(/\s+/g, " ")} world.`;
+  }
+  return atmosphereText;
+};
 
 const termMatches = (candidate: string, query: string): boolean =>
   candidate === query || candidate.includes(query) || query.includes(candidate);
@@ -812,6 +1168,7 @@ const scoreCard = (card: GalleryCardRecord, input: RecommendationInput, signals:
     finalScore: subtotal,
   });
   const commercePresentation = buildCommercePresentation(card, signals, cardSignals, commerceIntelligence);
+  const curatorNarration = buildCuratorNarration(card, signals, cardSignals, commercePresentation);
   recommendationScore.finalScore = roundScore(Math.max(0, subtotal - mismatchPenalty));
   recommendationScore.reasons = buildReasons(signals, cardSignals, recommendationScore, card, commercePresentation);
 
@@ -840,6 +1197,7 @@ const scoreCard = (card: GalleryCardRecord, input: RecommendationInput, signals:
       recommendationScore,
       commerceIntelligence,
       commercePresentation,
+      curatorNarration,
     },
   };
 };
@@ -942,5 +1300,41 @@ export const galleryRecommendationService = {
         scoreBreakdowns: baseDebugEntries,
       };
     }
+  },
+
+  buildCuratorNarrationForCard(input: {
+    card: GalleryCardRecord;
+    parsedQuery: ParsedGalleryQuery;
+    intelligenceQuery?: IntelligenceGalleryQuery;
+  }): RecommendationCuratorNarration {
+    const signals = collectQuerySignals({
+      parsedQuery: input.parsedQuery,
+      intelligenceQuery: input.intelligenceQuery,
+      candidates: [input.card],
+    });
+    const intelligence = normalizeCardIntelligence(input.card);
+    const cardSignals = buildCardSignals(input.card, intelligence);
+    const commerceIntelligence = buildCommerceIntelligence(
+      input.card,
+      signals,
+      cardSignals,
+      EMPTY_RECOMMENDATION_SCORE()
+    );
+    const commercePresentation = buildCommercePresentation(input.card, signals, cardSignals, commerceIntelligence);
+    return buildCuratorNarration(input.card, signals, cardSignals, commercePresentation);
+  },
+
+  buildCuratorSummary(input: {
+    cards: GalleryCardRecord[];
+    parsedQuery: ParsedGalleryQuery;
+    intelligenceQuery?: IntelligenceGalleryQuery;
+    language: SupportedLanguage;
+  }): string | null {
+    const signals = collectQuerySignals({
+      parsedQuery: input.parsedQuery,
+      intelligenceQuery: input.intelligenceQuery,
+      candidates: input.cards,
+    });
+    return buildBatchCuratorSummary(input.cards, signals, input.language);
   },
 };

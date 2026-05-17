@@ -17,6 +17,7 @@ export type SearchGalleryOutput = {
   parsedQuery: ParsedGalleryQuery | null;
   results: GalleryCardDto[];
   limit: number;
+  summaryText?: string;
 };
 
 type SearchSessionWriteTask = {
@@ -188,6 +189,7 @@ export const searchGallerySkill: SkillHandler<SearchGalleryInput, SearchGalleryO
         parsedQuery: searchResult.parsedQuery,
         results: [],
         limit: searchResult.limit,
+        summaryText: searchResult.summaryText,
       };
     }
 
@@ -219,6 +221,7 @@ export const searchGallerySkill: SkillHandler<SearchGalleryInput, SearchGalleryO
       parsedQuery: searchResult.parsedQuery,
       results: searchResult.results,
       limit: searchResult.limit,
+      summaryText: searchResult.summaryText,
     };
   } catch (error) {
     logger.error("[SEARCH GALLERY SKILL] search failed", {

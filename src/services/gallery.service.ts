@@ -19,6 +19,7 @@ import type { RecommendationScore } from "../types/gallery-recommendation.types"
 import type {
   RecommendationCommerceIntelligence,
   RecommendationCommercePresentation,
+  RecommendationCuratorNarration,
 } from "../types/gallery-recommendation.types";
 import type { RecommendationFeedbackDebugSummary } from "../types/recommendation-feedback.types";
 import { cardPricingService, CardPricingInput } from "./card-pricing.service";
@@ -55,6 +56,7 @@ export type GalleryCardDto = {
   score?: number;
   commerceIntelligence?: RecommendationCommerceIntelligence;
   commercePresentation?: RecommendationCommercePresentation;
+  curatorNarration?: RecommendationCuratorNarration;
 };
 
 export type GalleryCardPricingInputDto = {
@@ -78,6 +80,7 @@ export type GallerySearchResult = {
   structuredKeywords: string[];
   results: GalleryCardDto[];
   limit: number;
+  summaryText?: string;
 };
 
 export type RecommendationDebugCardSummary = {
@@ -142,6 +145,7 @@ export type GalleryRefreshResult = {
   broaden: string[];
   searchKeywords: string[];
   poolExhausted: boolean;
+  summaryText?: string;
 };
 
 export type RefreshPlannerCardSummary = {
@@ -307,6 +311,22 @@ const decorateDtoWithCommerce = (
     commercePresentation: entry?.commercePresentation,
   };
 };
+
+const decorateDtoWithNarration = (
+  card: GalleryCardRecord,
+  dto: GalleryCardDto,
+  parsedQuery: ParsedGalleryQuery,
+  entry?: RecommendationDebugEntry
+): GalleryCardDto => ({
+  ...dto,
+  curatorNarration:
+    entry?.curatorNarration ??
+    galleryRecommendationService.buildCuratorNarrationForCard({
+      card,
+      parsedQuery,
+      intelligenceQuery: parsedQuery.intelligenceQuery,
+    }),
+});
 
 const dedupeCards = (cards: GalleryCardRecord[]): GalleryCardRecord[] => {
   const seen = new Set<string>();
@@ -1002,9 +1022,16 @@ export const galleryService = {
       weakMatchFamilies: [],
       lowConversionThemes: [],
     }));
-    const results = dedupeCards(rerankedCards)
-      .slice(0, limit)
-      .map((card) => decorateDtoWithCommerce(card, scoreByCardId.get(card.id), analyticsHints));
+    const rankedCards = dedupeCards(rerankedCards).slice(0, limit);
+    const results = rankedCards
+      .map((card) => decorateDtoWithCommerce(card, scoreByCardId.get(card.id), analyticsHints))
+      .map((dto, index) => decorateDtoWithNarration(rankedCards[index], dto, parsedQuery, scoreByCardId.get(rankedCards[index].id)));
+    const summaryText = galleryRecommendationService.buildCuratorSummary({
+      cards: rankedCards,
+      parsedQuery,
+      intelligenceQuery: parsedQuery.intelligenceQuery,
+      language: parsedQuery.language,
+    });
     logger.info("[GALLERY SERVICE] final result count", { count: results.length, query });
 
     return {
@@ -1014,6 +1041,7 @@ export const galleryService = {
       structuredKeywords,
       results,
       limit,
+      summaryText: summaryText ?? undefined,
     };
   },
 
@@ -1238,8 +1266,19 @@ export const galleryService = {
       };
     }
 
+    const limitedCards = finalCards.slice(0, limit);
+    const narratedCards = limitedCards.map((card) =>
+      decorateDtoWithNarration(card, toDto(card), previousParsed)
+    );
+    const summaryText = galleryRecommendationService.buildCuratorSummary({
+      cards: limitedCards,
+      parsedQuery: previousParsed,
+      intelligenceQuery: previousParsed.intelligenceQuery,
+      language: decision.language,
+    });
+
     return {
-      cards: finalCards.slice(0, limit).map(toDto),
+      cards: narratedCards,
       language: decision.language,
       refreshMode: chosenMode,
       reason: decision.reason,
@@ -1251,6 +1290,7 @@ export const galleryService = {
       broaden: appliedKeywords.broaden,
       searchKeywords: appliedKeywords.searchKeywords,
       poolExhausted: chosenMode === "random_fallback" && finalCards.length < 3,
+      summaryText: summaryText ?? undefined,
     };
   },
 
@@ -1259,7 +1299,13 @@ export const galleryService = {
       throw new Error("DATABASE_NOT_READY");
     }
     const card = await galleryRepository.findById(cardId);
-    return card ? toDto(card) : null;
+    return card
+      ? decorateDtoWithNarration(
+          card,
+          toDto(card),
+          buildFallbackParsedQuery(card.title, detectPreferredLanguage(card.title))
+        )
+      : null;
   },
 
   async getGalleryCardPricingInput(cardId: string): Promise<GalleryCardPricingInputDto | null> {

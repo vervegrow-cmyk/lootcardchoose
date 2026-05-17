@@ -152,6 +152,9 @@ const buildCardDescription = (language: SupportedLanguage, card: GallerySearchRe
     .filter((tag) => tag.startsWith("commerce:"))
     .map((tag) => tag.slice("commerce:".length).trim())
     .filter(Boolean);
+  const curatorLines = Array.isArray(card.curatorNarration?.embedLines)
+    ? card.curatorNarration.embedLines.map((line) => line.trim()).filter(Boolean).slice(0, 2)
+    : [];
   const visibleTags = buildVisibleTags(language, card.tags);
   const baseDescription =
     language === "en"
@@ -162,6 +165,10 @@ const buildCardDescription = (language: SupportedLanguage, card: GallerySearchRe
           : t(language, "gallery.description.empty")
       : card.description ?? t(language, "gallery.description.empty");
   const lines = [baseDescription];
+
+  if (curatorLines.length > 0) {
+    lines.push(...curatorLines);
+  }
 
   if (commerceLines.length > 0) {
     lines.push(...commerceLines.slice(0, 3));

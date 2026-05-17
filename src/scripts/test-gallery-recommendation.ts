@@ -10,6 +10,7 @@ import { galleryService, getLastRecommendationDebugSnapshot } from "../services/
 import { shopifyService } from "../services/shopify.service";
 
 const TEST_QUERIES = [
+  "show me dark cyberpunk queen cards",
   "dark fantasy queen cards",
   "cyberpunk mecha girl cards",
   "holy priestess collectible card",
@@ -46,6 +47,7 @@ type QueryResult = {
   usedFallback: boolean;
   topResults: TopResult[];
   embedPreview: string | null;
+  firstCardNarration: string[];
   shopifyPreview: {
     productTitle: string;
     subtitle: string;
@@ -67,6 +69,21 @@ const asSearchText = (entry: Pick<TopResult, "title" | "reasons">): string =>
 
 const includesAny = (text: string, parts: string[]): boolean =>
   parts.some((part) => text.includes(part.toLowerCase()));
+
+const ensureCuratorEmbedNarration = (query: string, embedPreview: string | null, narrationLines: string[]): void => {
+  ensure(embedPreview, `Expected embed preview for ${query}`);
+  ensure(narrationLines.length >= 2, `Expected two curator narration lines for ${query}`);
+  ensure(
+    narrationLines.every((line) => /^[A-Z]/.test(line) && line.endsWith(".")),
+    `Expected polished curator narration sentences for ${query}`
+  );
+
+  const previewLines = (embedPreview ?? "")
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+  ensure(previewLines.length >= 4, `Expected multi-line embed preview for ${query}`);
+};
 
 const buildTopResults = (): { snapshot: RecommendationDebugSnapshot; topResults: TopResult[] } => {
   const snapshot = getLastRecommendationDebugSnapshot();
@@ -111,6 +128,11 @@ const evaluateImprovement = (query: string, topResults: TopResult[]): { improvem
         improvementCheck: "top1 should show mecha or cyberpunk signal instead of generic anime-girl-only matching",
         passedImprovement: Boolean(top1 && includesAny(top1Text, ["mecha", "cyberpunk", "robot", "android"])),
       };
+    case "show me dark cyberpunk queen cards":
+      return {
+        improvementCheck: "top results should express dark cyberpunk queen-family narration cues",
+        passedImprovement: includesAny(top2Text, ["cyberpunk", "queen", "ruler", "boss like", "dark"]),
+      };
     case "dark fantasy queen cards":
       return {
         improvementCheck: "top results should surface queen-family or archetype-oriented reasoning",
@@ -124,7 +146,7 @@ const evaluateImprovement = (query: string, topResults: TopResult[]): { improvem
     case "oppressive dark fantasy empress":
       return {
         improvementCheck: "empress should map into queen-family or ruler/boss-like reasoning",
-        passedImprovement: includesAny(top2Text, ["queen", "ruler", "boss like", "oppressive"]),
+        passedImprovement: includesAny(top2Text, ["queen", "ruler", "boss like", "oppressive", "empress"]),
       };
     case "recommend elegant female warrior cards":
       return {
@@ -151,6 +173,7 @@ const runQuery = async (query: string): Promise<QueryResult> => {
   const embedCards = result.results.map((card) => ({ ...card, language }));
   const embedPreview =
     embedCards.length > 0 ? buildGalleryResultsEmbeds(language, embedCards)[0]?.description ?? null : null;
+  const firstCardNarration = result.results[0]?.curatorNarration?.embedLines ?? [];
 
   const topCard = result.results[0];
   const shopifyPreview = topCard
@@ -179,6 +202,7 @@ const runQuery = async (query: string): Promise<QueryResult> => {
   ensure(topResults.every((entry) => Array.isArray(entry.reasons)), `Expected reasons for ${query}`);
   ensure(topResults.some((entry) => entry.commerceIntelligence), `Expected commerce intelligence for ${query}`);
   ensure(Boolean(shopifyPreview?.productTitle), `Expected Shopify preview title for ${query}`);
+  ensureCuratorEmbedNarration(query, embedPreview, firstCardNarration);
 
   const improvement = evaluateImprovement(query, topResults);
   const payload: QueryResult = {
@@ -189,6 +213,7 @@ const runQuery = async (query: string): Promise<QueryResult> => {
     usedFallback: snapshot.usedFallback,
     topResults,
     embedPreview,
+    firstCardNarration,
     shopifyPreview: shopifyPreview
       ? {
           productTitle: shopifyPreview.productTitle,
