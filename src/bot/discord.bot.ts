@@ -1,4 +1,4 @@
-import { Client, EmbedBuilder, GatewayIntentBits, Message } from "discord.js";
+import { Client, EmbedBuilder, GatewayIntentBits, Message, Partials } from "discord.js";
 import { loadEnv } from "../config/env";
 import {
   HermesGalleryCheckoutCreatedOutput,
@@ -228,7 +228,13 @@ export const DiscordBot = {
       logger.warn("[DISCORD] DATABASE_URL missing - bot will start with limited features");
     }
     const client = new Client({
-      intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
+      intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.DirectMessages,
+        GatewayIntentBits.MessageContent,
+      ],
+      partials: [Partials.Channel],
     });
     discordNotificationService.registerClient(client);
 
