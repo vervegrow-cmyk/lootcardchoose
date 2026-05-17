@@ -165,6 +165,32 @@ export const searchGallerySkill: SkillHandler<SearchGalleryInput, SearchGalleryO
 
   try {
     const searchResult: GallerySearchResult = await galleryService.searchGalleryCards(input.query, context.language);
+
+    if (searchResult.results.length === 0) {
+      const normalizedGuildId = context.discordGuildId ?? null;
+      const archivedCount = await gallerySearchSessionRepository.archiveActiveSessions({
+        discordGuildId: normalizedGuildId,
+        discordUserId: input.discordUserId,
+        discordChannelId: input.discordChannelId,
+      });
+
+      logger.info("[SEARCH GALLERY SKILL] zero-result search cleared active sessions", {
+        query: input.query,
+        discordGuildId: normalizedGuildId,
+        discordUserId: input.discordUserId,
+        discordChannelId: input.discordChannelId,
+        archivedCount,
+      });
+
+      return {
+        query: searchResult.query,
+        language: searchResult.language,
+        parsedQuery: searchResult.parsedQuery,
+        results: [],
+        limit: searchResult.limit,
+      };
+    }
+
     const sessionResults = searchResult.results.map((card) => ({
       id: card.id,
       title: card.title,

@@ -22,6 +22,8 @@ const ensure = (condition: unknown, message: string): void => {
 const LEGACY_CHANNEL_DENIAL_TEXT = "Please use #lootcardchoose to search and choose cards.";
 const CONFIGURED_CHANNEL_DENIAL_TEXT =
   "This bot is not enabled in this channel. Please use the configured card channel.";
+const EMPTY_GALLERY_TEXT = "Sorry, I couldn't find matching cards.";
+const ZERO_RESULT_QUERY = "show me 10 qwertyuiop cards";
 
 const createSessionResultCard = (card: {
   id: string;
@@ -62,6 +64,12 @@ const main = async (): Promise<void> => {
   const discordGuildId = `test-select-guild-${suffix}`;
   const discordChannelName = "lootcardchoose";
   const query = "Show me 10 black gold SSR female cards";
+  const zeroResultUserId = `test-zero-user-${suffix}`;
+  const zeroResultChannelId = `test-zero-channel-${suffix}`;
+  const zeroResultGuildId = `test-zero-guild-${suffix}`;
+  const staleSessionUserId = `test-stale-user-${suffix}`;
+  const staleSessionChannelId = `test-stale-channel-${suffix}`;
+  const staleSessionGuildId = `test-stale-guild-${suffix}`;
 
   const legacyGuildId = `test-legacy-guild-${suffix}`;
   const configuredGuildId = `test-configured-guild-${suffix}`;
@@ -190,8 +198,80 @@ const main = async (): Promise<void> => {
     discordChannelId,
     status: "active",
   });
-  assert.equal(activeSessionsAfterSearch.length, 1);
-  assert.equal(activeSessionsAfterSearch[0]?.discordGuildId, discordGuildId);
+    assert.equal(activeSessionsAfterSearch.length, 1);
+    assert.equal(activeSessionsAfterSearch[0]?.discordGuildId, discordGuildId);
+
+    const zeroResultSearchResponse = await router.handle({
+      text: ZERO_RESULT_QUERY,
+      discordGuildId: zeroResultGuildId,
+      userId: zeroResultUserId,
+      channelId: zeroResultChannelId,
+      channelName: discordChannelName,
+    });
+    assert.equal(zeroResultSearchResponse.type, "text");
+    assert.equal(zeroResultSearchResponse.text, EMPTY_GALLERY_TEXT);
+
+    const zeroResultActiveSessions = await gallerySearchSessionRepository.findRecentByUserId({
+      discordGuildId: zeroResultGuildId,
+      discordUserId: zeroResultUserId,
+      discordChannelId: zeroResultChannelId,
+      status: "active",
+    });
+    assert.equal(zeroResultActiveSessions.length, 0);
+
+    const staleSessionSearch = await router.handle({
+      text: query,
+      discordGuildId: staleSessionGuildId,
+      userId: staleSessionUserId,
+      channelId: staleSessionChannelId,
+      channelName: discordChannelName,
+    });
+    assert.equal(staleSessionSearch.type, "gallery_search_results");
+
+    await awaitPendingSearchSessionWrite({
+      discordGuildId: staleSessionGuildId,
+      discordUserId: staleSessionUserId,
+      discordChannelId: staleSessionChannelId,
+      timeoutMs: 5000,
+    });
+
+    const staleSessionBeforeZeroResult = await gallerySearchSessionRepository.findRecentByUserId({
+      discordGuildId: staleSessionGuildId,
+      discordUserId: staleSessionUserId,
+      discordChannelId: staleSessionChannelId,
+      status: "active",
+    });
+    assert.equal(staleSessionBeforeZeroResult.length, 1);
+
+    const staleSessionZeroResultResponse = await router.handle({
+      text: ZERO_RESULT_QUERY,
+      discordGuildId: staleSessionGuildId,
+      userId: staleSessionUserId,
+      channelId: staleSessionChannelId,
+      channelName: discordChannelName,
+    });
+    assert.equal(staleSessionZeroResultResponse.type, "text");
+    assert.equal(staleSessionZeroResultResponse.text, EMPTY_GALLERY_TEXT);
+
+    const staleSessionAfterZeroResult = await gallerySearchSessionRepository.findRecentByUserId({
+      discordGuildId: staleSessionGuildId,
+      discordUserId: staleSessionUserId,
+      discordChannelId: staleSessionChannelId,
+      status: "active",
+    });
+    assert.equal(staleSessionAfterZeroResult.length, 0);
+
+    const zeroResultSelectResponse = await router.handle({
+      text: "1",
+      discordGuildId: staleSessionGuildId,
+      userId: staleSessionUserId,
+      channelId: staleSessionChannelId,
+      channelName: discordChannelName,
+    });
+    assert.notEqual(zeroResultSelectResponse.type, "gallery_checkout_created");
+    if (zeroResultSelectResponse.type === "text") {
+      assert.notEqual(zeroResultSelectResponse.text, "Please choose a number from 1 to 0.");
+    }
 
   const originalCreateProductFromGalleryCard = shopifyService.createProductFromGalleryCard;
   let capturedCheckoutPrice: string | null = null;
