@@ -9,7 +9,7 @@ import {
 import { buildHermesRegistry } from "../hermes/registry";
 import { HermesRouter } from "../hermes/router";
 import { discordNotificationService } from "../services/discord-notification.service";
-import { buildGalleryResultsEmbeds } from "../utils/embeds";
+import { buildGalleryResultLargeImageEmbeds, buildGalleryResultsEmbeds } from "../utils/embeds";
 import { t } from "../utils/i18n";
 import { logger } from "../utils/logger";
 import { isUserFacingError } from "../utils/user-facing-error";
@@ -24,6 +24,9 @@ type DiscordMessageHandlingDecision = {
   normalizedText: string;
   isDM: boolean;
 };
+
+const hasSend = (value: unknown): value is { send: (payload: unknown) => Promise<unknown> } =>
+  typeof value === "object" && value !== null && "send" in value && typeof value.send === "function";
 
 const getChannelName = (message: Message): string =>
   message.channel && "name" in message.channel && typeof message.channel.name === "string" ? message.channel.name : "";
@@ -306,13 +309,22 @@ export const DiscordBot = {
 
         if (response.type === "gallery_search_results") {
           stage = "reply.gallery_search_results";
-          const embeds = buildGalleryResultsEmbeds(response.language, response.cards).map((embed) => {
+          const buildDiscordEmbed = (embed: {
+            title?: string;
+            description?: string;
+            imageUrl?: string;
+            thumbnailUrl?: string;
+            fields?: Array<{ name: string; value: string; inline?: boolean }>;
+          }): EmbedBuilder => {
             const builder = new EmbedBuilder();
             if (embed.title) {
               builder.setTitle(embed.title);
             }
             if (embed.description) {
               builder.setDescription(embed.description);
+            }
+            if (embed.imageUrl) {
+              builder.setImage(embed.imageUrl);
             }
             if (embed.thumbnailUrl) {
               builder.setThumbnail(embed.thumbnailUrl);
@@ -327,15 +339,35 @@ export const DiscordBot = {
               );
             }
             return builder;
-          });
+          };
 
           await replyWithFallback(
             message,
             async () => {
+              if (!handlingDecision.isDM) {
+                const embeds = buildGalleryResultsEmbeds(response.language, response.cards).map(buildDiscordEmbed);
+                await message.reply({
+                  content: `${response.text}\n${response.selectionPrompt}`,
+                  embeds,
+                });
+                return;
+              }
+
               await message.reply({
                 content: `${response.text}\n${response.selectionPrompt}`,
-                embeds,
               });
+
+              const largeImageEmbeds = buildGalleryResultLargeImageEmbeds(response.language, response.cards).map(
+                buildDiscordEmbed
+              );
+
+              if (!hasSend(message.channel)) {
+                throw new Error("DM channel does not support send");
+              }
+
+              for (const embed of largeImageEmbeds) {
+                await message.channel.send({ embeds: [embed] });
+              }
             },
             buildSearchFallbackText(response),
             {

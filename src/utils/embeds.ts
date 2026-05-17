@@ -190,3 +190,19 @@ export const buildGalleryResultsEmbeds = (
     fields: [],
   }));
 };
+
+export const buildGalleryResultLargeImageEmbeds = (
+  language: SupportedLanguage,
+  results: GallerySearchResultCard[]
+): EmbedPayload[] => {
+  return results.slice(0, 10).map((card, index) => ({
+    title: t(language, "gallery.search.resultTitle", {
+      index: index + 1,
+      title: card.title,
+    }),
+    description: buildCardDescription(language, card),
+    imageUrl: card.imageUrl,
+    thumbnailUrl: undefined,
+    fields: [],
+  }));
+};
