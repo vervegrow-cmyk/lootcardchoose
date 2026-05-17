@@ -61,6 +61,7 @@ export const selectCardSkill: SkillHandler<SelectCardInput, SelectCardOutput> = 
   context: SkillContext
 ) => {
   const session = await gallerySearchSessionRepository.findLatest({
+    discordGuildId: context.discordGuildId,
     discordUserId: input.discordUserId,
     discordChannelId: input.discordChannelId,
     status: "active",

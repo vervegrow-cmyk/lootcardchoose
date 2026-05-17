@@ -321,6 +321,8 @@ const normalizeSearchTerm = (value: string): string => {
   if (!normalized || KEYWORD_BLACKLIST.has(normalized) || isQuantifierKeyword(normalized) || /^\d+$/.test(normalized)) {
     return "";
   }
+  if (normalized.includes("\u7f8e\u5973")) return "female character";
+
 
   if (/(black[\s_-]*gold|黑金)/i.test(normalized)) return "black gold";
   if (/(white[\s_-]*gold|白金)/i.test(normalized)) return "white gold";
@@ -397,6 +399,7 @@ const normalizeColorHint = (value: string): string | string[] => {
 
 const normalizeCharacterType = (value: string): string => {
   const normalized = normalizeLower(value);
+  if (normalized.includes("\u7f8e\u5973")) return "female character";
   if (/(mecha[\s_-]*girl|机甲少女)/i.test(normalized)) return "mecha girl";
   if (/(anime[\s_-]*girl|动漫女孩|二次元女孩)/i.test(normalized)) return "female character";
   if (/(girl|female|女角色|女性角色)/i.test(normalized)) return "female character";
@@ -921,6 +924,10 @@ const buildRuleBasedIntelligenceQuery = (
   language: IntelligenceQueryLanguage = detectIntelligenceLanguage(userMessage)
 ): IntelligenceQuery => {
   let query = EMPTY_INTELLIGENCE_QUERY();
+
+  if (userMessage.includes("\u7f8e\u5973")) {
+    query = addSignal(query, { characterTypes: "female character" });
+  }
 
   if (containsAny(userMessage, [/(black[\s_-]*gold|黑金)/i])) {
     query = addSignal(query, { colorHints: ["black", "gold"], visualIntent: "black_gold" });

@@ -8,6 +8,7 @@ import { galleryHelpSkill } from "../skills/gallery/gallery-help.skill";
 const buildContext = (language: SkillContext["language"]): SkillContext => ({
   requestId: `help-${Date.now()}-${language}`,
   language,
+  discordGuildId: null,
   userId: "test-user",
   channelId: "test-channel",
   intent: "help",

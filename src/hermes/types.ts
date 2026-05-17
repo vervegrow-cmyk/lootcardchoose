@@ -42,6 +42,7 @@ export type HermesContext = {
   traceId?: string;
   locale?: string;
   language: SupportedLanguage;
+  discordGuildId: string | null;
   userId?: string;
   channelId?: string;
   intent?: IntentId;
@@ -106,6 +107,7 @@ export type RouterInput = {
   text: string;
   channelId: string;
   userId: string;
+  discordGuildId?: string | null;
 };
 
 export type RoutingDecision = {

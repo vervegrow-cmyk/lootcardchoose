@@ -108,6 +108,7 @@ const run = async (): Promise<void> => {
     gallerySearchSessionRepository.findLatest = async () =>
       ({
         id: "active-session",
+        discordGuildId: null,
         discordUserId: "test-select-user",
         discordChannelId: "test-select-channel",
         query: "black gold",

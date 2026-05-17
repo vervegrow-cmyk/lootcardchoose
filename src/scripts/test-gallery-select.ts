@@ -10,6 +10,7 @@ import { gallerySearchSessionRepository } from "../repositories/gallery-search-s
 import { orderService } from "../services/order.service";
 import { shopifyService } from "../services/shopify.service";
 import { awaitPendingSearchSessionWrite } from "../skills/gallery/search-gallery.skill";
+import { GallerySearchSessionRecord } from "../repositories/gallery-search-session.repository";
 
 const ensure = (condition: unknown, message: string): void => {
   if (!condition) {
@@ -34,16 +35,31 @@ const createSessionResultCard = (card: {
   language: "en" as const,
 });
 
+const getFirstSessionCardId = (session: GallerySearchSessionRecord | null): string | null => {
+  if (!session || !Array.isArray(session.results) || session.results.length === 0) {
+    return null;
+  }
+
+  const firstResult = session.results[0];
+  if (!firstResult || typeof firstResult !== "object" || Array.isArray(firstResult)) {
+    return null;
+  }
+
+  return typeof (firstResult as { id?: unknown }).id === "string" ? ((firstResult as { id: string }).id) : null;
+};
+
 const main = async (): Promise<void> => {
   const registry = buildHermesRegistry();
   const router = new HermesRouter(registry);
   const suffix = `${Date.now()}`;
   const discordUserId = `test-select-user-${suffix}`;
   const discordChannelId = `test-select-channel-${suffix}`;
+  const discordGuildId = `test-select-guild-${suffix}`;
   const query = "Show me 10 black gold SSR female cards";
 
   const searchResult = await router.handle({
     text: query,
+    discordGuildId,
     userId: discordUserId,
     channelId: discordChannelId,
   });
@@ -52,17 +68,20 @@ const main = async (): Promise<void> => {
   ensure(searchResult.cards.length > 0, "Expected gallery search results for select test");
 
   await awaitPendingSearchSessionWrite({
+    discordGuildId,
     discordUserId,
     discordChannelId,
     timeoutMs: 5000,
   });
 
   const activeSessionsAfterSearch = await gallerySearchSessionRepository.findRecentByUserId({
+    discordGuildId,
     discordUserId,
     discordChannelId,
     status: "active",
   });
   assert.equal(activeSessionsAfterSearch.length, 1);
+  assert.equal(activeSessionsAfterSearch[0]?.discordGuildId, discordGuildId);
 
   const originalCreateProductFromGalleryCard = shopifyService.createProductFromGalleryCard;
   let capturedCheckoutPrice: string | null = null;
@@ -85,6 +104,7 @@ const main = async (): Promise<void> => {
   try {
     const checkoutResponse = await router.handle({
       text: "1",
+      discordGuildId,
       userId: discordUserId,
       channelId: discordChannelId,
     });
@@ -124,10 +144,12 @@ const main = async (): Promise<void> => {
     console.log(`[TEST GALLERY SELECT] shareImageUrl=${checkoutResponse.shareImageUrl}`);
 
     await gallerySearchSessionRepository.archiveActiveSessions({
+      discordGuildId,
       discordUserId,
       discordChannelId,
     });
     await gallerySearchSessionRepository.create({
+      discordGuildId,
       discordUserId,
       discordChannelId,
       query,
@@ -137,6 +159,7 @@ const main = async (): Promise<void> => {
 
     const outOfRangeResponse = await router.handle({
       text: "5",
+      discordGuildId,
       userId: discordUserId,
       channelId: discordChannelId,
     });
@@ -149,6 +172,7 @@ const main = async (): Promise<void> => {
 
     const checkoutFailureResponse = await router.handle({
       text: "1",
+      discordGuildId,
       userId: discordUserId,
       channelId: discordChannelId,
     });
@@ -159,11 +183,175 @@ const main = async (): Promise<void> => {
     );
 
     const activeSessionsAfterFailure = await gallerySearchSessionRepository.findRecentByUserId({
+      discordGuildId,
       discordUserId,
       discordChannelId,
       status: "active",
     });
     assert.equal(activeSessionsAfterFailure.length, 1);
+
+    const multiGuildUserId = "test-user-001";
+    const multiGuildChannelId = "test-channel-001";
+    const guildA = "test-guild-A";
+    const guildB = "test-guild-B";
+    const guildAQuery = "Show me 10 black gold queen cards";
+    const guildBQuery = "Show me 10 dark angel cards";
+
+    await gallerySearchSessionRepository.archiveActiveSessions({
+      discordGuildId: guildA,
+      discordUserId: multiGuildUserId,
+      discordChannelId: multiGuildChannelId,
+    });
+    await gallerySearchSessionRepository.archiveActiveSessions({
+      discordGuildId: guildB,
+      discordUserId: multiGuildUserId,
+      discordChannelId: multiGuildChannelId,
+    });
+    await gallerySearchSessionRepository.archiveActiveSessions({
+      discordGuildId: null,
+      discordUserId: multiGuildUserId,
+      discordChannelId: multiGuildChannelId,
+    });
+
+    const guildASearch = await router.handle({
+      text: guildAQuery,
+      discordGuildId: guildA,
+      userId: multiGuildUserId,
+      channelId: multiGuildChannelId,
+    });
+    assert.equal(guildASearch.type, "gallery_search_results");
+
+    const guildBSearch = await router.handle({
+      text: guildBQuery,
+      discordGuildId: guildB,
+      userId: multiGuildUserId,
+      channelId: multiGuildChannelId,
+    });
+    assert.equal(guildBSearch.type, "gallery_search_results");
+
+    await awaitPendingSearchSessionWrite({
+      discordGuildId: guildA,
+      discordUserId: multiGuildUserId,
+      discordChannelId: multiGuildChannelId,
+      timeoutMs: 5000,
+    });
+    await awaitPendingSearchSessionWrite({
+      discordGuildId: guildB,
+      discordUserId: multiGuildUserId,
+      discordChannelId: multiGuildChannelId,
+      timeoutMs: 5000,
+    });
+
+    const guildAActiveSession = await gallerySearchSessionRepository.findLatest({
+      discordGuildId: guildA,
+      discordUserId: multiGuildUserId,
+      discordChannelId: multiGuildChannelId,
+      status: "active",
+    });
+    const guildBActiveSession = await gallerySearchSessionRepository.findLatest({
+      discordGuildId: guildB,
+      discordUserId: multiGuildUserId,
+      discordChannelId: multiGuildChannelId,
+      status: "active",
+    });
+    ensure(guildAActiveSession, "Expected guild A active session");
+    ensure(guildBActiveSession, "Expected guild B active session");
+    assert.equal(guildAActiveSession?.discordGuildId, guildA);
+    assert.equal(guildBActiveSession?.discordGuildId, guildB);
+    assert.notEqual(guildAActiveSession?.id, guildBActiveSession?.id);
+    assert.equal(guildAActiveSession?.query, guildAQuery);
+    assert.equal(guildBActiveSession?.query, guildBQuery);
+
+    const guildARecentSessions = await gallerySearchSessionRepository.findRecentByUserId({
+      discordGuildId: guildA,
+      discordUserId: multiGuildUserId,
+      discordChannelId: multiGuildChannelId,
+      status: "active",
+    });
+    const guildBRecentSessions = await gallerySearchSessionRepository.findRecentByUserId({
+      discordGuildId: guildB,
+      discordUserId: multiGuildUserId,
+      discordChannelId: multiGuildChannelId,
+      status: "active",
+    });
+    assert.equal(guildARecentSessions.length, 1);
+    assert.equal(guildBRecentSessions.length, 1);
+
+    const guildAExpectedCardId = getFirstSessionCardId(guildAActiveSession);
+    const guildBExpectedCardId = getFirstSessionCardId(guildBActiveSession);
+    ensure(guildAExpectedCardId, "Expected guild A session first card id");
+    ensure(guildBExpectedCardId, "Expected guild B session first card id");
+
+    const guildASelect = await router.handle({
+      text: "1",
+      discordGuildId: guildA,
+      userId: multiGuildUserId,
+      channelId: multiGuildChannelId,
+    });
+    const guildBSelect = await router.handle({
+      text: "1",
+      discordGuildId: guildB,
+      userId: multiGuildUserId,
+      channelId: multiGuildChannelId,
+    });
+    assert.equal(guildASelect.type, "text");
+    assert.equal(
+      guildASelect.text,
+      "Unable to create a product link right now. Please try again later."
+    );
+    assert.equal(guildBSelect.type, "text");
+    assert.equal(
+      guildBSelect.text,
+      "Unable to create a product link right now. Please try again later."
+    );
+
+    const guildASelectedSession = await gallerySearchSessionRepository.findLatest({
+      discordGuildId: guildA,
+      discordUserId: multiGuildUserId,
+      discordChannelId: multiGuildChannelId,
+      status: "active",
+    });
+    const guildBSelectedSession = await gallerySearchSessionRepository.findLatest({
+      discordGuildId: guildB,
+      discordUserId: multiGuildUserId,
+      discordChannelId: multiGuildChannelId,
+      status: "active",
+    });
+    assert.equal(guildASelectedSession?.query, guildAQuery);
+    assert.equal(guildBSelectedSession?.query, guildBQuery);
+    assert.equal(guildASelectedSession?.selectedGalleryCardId, guildAExpectedCardId);
+    assert.equal(guildBSelectedSession?.selectedGalleryCardId, guildBExpectedCardId);
+    assert.notEqual(guildASelectedSession?.selectedGalleryCardId, null);
+    assert.notEqual(guildBSelectedSession?.selectedGalleryCardId, null);
+
+    const nullGuildLookupAgainstSharedIds = await gallerySearchSessionRepository.findLatest({
+      discordGuildId: null,
+      discordUserId: multiGuildUserId,
+      discordChannelId: multiGuildChannelId,
+      status: "active",
+    });
+    assert.equal(nullGuildLookupAgainstSharedIds, null);
+
+    const legacyUserId = multiGuildUserId;
+    const legacyChannelId = multiGuildChannelId;
+    const legacySession = await gallerySearchSessionRepository.create({
+      discordGuildId: null,
+      discordUserId: legacyUserId,
+      discordChannelId: legacyChannelId,
+      query,
+      results: searchResult.cards.slice(0, 1).map(createSessionResultCard),
+      status: "active",
+    });
+    const legacyLookup = await gallerySearchSessionRepository.findLatest({
+      discordGuildId: null,
+      discordUserId: legacyUserId,
+      discordChannelId: legacyChannelId,
+      status: "active",
+    });
+    assert.equal(legacyLookup?.id, legacySession.id);
+    assert.equal(legacyLookup?.discordGuildId, null);
+    assert.notEqual(legacyLookup?.id, guildASelectedSession?.id);
+    assert.notEqual(legacyLookup?.id, guildBSelectedSession?.id);
   } finally {
     shopifyService.createProductFromGalleryCard = originalCreateProductFromGalleryCard;
   }

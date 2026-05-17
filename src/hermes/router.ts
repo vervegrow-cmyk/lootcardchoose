@@ -192,6 +192,7 @@ export class HermesRouter {
     context?: {
       userId?: string;
       channelId?: string;
+      discordGuildId?: string | null;
     }
   ): Promise<{ intent: IntentId; language: SupportedLanguage }> {
     const startedAt = Date.now();
@@ -211,6 +212,7 @@ export class HermesRouter {
     try {
       if (context?.userId && context?.channelId) {
         const completed = await awaitPendingSearchSessionWrite({
+          discordGuildId: context.discordGuildId ?? null,
           discordUserId: context.userId,
           discordChannelId: context.channelId,
           timeoutMs: 1200,
@@ -226,6 +228,7 @@ export class HermesRouter {
 
         hasActiveGallerySession = Boolean(
           await gallerySearchSessionRepository.findLatest({
+            discordGuildId: context.discordGuildId ?? null,
             discordUserId: context.userId,
             discordChannelId: context.channelId,
             status: "active",
@@ -437,6 +440,7 @@ export class HermesRouter {
 
   async handle(input: RouterInput): Promise<HermesOutput> {
     const classification = await this.determineIntent(input.text, {
+      discordGuildId: input.discordGuildId ?? null,
       userId: input.userId,
       channelId: input.channelId,
     });
@@ -451,6 +455,7 @@ export class HermesRouter {
     const context: AgentContext = {
       requestId: `${Date.now()}`,
       language: classification.language,
+      discordGuildId: input.discordGuildId ?? null,
       userId: input.userId,
       channelId: input.channelId,
       agentId: decision.agentId,

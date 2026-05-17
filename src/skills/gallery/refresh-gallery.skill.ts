@@ -124,6 +124,7 @@ export const refreshGallerySkill: SkillHandler<RefreshGalleryInput, RefreshGalle
   });
 
   const displaySession = await gallerySearchSessionRepository.findLatest({
+    discordGuildId: context.discordGuildId,
     discordUserId: input.discordUserId,
     discordChannelId: input.discordChannelId,
     status: "active",
@@ -151,6 +152,7 @@ export const refreshGallerySkill: SkillHandler<RefreshGalleryInput, RefreshGalle
   }
 
   const recentSessions = await gallerySearchSessionRepository.findRecentByUserId({
+    discordGuildId: context.discordGuildId,
     discordUserId: input.discordUserId,
     discordChannelId: input.discordChannelId,
     take: 20,
@@ -199,6 +201,7 @@ export const refreshGallerySkill: SkillHandler<RefreshGalleryInput, RefreshGalle
 
   if (refreshResult.cards.length > 0) {
     const archivedCount = await gallerySearchSessionRepository.archiveActiveSessions({
+      discordGuildId: context.discordGuildId,
       discordUserId: input.discordUserId,
       discordChannelId: input.discordChannelId,
     });
@@ -209,6 +212,7 @@ export const refreshGallerySkill: SkillHandler<RefreshGalleryInput, RefreshGalle
     });
 
     await gallerySearchSessionRepository.create({
+      discordGuildId: context.discordGuildId,
       discordUserId: input.discordUserId,
       discordChannelId: input.discordChannelId,
       query: planningAnchorSession.query,

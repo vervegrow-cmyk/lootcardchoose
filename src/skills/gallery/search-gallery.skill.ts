@@ -20,6 +20,7 @@ export type SearchGalleryOutput = {
 };
 
 type SearchSessionWriteTask = {
+  discordGuildId?: string | null;
   discordUserId: string;
   discordChannelId: string;
   query: string;
@@ -45,11 +46,12 @@ type PendingSearchSessionWriteState = {
 
 const pendingSearchSessionWrites = new Map<string, PendingSearchSessionWriteState>();
 
-const buildSessionWriteKey = (discordUserId: string, discordChannelId: string): string =>
-  `${discordUserId}:${discordChannelId}`;
+const buildSessionWriteKey = (discordGuildId: string | null | undefined, discordUserId: string, discordChannelId: string): string =>
+  `${discordGuildId ?? "null"}:${discordUserId}:${discordChannelId}`;
 
 const scheduleSearchSessionWrite = (task: SearchSessionWriteTask): void => {
-  const key = buildSessionWriteKey(task.discordUserId, task.discordChannelId);
+  const normalizedGuildId = task.discordGuildId ?? null;
+  const key = buildSessionWriteKey(normalizedGuildId, task.discordUserId, task.discordChannelId);
   const previousWrite = pendingSearchSessionWrites.get(key)?.write ?? Promise.resolve();
 
   let resolveReady: (() => void) | undefined;
@@ -70,6 +72,7 @@ const scheduleSearchSessionWrite = (task: SearchSessionWriteTask): void => {
 
       try {
         const createdSession = await gallerySearchSessionRepository.create({
+          discordGuildId: normalizedGuildId,
           discordUserId: task.discordUserId,
           discordChannelId: task.discordChannelId,
           query: task.query,
@@ -79,6 +82,7 @@ const scheduleSearchSessionWrite = (task: SearchSessionWriteTask): void => {
         resolveReady?.();
 
         const archivedCount = await gallerySearchSessionRepository.archiveOtherActiveSessions({
+          discordGuildId: normalizedGuildId,
           discordUserId: task.discordUserId,
           discordChannelId: task.discordChannelId,
           keepSessionId: createdSession.id,
@@ -122,11 +126,12 @@ const scheduleSearchSessionWrite = (task: SearchSessionWriteTask): void => {
 };
 
 export const awaitPendingSearchSessionWrite = async (input: {
+  discordGuildId?: string | null;
   discordUserId: string;
   discordChannelId: string;
   timeoutMs: number;
 }): Promise<boolean> => {
-  const key = buildSessionWriteKey(input.discordUserId, input.discordChannelId);
+  const key = buildSessionWriteKey(input.discordGuildId ?? null, input.discordUserId, input.discordChannelId);
   const pendingWrite = pendingSearchSessionWrites.get(key);
 
   if (!pendingWrite) {
@@ -173,6 +178,7 @@ export const searchGallerySkill: SkillHandler<SearchGalleryInput, SearchGalleryO
     }));
 
     scheduleSearchSessionWrite({
+      discordGuildId: context.discordGuildId,
       discordUserId: input.discordUserId,
       discordChannelId: input.discordChannelId,
       query: searchResult.query,

@@ -71,12 +71,14 @@ export const GalleryAgent: AgentDefinition = {
         }
 
         await awaitPendingSearchSessionWrite({
+          discordGuildId: context.discordGuildId,
           discordUserId: context.userId ?? "",
           discordChannelId: context.channelId ?? "",
           timeoutMs: 2000,
         });
 
         const activeSessionAfterSearch = await gallerySearchSessionRepository.findLatest({
+          discordGuildId: context.discordGuildId,
           discordUserId: context.userId ?? "",
           discordChannelId: context.channelId ?? "",
           status: "active",
@@ -209,6 +211,7 @@ export const GalleryAgent: AgentDefinition = {
 
       case "gallery_select": {
         const activeSession = await gallerySearchSessionRepository.findLatest({
+          discordGuildId: context.discordGuildId,
           discordUserId: context.userId ?? "",
           discordChannelId: context.channelId ?? "",
           status: "active",

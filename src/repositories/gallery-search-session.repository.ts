@@ -3,6 +3,7 @@ import { prisma } from "../services/prisma.service";
 
 export type GallerySearchSessionRecord = {
   id: string;
+  discordGuildId: string | null;
   discordUserId: string;
   discordChannelId: string;
   query: string;
@@ -15,6 +16,7 @@ export type GallerySearchSessionRecord = {
 
 export type GallerySearchSessionRepository = {
   create: (input: {
+    discordGuildId?: string | null;
     discordUserId: string;
     discordChannelId: string;
     query: string;
@@ -22,19 +24,26 @@ export type GallerySearchSessionRepository = {
     status: string;
   }) => Promise<GallerySearchSessionRecord>;
   findLatest: (input: {
+    discordGuildId?: string | null;
     discordUserId: string;
     discordChannelId: string;
     status?: string;
   }) => Promise<GallerySearchSessionRecord | null>;
   findLatestByUserId: (discordUserId: string) => Promise<GallerySearchSessionRecord | null>;
   findRecentByUserId: (input: {
+    discordGuildId?: string | null;
     discordUserId: string;
     discordChannelId?: string;
     take?: number;
     status?: string;
   }) => Promise<GallerySearchSessionRecord[]>;
-  archiveActiveSessions: (input: { discordUserId: string; discordChannelId: string }) => Promise<number>;
+  archiveActiveSessions: (input: {
+    discordGuildId?: string | null;
+    discordUserId: string;
+    discordChannelId: string;
+  }) => Promise<number>;
   archiveOtherActiveSessions: (input: {
+    discordGuildId?: string | null;
     discordUserId: string;
     discordChannelId: string;
     keepSessionId: string;
@@ -44,8 +53,11 @@ export type GallerySearchSessionRepository = {
 
 export const gallerySearchSessionRepository: GallerySearchSessionRepository = {
   async create(input) {
+    const normalizedGuildId = input.discordGuildId ?? null;
+
     return prisma.gallerySearchSession.create({
       data: {
+        discordGuildId: normalizedGuildId,
         discordUserId: input.discordUserId,
         discordChannelId: input.discordChannelId,
         query: input.query,
@@ -55,8 +67,11 @@ export const gallerySearchSessionRepository: GallerySearchSessionRepository = {
     });
   },
   async findLatest(input) {
+    const normalizedGuildId = input.discordGuildId ?? null;
+
     return prisma.gallerySearchSession.findFirst({
       where: {
+        discordGuildId: normalizedGuildId,
         discordUserId: input.discordUserId,
         discordChannelId: input.discordChannelId,
         ...(input.status ? { status: input.status } : {}),
@@ -73,8 +88,11 @@ export const gallerySearchSessionRepository: GallerySearchSessionRepository = {
     });
   },
   async findRecentByUserId(input) {
+    const normalizedGuildId = input.discordGuildId ?? null;
+
     return prisma.gallerySearchSession.findMany({
       where: {
+        discordGuildId: normalizedGuildId,
         discordUserId: input.discordUserId,
         ...(input.discordChannelId ? { discordChannelId: input.discordChannelId } : {}),
         ...(input.status ? { status: input.status } : {}),
@@ -84,8 +102,11 @@ export const gallerySearchSessionRepository: GallerySearchSessionRepository = {
     });
   },
   async archiveActiveSessions(input) {
+    const normalizedGuildId = input.discordGuildId ?? null;
+
     const result = await prisma.gallerySearchSession.updateMany({
       where: {
+        discordGuildId: normalizedGuildId,
         discordUserId: input.discordUserId,
         discordChannelId: input.discordChannelId,
         status: "active",
@@ -98,8 +119,11 @@ export const gallerySearchSessionRepository: GallerySearchSessionRepository = {
     return result.count;
   },
   async archiveOtherActiveSessions(input) {
+    const normalizedGuildId = input.discordGuildId ?? null;
+
     const result = await prisma.gallerySearchSession.updateMany({
       where: {
+        discordGuildId: normalizedGuildId,
         discordUserId: input.discordUserId,
         discordChannelId: input.discordChannelId,
         status: "active",

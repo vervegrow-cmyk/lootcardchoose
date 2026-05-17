@@ -29,6 +29,7 @@ model GalleryCard {
 
 model GallerySearchSession {
   id                    String   @id @default(cuid())
+  discordGuildId        String?
   discordUserId         String
   discordChannelId      String
   query                 String
@@ -37,6 +38,8 @@ model GallerySearchSession {
   status                String
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
+
+  @@index([discordGuildId, discordChannelId, discordUserId, createdAt])
 }
 
 model Order {
