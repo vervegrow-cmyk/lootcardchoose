@@ -82,10 +82,16 @@ export type GallerySearchResult = {
   limit: number;
   summaryText?: string;
   exactResultCount: number;
+  recoveryAttempted: boolean;
+  recoveryTriggerReason: string | null;
+  recoveryCandidateCount: number;
+  recoverySignals: string[];
+  recoveryThreshold: number;
+  recoveryRejectedReason: string | null;
   recoveryTriggered: boolean;
   recoveryResultCount: number;
   curatorNarrationUsed: boolean;
-  responseTextSource: "curator_summary" | "recovery_summary" | "legacy_success" | "legacy_empty";
+  responseTextSource: "curator_summary" | "recovery" | "legacy_success" | "legacy_empty";
 };
 
 export type RecommendationDebugCardSummary = {
@@ -238,6 +244,12 @@ const META_ONLY_REFRESH_KEYWORDS = new Set([
 ]);
 
 const SHORT_KEYWORD_ALLOWLIST = new Set(["ani", "sr", "ur", "ssr", "r", "n"]);
+const RECOVERY_MIN_MEANINGFUL_SCORE = 8;
+const RECOVERY_THEME_SIGNAL_MAP = {
+  cyberpunk: ["cyberpunk", "neon", "tech noir", "futuristic", "sci-fi", "cyber"],
+  "sci-fi": ["sci-fi", "science fiction", "futuristic", "cyberpunk", "cyber"],
+  mecha: ["mecha", "robot", "android", "mechanical"],
+} as const;
 
 const buildCardPricingInput = (card: GalleryCardRecord): CardPricingInput => ({
   galleryPrice: Number(card.price),
@@ -340,6 +352,73 @@ const buildSummaryFromCardNarration = (cards: GalleryCardDto[]): string | null =
   }
 
   return narrationLines.slice(0, 2).join(" ");
+};
+
+type RecoveryPlan = {
+  triggerReason: string;
+  signals: string[];
+};
+
+const normalizeRecoveryToken = (value: string | null | undefined): string => (value ?? "").trim().toLowerCase();
+
+const collectRecoverySourceTokens = (parsedQuery: ParsedGalleryQuery, structuredKeywords: string[]): Set<string> => {
+  const sourceTokens = new Set<string>();
+  const addToken = (value: string | null | undefined) => {
+    const normalized = normalizeRecoveryToken(value);
+    if (normalized) {
+      sourceTokens.add(normalized);
+    }
+  };
+
+  const addTokens = (values: Array<string | null | undefined>) => {
+    for (const value of values) {
+      addToken(value);
+    }
+  };
+
+  addTokens([
+    ...structuredKeywords,
+    ...parsedQuery.keywords,
+    ...parsedQuery.tags,
+    parsedQuery.style,
+    parsedQuery.scene,
+  ]);
+  addTokens(parsedQuery.visualStyle);
+  addTokens(parsedQuery.genreTags);
+  addTokens(parsedQuery.settingTags);
+  addTokens(parsedQuery.intelligenceQuery?.visualStyle ?? []);
+  addTokens(parsedQuery.intelligenceQuery?.genreTags ?? []);
+  addTokens(parsedQuery.intelligenceQuery?.visualIntent ?? []);
+  addTokens(parsedQuery.intelligenceQuery?.worldbuildingIntent ?? []);
+
+  if (sourceTokens.has("scifi")) {
+    sourceTokens.add("sci-fi");
+  }
+
+  return sourceTokens;
+};
+
+const buildDeterministicRecoveryPlan = (
+  parsedQuery: ParsedGalleryQuery,
+  structuredKeywords: string[]
+): RecoveryPlan | null => {
+  const sourceTokens = collectRecoverySourceTokens(parsedQuery, structuredKeywords);
+  const matchedThemes = Object.keys(RECOVERY_THEME_SIGNAL_MAP).filter((theme) => sourceTokens.has(theme));
+
+  if (matchedThemes.length === 0) {
+    return null;
+  }
+
+  const signals = Array.from(
+    new Set(
+      matchedThemes.flatMap((theme) => RECOVERY_THEME_SIGNAL_MAP[theme as keyof typeof RECOVERY_THEME_SIGNAL_MAP])
+    )
+  );
+
+  return {
+    triggerReason: `exact_zero_theme_signal:${matchedThemes.join(",")}`,
+    signals,
+  };
 };
 
 const dedupeCards = (cards: GalleryCardRecord[]): GalleryCardRecord[] => {
@@ -984,6 +1063,15 @@ export const galleryService = {
     });
 
     let candidateCards = resultsSource;
+    const exactResultCount = resultsSource.length;
+    const recoveryPlan = exactResultCount === 0 ? buildDeterministicRecoveryPlan(parsedQuery, structuredKeywords) : null;
+    const recoveryAttempted = Boolean(recoveryPlan);
+    const recoveryTriggerReason = recoveryPlan?.triggerReason ?? null;
+    const recoverySignals = recoveryPlan?.signals ?? [];
+    const recoveryThreshold = RECOVERY_MIN_MEANINGFUL_SCORE;
+    let recoveryCandidateCount = 0;
+    let recoveryTriggered = recoveryAttempted;
+    let recoveryRejectedReason: string | null = recoveryAttempted ? "no_candidates_above_threshold" : null;
 
     try {
       const [keywordHeavyResults, structuredHeavyResults] = await Promise.all([
@@ -995,8 +1083,38 @@ export const galleryService = {
         0,
         RECOMMENDATION_CANDIDATE_LIMIT
       );
+
+      if (recoveryPlan) {
+        const recoveryCandidates = await galleryRepository.search({
+          keywords: recoveryPlan.signals,
+          tags: [],
+          style: "",
+          rarity: parsedQuery.rarity,
+          category: "",
+          character: "",
+          color: "",
+          mood: "",
+          scene: parsedQuery.scene,
+          limit,
+          preferredKeywords: recoveryPlan.signals,
+        });
+        const meaningfulRecoveryCandidates = recoveryCandidates.filter(
+          (card) => (card.score ?? 0) >= RECOVERY_MIN_MEANINGFUL_SCORE
+        );
+
+        recoveryCandidateCount = recoveryCandidates.length;
+        if (meaningfulRecoveryCandidates.length > 0) {
+          candidateCards = dedupeCards([...candidateCards, ...meaningfulRecoveryCandidates]).slice(
+            0,
+            RECOMMENDATION_CANDIDATE_LIMIT
+          );
+          recoveryRejectedReason = null;
+        }
+      }
     } catch (error) {
       candidateCards = resultsSource;
+      recoveryCandidateCount = 0;
+      recoveryRejectedReason = recoveryAttempted ? "recovery_search_failed" : null;
       logger.warn("[GALLERY SERVICE] recommendation candidate fallback", {
         query,
         message: error instanceof Error ? error.message : String(error),
@@ -1047,24 +1165,33 @@ export const galleryService = {
         intelligenceQuery: parsedQuery.intelligenceQuery,
         language: parsedQuery.language,
       }) ?? buildSummaryFromCardNarration(results);
-    const exactResultCount = resultsSource.length;
-    const recoveryTriggered = exactResultCount === 0 && rankedCards.length > 0;
-    const recoveryResultCount = recoveryTriggered ? rankedCards.length : 0;
+    const recoveryResultCount = recoveryAttempted ? rankedCards.length : 0;
     const curatorNarrationUsed = Boolean(summaryText?.trim());
-    const responseTextSource: GallerySearchResult["responseTextSource"] = recoveryTriggered
-      ? curatorNarrationUsed
-        ? "recovery_summary"
-        : "legacy_success"
-      : curatorNarrationUsed
-        ? "curator_summary"
-        : results.length > 0
-          ? "legacy_success"
-          : "legacy_empty";
+    const responseTextSource: GallerySearchResult["responseTextSource"] =
+      recoveryTriggered && results.length > 0
+        ? "recovery"
+        : curatorNarrationUsed
+          ? "curator_summary"
+          : results.length > 0
+            ? "legacy_success"
+            : "legacy_empty";
+
+    if (recoveryAttempted && recoveryCandidateCount === 0) {
+      recoveryRejectedReason = recoveryRejectedReason ?? "recovery_candidate_pool_empty";
+    } else if (recoveryAttempted && recoveryCandidateCount > 0 && recoveryResultCount === 0) {
+      recoveryRejectedReason = recoveryRejectedReason ?? "recovery_rerank_filtered_results";
+    }
 
     logger.info("[GALLERY SERVICE] final result count", {
       count: results.length,
       query,
       exactResultCount,
+      recoveryAttempted,
+      recoveryTriggerReason,
+      recoveryCandidateCount,
+      recoverySignals,
+      recoveryThreshold,
+      recoveryRejectedReason,
       recoveryTriggered,
       recoveryResultCount,
       curatorNarrationUsed,
@@ -1080,6 +1207,12 @@ export const galleryService = {
       limit,
       summaryText: summaryText ?? undefined,
       exactResultCount,
+      recoveryAttempted,
+      recoveryTriggerReason,
+      recoveryCandidateCount,
+      recoverySignals,
+      recoveryThreshold,
+      recoveryRejectedReason,
       recoveryTriggered,
       recoveryResultCount,
       curatorNarrationUsed,

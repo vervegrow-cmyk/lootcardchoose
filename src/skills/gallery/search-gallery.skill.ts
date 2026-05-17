@@ -19,10 +19,16 @@ export type SearchGalleryOutput = {
   limit: number;
   summaryText?: string;
   exactResultCount: number;
+  recoveryAttempted: boolean;
+  recoveryTriggerReason: string | null;
+  recoveryCandidateCount: number;
+  recoverySignals: string[];
+  recoveryThreshold: number;
+  recoveryRejectedReason: string | null;
   recoveryTriggered: boolean;
   recoveryResultCount: number;
   curatorNarrationUsed: boolean;
-  responseTextSource: "curator_summary" | "recovery_summary" | "legacy_success" | "legacy_empty";
+  responseTextSource: "curator_summary" | "recovery" | "legacy_success" | "legacy_empty";
 };
 
 type SearchSessionWriteTask = {
@@ -196,6 +202,12 @@ export const searchGallerySkill: SkillHandler<SearchGalleryInput, SearchGalleryO
         limit: searchResult.limit,
         summaryText: searchResult.summaryText,
         exactResultCount: searchResult.exactResultCount,
+        recoveryAttempted: searchResult.recoveryAttempted,
+        recoveryTriggerReason: searchResult.recoveryTriggerReason,
+        recoveryCandidateCount: searchResult.recoveryCandidateCount,
+        recoverySignals: searchResult.recoverySignals,
+        recoveryThreshold: searchResult.recoveryThreshold,
+        recoveryRejectedReason: searchResult.recoveryRejectedReason,
         recoveryTriggered: searchResult.recoveryTriggered,
         recoveryResultCount: searchResult.recoveryResultCount,
         curatorNarrationUsed: searchResult.curatorNarrationUsed,
@@ -233,6 +245,12 @@ export const searchGallerySkill: SkillHandler<SearchGalleryInput, SearchGalleryO
       limit: searchResult.limit,
       summaryText: searchResult.summaryText,
       exactResultCount: searchResult.exactResultCount,
+      recoveryAttempted: searchResult.recoveryAttempted,
+      recoveryTriggerReason: searchResult.recoveryTriggerReason,
+      recoveryCandidateCount: searchResult.recoveryCandidateCount,
+      recoverySignals: searchResult.recoverySignals,
+      recoveryThreshold: searchResult.recoveryThreshold,
+      recoveryRejectedReason: searchResult.recoveryRejectedReason,
       recoveryTriggered: searchResult.recoveryTriggered,
       recoveryResultCount: searchResult.recoveryResultCount,
       curatorNarrationUsed: searchResult.curatorNarrationUsed,

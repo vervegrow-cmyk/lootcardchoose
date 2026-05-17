@@ -6,12 +6,14 @@ dotenv.config({ path: ".env.local", override: true });
 import assert from "node:assert/strict";
 import { buildHermesRegistry } from "../hermes/registry";
 import { HermesRouter } from "../hermes/router";
+import { SkillContext } from "../hermes/types";
 import { gallerySearchSessionRepository } from "../repositories/gallery-search-session.repository";
 import { guildConfigRepository } from "../repositories/guild-config.repository";
 import { galleryRepository } from "../repositories/gallery.repository";
+import { galleryService } from "../services/gallery.service";
 import { orderService } from "../services/order.service";
 import { shopifyService } from "../services/shopify.service";
-import { awaitPendingSearchSessionWrite } from "../skills/gallery/search-gallery.skill";
+import { awaitPendingSearchSessionWrite, searchGallerySkill } from "../skills/gallery/search-gallery.skill";
 import { GallerySearchSessionRecord } from "../repositories/gallery-search-session.repository";
 
 const ensure = (condition: unknown, message: string): void => {
@@ -57,6 +59,20 @@ const getFirstSessionCardId = (session: GallerySearchSessionRecord | null): stri
 
   return typeof (firstResult as { id?: unknown }).id === "string" ? ((firstResult as { id: string }).id) : null;
 };
+
+const buildSearchSkillContext = (input: {
+  discordGuildId: string;
+  userId: string;
+  channelId: string;
+}): SkillContext => ({
+  requestId: `test-request-${input.userId}-${input.channelId}`,
+  skillId: "gallery.search",
+  language: "en",
+  discordGuildId: input.discordGuildId,
+  isDM: false,
+  userId: input.userId,
+  channelId: input.channelId,
+});
 
 const main = async (): Promise<void> => {
   const registry = buildHermesRegistry();
@@ -296,18 +312,38 @@ const main = async (): Promise<void> => {
     assert.equal(girlNarrationResponse.metadata?.responseTextSource, "curator_summary");
     assert.ok((girlNarrationResponse.cards[0]?.curatorNarration?.embedLines?.length ?? 0) >= 2);
 
+    const girlSearchResult = await galleryService.searchGalleryCards("girl", "en");
+    assert.equal(girlSearchResult.recoveryAttempted, false);
+    assert.equal(girlSearchResult.recoveryTriggered, false);
+    assert.equal(girlSearchResult.results.length > 0, true);
+
+    const zeroResultServiceResponse = await galleryService.searchGalleryCards(ZERO_RESULT_QUERY, "en");
+    assert.equal(zeroResultServiceResponse.results.length, 0);
+    assert.equal(zeroResultServiceResponse.recoveryAttempted, false);
+    assert.equal(zeroResultServiceResponse.recoveryResultCount, 0);
+
     const originalGallerySearch = galleryRepository.search;
     let recoveryPrimarySearchConsumed = false;
     galleryRepository.search = async (query) => {
       const normalizedKeywords = query.keywords.map((keyword) => keyword.trim().toLowerCase());
-      const isRecoveryTarget = normalizedKeywords.includes("cyberpunk");
+      const isRecoveryThemeQuery = normalizedKeywords.includes("cyberpunk");
+      const isDeterministicRecoveryAttempt =
+        normalizedKeywords.includes("neon") ||
+        normalizedKeywords.includes("tech noir") ||
+        normalizedKeywords.includes("futuristic") ||
+        normalizedKeywords.includes("sci-fi") ||
+        normalizedKeywords.includes("cyber");
 
-      if (isRecoveryTarget && !recoveryPrimarySearchConsumed) {
+      if (isRecoveryThemeQuery && !isDeterministicRecoveryAttempt && !recoveryPrimarySearchConsumed) {
         recoveryPrimarySearchConsumed = true;
         return [];
       }
 
-      if (isRecoveryTarget) {
+      if (isRecoveryThemeQuery && !isDeterministicRecoveryAttempt) {
+        return [];
+      }
+
+      if (isDeterministicRecoveryAttempt) {
         return originalGallerySearch({
           ...query,
           keywords: ["girl"],
@@ -326,18 +362,29 @@ const main = async (): Promise<void> => {
     };
 
     try {
-      const recoveryResponse = await router.handle({
-        text: RECOVERY_QUERY,
-        discordGuildId: recoveryGuildId,
-        userId: recoveryUserId,
-        channelId: recoveryChannelId,
-        channelName: discordChannelName,
-      });
-      assert.equal(recoveryResponse.type, "gallery_search_results");
-      assert.match(recoveryResponse.text, /similar vibe/i);
-      assert.equal(recoveryResponse.metadata?.recoveryTriggered, true);
-      assert.ok(Number(recoveryResponse.metadata?.recoveryResultCount) > 0);
-      assert.notEqual(recoveryResponse.metadata?.responseTextSource, "legacy_empty");
+      const recoveryResponse = await searchGallerySkill(
+        {
+          query: RECOVERY_QUERY,
+          discordUserId: recoveryUserId,
+          discordChannelId: recoveryChannelId,
+        },
+        buildSearchSkillContext({
+          discordGuildId: recoveryGuildId,
+          userId: recoveryUserId,
+          channelId: recoveryChannelId,
+        })
+      );
+      assert.equal(recoveryResponse.results.length > 0, true);
+      assert.equal(recoveryResponse.exactResultCount, 0);
+      assert.equal(recoveryResponse.recoveryAttempted, true);
+      assert.equal(recoveryResponse.recoveryTriggered, true);
+      assert.equal(typeof recoveryResponse.recoveryTriggerReason, "string");
+      assert.ok((recoveryResponse.recoverySignals ?? []).includes("cyberpunk"));
+      assert.ok((recoveryResponse.recoverySignals ?? []).includes("neon"));
+      assert.ok(Number(recoveryResponse.recoveryCandidateCount) > 0);
+      assert.ok(Number(recoveryResponse.recoveryThreshold) > 0);
+      assert.ok(Number(recoveryResponse.recoveryResultCount) > 0);
+      assert.equal(recoveryResponse.responseTextSource, "recovery");
 
       await awaitPendingSearchSessionWrite({
         discordGuildId: recoveryGuildId,
@@ -353,9 +400,9 @@ const main = async (): Promise<void> => {
         status: "active",
       });
       ensure(recoveryActiveSession, "Expected recovery session to be persisted");
-      assert.ok((recoveryResponse.cards.length ?? 0) > 0);
+      assert.ok((recoveryResponse.results.length ?? 0) > 0);
       assert.equal(Array.isArray(recoveryActiveSession?.results), true);
-      assert.equal(getFirstSessionCardId(recoveryActiveSession), recoveryResponse.cards[0]?.id ?? null);
+      assert.equal(getFirstSessionCardId(recoveryActiveSession), recoveryResponse.results[0]?.id ?? null);
     } finally {
       galleryRepository.search = originalGallerySearch;
     }
