@@ -20,7 +20,17 @@ const run = async (): Promise<void> => {
       "girl",
       "anime",
       "ssr",
+      "SSR",
       "black gold",
+      "black gold SSR girl",
+      "show me 10 cyberpunk cards",
+      "recommend cards",
+      "dragon",
+      "queen",
+      "angel",
+      "red",
+      "dark",
+      "gold",
       "dark royal energy",
       "Give me the vibe of a corrupted angel queen",
       "Show me cards that look like legendary relics from a fallen kingdom",
@@ -33,6 +43,7 @@ const run = async (): Promise<void> => {
       const result = await router.determineIntent(message, {
         userId: "test-gallery-user",
         channelId: "test-gallery-channel",
+        isDM: false,
       });
       assert.equal(result.intent, "gallery_search", `Expected gallery_search for ${message}`);
     }
@@ -56,8 +67,20 @@ const run = async (): Promise<void> => {
       const result = await router.determineIntent(message, {
         userId: "test-support-user",
         channelId: "test-support-channel",
+        isDM: false,
       });
       assert.equal(result.intent, "customer_support", `Expected customer_support for ${message}`);
+    }
+
+    const dmSupportCases = ["shipping", "refund", "tracking", "payment", "where is my order", "checkout problem"];
+    for (const message of dmSupportCases) {
+      const result = await router.determineIntent(message, {
+        userId: "test-dm-support-user",
+        channelId: "test-dm-support-channel",
+        discordGuildId: null,
+        isDM: true,
+      });
+      assert.equal(result.intent, "customer_support", `Expected DM customer_support for ${message}`);
     }
 
     const helpCases = ["hi", "hello", "good morning", "shopping", "browse", "looking", "help me", "I want to shop"];
@@ -65,6 +88,7 @@ const run = async (): Promise<void> => {
       const result = await router.determineIntent(message, {
         userId: "test-help-user",
         channelId: "test-help-channel",
+        isDM: false,
       });
       assert.equal(result.intent, "help", `Expected help for ${message}`);
     }
@@ -74,8 +98,31 @@ const run = async (): Promise<void> => {
       const result = await router.determineIntent(message, {
         userId: "test-ignore-user",
         channelId: "test-ignore-channel",
+        isDM: false,
       });
       assert.equal(result.intent, "ignore", `Expected ignore for ${message}`);
+    }
+
+    const dmIgnoreCases = ["asdfgh", "???", "random meaningless text"];
+    for (const message of dmIgnoreCases) {
+      const result = await router.determineIntent(message, {
+        userId: "test-dm-ignore-user",
+        channelId: "test-dm-ignore-channel",
+        discordGuildId: null,
+        isDM: true,
+      });
+      assert.equal(result.intent, "ignore", `Expected DM ignore for ${message}`);
+    }
+
+    const dmGalleryCases = ["show me 10 cyberpunk cards", "recommend black gold anime cards"];
+    for (const message of dmGalleryCases) {
+      const result = await router.determineIntent(message, {
+        userId: "test-dm-gallery-user",
+        channelId: "test-dm-gallery-channel",
+        discordGuildId: null,
+        isDM: true,
+      });
+      assert.equal(result.intent, "gallery_search", `Expected DM gallery_search for ${message}`);
     }
 
     const notCustomerSupportCases = ["hi", "shopping", "browse"];
@@ -83,6 +130,7 @@ const run = async (): Promise<void> => {
       const result = await router.determineIntent(message, {
         userId: "test-not-support-user",
         channelId: "test-not-support-channel",
+        isDM: false,
       });
       assert.notEqual(result.intent, "customer_support", `Expected non-customer_support for ${message}`);
     }
@@ -92,6 +140,7 @@ const run = async (): Promise<void> => {
       const result = await router.determineIntent(message, {
         userId: "test-order-user",
         channelId: "test-order-channel",
+        isDM: false,
       });
       assert.equal(result.intent, "order_status", `Expected order_status for ${message}`);
     }
@@ -101,6 +150,7 @@ const run = async (): Promise<void> => {
       const result = await router.determineIntent(message, {
         userId: "test-order-support-user",
         channelId: "test-order-support-channel",
+        isDM: false,
       });
       assert.equal(result.intent, "customer_support", `Expected customer_support for ${message}`);
     }
@@ -124,6 +174,7 @@ const run = async (): Promise<void> => {
       const result = await router.determineIntent(message, {
         userId: "test-select-user",
         channelId: "test-select-channel",
+        isDM: false,
       });
       assert.equal(result.intent, "gallery_select", `Expected gallery_select for ${message}`);
     }
@@ -159,6 +210,8 @@ const run = async (): Promise<void> => {
       text: "can I get a discount?",
       userId: "support-user-en",
       channelId: "support-channel-en",
+      discordGuildId: null,
+      isDM: true,
     });
     assert.equal(englishReply.type, "text");
     assert.equal(englishReply.language, "en");
@@ -168,6 +221,8 @@ const run = async (): Promise<void> => {
       text: "可以定制卡牌吗？",
       userId: "support-user-zh",
       channelId: "support-channel-zh",
+      discordGuildId: null,
+      isDM: true,
     });
     assert.equal(chineseReply.type, "text");
     assert.equal(chineseReply.language, "zh");

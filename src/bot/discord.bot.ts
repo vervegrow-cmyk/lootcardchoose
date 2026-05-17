@@ -14,7 +14,7 @@ import { t } from "../utils/i18n";
 import { logger } from "../utils/logger";
 import { isUserFacingError } from "../utils/user-facing-error";
 
-type DiscordIgnoreReason = "wrong_channel" | "bot_message" | "empty_content";
+type DiscordIgnoreReason = "bot_message" | "empty_content";
 
 type DiscordMessageHandlingDecision = {
   shouldHandle: boolean;
@@ -22,6 +22,7 @@ type DiscordMessageHandlingDecision = {
   channelName: string;
   mentioned: boolean;
   normalizedText: string;
+  isDM: boolean;
 };
 
 const getChannelName = (message: Message): string =>
@@ -40,6 +41,7 @@ const shouldHandleDiscordMessage = (message: Message, botUserId: string | null):
     ? message.mentions.users.has(botUserId) || buildMentionRegex(botUserId).test(message.content)
     : false;
   const normalizedText = normalizeDiscordMessageContent(message.content, botUserId);
+  const isDM = !message.guildId;
 
   if (message.author.bot) {
     return {
@@ -48,16 +50,7 @@ const shouldHandleDiscordMessage = (message: Message, botUserId: string | null):
       channelName,
       mentioned,
       normalizedText,
-    };
-  }
-
-  if (!message.guildId) {
-    return {
-      shouldHandle: false,
-      reason: "wrong_channel",
-      channelName,
-      mentioned,
-      normalizedText,
+      isDM,
     };
   }
 
@@ -68,6 +61,7 @@ const shouldHandleDiscordMessage = (message: Message, botUserId: string | null):
       channelName,
       mentioned,
       normalizedText,
+      isDM,
     };
   }
 
@@ -76,6 +70,7 @@ const shouldHandleDiscordMessage = (message: Message, botUserId: string | null):
     channelName,
     mentioned,
     normalizedText,
+    isDM,
   };
 };
 
@@ -264,6 +259,7 @@ export const DiscordBot = {
           userId: message.author.id,
           channelId: message.channelId,
           channelName: handlingDecision.channelName,
+          isDM: handlingDecision.isDM,
           mentioned: handlingDecision.mentioned,
           reason: handlingDecision.reason,
           rawContent: message.content,
@@ -276,6 +272,7 @@ export const DiscordBot = {
         userId: message.author.id,
         channelId: message.channelId,
         channelName: handlingDecision.channelName,
+        isDM: handlingDecision.isDM,
         mentioned: handlingDecision.mentioned,
         rawContent: message.content,
         normalizedContent: handlingDecision.normalizedText,
@@ -291,8 +288,9 @@ export const DiscordBot = {
         const response = await router.handle({
           text: handlingDecision.normalizedText,
           channelId: message.channelId,
-          channelName: handlingDecision.channelName,
+          channelName: handlingDecision.isDM ? null : handlingDecision.channelName,
           discordGuildId: message.guildId ?? null,
+          isDM: handlingDecision.isDM,
           userId: message.author.id,
         });
 

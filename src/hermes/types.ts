@@ -43,6 +43,7 @@ export type HermesContext = {
   locale?: string;
   language: SupportedLanguage;
   discordGuildId: string | null;
+  isDM: boolean;
   userId?: string;
   channelId?: string;
   intent?: IntentId;
@@ -109,6 +110,7 @@ export type RouterInput = {
   channelName?: string | null;
   userId: string;
   discordGuildId?: string | null;
+  isDM?: boolean;
 };
 
 export type RoutingDecision = {

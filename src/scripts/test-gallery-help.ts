@@ -9,6 +9,7 @@ const buildContext = (language: SkillContext["language"]): SkillContext => ({
   requestId: `help-${Date.now()}-${language}`,
   language,
   discordGuildId: null,
+  isDM: false,
   userId: "test-user",
   channelId: "test-channel",
   intent: "help",

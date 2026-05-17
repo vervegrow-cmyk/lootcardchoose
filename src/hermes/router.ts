@@ -95,6 +95,21 @@ const GALLERY_STYLE_TERMS = [
   "character",
 ];
 
+const TRUSTED_GALLERY_SIGNAL_TERMS = [
+  ...GALLERY_STYLE_TERMS,
+  "gallery",
+  "card",
+  "cards",
+  "recommend",
+  "find",
+  "search",
+  "show me",
+  "queen",
+  "angel",
+  "gold",
+  "black",
+];
+
 const CUSTOMER_SUPPORT_PATTERNS: RegExp[] = [
   /\bshipping\b/i,
   /\bship\b/i,
@@ -130,6 +145,8 @@ const CUSTOMER_SUPPORT_PATTERNS: RegExp[] = [
   /折扣|包邮|付款|支付|发货|物流|多张|定制|地址/,
 ];
 
+const DM_CUSTOMER_SUPPORT_PATTERNS: RegExp[] = [...CUSTOMER_SUPPORT_PATTERNS, /\border\b/i, /\blost package\b/i];
+
 const HELP_WELCOME_EXACT_PATTERNS: RegExp[] = [
   /^(?:hi|hello|good morning|shopping|browse|looking|help me)$/i,
   /^i want to shop$/i,
@@ -137,6 +154,26 @@ const HELP_WELCOME_EXACT_PATTERNS: RegExp[] = [
 const NOT_CUSTOMER_SUPPORT_ONLY = ["anime", "cards", "cool", "styles", "ssr", "girl", "red", "one piece", "black gold"];
 
 const detectLanguage = (message: string): SupportedLanguage => (/[\u4e00-\u9fff]/.test(message) ? "zh" : "en");
+
+const hasTrustedGallerySignal = (text: string): boolean => {
+  const normalized = text.trim().toLowerCase();
+  if (!normalized) {
+    return false;
+  }
+
+  if (GALLERY_SEARCH_PATTERNS.some((pattern) => pattern.test(text))) {
+    return true;
+  }
+
+  if (TRUSTED_GALLERY_SIGNAL_TERMS.some((term) => normalized.includes(term.toLowerCase()))) {
+    return true;
+  }
+
+  const keywordCandidates = extractGalleryKeywordCandidates(text).map((keyword) => keyword.trim().toLowerCase());
+  return keywordCandidates.some((keyword) =>
+    TRUSTED_GALLERY_SIGNAL_TERMS.some((term) => keyword.includes(term.toLowerCase()) || term.toLowerCase().includes(keyword))
+  );
+};
 
 const formatChannelNameList = (channelNames: string[]): string =>
   channelNames.map((channelName) => `#${channelName}`).join(", ");
@@ -169,6 +206,22 @@ const buildDeniedChannelText = (
 
 const hasExplicitCustomerSupportSignal = (text: string): boolean =>
   CUSTOMER_SUPPORT_PATTERNS.some((pattern) => pattern.test(text));
+
+const hasExplicitDmCustomerSupportSignal = (text: string): boolean =>
+  DM_CUSTOMER_SUPPORT_PATTERNS.some((pattern) => pattern.test(text));
+
+const hasExplicitDmGalleryIntent = (text: string): boolean => {
+  const normalized = text.trim().toLowerCase();
+  if (!normalized) {
+    return false;
+  }
+
+  const hasSearchVerb =
+    /\b(?:show|find|search|recommend|give)\s+me\b/i.test(text) || /\b(?:show|find|search|recommend)\b/i.test(text);
+  const hasCardTarget = /\b(?:card|cards|gallery)\b/i.test(text);
+
+  return hasSearchVerb && hasCardTarget;
+};
 
 const matchesAnyPhrase = (normalized: string, phrases: string[]): boolean =>
   phrases.some((phrase) => normalized.includes(phrase));
@@ -224,11 +277,13 @@ export class HermesRouter {
       userId?: string;
       channelId?: string;
       discordGuildId?: string | null;
+      isDM?: boolean;
     }
   ): Promise<{ intent: IntentId; language: SupportedLanguage }> {
     const startedAt = Date.now();
     const normalized = text.trim().toLowerCase();
     const fallbackLanguage = detectLanguage(text);
+    const isDM = context?.isDM ?? false;
     let hasActiveGallerySession = false;
     let resolvedIntent: IntentId = "ignore";
     let resolvedLanguage: SupportedLanguage = fallbackLanguage;
@@ -288,6 +343,16 @@ export class HermesRouter {
 
       const confidence = computeIntentConfidence(text);
 
+      if (isDM && hasExplicitDmCustomerSupportSignal(text)) {
+        path = "rule_customer_support";
+        resolvedIntent = "customer_support";
+        resolvedLanguage = fallbackLanguage;
+        return {
+          intent: resolvedIntent,
+          language: resolvedLanguage,
+        };
+      }
+
       if (
         isGalleryRefreshMessage(text) &&
         confidence.customerSupportConfidence === 0 &&
@@ -313,6 +378,15 @@ export class HermesRouter {
       }
 
       if (confidence.gallerySearchConfidence >= confidence.customerSupportConfidence && confidence.gallerySearchConfidence >= 0.92) {
+        if (isDM && !hasExplicitDmGalleryIntent(text)) {
+          resolvedIntent = "ignore";
+          resolvedLanguage = fallbackLanguage;
+          return {
+            intent: resolvedIntent,
+            language: resolvedLanguage,
+          };
+        }
+
         path = "rule_gallery_search";
         resolvedIntent = "gallery_search";
         resolvedLanguage = fallbackLanguage;
@@ -388,6 +462,24 @@ export class HermesRouter {
           };
         }
 
+        if (fallback.intent === "ignore" && !hasTrustedGallerySignal(text)) {
+          resolvedIntent = "ignore";
+          resolvedLanguage = fallback.language;
+          return {
+            intent: resolvedIntent,
+            language: resolvedLanguage,
+          };
+        }
+
+        if (isDM && !hasExplicitDmGalleryIntent(text)) {
+          resolvedIntent = "ignore";
+          resolvedLanguage = fallback.language;
+          return {
+            intent: resolvedIntent,
+            language: resolvedLanguage,
+          };
+        }
+
         resolvedIntent = "gallery_search";
         resolvedLanguage = classified.language;
         return {
@@ -399,6 +491,15 @@ export class HermesRouter {
       path = resolveClassifiedPath(classified);
       const hasExplicitSupportSignal = hasExplicitCustomerSupportSignal(text);
       const matchesNotCustomerSupportOnly = matchesAnyPhrase(normalized, NOT_CUSTOMER_SUPPORT_ONLY);
+
+      if (isDM && classified.intent === "gallery_search" && !hasExplicitDmGalleryIntent(text)) {
+        resolvedIntent = "ignore";
+        resolvedLanguage = classified.language;
+        return {
+          intent: resolvedIntent,
+          language: resolvedLanguage,
+        };
+      }
 
       if (
         classified.intent === "customer_support" &&
@@ -470,6 +571,7 @@ export class HermesRouter {
   }
 
   async handle(input: RouterInput): Promise<HermesOutput> {
+    const isDM = input.isDM ?? input.discordGuildId == null;
     const language = detectLanguage(input.text);
     const channelAccess = await guildConfigService.resolveChannelAccess({
       discordGuildId: input.discordGuildId ?? null,
@@ -502,6 +604,7 @@ export class HermesRouter {
       discordGuildId: input.discordGuildId ?? null,
       userId: input.userId,
       channelId: input.channelId,
+      isDM,
     });
     logger.info("[HERMES ROUTER] intent=" + classification.intent);
     const decision = this.resolveAgent(classification.intent, input.channelId);
@@ -515,6 +618,7 @@ export class HermesRouter {
       requestId: `${Date.now()}`,
       language: classification.language,
       discordGuildId: input.discordGuildId ?? null,
+      isDM,
       userId: input.userId,
       channelId: input.channelId,
       agentId: decision.agentId,
