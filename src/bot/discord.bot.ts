@@ -86,6 +86,30 @@ const extractDiscordApiCode = (error: unknown): string | number | null => {
   return typeof code === "string" || typeof code === "number" ? code : null;
 };
 
+const resolveErrorDetails = (
+  error: unknown
+): {
+  name: string;
+  message: string;
+  code?: string | number;
+} => {
+  const code = extractDiscordApiCode(error);
+
+  if (error instanceof Error) {
+    return {
+      name: error.name,
+      message: error.message,
+      ...(code !== null ? { code } : {}),
+    };
+  }
+
+  return {
+    name: "UnknownError",
+    message: String(error),
+    ...(code !== null ? { code } : {}),
+  };
+};
+
 const resolveCheckoutProductCode = (response: HermesGalleryCheckoutCreatedOutput): string | null =>
   response.metadata && typeof response.metadata.productCode === "string" ? response.metadata.productCode : null;
 
@@ -231,12 +255,14 @@ export const DiscordBot = {
   start: async (): Promise<void> => {
     const env = loadEnv();
     logger.info("[DISCORD] starting bot");
+    const isTokenConfigured = Boolean(env.discordBotToken && env.discordBotToken.trim().length > 0);
+    logger.info(`[DISCORD] token configured=${isTokenConfigured}`);
 
-    if (!env.discordBotToken.trim()) {
+    if (!isTokenConfigured) {
       logger.error("[DISCORD] token missing", {
         envKey: "DISCORD_BOT_TOKEN",
       });
-      return;
+      throw new Error("Missing DISCORD_BOT_TOKEN");
     }
 
     if (!env.databaseUrl) {
@@ -257,7 +283,7 @@ export const DiscordBot = {
     const router = new HermesRouter(registry);
 
     client.on("clientReady", () => {
-      logger.info("[DISCORD] bot ready");
+      logger.info(`[DISCORD] bot ready user=${client.user?.tag || client.user?.id || "unknown"}`);
     });
 
     client.on("error", (error) => {
@@ -454,10 +480,7 @@ export const DiscordBot = {
     try {
       await client.login(env.discordBotToken);
     } catch (error) {
-      logger.error("[DISCORD] login failed", {
-        message: error instanceof Error ? error.message : String(error),
-        discordApiCode: extractDiscordApiCode(error),
-      });
+      logger.error("[DISCORD] login failed", resolveErrorDetails(error));
       throw error;
     }
   },

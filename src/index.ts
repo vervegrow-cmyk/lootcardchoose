@@ -354,7 +354,7 @@ const main = async (): Promise<void> => {
   try {
     await DiscordBot.start();
   } catch (error) {
-    console.error("[DISCORD] login failed", {
+    console.error("[BOOT] discord start failed", {
       message: error instanceof Error ? error.message : String(error),
       stack: error instanceof Error ? error.stack : undefined,
     });
