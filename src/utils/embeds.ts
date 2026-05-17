@@ -11,6 +11,7 @@ export type EmbedPayload = {
   title?: string;
   description?: string;
   imageUrl?: string;
+  thumbnailUrl?: string;
   fields?: EmbedField[];
 };
 
@@ -47,7 +48,8 @@ export const buildGalleryResultsEmbeds = (
       title: card.title,
     }),
     description: buildCardDescription(language, card),
-    imageUrl: card.imageUrl,
+    imageUrl: index === 0 ? card.imageUrl : undefined,
+    thumbnailUrl: index === 0 ? undefined : card.imageUrl,
     fields: [],
   }));
 };

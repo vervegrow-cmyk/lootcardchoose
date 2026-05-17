@@ -317,6 +317,9 @@ export const DiscordBot = {
             if (embed.imageUrl) {
               builder.setImage(embed.imageUrl);
             }
+            if (embed.thumbnailUrl) {
+              builder.setThumbnail(embed.thumbnailUrl);
+            }
             if (embed.fields && embed.fields.length > 0) {
               builder.addFields(
                 embed.fields.map((field) => ({
