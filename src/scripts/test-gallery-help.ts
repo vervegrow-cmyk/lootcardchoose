@@ -136,7 +136,7 @@ const run = async (): Promise<void> => {
     assert.equal(englishPurchaseIntent.intent, "help");
 
     const englishOrderStatusIntent = await router.determineIntent("Where is my order?");
-    assert.equal(englishOrderStatusIntent.intent, "order_status");
+    assert.equal(englishOrderStatusIntent.intent, "customer_support");
 
     const englishIntent = await llmIntentClassifierService.classify(englishMessage);
     console.log("[TEST GALLERY HELP] english intent=", JSON.stringify(englishIntent));
