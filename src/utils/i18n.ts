@@ -32,7 +32,7 @@ const dictionary: Record<SupportedLanguage, Record<string, string>> = {
     "gallery.description.empty": "暂无描述",
   },
   en: {
-    "channel.onlyLootcardchoose": "Please use the #lootcardchoose channel for gallery card selection.",
+    "channel.onlyLootcardchoose": "Please use #lootcardchoose to search and choose cards.",
     "gallery.search.success": "I found {count} cards for you.",
     "gallery.search.empty": "Sorry, I couldn't find matching cards.",
     "gallery.search.chooseHint": "Reply with a number from 1-{count} to choose one.",

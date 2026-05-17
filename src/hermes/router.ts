@@ -1,4 +1,5 @@
 import { gallerySearchSessionRepository } from "../repositories/gallery-search-session.repository";
+import { guildConfigService, GuildChannelAccessDecision } from "../services/guild-config.service";
 import {
   IntentClassificationResult,
   fallbackIntentClassification,
@@ -6,6 +7,7 @@ import {
 } from "../services/llm-intent-classifier.service";
 import { awaitPendingSearchSessionWrite } from "../skills/gallery/search-gallery.skill";
 import { extractGalleryKeywordCandidates, isGalleryRefreshMessage, isGallerySelectMessage } from "../utils/gallery-language";
+import { t } from "../utils/i18n";
 import { logger } from "../utils/logger";
 import { HermesOrchestrator } from "./orchestrator";
 import { HermesRegistry } from "./registry";
@@ -135,6 +137,35 @@ const HELP_WELCOME_EXACT_PATTERNS: RegExp[] = [
 const NOT_CUSTOMER_SUPPORT_ONLY = ["anime", "cards", "cool", "styles", "ssr", "girl", "red", "one piece", "black gold"];
 
 const detectLanguage = (message: string): SupportedLanguage => (/[\u4e00-\u9fff]/.test(message) ? "zh" : "en");
+
+const formatChannelNameList = (channelNames: string[]): string =>
+  channelNames.map((channelName) => `#${channelName}`).join(", ");
+
+const buildDeniedChannelText = (
+  language: SupportedLanguage,
+  decision: Extract<GuildChannelAccessDecision, { status: "denied" }>
+): string => {
+  if (decision.reason === "legacy_wrong_channel") {
+    return t(language, "channel.onlyLootcardchoose");
+  }
+
+  if (decision.reason === "guild_disabled") {
+    return language === "zh"
+      ? "这个服务器已关闭 LootCardChoose。请联系服务器管理员启用后再使用。"
+      : "LootCardChoose is disabled for this server. Please ask the server admin to enable it first.";
+  }
+
+  if (decision.allowedChannelNames.length > 0) {
+    const allowedChannelList = formatChannelNameList(decision.allowedChannelNames);
+    return language === "zh"
+      ? `这个服务器当前只允许在这些频道使用 LootCardChoose：${allowedChannelList}。如需开放更多频道，请联系服务器管理员。`
+      : "This bot is not enabled in this channel. Please use the configured card channel.";
+  }
+
+  return language === "zh"
+    ? "这个频道未启用 LootCardChoose。请联系服务器管理员配置可用频道。"
+    : "This bot is not enabled in this channel. Please use the configured card channel.";
+};
 
 const hasExplicitCustomerSupportSignal = (text: string): boolean =>
   CUSTOMER_SUPPORT_PATTERNS.some((pattern) => pattern.test(text));
@@ -439,6 +470,34 @@ export class HermesRouter {
   }
 
   async handle(input: RouterInput): Promise<HermesOutput> {
+    const language = detectLanguage(input.text);
+    const channelAccess = await guildConfigService.resolveChannelAccess({
+      discordGuildId: input.discordGuildId ?? null,
+      discordChannelId: input.channelId,
+      discordChannelName: input.channelName ?? null,
+    });
+
+    if (channelAccess.status === "denied") {
+      logger.info("[HERMES ROUTER] channel denied", {
+        discordGuildId: input.discordGuildId ?? null,
+        channelId: input.channelId,
+        channelName: input.channelName ?? "",
+        userId: input.userId,
+        reason: channelAccess.reason,
+        mode: channelAccess.mode,
+      });
+
+      return {
+        type: "text",
+        language,
+        text: buildDeniedChannelText(language, channelAccess),
+        metadata: {
+          reason: channelAccess.reason,
+          mode: channelAccess.mode,
+        },
+      };
+    }
+
     const classification = await this.determineIntent(input.text, {
       discordGuildId: input.discordGuildId ?? null,
       userId: input.userId,

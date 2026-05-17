@@ -106,6 +106,7 @@ export type HermesOutput =
 export type RouterInput = {
   text: string;
   channelId: string;
+  channelName?: string | null;
   userId: string;
   discordGuildId?: string | null;
 };

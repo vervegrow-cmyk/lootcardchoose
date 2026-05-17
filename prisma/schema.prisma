@@ -42,6 +42,18 @@ model GallerySearchSession {
   @@index([discordGuildId, discordChannelId, discordUserId, createdAt])
 }
 
+model GuildConfig {
+  id                  String   @id @default(cuid())
+  discordGuildId      String   @unique
+  enabledChannelIds   String[]
+  enabledChannelNames String[]
+  enabledAgents       String[]
+  isEnabled           Boolean  @default(true)
+  defaultLanguage     String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
 model Order {
   id                  String   @id @default(cuid())
   orderNumber         String

@@ -14,9 +14,7 @@ import { t } from "../utils/i18n";
 import { logger } from "../utils/logger";
 import { isUserFacingError } from "../utils/user-facing-error";
 
-const LOOTCARDCHOOSE_CHANNEL_NAME = "lootcardchoose";
-
-type DiscordIgnoreReason = "wrong_channel" | "not_mentioned" | "bot_message" | "empty_content";
+type DiscordIgnoreReason = "wrong_channel" | "bot_message" | "empty_content";
 
 type DiscordMessageHandlingDecision = {
   shouldHandle: boolean;
@@ -53,21 +51,10 @@ const shouldHandleDiscordMessage = (message: Message, botUserId: string | null):
     };
   }
 
-  const isLootcardChooseChannel = channelName === LOOTCARDCHOOSE_CHANNEL_NAME;
-  if (!isLootcardChooseChannel && !channelName) {
+  if (!message.guildId) {
     return {
       shouldHandle: false,
       reason: "wrong_channel",
-      channelName,
-      mentioned,
-      normalizedText,
-    };
-  }
-
-  if (!isLootcardChooseChannel && !mentioned) {
-    return {
-      shouldHandle: false,
-      reason: "not_mentioned",
       channelName,
       mentioned,
       normalizedText,
@@ -304,6 +291,8 @@ export const DiscordBot = {
         const response = await router.handle({
           text: handlingDecision.normalizedText,
           channelId: message.channelId,
+          channelName: handlingDecision.channelName,
+          discordGuildId: message.guildId ?? null,
           userId: message.author.id,
         });
 

@@ -7,6 +7,7 @@ import assert from "node:assert/strict";
 import { buildHermesRegistry } from "../hermes/registry";
 import { HermesRouter } from "../hermes/router";
 import { gallerySearchSessionRepository } from "../repositories/gallery-search-session.repository";
+import { guildConfigRepository } from "../repositories/guild-config.repository";
 import { orderService } from "../services/order.service";
 import { shopifyService } from "../services/shopify.service";
 import { awaitPendingSearchSessionWrite } from "../skills/gallery/search-gallery.skill";
@@ -17,6 +18,10 @@ const ensure = (condition: unknown, message: string): void => {
     throw new Error(message);
   }
 };
+
+const LEGACY_CHANNEL_DENIAL_TEXT = "Please use #lootcardchoose to search and choose cards.";
+const CONFIGURED_CHANNEL_DENIAL_TEXT =
+  "This bot is not enabled in this channel. Please use the configured card channel.";
 
 const createSessionResultCard = (card: {
   id: string;
@@ -55,13 +60,118 @@ const main = async (): Promise<void> => {
   const discordUserId = `test-select-user-${suffix}`;
   const discordChannelId = `test-select-channel-${suffix}`;
   const discordGuildId = `test-select-guild-${suffix}`;
+  const discordChannelName = "lootcardchoose";
   const query = "Show me 10 black gold SSR female cards";
+
+  const legacyGuildId = `test-legacy-guild-${suffix}`;
+  const configuredGuildId = `test-configured-guild-${suffix}`;
+  const disabledGuildId = `test-disabled-guild-${suffix}`;
+  const configuredChannelId = `configured-channel-${suffix}`;
+  const configuredNameChannel = "card-browse";
+  const blockedChannelId = `blocked-channel-${suffix}`;
+  const blockedChannelName = "general";
+
+  await guildConfigRepository.deleteByGuildId(legacyGuildId);
+  await guildConfigRepository.deleteByGuildId(configuredGuildId);
+  await guildConfigRepository.deleteByGuildId(disabledGuildId);
+
+  const legacyAllowedResponse = await router.handle({
+    text: "help me",
+    discordGuildId: legacyGuildId,
+    userId: `legacy-user-${suffix}`,
+    channelId: `legacy-channel-${suffix}`,
+    channelName: "lootcardchoose",
+  });
+  assert.equal(legacyAllowedResponse.type, "text");
+  assert.notEqual(legacyAllowedResponse.text, LEGACY_CHANNEL_DENIAL_TEXT);
+
+  const legacyGeneralResponse = await router.handle({
+    text: "help me",
+    discordGuildId: legacyGuildId,
+    userId: `legacy-general-user-${suffix}`,
+    channelId: `legacy-general-channel-${suffix}`,
+    channelName: "general",
+  });
+  assert.equal(legacyGeneralResponse.type, "text");
+  assert.equal(legacyGeneralResponse.text, LEGACY_CHANNEL_DENIAL_TEXT);
+
+  const legacyChineseNamedChannelResponse = await router.handle({
+    text: "help me",
+    discordGuildId: legacyGuildId,
+    userId: `legacy-zh-user-${suffix}`,
+    channelId: `legacy-zh-channel-${suffix}`,
+    channelName: "常规",
+  });
+  assert.equal(legacyChineseNamedChannelResponse.type, "text");
+  assert.equal(
+    legacyChineseNamedChannelResponse.text,
+    LEGACY_CHANNEL_DENIAL_TEXT
+  );
+
+  await guildConfigRepository.upsert({
+    discordGuildId: configuredGuildId,
+    enabledChannelIds: [configuredChannelId],
+    enabledChannelNames: [configuredNameChannel],
+    enabledAgents: [],
+    isEnabled: true,
+    defaultLanguage: null,
+  });
+
+  const configuredAllowedById = await router.handle({
+    text: "help me",
+    discordGuildId: configuredGuildId,
+    userId: `configured-id-user-${suffix}`,
+    channelId: configuredChannelId,
+    channelName: blockedChannelName,
+  });
+  assert.equal(configuredAllowedById.type, "text");
+  assert.notEqual(configuredAllowedById.text, LEGACY_CHANNEL_DENIAL_TEXT);
+
+  const configuredAllowedByName = await router.handle({
+    text: "help me",
+    discordGuildId: configuredGuildId,
+    userId: `configured-name-user-${suffix}`,
+    channelId: `configured-name-id-${suffix}`,
+    channelName: configuredNameChannel,
+  });
+  assert.equal(configuredAllowedByName.type, "text");
+  assert.notEqual(configuredAllowedByName.text, LEGACY_CHANNEL_DENIAL_TEXT);
+
+  const configuredBlockedResponse = await router.handle({
+    text: "help me",
+    discordGuildId: configuredGuildId,
+    userId: `configured-blocked-user-${suffix}`,
+    channelId: blockedChannelId,
+    channelName: blockedChannelName,
+  });
+  assert.equal(configuredBlockedResponse.type, "text");
+  assert.equal(configuredBlockedResponse.text, CONFIGURED_CHANNEL_DENIAL_TEXT);
+
+  await guildConfigRepository.upsert({
+    discordGuildId: disabledGuildId,
+    enabledChannelIds: [configuredChannelId],
+    enabledChannelNames: [configuredNameChannel],
+    enabledAgents: [],
+    isEnabled: false,
+    defaultLanguage: null,
+  });
+
+  const disabledGuildResponse = await router.handle({
+    text: "help me",
+    discordGuildId: disabledGuildId,
+    userId: `disabled-user-${suffix}`,
+    channelId: configuredChannelId,
+    channelName: configuredNameChannel,
+  });
+  assert.equal(disabledGuildResponse.type, "text");
+  assert.match(disabledGuildResponse.text, /disabled for this server/i);
 
   const searchResult = await router.handle({
     text: query,
     discordGuildId,
     userId: discordUserId,
     channelId: discordChannelId,
+    channelName: discordChannelName,
   });
 
   assert.equal(searchResult.type, "gallery_search_results");
@@ -107,6 +217,7 @@ const main = async (): Promise<void> => {
       discordGuildId,
       userId: discordUserId,
       channelId: discordChannelId,
+      channelName: discordChannelName,
     });
 
     assert.equal(checkoutResponse.type, "gallery_checkout_created");
@@ -162,6 +273,7 @@ const main = async (): Promise<void> => {
       discordGuildId,
       userId: discordUserId,
       channelId: discordChannelId,
+      channelName: discordChannelName,
     });
     assert.equal(outOfRangeResponse.type, "text");
     assert.equal(outOfRangeResponse.text, "Please choose a number from 1 to 3.");
@@ -175,6 +287,7 @@ const main = async (): Promise<void> => {
       discordGuildId,
       userId: discordUserId,
       channelId: discordChannelId,
+      channelName: discordChannelName,
     });
     assert.equal(checkoutFailureResponse.type, "text");
     assert.equal(
@@ -218,6 +331,7 @@ const main = async (): Promise<void> => {
       discordGuildId: guildA,
       userId: multiGuildUserId,
       channelId: multiGuildChannelId,
+      channelName: "lootcardchoose",
     });
     assert.equal(guildASearch.type, "gallery_search_results");
 
@@ -226,6 +340,7 @@ const main = async (): Promise<void> => {
       discordGuildId: guildB,
       userId: multiGuildUserId,
       channelId: multiGuildChannelId,
+      channelName: "lootcardchoose",
     });
     assert.equal(guildBSearch.type, "gallery_search_results");
 
@@ -287,12 +402,14 @@ const main = async (): Promise<void> => {
       discordGuildId: guildA,
       userId: multiGuildUserId,
       channelId: multiGuildChannelId,
+      channelName: "lootcardchoose",
     });
     const guildBSelect = await router.handle({
       text: "1",
       discordGuildId: guildB,
       userId: multiGuildUserId,
       channelId: multiGuildChannelId,
+      channelName: "lootcardchoose",
     });
     assert.equal(guildASelect.type, "text");
     assert.equal(
@@ -354,6 +471,9 @@ const main = async (): Promise<void> => {
     assert.notEqual(legacyLookup?.id, guildBSelectedSession?.id);
   } finally {
     shopifyService.createProductFromGalleryCard = originalCreateProductFromGalleryCard;
+    await guildConfigRepository.deleteByGuildId(legacyGuildId);
+    await guildConfigRepository.deleteByGuildId(configuredGuildId);
+    await guildConfigRepository.deleteByGuildId(disabledGuildId);
   }
 };
 
