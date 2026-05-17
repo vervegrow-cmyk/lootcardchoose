@@ -14,6 +14,7 @@ export type EmbedPayload = {
   imageUrl?: string;
   thumbnailUrl?: string;
   fields?: EmbedField[];
+  footerText?: string;
 };
 
 const ENGLISH_STYLE_TAGS = new Set([
@@ -175,34 +176,46 @@ const buildCardDescription = (language: SupportedLanguage, card: GallerySearchRe
   return lines.join("\n");
 };
 
-export const buildGalleryResultsEmbeds = (
-  language: SupportedLanguage,
-  results: GallerySearchResultCard[]
-): EmbedPayload[] => {
-  return results.slice(0, 10).map((card, index) => ({
-    title: t(language, "gallery.search.resultTitle", {
-      index: index + 1,
-      title: card.title,
-    }),
-    description: buildCardDescription(language, card),
-    imageUrl: undefined,
-    thumbnailUrl: card.imageUrl,
-    fields: [],
-  }));
+const resolveGalleryImageUrl = (card: GallerySearchResultCard): string | null => {
+  const extendedCard = card as GallerySearchResultCard & {
+    shareImageUrl?: unknown;
+    metadata?: { imageUrl?: unknown } | null;
+  };
+
+  const candidates = [
+    card.imageUrl,
+    typeof extendedCard.shareImageUrl === "string" ? extendedCard.shareImageUrl : null,
+    typeof extendedCard.metadata?.imageUrl === "string" ? extendedCard.metadata.imageUrl : null,
+  ];
+
+  for (const candidate of candidates) {
+    if (typeof candidate === "string" && candidate.trim().length > 0) {
+      return candidate.trim();
+    }
+  }
+
+  return null;
 };
 
-export const buildGalleryResultLargeImageEmbeds = (
+export const buildGalleryLargeImageFeedEmbeds = (
   language: SupportedLanguage,
   results: GallerySearchResultCard[]
 ): EmbedPayload[] => {
-  return results.slice(0, 10).map((card, index) => ({
-    title: t(language, "gallery.search.resultTitle", {
-      index: index + 1,
-      title: card.title,
-    }),
-    description: buildCardDescription(language, card),
-    imageUrl: card.imageUrl,
-    thumbnailUrl: undefined,
-    fields: [],
-  }));
+  return results.slice(0, 10).map((card, index) => {
+    const imageUrl = resolveGalleryImageUrl(card);
+
+    return {
+      title: t(language, "gallery.search.resultTitle", {
+        index: index + 1,
+        title: card.title,
+      }),
+      description: buildCardDescription(language, card),
+      imageUrl: imageUrl ?? undefined,
+      thumbnailUrl: undefined,
+      fields: [],
+      footerText: imageUrl ? undefined : "Image unavailable",
+    };
+  });
 };
+
+export const buildGalleryResultsEmbeds = buildGalleryLargeImageFeedEmbeds;

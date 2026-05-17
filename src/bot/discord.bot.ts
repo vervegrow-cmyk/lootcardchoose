@@ -9,7 +9,7 @@ import {
 import { buildHermesRegistry } from "../hermes/registry";
 import { HermesRouter } from "../hermes/router";
 import { discordNotificationService } from "../services/discord-notification.service";
-import { buildGalleryResultLargeImageEmbeds, buildGalleryResultsEmbeds } from "../utils/embeds";
+import { buildGalleryLargeImageFeedEmbeds } from "../utils/embeds";
 import { t } from "../utils/i18n";
 import { logger } from "../utils/logger";
 import { isUserFacingError } from "../utils/user-facing-error";
@@ -315,6 +315,7 @@ export const DiscordBot = {
             imageUrl?: string;
             thumbnailUrl?: string;
             fields?: Array<{ name: string; value: string; inline?: boolean }>;
+            footerText?: string;
           }): EmbedBuilder => {
             const builder = new EmbedBuilder();
             if (embed.title) {
@@ -326,9 +327,6 @@ export const DiscordBot = {
             if (embed.imageUrl) {
               builder.setImage(embed.imageUrl);
             }
-            if (embed.thumbnailUrl) {
-              builder.setThumbnail(embed.thumbnailUrl);
-            }
             if (embed.fields && embed.fields.length > 0) {
               builder.addFields(
                 embed.fields.map((field) => ({
@@ -338,34 +336,26 @@ export const DiscordBot = {
                 }))
               );
             }
+            if (embed.footerText) {
+              builder.setFooter({ text: embed.footerText });
+            }
             return builder;
           };
 
           await replyWithFallback(
             message,
             async () => {
-              if (!handlingDecision.isDM) {
-                const embeds = buildGalleryResultsEmbeds(response.language, response.cards).map(buildDiscordEmbed);
-                await message.reply({
-                  content: `${response.text}\n${response.selectionPrompt}`,
-                  embeds,
-                });
-                return;
-              }
-
               await message.reply({
                 content: `${response.text}\n${response.selectionPrompt}`,
               });
 
-              const largeImageEmbeds = buildGalleryResultLargeImageEmbeds(response.language, response.cards).map(
-                buildDiscordEmbed
-              );
+              const embeds = buildGalleryLargeImageFeedEmbeds(response.language, response.cards).map(buildDiscordEmbed);
 
               if (!hasSend(message.channel)) {
-                throw new Error("DM channel does not support send");
+                throw new Error("Channel does not support send");
               }
 
-              for (const embed of largeImageEmbeds) {
+              for (const embed of embeds) {
                 await message.channel.send({ embeds: [embed] });
               }
             },
