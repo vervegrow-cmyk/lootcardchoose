@@ -185,8 +185,8 @@ export const buildGalleryResultsEmbeds = (
       title: card.title,
     }),
     description: buildCardDescription(language, card),
-    imageUrl: index === 0 ? card.imageUrl : undefined,
-    thumbnailUrl: index === 0 ? undefined : card.imageUrl,
+    imageUrl: undefined,
+    thumbnailUrl: card.imageUrl,
     fields: [],
   }));
 };

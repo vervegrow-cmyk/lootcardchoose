@@ -314,9 +314,6 @@ export const DiscordBot = {
             if (embed.description) {
               builder.setDescription(embed.description);
             }
-            if (embed.imageUrl) {
-              builder.setImage(embed.imageUrl);
-            }
             if (embed.thumbnailUrl) {
               builder.setThumbnail(embed.thumbnailUrl);
             }
