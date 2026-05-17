@@ -176,21 +176,43 @@ const buildCardDescription = (language: SupportedLanguage, card: GallerySearchRe
   return lines.join("\n");
 };
 
-const resolveGalleryImageUrl = (card: GallerySearchResultCard): string | null => {
+const normalizeHttpImageUrl = (value: unknown): string | null => {
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const trimmed = value.trim();
+  if (!trimmed || (!trimmed.startsWith("http://") && !trimmed.startsWith("https://"))) {
+    return null;
+  }
+
+  return trimmed;
+};
+
+export const resolveGalleryCardImageUrl = (card: GallerySearchResultCard): string | null => {
   const extendedCard = card as GallerySearchResultCard & {
     shareImageUrl?: unknown;
-    metadata?: { imageUrl?: unknown } | null;
+    metadata?: {
+      imageUrl?: unknown;
+      r2Url?: unknown;
+      publicUrl?: unknown;
+      originalImageUrl?: unknown;
+    } | null;
   };
 
   const candidates = [
     card.imageUrl,
-    typeof extendedCard.shareImageUrl === "string" ? extendedCard.shareImageUrl : null,
-    typeof extendedCard.metadata?.imageUrl === "string" ? extendedCard.metadata.imageUrl : null,
+    extendedCard.shareImageUrl,
+    extendedCard.metadata?.imageUrl,
+    extendedCard.metadata?.r2Url,
+    extendedCard.metadata?.publicUrl,
+    extendedCard.metadata?.originalImageUrl,
   ];
 
   for (const candidate of candidates) {
-    if (typeof candidate === "string" && candidate.trim().length > 0) {
-      return candidate.trim();
+    const normalizedUrl = normalizeHttpImageUrl(candidate);
+    if (normalizedUrl) {
+      return normalizedUrl;
     }
   }
 
@@ -202,7 +224,7 @@ export const buildGalleryLargeImageFeedEmbeds = (
   results: GallerySearchResultCard[]
 ): EmbedPayload[] => {
   return results.slice(0, 10).map((card, index) => {
-    const imageUrl = resolveGalleryImageUrl(card);
+    const imageUrl = resolveGalleryCardImageUrl(card);
 
     return {
       title: t(language, "gallery.search.resultTitle", {

@@ -9,7 +9,7 @@ import {
 import { buildHermesRegistry } from "../hermes/registry";
 import { HermesRouter } from "../hermes/router";
 import { discordNotificationService } from "../services/discord-notification.service";
-import { buildGalleryLargeImageFeedEmbeds } from "../utils/embeds";
+import { buildGalleryLargeImageFeedEmbeds, resolveGalleryCardImageUrl } from "../utils/embeds";
 import { t } from "../utils/i18n";
 import { logger } from "../utils/logger";
 import { isUserFacingError } from "../utils/user-facing-error";
@@ -88,6 +88,18 @@ const extractDiscordApiCode = (error: unknown): string | number | null => {
 
 const resolveCheckoutProductCode = (response: HermesGalleryCheckoutCreatedOutput): string | null =>
   response.metadata && typeof response.metadata.productCode === "string" ? response.metadata.productCode : null;
+
+const resolveImageUrlHost = (imageUrl: string | null): string | null => {
+  if (!imageUrl) {
+    return null;
+  }
+
+  try {
+    return new URL(imageUrl).host || null;
+  } catch {
+    return null;
+  }
+};
 
 export const buildSearchFallbackText = (response: HermesGallerySearchResultsOutput): string => {
   const cardLines = response.cards.slice(0, 10).map((card, index) => {
@@ -347,6 +359,17 @@ export const DiscordBot = {
             async () => {
               await message.reply({
                 content: `${response.text}\n${response.selectionPrompt}`,
+              });
+
+              response.cards.slice(0, 10).forEach((card, index) => {
+                const imageUrl = resolveGalleryCardImageUrl(card);
+                logger.info("[GALLERY PRESENTATION] large_feed_card_image", {
+                  index,
+                  title: card.title,
+                  hasImageUrl: Boolean(imageUrl),
+                  imageUrlHost: resolveImageUrlHost(imageUrl),
+                  imageUrlLength: imageUrl?.length ?? 0,
+                });
               });
 
               const embeds = buildGalleryLargeImageFeedEmbeds(response.language, response.cards).map(buildDiscordEmbed);
