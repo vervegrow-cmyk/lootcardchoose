@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 dotenv.config({ path: ".env.local", override: true });
 
-import { readFile, readdir, rm, writeFile } from "node:fs/promises";
+import { access, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { Prisma } from "@prisma/client";
 import { loadEnv } from "../config/env";
@@ -60,6 +60,14 @@ type GallerySyncStats = {
   deactivated: number;
   r2Deleted: number;
   failed: number;
+  staleCardsDeactivated: number;
+};
+
+type LocalGalleryCardState = {
+  id: string;
+  title: string;
+  imageUrl: string;
+  metadata: Prisma.JsonValue | null;
 };
 
 const walkDirectory = async (directory: string): Promise<string[]> => {
@@ -135,6 +143,36 @@ const normalizeRelativePath = (filePath: string): string => filePath.replace(/\\
 const buildSyncSourceId = (relativePath: string): string => `${LOCAL_GALLERY_SOURCE_PREFIX}${normalizeRelativePath(relativePath)}`;
 
 const buildR2Key = (relativePath: string): string => `${R2_PREFIX}/${normalizeRelativePath(relativePath)}`;
+
+const fileExists = async (filePath: string): Promise<boolean> => {
+  try {
+    await access(filePath);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const readStringMetadata = (metadata: Prisma.JsonValue | null, key: string): string | null => {
+  if (!isRecord(metadata)) {
+    return null;
+  }
+
+  const value = metadata[key];
+  return typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
+};
+
+const buildRelativePathFromSyncSourceId = (syncSourceId: string): string | null => {
+  if (!syncSourceId.startsWith(LOCAL_GALLERY_SOURCE_PREFIX)) {
+    return null;
+  }
+
+  const relativePath = syncSourceId.slice(LOCAL_GALLERY_SOURCE_PREFIX.length).trim();
+  return relativePath ? normalizeRelativePath(relativePath) : null;
+};
 
 const hasMatchingImage = (jsonPath: string, fileSet: Set<string>): boolean => {
   const basePath = jsonPath.slice(0, -path.extname(jsonPath).length);
@@ -299,6 +337,13 @@ const syncItem = async (item: GallerySyncItem): Promise<void> => {
   const normalized = normalizeMetadata(item.relativePath, item.metadata);
   const syncSourceId = buildSyncSourceId(item.relativePath);
   const r2Key = buildR2Key(item.relativePath);
+  const generatedPublicUrl = r2Service.buildPublicUrl(r2Key);
+  const localExists = await fileExists(item.imagePath);
+
+  console.log(
+    `[Gallery Sync] prepare ${normalizeRelativePath(item.relativePath)} localExists=${localExists} r2Key=${r2Key} publicUrl=${generatedPublicUrl}`
+  );
+
   const upload = await r2Service.uploadFile({
     key: r2Key,
     filePath: item.imagePath,
@@ -335,6 +380,88 @@ const syncItem = async (item: GallerySyncItem): Promise<void> => {
   });
 };
 
+const loadActiveLocalGalleryCards = async (): Promise<LocalGalleryCardState[]> => {
+  const cards = await prisma.galleryCard.findMany({
+    where: {
+      isActive: true,
+    },
+    select: {
+      id: true,
+      title: true,
+      imageUrl: true,
+      metadata: true,
+    },
+  });
+
+  return cards.filter((card) => {
+    const syncSourceId = readStringMetadata(card.metadata, "syncSourceId");
+    return typeof syncSourceId === "string" && syncSourceId.startsWith(LOCAL_GALLERY_SOURCE_PREFIX);
+  });
+};
+
+const repairStaleLocalGalleryCards = async (input: {
+  scannedSyncSourceIds: string[];
+  remoteKeys: string[];
+}): Promise<number> => {
+  const activeCards = await loadActiveLocalGalleryCards();
+  const scannedSyncSourceIds = new Set(input.scannedSyncSourceIds);
+  const remoteKeys = new Set(input.remoteKeys.map(normalizeRelativePath));
+  let deactivatedCount = 0;
+
+  for (const card of activeCards) {
+    const syncSourceId = readStringMetadata(card.metadata, "syncSourceId");
+    if (!syncSourceId) {
+      continue;
+    }
+
+    const relativePath =
+      buildRelativePathFromSyncSourceId(syncSourceId) ??
+      normalizeRelativePath(readStringMetadata(card.metadata, "filename") ?? "");
+    const expectedR2Key = readStringMetadata(card.metadata, "r2Key") ?? (relativePath ? buildR2Key(relativePath) : null);
+    const expectedPublicUrl = expectedR2Key ? r2Service.buildPublicUrl(expectedR2Key) : null;
+    const localImagePath =
+      readStringMetadata(card.metadata, "localImagePath") ??
+      (relativePath ? path.join(GALLERY_ROOT, relativePath) : null);
+    const localExists = localImagePath ? await fileExists(localImagePath) : false;
+    const syncSourceScanned = scannedSyncSourceIds.has(syncSourceId);
+    const remoteExists = expectedR2Key ? remoteKeys.has(normalizeRelativePath(expectedR2Key)) : false;
+    const reasons: string[] = [];
+
+    if (!syncSourceScanned) {
+      reasons.push("missing_sync_source");
+    }
+    if (!localExists) {
+      reasons.push("missing_local_file");
+    }
+    if (!expectedR2Key) {
+      reasons.push("missing_r2_key");
+    } else if (!remoteExists) {
+      reasons.push("missing_r2_object");
+    }
+    if (!expectedPublicUrl) {
+      reasons.push("missing_public_url");
+    } else if (card.imageUrl !== expectedPublicUrl) {
+      reasons.push("public_url_mismatch");
+    }
+
+    if (reasons.length === 0) {
+      continue;
+    }
+
+    await prisma.galleryCard.update({
+      where: { id: card.id },
+      data: { isActive: false },
+    });
+    deactivatedCount += 1;
+
+    console.log(
+      `[Gallery Sync] deactivated stale local-gallery card id=${card.id} title="${card.title}" reasons=${reasons.join(",")} syncSourceId=${syncSourceId} expectedR2Key=${expectedR2Key ?? "null"}`
+    );
+  }
+
+  return deactivatedCount;
+};
+
 const deleteStaleR2Objects = async (activeR2Keys: string[]): Promise<number> => {
   const activeKeySet = new Set(activeR2Keys.map(normalizeRelativePath));
   const remoteKeys = await r2Service.listObjects(`${R2_PREFIX}/`);
@@ -367,6 +494,7 @@ export const syncGalleryR2 = async (): Promise<void> => {
     deactivated: 0,
     r2Deleted: 0,
     failed: 0,
+    staleCardsDeactivated: 0,
   };
 
   let items: GallerySyncItem[] = [];
@@ -408,11 +536,23 @@ export const syncGalleryR2 = async (): Promise<void> => {
     console.error("[Gallery Sync] failed to deactivate missing GalleryCard records", error);
   }
 
+  let remoteKeysAfterSync: string[] = [];
   try {
     stats.r2Deleted = await deleteStaleR2Objects(items.map((item) => buildR2Key(item.relativePath)));
+    remoteKeysAfterSync = await r2Service.listObjects(`${R2_PREFIX}/`);
   } catch (error) {
     stats.failed += 1;
-    console.error("[Gallery Sync] failed to delete stale R2 objects", error);
+    console.error("[Gallery Sync] failed to delete stale R2 objects or reload remote keys", error);
+  }
+
+  try {
+    stats.staleCardsDeactivated = await repairStaleLocalGalleryCards({
+      scannedSyncSourceIds: activeSyncSourceIds,
+      remoteKeys: remoteKeysAfterSync,
+    });
+  } catch (error) {
+    stats.failed += 1;
+    console.error("[Gallery Sync] failed to repair stale local-gallery cards", error);
   }
 
   console.log(JSON.stringify(stats, null, 2));
