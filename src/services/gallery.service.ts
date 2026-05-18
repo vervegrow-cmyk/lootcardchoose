@@ -255,6 +255,42 @@ const RECOVERY_THEME_SIGNAL_MAP = {
   mecha: ["mecha", "robot", "android", "mechanical"],
 } as const;
 
+const RECOVERY_THEME_OVERLAY_MAP = {
+  cyberpunk: {
+    visualStyle: ["cyberpunk"],
+    styleTags: ["cyberpunk", "neon", "futuristic", "tech noir"],
+    toneTags: ["futuristic", "electric"],
+    characterType: ["female character"],
+    archetypeTags: ["warrior"],
+    entityType: "cyberpunk heroine",
+    settingTags: ["futuristic city", "neon district"],
+    genreTags: ["cyberpunk", "sci-fi"],
+    searchKeywords: ["cyberpunk", "neon", "futuristic", "tech noir"],
+  },
+  "sci-fi": {
+    visualStyle: ["sci-fi"],
+    styleTags: ["sci-fi", "futuristic", "science fiction"],
+    toneTags: ["futuristic"],
+    characterType: ["female character"],
+    archetypeTags: ["warrior"],
+    entityType: "science fiction heroine",
+    settingTags: ["future world", "space age"],
+    genreTags: ["sci-fi", "science fiction"],
+    searchKeywords: ["sci-fi", "science fiction", "futuristic", "cyberpunk"],
+  },
+  mecha: {
+    visualStyle: ["mecha"],
+    styleTags: ["mecha", "mechanical", "armored"],
+    toneTags: ["industrial", "battle"],
+    characterType: ["mecha girl", "android"],
+    archetypeTags: ["warrior"],
+    entityType: "mechanical warrior",
+    settingTags: ["mecha battlefield", "industrial future"],
+    genreTags: ["mecha", "sci-fi"],
+    searchKeywords: ["mecha", "robot", "android", "mechanical"],
+  },
+} as const;
+
 const buildCardPricingInput = (card: GalleryCardRecord): CardPricingInput => ({
   galleryPrice: Number(card.price),
   metadataPrice: readMetadataPrice(card.metadata),
@@ -439,6 +475,128 @@ const dedupeCards = (cards: GalleryCardRecord[]): GalleryCardRecord[] => {
 
   return result;
 };
+
+const readObjectRecord = (value: unknown): Record<string, unknown> =>
+  value && typeof value === "object" && !Array.isArray(value) ? ({ ...(value as Record<string, unknown>) }) : {};
+
+const readStringArrayValues = (value: unknown): string[] =>
+  Array.isArray(value)
+    ? value.filter((item): item is string => typeof item === "string").map((item) => item.trim()).filter(Boolean)
+    : [];
+
+const mergeUniqueStrings = (...values: Array<string[] | undefined>): string[] => {
+  const seen = new Set<string>();
+  const result: string[] = [];
+
+  for (const list of values) {
+    for (const value of list ?? []) {
+      const normalized = value.trim().toLowerCase();
+      if (!normalized || seen.has(normalized)) {
+        continue;
+      }
+      seen.add(normalized);
+      result.push(value.trim());
+    }
+  }
+
+  return result;
+};
+
+const buildRecoveryOverlayMetadata = (
+  card: GalleryCardRecord,
+  recoverySignals: string[],
+  recoveryTriggerReason: string | null
+): Prisma.JsonValue | null => {
+  if (recoverySignals.length === 0) {
+    return card.metadata;
+  }
+
+  const metadata = readObjectRecord(card.metadata);
+  const intelligence = readObjectRecord(metadata.intelligence);
+  const visualLayer = readObjectRecord(intelligence.visualLayer);
+  const emotionalLayer = readObjectRecord(intelligence.emotionalLayer);
+  const characterLayer = readObjectRecord(intelligence.characterLayer);
+  const worldbuildingLayer = readObjectRecord(intelligence.worldbuildingLayer);
+  const commerceLayer = readObjectRecord(intelligence.commerceLayer);
+
+  const normalizedSignals = new Set(recoverySignals.map((signal) => signal.trim().toLowerCase()));
+  const overlayFamilies = Object.entries(RECOVERY_THEME_OVERLAY_MAP).filter(([theme, overlay]) => {
+    if (normalizedSignals.has(theme)) {
+      return true;
+    }
+
+    return overlay.searchKeywords.some((keyword) => normalizedSignals.has(keyword.toLowerCase()));
+  });
+
+  if (overlayFamilies.length === 0) {
+    return card.metadata;
+  }
+
+  const overlayVisualStyle = mergeUniqueStrings(
+    ...overlayFamilies.map(([, overlay]) => [...Array.from(overlay.visualStyle), ...Array.from(overlay.styleTags)])
+  );
+  const overlayToneTags = mergeUniqueStrings(...overlayFamilies.map(([, overlay]) => Array.from(overlay.toneTags)));
+  const overlayCharacterTypes = mergeUniqueStrings(...overlayFamilies.map(([, overlay]) => Array.from(overlay.characterType)));
+  const overlayArchetypes = mergeUniqueStrings(...overlayFamilies.map(([, overlay]) => Array.from(overlay.archetypeTags)));
+  const overlaySettingTags = mergeUniqueStrings(...overlayFamilies.map(([, overlay]) => Array.from(overlay.settingTags)));
+  const overlayGenreTags = mergeUniqueStrings(...overlayFamilies.map(([, overlay]) => Array.from(overlay.genreTags)));
+  const overlaySearchKeywords = mergeUniqueStrings(...overlayFamilies.map(([, overlay]) => Array.from(overlay.searchKeywords)));
+  const overlayEntityTypes = mergeUniqueStrings(...overlayFamilies.map(([, overlay]) => [overlay.entityType]));
+  const overlaySubjectFocus =
+    typeof visualLayer.subjectFocus === "string" && visualLayer.subjectFocus.trim().length > 0
+      ? visualLayer.subjectFocus
+      : overlayEntityTypes[0];
+  const overlayEntityType =
+    typeof characterLayer.entityType === "string" && characterLayer.entityType.trim().length > 0
+      ? characterLayer.entityType
+      : overlayEntityTypes[0];
+
+  return {
+    ...metadata,
+    intelligence: {
+      ...intelligence,
+      visualLayer: {
+        ...visualLayer,
+        visualStyle: mergeUniqueStrings(readStringArrayValues(visualLayer.visualStyle), overlayVisualStyle),
+        styleTags: mergeUniqueStrings(readStringArrayValues(visualLayer.styleTags), overlayVisualStyle),
+        ...(overlaySubjectFocus ? { subjectFocus: overlaySubjectFocus } : {}),
+      },
+      emotionalLayer: {
+        ...emotionalLayer,
+        toneTags: mergeUniqueStrings(readStringArrayValues(emotionalLayer.toneTags), overlayToneTags),
+      },
+      characterLayer: {
+        ...characterLayer,
+        characterType: mergeUniqueStrings(readStringArrayValues(characterLayer.characterType), overlayCharacterTypes),
+        archetypeTags: mergeUniqueStrings(readStringArrayValues(characterLayer.archetypeTags), overlayArchetypes),
+        ...(overlayEntityType ? { entityType: overlayEntityType } : {}),
+      },
+      worldbuildingLayer: {
+        ...worldbuildingLayer,
+        settingTags: mergeUniqueStrings(readStringArrayValues(worldbuildingLayer.settingTags), overlaySettingTags),
+        genreTags: mergeUniqueStrings(readStringArrayValues(worldbuildingLayer.genreTags), overlayGenreTags),
+      },
+      commerceLayer: {
+        ...commerceLayer,
+        searchKeywords: mergeUniqueStrings(readStringArrayValues(commerceLayer.searchKeywords), overlaySearchKeywords),
+      },
+      recoveryOverlay: {
+        triggerReason: recoveryTriggerReason,
+        signals: recoverySignals,
+      },
+    },
+  } satisfies Prisma.JsonValue;
+};
+
+const applyRecoveryThemeOverlay = (
+  cards: GalleryCardRecord[],
+  recoverySignals: string[],
+  recoveryTriggerReason: string | null
+): GalleryCardRecord[] =>
+  cards.map((card) => ({
+    ...card,
+    metadata: buildRecoveryOverlayMetadata(card, recoverySignals, recoveryTriggerReason),
+  }));
 
 const compactScoreReasons = (entry: RecommendationDebugEntry): string[] => {
   if (entry.recommendationScore.reasons.length > 0) {
@@ -1122,6 +1280,11 @@ export const galleryService = {
           }
 
           recoveryCandidateCount = recoveryCandidates.length;
+          recoveryCandidates = applyRecoveryThemeOverlay(
+            recoveryCandidates,
+            recoveryPlan.signals,
+            recoveryPlan.triggerReason
+          );
         }
 
         if (recoveryCandidates.length > 0) {

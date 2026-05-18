@@ -358,54 +358,20 @@ const main = async (): Promise<void> => {
       return originalGallerySearch(query);
     };
     galleryRepository.searchRecoveryCandidatePool = async (input) =>
-      (
-        await originalGallerySearch({
-          keywords: ["girl"],
-          tags: [],
-          style: "",
-          rarity: input.rarity ?? "",
-          category: "",
-          character: "female character",
-          color: "",
-          mood: "",
-          scene: input.scene ?? "",
-          limit: input.limit,
-          preferredKeywords: input.signals,
-        })
-      ).map((card, index) => ({
-        ...card,
-        title: index === 0 ? `Cyberpunk ${card.title}` : card.title,
-        description: `${card.description ?? ""} Neon cyberpunk futuristic city energy.`.trim(),
-        tags: [...new Set([...card.tags, "cyberpunk", "neon", "futuristic"])],
-        style: "cyberpunk",
-        metadata: {
-          intelligence: {
-            visualLayer: {
-              visualStyle: ["cyberpunk"],
-              styleTags: ["neon", "futuristic"],
-              subjectFocus: "cyberpunk heroine",
-            },
-            emotionalLayer: {
-              moodTags: ["electric"],
-              toneTags: ["futuristic"],
-            },
-            characterLayer: {
-              characterType: ["female character"],
-              archetypeTags: ["warrior"],
-              entityType: "cyberpunk heroine",
-            },
-            worldbuildingLayer: {
-              genreTags: ["cyberpunk", "sci-fi"],
-              settingTags: ["futuristic city"],
-            },
-            commerceLayer: {
-              searchKeywords: ["cyberpunk", "neon", "futuristic"],
-            },
-          },
-        },
-      }));
+      [];
     galleryRepository.getActiveGalleryCardsForRecommendation = async (limit) =>
-      originalGetActiveGalleryCardsForRecommendation(limit);
+      originalGallerySearch({
+        keywords: ["girl"],
+        tags: [],
+        style: "",
+        rarity: "",
+        category: "",
+        character: "female character",
+        color: "",
+        mood: "",
+        scene: "",
+        limit,
+      });
 
     try {
       const recoveryResponse = await searchGallerySkill(
@@ -457,6 +423,22 @@ const main = async (): Promise<void> => {
       galleryRepository.searchRecoveryCandidatePool = originalSearchRecoveryCandidatePool;
       galleryRepository.getActiveGalleryCardsForRecommendation = originalGetActiveGalleryCardsForRecommendation;
     }
+
+    const dmGirlIntent = await router.determineIntent("girl", {
+      userId: `test-dm-girl-user-${suffix}`,
+      channelId: `test-dm-girl-channel-${suffix}`,
+      discordGuildId: null,
+      isDM: true,
+    });
+    assert.equal(dmGirlIntent.intent, "gallery_search");
+
+    const dmNonsenseIntent = await router.determineIntent("asdfgh", {
+      userId: `test-dm-ignore-user-${suffix}`,
+      channelId: `test-dm-ignore-channel-${suffix}`,
+      discordGuildId: null,
+      isDM: true,
+    });
+    assert.equal(dmNonsenseIntent.intent, "ignore");
 
   const originalCreateProductFromGalleryCard = shopifyService.createProductFromGalleryCard;
   let capturedCheckoutPrice: string | null = null;

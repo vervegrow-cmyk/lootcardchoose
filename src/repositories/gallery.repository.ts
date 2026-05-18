@@ -161,6 +161,15 @@ const buildKeywordMatchers = (keyword: string): Prisma.GalleryCardWhereInput[] =
   { color: { contains: keyword, mode: "insensitive" } },
 ];
 
+const buildRecoverySignalMatchers = (signal: string): Prisma.GalleryCardWhereInput[] => [
+  ...buildKeywordMatchers(signal),
+  {
+    metadata: {
+      string_contains: signal,
+    },
+  },
+];
+
 const SPARSE_THEME_PATTERNS: Array<{ token: SparseThemeToken; patterns: RegExp[] }> = [
   { token: "cyberpunk", patterns: [/\bcyberpunk\b/i, /\btech noir\b/i] },
   { token: "mecha", patterns: [/\bmecha\b/i, /\bmech\b/i, /\bmecha[\s_-]*girl\b/i] },
@@ -246,6 +255,19 @@ const buildSparseThemeMetadataMatchers = (input: ParsedGallerySearchInput): Pris
   return matchers;
 };
 
+const buildSparseThemeExpandedKeywordMatchers = (input: ParsedGallerySearchInput): Prisma.GalleryCardWhereInput[] => {
+  const sparseThemeTokens = collectSparseThemeTokens(input);
+  if (sparseThemeTokens.length === 0) {
+    return [];
+  }
+
+  const expandedTerms = normalizeKeywords(
+    sparseThemeTokens.flatMap((token) => SPARSE_THEME_EXPANSION_MAP[token])
+  ).map((term) => normalizeText(term));
+
+  return expandedTerms.flatMap((term) => buildRecoverySignalMatchers(term));
+};
+
 const buildAvoidMatchers = (keyword: string): Prisma.GalleryCardWhereInput => ({
   OR: buildKeywordMatchers(keyword),
 });
@@ -294,6 +316,7 @@ const buildSearchWhere = (input: ParsedGallerySearchInput): Prisma.GalleryCardWh
   }
 
   orFilters.push(...buildSparseThemeMetadataMatchers(input));
+  orFilters.push(...buildSparseThemeExpandedKeywordMatchers(input));
 
   for (const avoidKeyword of avoidKeywords) {
     notFilters.push(buildAvoidMatchers(avoidKeyword));
@@ -581,8 +604,9 @@ export const galleryRepository: GalleryRepository = {
   },
   async searchRecoveryCandidatePool(input) {
     const take = normalizeRecommendationPoolLimit(input.limit);
+    const normalizedSignals = normalizeKeywords(input.signals);
     const recoveryInput: ParsedGallerySearchInput = {
-      keywords: [],
+      keywords: normalizedSignals,
       tags: [],
       style: "",
       rarity: input.rarity ?? "",
@@ -591,7 +615,7 @@ export const galleryRepository: GalleryRepository = {
       color: "",
       mood: "",
       scene: input.scene ?? "",
-      preferredKeywords: normalizeKeywords(input.signals),
+      preferredKeywords: normalizedSignals,
       limit: take,
     };
 
