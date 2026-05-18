@@ -1,0 +1,180 @@
+{
+  "title": "Cherry Blossom Girl in Red Outfit",
+  "description": "A female anime character in a red outfit with a cherry blossom background.",
+  "tags": [
+    "ani",
+    "female character",
+    "cherry blossom",
+    "red outfit",
+    "gacha",
+    "collectible",
+    "spring",
+    "pink",
+    "sakura",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "collectible card"
+  ],
+  "style": "anime",
+  "rarity": "UR",
+  "category": "anime",
+  "character": "female character",
+  "color": "red",
+  "mood": "cute",
+  "scene": "cherry blossom",
+  "price": 100,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "zh": {
+      "title": "樱花少女红装",
+      "description": "一位穿着红色服装的动漫女角色，背景是樱花。",
+      "tags": [
+        "动漫",
+        "女性角色",
+        "樱花",
+        "红色服装",
+        "扭蛋",
+        "收藏卡",
+        "春天",
+        "粉色",
+        "樱花"
+      ]
+    },
+    "filename": "24.jpg",
+    "syncSourceId": "local-gallery:24.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "pink",
+          "white",
+          "brown"
+        ],
+        "styleTags": [
+          "anime",
+          "digital art",
+          "illustration",
+          "gacha style"
+        ],
+        "compositionTags": [
+          "centered subject",
+          "overhead angle",
+          "soft lighting",
+          "background blur"
+        ],
+        "subjectFocus": "female anime character",
+        "raritySignals": [
+          "ur rarity",
+          "collectible card",
+          "patreon watermark"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "cute",
+          "serene",
+          "playful",
+          "whimsical"
+        ],
+        "toneTags": [
+          "pastoral",
+          "dreamy",
+          "springtime"
+        ],
+        "energyLevel": "medium",
+        "dramaticIntensity": 0.3
+      },
+      "characterLayer": {
+        "entityType": "humanoid",
+        "genderPresentation": "female",
+        "agePresentation": "teen",
+        "archetypeTags": [
+          "schoolgirl",
+          "warrior",
+          "heroine"
+        ],
+        "poseTags": [
+          "sitting",
+          "side profile",
+          "relaxed",
+          "looking back"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "cherry blossom",
+          "spring",
+          "traditional architecture",
+          "outdoor"
+        ],
+        "genreTags": [
+          "fantasy",
+          "anime",
+          "gacha game"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "red outfit",
+          "headband",
+          "armor elements",
+          "sakura petals"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "cherry blossom",
+          "red outfit",
+          "gacha collectible",
+          "spring anime"
+        ],
+        "collectorHooks": [
+          "ur rarity",
+          "patreon exclusive",
+          "limited edition",
+          "beautiful art"
+        ],
+        "marketingAngles": [
+          "spring collection",
+          "anime fan art",
+          "gacha game merch",
+          "collectible card"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "gacha collectors",
+          "digital art lovers",
+          "spring enthusiasts"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Cherry Blossom Girl in Red Outfit",
+      "shopifyTitle": "Cherry Blossom Girl in Red Outfit - UR Collectible Card",
+      "shortName": "Cherry Blossom Girl",
+      "slug": "cherry-blossom-girl-red-outfit",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Crimson Sakura Warrior"
+  }
+}

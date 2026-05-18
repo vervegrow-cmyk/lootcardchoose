@@ -1,0 +1,188 @@
+{
+  "title": "Red-Haired Female Character in Gothic Cathedral",
+  "description": "A red-haired female character in a gothic cathedral setting, wearing a revealing outfit with a crown and clawed gloves.",
+  "tags": [
+    "ani",
+    "female character",
+    "gothic",
+    "cathedral",
+    "red hair",
+    "fantasy",
+    "collectible",
+    "art",
+    "illustration",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "premium",
+    "collectible card",
+    "luxury"
+  ],
+  "style": "dark fantasy anime",
+  "rarity": "SSR",
+  "category": "anime",
+  "character": "female character",
+  "color": "red and white",
+  "mood": "seductive",
+  "scene": "gothic cathedral",
+  "price": 100,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "zh": {
+      "title": "红发女性角色在哥特式大教堂",
+      "description": "一位红发女性角色在哥特式大教堂场景中，穿着露骨的服装，戴着王冠和爪形手套。",
+      "tags": [
+        "动漫",
+        "女性角色",
+        "哥特式",
+        "大教堂",
+        "红发",
+        "奇幻",
+        "收藏卡",
+        "艺术",
+        "插画"
+      ]
+    },
+    "filename": "21.jpg",
+    "syncSourceId": "local-gallery:21.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "white",
+          "dark brown"
+        ],
+        "styleTags": [
+          "dark fantasy",
+          "anime",
+          "high detail",
+          "glow",
+          "dramatic lighting"
+        ],
+        "compositionTags": [
+          "centered subject",
+          "low angle",
+          "close-up",
+          "foreground focus",
+          "symmetrical framing"
+        ],
+        "subjectFocus": "female character with exaggerated anatomy",
+        "raritySignals": [
+          "premium",
+          "luxury",
+          "collectible"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "seductive",
+          "powerful",
+          "alluring",
+          "dominant"
+        ],
+        "toneTags": [
+          "intense",
+          "opulent",
+          "mysterious"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.85
+      },
+      "characterLayer": {
+        "entityType": "female character",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "queen",
+          "warrior",
+          "seductress",
+          "dark princess"
+        ],
+        "poseTags": [
+          "dominant",
+          "power pose",
+          "thigh-high",
+          "clawed gloves",
+          "crown"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "gothic cathedral",
+          "religious architecture",
+          "stained glass",
+          "arched windows"
+        ],
+        "genreTags": [
+          "fantasy",
+          "dark fantasy",
+          "anime",
+          "mythology"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "crown",
+          "clawed gloves",
+          "red cape",
+          "white bodysuit",
+          "gloves"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "gothic cathedral",
+          "red hair",
+          "seductive",
+          "ssr collectible",
+          "dark fantasy"
+        ],
+        "collectorHooks": [
+          "limited edition",
+          "premium rarity",
+          "high detail art",
+          "exclusive design"
+        ],
+        "marketingAngles": [
+          "luxury collectible",
+          "anime art",
+          "dark fantasy aesthetic",
+          "character design"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "collectors",
+          "fantasy lovers",
+          "premium collectors"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Red-Haired Queen in Gothic Cathedral",
+      "shopifyTitle": "Red-Haired Queen in Gothic Cathedral - SSR Collectible Card",
+      "shortName": "Queen of the Cathedral",
+      "slug": "queen-of-the-cathedral",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Crimson Cathedral Queen"
+  }
+}

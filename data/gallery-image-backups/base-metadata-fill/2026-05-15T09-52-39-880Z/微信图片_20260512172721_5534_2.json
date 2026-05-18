@@ -1,0 +1,150 @@
+{
+  "title": "Anime Girl in Traditional Attire",
+  "description": "A playful anime card featuring a geisha in a fantasy setting.",
+  "tags": [
+    "anime girl",
+    "geisha character",
+    "blue hair",
+    "pink heart",
+    "traditional outfit",
+    "playful",
+    "gentle",
+    "flirtatious",
+    "geisha",
+    "fashionable",
+    "anime",
+    "digital-art"
+  ],
+  "style": "anime",
+  "rarity": "",
+  "category": "card",
+  "character": "human - geisha",
+  "color": "cyan pink green purple",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "微信图片_20260512172721_5534_2.jpg",
+    "syncSourceId": "local-gallery:微信图片_20260512172721_5534_2.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "cyan",
+          "pink",
+          "green",
+          "purple"
+        ],
+        "styleTags": [
+          "anime",
+          "digital-art",
+          "illustration",
+          "character-design"
+        ],
+        "compositionTags": [
+          "portrait",
+          "centered-subject",
+          "hand-gesture",
+          "soft-background"
+        ],
+        "subjectFocus": "female character in traditional attire",
+        "raritySignals": [
+          "high-detail",
+          "artistic-rendering",
+          "character-centric"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "playful",
+          "gentle",
+          "flirtatious"
+        ],
+        "toneTags": [
+          "sweet",
+          "coquettish",
+          "charming"
+        ],
+        "energyLevel": "medium",
+        "dramaticIntensity": 0.3
+      },
+      "characterLayer": {
+        "entityType": "human",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "geisha",
+          "fashionable",
+          "playful"
+        ],
+        "poseTags": [
+          "hand-to-chin",
+          "smiling",
+          "looking-at-viewer"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "fantasy",
+          "anime-universe"
+        ],
+        "genreTags": [
+          "anime",
+          "fantasy",
+          "character-art"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "kimono",
+          "hair-ornaments",
+          "flower-decor",
+          "belt"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "geisha character",
+          "blue hair",
+          "pink heart",
+          "traditional outfit"
+        ],
+        "collectorHooks": [
+          "unique character design",
+          "high-quality digital art",
+          "fan-favorite style"
+        ],
+        "marketingAngles": [
+          "collectible character art",
+          "anime fan merchandise",
+          "digital collectible card"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "digital art collectors",
+          "character collectors"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Anime Girl in Traditional Attire",
+      "shopifyTitle": "Anime Character Digital Art Collectible Card",
+      "shortName": "Anime Geisha Card",
+      "slug": "anime-geisha-card",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

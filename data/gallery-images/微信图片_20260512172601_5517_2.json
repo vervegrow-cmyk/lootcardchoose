@@ -1,0 +1,169 @@
+{
+  "title": "Bedroom Heroine Portrait",
+  "description": "A collectible soft shading card with pink and blue tones, warm styling, and a polished lounge showcase inspired by bedroom scenes.",
+  "tags": [
+    "anime girl",
+    "lounging character",
+    "bedroom scene",
+    "soft art",
+    "digital illustration",
+    "relaxed",
+    "calm",
+    "content",
+    "intimate",
+    "serene",
+    "lounge",
+    "reader",
+    "casual",
+    "indulgent",
+    "anime"
+  ],
+  "style": "anime",
+  "rarity": "",
+  "category": "card",
+  "character": "human lounge",
+  "color": "pink blue brown white",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "微信图片_20260512172601_5517_2.jpg",
+    "syncSourceId": "local-gallery:微信图片_20260512172601_5517_2.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "pink",
+          "blue",
+          "brown",
+          "white"
+        ],
+        "styleTags": [
+          "anime",
+          "digital-art",
+          "illustration",
+          "soft-shading",
+          "realistic-textures"
+        ],
+        "compositionTags": [
+          "close-up",
+          "centered-subject",
+          "bedroom-scene",
+          "hand-on-chin",
+          "book-on-bed"
+        ],
+        "subjectFocus": "female character lounging on bed",
+        "raritySignals": [
+          "high-detail",
+          "character-centric",
+          "premium-art-style"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "relaxed",
+          "calm",
+          "content",
+          "intimate",
+          "serene"
+        ],
+        "toneTags": [
+          "warm",
+          "gentle",
+          "soft",
+          "cozy",
+          "indulgent"
+        ],
+        "energyLevel": "low",
+        "dramaticIntensity": 0.2
+      },
+      "characterLayer": {
+        "entityType": "human",
+        "genderPresentation": "female",
+        "agePresentation": "young-adult",
+        "archetypeTags": [
+          "lounge",
+          "reader",
+          "casual",
+          "relaxed",
+          "indulgent"
+        ],
+        "poseTags": [
+          "lying-down",
+          "hand-on-chin",
+          "gaze-forward",
+          "relaxed-posture"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "bedroom",
+          "indoor",
+          "wooden-interior",
+          "cozy-room"
+        ],
+        "genreTags": [
+          "fantasy",
+          "slice-of-life",
+          "romance",
+          "drama"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "book",
+          "lamp",
+          "pillow",
+          "sweater"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "lounging character",
+          "bedroom scene",
+          "soft art",
+          "digital illustration"
+        ],
+        "collectorHooks": [
+          "high-detail artwork",
+          "character-focused",
+          "relaxed mood",
+          "premium quality"
+        ],
+        "marketingAngles": [
+          "cozy aesthetic",
+          "relaxation theme",
+          "character appreciation",
+          "bedroom decor"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "digital art collectors",
+          "character collectors",
+          "relaxation enthusiasts"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Relaxed Anime Girl Reading in Cozy Bedroom",
+      "shopifyTitle": "Relaxed Anime Girl Reading in Cozy Bedroom - Digital Art",
+      "shortName": "Cozy Anime Girl",
+      "slug": "cozy-anime-girl",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Serene Lounge Heroine"
+  }
+}

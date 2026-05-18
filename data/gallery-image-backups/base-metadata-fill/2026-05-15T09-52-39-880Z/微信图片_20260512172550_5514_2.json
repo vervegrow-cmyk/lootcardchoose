@@ -1,0 +1,156 @@
+{
+  "title": "Pink Mermaid Anime Girl in Gold Outfit",
+  "description": "A joyful anime card featuring a heroine in a outdoor setting.",
+  "tags": [
+    "anime girl",
+    "mermaid character",
+    "pink hair",
+    "gold outfit",
+    "ocean fantasy",
+    "joyful",
+    "playful",
+    "confident",
+    "heroine",
+    "beauty",
+    "mermaid",
+    "fantasy-character"
+  ],
+  "style": "anime",
+  "rarity": "SSR",
+  "category": "card",
+  "character": "humanoid - heroine",
+  "color": "pink gold blue",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "微信图片_20260512172550_5514_2.jpg",
+    "syncSourceId": "local-gallery:微信图片_20260512172550_5514_2.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "pink",
+          "gold",
+          "blue"
+        ],
+        "styleTags": [
+          "anime",
+          "digital-art",
+          "illustration",
+          "high-fidelity"
+        ],
+        "compositionTags": [
+          "centered-subject",
+          "full-body",
+          "dynamic-pose",
+          "bright-background"
+        ],
+        "subjectFocus": "female anime character",
+        "raritySignals": [
+          "high-detail",
+          "vibrant-colors",
+          "character-centric"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "joyful",
+          "playful",
+          "confident"
+        ],
+        "toneTags": [
+          "uplifting",
+          "lighthearted",
+          "cheerful"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.3
+      },
+      "characterLayer": {
+        "entityType": "humanoid",
+        "genderPresentation": "female",
+        "agePresentation": "young-adult",
+        "archetypeTags": [
+          "heroine",
+          "beauty",
+          "mermaid",
+          "fantasy-character"
+        ],
+        "poseTags": [
+          "smiling",
+          "looking-at-viewer",
+          "relaxed",
+          "fluffy-hair"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "outdoor",
+          "daytime",
+          "oceanic"
+        ],
+        "genreTags": [
+          "fantasy",
+          "adventure",
+          "anime-manga",
+          "sea-fantasy"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "mermaid-tail",
+          "gold-armor",
+          "beads",
+          "fish-scale-headpiece"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "mermaid character",
+          "pink hair",
+          "gold outfit",
+          "ocean fantasy"
+        ],
+        "collectorHooks": [
+          "high-detail art",
+          "character design",
+          "limited edition",
+          "fan-favorite"
+        ],
+        "marketingAngles": [
+          "collectible art",
+          "anime merchandise",
+          "digital collectible card",
+          "fantasy character"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "collectors",
+          "digital art lovers",
+          "mermaid enthusiasts"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Pink Mermaid Anime Girl in Gold Outfit",
+      "shopifyTitle": "Anime Mermaid Girl Collectible Card - Pink Hair & Gold Armor",
+      "shortName": "Mermaid Girl Card",
+      "slug": "mermaid-girl-card",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

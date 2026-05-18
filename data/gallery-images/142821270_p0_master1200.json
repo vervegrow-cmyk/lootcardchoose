@@ -1,0 +1,154 @@
+{
+  "title": "Blue-haired Girl on Train",
+  "description": "A cheerful anime girl with blue hair and a school uniform poses happily on a train, making a peace sign.",
+  "tags": [
+    "ani",
+    "female character",
+    "school uniform",
+    "train",
+    "blue hair",
+    "peace sign",
+    "cute",
+    "collectible",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "collectible card"
+  ],
+  "style": "anime",
+  "rarity": "SR",
+  "category": "anime",
+  "character": "female character",
+  "color": "blue and white",
+  "mood": "happy",
+  "scene": "train interior",
+  "price": 150,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "filename": "142821270_p0_master1200.jpg",
+    "syncSourceId": "local-gallery:142821270_p0_master1200.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.99,
+      "visualLayer": {
+        "primaryColors": [
+          "blue",
+          "white"
+        ],
+        "styleTags": [
+          "anime",
+          "illustration",
+          "digital art"
+        ],
+        "compositionTags": [
+          "centered subject",
+          "dynamic pose",
+          "background blur"
+        ],
+        "subjectFocus": "blue-haired anime girl",
+        "raritySignals": [
+          "sr rarity",
+          "collectible card"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "happy",
+          "cheerful",
+          "playful"
+        ],
+        "toneTags": [
+          "bright",
+          "uplifting",
+          "whimsical"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.3
+      },
+      "characterLayer": {
+        "entityType": "anime girl",
+        "genderPresentation": "female",
+        "agePresentation": "teen",
+        "archetypeTags": [
+          "schoolgirl",
+          "student",
+          "friendly"
+        ],
+        "poseTags": [
+          "peace sign",
+          "smiling",
+          "leaning"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "train interior",
+          "public transport"
+        ],
+        "genreTags": [
+          "anime",
+          "school life",
+          "slice of life"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "school uniform",
+          "school bag",
+          "train pole"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "blue hair",
+          "school uniform",
+          "train",
+          "peace sign",
+          "collectible card"
+        ],
+        "collectorHooks": [
+          "limited edition",
+          "rare sr",
+          "cute anime character"
+        ],
+        "marketingAngles": [
+          "daily commute charm",
+          "schoolgirl aesthetic",
+          "train travel vibe"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "collectors",
+          "gacha players",
+          "schoolgirl lovers"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Blue-haired Girl on Train",
+      "shopifyTitle": "Blue-haired Girl on Train - SR Collectible Card",
+      "shortName": "Train Girl SR",
+      "slug": "train-girl-sr",
+      "namingVersion": "v1",
+      "confidence": 0.98,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Sapphire Schoolgirl Express"
+  }
+}

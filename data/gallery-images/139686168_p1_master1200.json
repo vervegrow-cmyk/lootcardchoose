@@ -1,0 +1,182 @@
+{
+  "title": "Pink-haired Girl in Hammock Under Starry Night",
+  "description": "A pink-haired anime girl with horns lounges in a hammock, holding glowing drink tags, against a serene night sky with stars and distant water.",
+  "tags": [
+    "ani",
+    "female character",
+    "pink hair",
+    "horned",
+    "hammock",
+    "starry night",
+    "night scene",
+    "glowing drink",
+    "cute",
+    "relaxing",
+    "collectible",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "collectible card"
+  ],
+  "style": "anime",
+  "rarity": "SSR",
+  "category": "anime",
+  "character": "female character",
+  "color": "pink and white",
+  "mood": "relaxed",
+  "scene": "night",
+  "price": 150,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "zh": {
+      "title": "粉发女孩在吊床上仰望星空",
+      "description": "一位粉发的动漫女孩，长着角，躺在吊床上，手持发光的饮料标签，背景是繁星点点的夜空和远处的水面。",
+      "tags": [
+        "动漫",
+        "女性角色",
+        "粉发",
+        "角",
+        "吊床",
+        "星空",
+        "夜景",
+        "发光饮料",
+        "可爱",
+        "放松",
+        "收藏卡"
+      ]
+    },
+    "filename": "139686168_p1_master1200.jpg",
+    "syncSourceId": "local-gallery:139686168_p1_master1200.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.99,
+      "visualLayer": {
+        "primaryColors": [
+          "pink",
+          "white",
+          "blue"
+        ],
+        "styleTags": [
+          "anime",
+          "digital art",
+          "soft lighting",
+          "glow effect"
+        ],
+        "compositionTags": [
+          "centered subject",
+          "low angle",
+          "foreground focus",
+          "night scene"
+        ],
+        "subjectFocus": "pink-haired girl in hammock",
+        "raritySignals": [
+          "ssr rarity",
+          "collectible card",
+          "high detail"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "relaxed",
+          "serene",
+          "peaceful",
+          "cute"
+        ],
+        "toneTags": [
+          "calm",
+          "dreamy",
+          "whimsical"
+        ],
+        "energyLevel": "low",
+        "dramaticIntensity": 0.2
+      },
+      "characterLayer": {
+        "entityType": "female character",
+        "genderPresentation": "female",
+        "agePresentation": "teen",
+        "archetypeTags": [
+          "relaxing",
+          "beauty",
+          "feminine"
+        ],
+        "poseTags": [
+          "lounging",
+          "reclining",
+          "holding objects"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "night",
+          "starry sky",
+          "water view",
+          "outdoor"
+        ],
+        "genreTags": [
+          "anime",
+          "fantasy",
+          "romantic"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "hammock",
+          "glowing drink tags",
+          "white robe"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "pink hair",
+          "hammock",
+          "starry night",
+          "collectible card"
+        ],
+        "collectorHooks": [
+          "rare ssr",
+          "beautiful art",
+          "relaxing scene",
+          "glowing drink"
+        ],
+        "marketingAngles": [
+          "relaxation",
+          "beauty",
+          "nighttime fantasy",
+          "collectible art"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "collectors",
+          "gacha players",
+          "feminine aesthetics"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Pink-haired Girl in Hammock Under Starry Night",
+      "shopifyTitle": "SSR Collectible Card: Pink-haired Girl in Hammock Under Starry Night",
+      "shortName": "Pink Hair Hammock Girl",
+      "slug": "pink-hair-hammock-girl",
+      "namingVersion": "v1",
+      "confidence": 0.98,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Celestial Pink Serenity"
+  }
+}

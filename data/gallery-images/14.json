@@ -1,0 +1,187 @@
+{
+  "title": "Purple Braided Hair Female Character Collectible Card",
+  "description": "A female anime character with long purple braided hair and ornate clothing, posing with a glowing orb in hand.",
+  "tags": [
+    "ani",
+    "female character",
+    "purple hair",
+    "braided hair",
+    "glowing orb",
+    "collectible",
+    "fantasy",
+    "magic",
+    "art",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "premium",
+    "collectible card",
+    "luxury"
+  ],
+  "style": "anime fantasy",
+  "rarity": "SSR",
+  "category": "anime",
+  "character": "female character",
+  "color": "purple and gold",
+  "mood": "mystical",
+  "scene": "studio",
+  "price": 150,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "zh": {
+      "title": "紫色长辫女性角色收藏卡",
+      "description": "一位拥有紫色长辫的动漫女性角色，身着华丽服饰，手持发光球体。",
+      "tags": [
+        "动漫",
+        "女性角色",
+        "紫色长发",
+        "编发",
+        "发光球",
+        "收藏卡",
+        "奇幻",
+        "魔法",
+        "艺术"
+      ]
+    },
+    "filename": "14.jpg",
+    "syncSourceId": "local-gallery:14.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9824999999999999,
+      "visualLayer": {
+        "primaryColors": [
+          "purple",
+          "gold",
+          "white"
+        ],
+        "styleTags": [
+          "anime",
+          "fantasy",
+          "illustration",
+          "digital art"
+        ],
+        "compositionTags": [
+          "full body",
+          "side profile",
+          "dynamic pose",
+          "centered subject",
+          "high contrast"
+        ],
+        "subjectFocus": "female character with glowing orb",
+        "raritySignals": [
+          "premium",
+          "luxury",
+          "collectible"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "mystical",
+          "powerful",
+          "alluring",
+          "serene"
+        ],
+        "toneTags": [
+          "elegant",
+          "magical",
+          "awe-inspiring"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.85
+      },
+      "characterLayer": {
+        "entityType": "anime character",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "mage",
+          "warrior",
+          "priestess",
+          "heroine"
+        ],
+        "poseTags": [
+          "back view",
+          "curved posture",
+          "hand gesture",
+          "revealing attire"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "studio",
+          "abstract",
+          "magical realm"
+        ],
+        "genreTags": [
+          "fantasy",
+          "anime",
+          "magic",
+          "action"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "glowing orb",
+          "ornate clothing",
+          "magic staff"
+        ],
+        "powerSystemTags": [
+          "elemental magic",
+          "arcane energy",
+          "spiritual power"
+        ]
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "purple hair",
+          "glowing orb",
+          "ssr collectible",
+          "fantasy art"
+        ],
+        "collectorHooks": [
+          "limited edition",
+          "high rarity",
+          "premium quality",
+          "exclusive design"
+        ],
+        "marketingAngles": [
+          "mystical beauty",
+          "powerful mage",
+          "luxury collectible",
+          "anime fantasy"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "collectors",
+          "gaming community",
+          "fantasy enthusiasts"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Mystical Purple Mage with Glowing Orb",
+      "shopifyTitle": "SSR Anime Fantasy Collectible Card - Purple Braided Hair Mage",
+      "shortName": "Purple Mage Orb",
+      "slug": "purple-mage-orb-ssr",
+      "namingVersion": "v1",
+      "confidence": 0.98,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Mystic Violet Enchantress"
+  }
+}

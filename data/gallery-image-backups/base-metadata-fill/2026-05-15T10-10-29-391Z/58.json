@@ -1,0 +1,155 @@
+{
+  "title": "Elegant Heroine Fantasy Anime",
+  "description": "A collectible character design card with purple and blue tones, flirty styling, and a polished heroine showcase inspired by fantasy scenes.",
+  "tags": [
+    "anime girl",
+    "fantasy character",
+    "collectible card",
+    "gacha game",
+    "digital art",
+    "playful",
+    "glamorous",
+    "confident",
+    "heroine",
+    "warrior",
+    "magician",
+    "anime",
+    "illustration",
+    "character design"
+  ],
+  "style": "anime",
+  "rarity": "SSR",
+  "category": "card",
+  "character": "heroine",
+  "color": "purple blue white",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "58.jpg",
+    "syncSourceId": "local-gallery:58.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "purple",
+          "blue",
+          "white"
+        ],
+        "styleTags": [
+          "anime",
+          "digital-art",
+          "illustration",
+          "character-design"
+        ],
+        "compositionTags": [
+          "centered",
+          "close-up",
+          "full-body",
+          "symmetrical"
+        ],
+        "subjectFocus": "female character",
+        "raritySignals": [
+          "high-detail",
+          "premium-art",
+          "collectible-quality"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "playful",
+          "alluring",
+          "confident"
+        ],
+        "toneTags": [
+          "flirty",
+          "seductive",
+          "charming"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.85
+      },
+      "characterLayer": {
+        "entityType": "humanoid",
+        "genderPresentation": "female",
+        "agePresentation": "young-adult",
+        "archetypeTags": [
+          "heroine",
+          "warrior",
+          "magician"
+        ],
+        "poseTags": [
+          "posing",
+          "hands-on-waist",
+          "smiling",
+          "looking-at-viewer"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "fantasy",
+          "game-world",
+          "mythical"
+        ],
+        "genreTags": [
+          "action",
+          "role-playing",
+          "adventure"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "costume",
+          "armor",
+          "accessories"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "fantasy character",
+          "collectible card",
+          "gacha game",
+          "digital art"
+        ],
+        "collectorHooks": [
+          "limited edition",
+          "high-quality art",
+          "rare character",
+          "fan-favorite"
+        ],
+        "marketingAngles": [
+          "visual appeal",
+          "character design",
+          "emotional connection",
+          "collectibility"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "gaming community",
+          "digital collectors",
+          "art enthusiasts"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "58 - Purple-haired Anime Girl in Fantasy Costume",
+      "shopifyTitle": "Collectible Card 58: Purple-haired Anime Girl in Fantasy Costume",
+      "shortName": "Card 58",
+      "slug": "card-58-purple-haired-anime-girl",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

@@ -1,0 +1,176 @@
+{
+  "title": "Blue-haired Female Character in Brown Tights Collectible Card",
+  "description": "A blue-haired female anime character posing in shiny brown tights with gold patterns, wearing a white top and red tassels.",
+  "tags": [
+    "ani",
+    "female character",
+    "blue hair",
+    "brown tights",
+    "gold pattern",
+    "collectible",
+    "art",
+    "illustration",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "collectible card"
+  ],
+  "style": "anime",
+  "rarity": "UR",
+  "category": "anime",
+  "character": "female character",
+  "color": "brown and gold",
+  "mood": "playful",
+  "scene": "studio",
+  "price": 100,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "filename": "12.jpg",
+    "syncSourceId": "local-gallery:12.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.99,
+      "visualLayer": {
+        "primaryColors": [
+          "brown",
+          "gold",
+          "blue",
+          "white"
+        ],
+        "styleTags": [
+          "anime",
+          "illustration",
+          "digital art",
+          "high detail",
+          "glow effect"
+        ],
+        "compositionTags": [
+          "close-up",
+          "dynamic pose",
+          "centered subject",
+          "high contrast",
+          "shallow depth of field"
+        ],
+        "subjectFocus": "female anime character",
+        "raritySignals": [
+          "collectible",
+          "premium art"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "playful",
+          "alluring",
+          "seductive",
+          "confident",
+          "charming"
+        ],
+        "toneTags": [
+          "lighthearted",
+          "vibrant",
+          "energetic",
+          "flirty"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.75
+      },
+      "characterLayer": {
+        "entityType": "anime character",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "seductress",
+          "playful girl",
+          "fashionable",
+          "cosplay"
+        ],
+        "poseTags": [
+          "sitting",
+          "leg crossed",
+          "bent knee",
+          "exposed thigh",
+          "tassel accessory"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "studio",
+          "concept art",
+          "no background",
+          "isolated subject"
+        ],
+        "genreTags": [
+          "anime",
+          "fantasy",
+          "cosplay",
+          "gaming"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "tassels",
+          "gold patterns",
+          "red accessories",
+          "white top"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "blue hair",
+          "brown tights",
+          "gold pattern",
+          "collectible card",
+          "ur rarity",
+          "playful pose"
+        ],
+        "collectorHooks": [
+          "limited edition",
+          "high detail art",
+          "ur rarity",
+          "exclusive design",
+          "fan favorite"
+        ],
+        "marketingAngles": [
+          "visual appeal",
+          "character design",
+          "rarity value",
+          "collectible appeal",
+          "fan engagement"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "gaming collectors",
+          "cosplay enthusiasts",
+          "digital art collectors",
+          "female anime lovers"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Blue-haired Anime Girl in Brown Tights Collectible Card",
+      "shopifyTitle": "UR Rarity Anime Girl in Brown Tights Collectible Card",
+      "shortName": "Blue Hair Brown Tights Card",
+      "slug": "blue-hair-brown-tights-card",
+      "namingVersion": "v1",
+      "confidence": 0.98,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Crimson Tassel Enchantress"
+  }
+}

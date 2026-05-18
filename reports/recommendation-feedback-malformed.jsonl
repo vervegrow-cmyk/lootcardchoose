@@ -1,0 +1,3 @@
+{"timestamp":"2026-05-16T12:05:00.000Z","eventType":"search","sessionId":"bad-1","orderNumber":null,"query":"cyberpunk mecha girl cards","selectedCardId":null,"checkoutCreated":false,"purchased":false,"orphan":false,"parserOutcome":"llm_success","parserTimedOut":false,"parserUsedFallback":false,"parserFallbackReason":null,"rerankHappened":true,"recommendationDebugSummary":null}
+not-json-line
+{"timestamp":"2026-05-16T12:06:00.000Z","eventType":"selection","sessionId":"bad-1","orderNumber":null,"query":"cyberpunk mecha girl cards","selectedCardId":"cmp3tcl5y000r3u72znjiqcso","checkoutCreated":false,"purchased":false,"orphan":false,"recommendationDebugSummary":null}

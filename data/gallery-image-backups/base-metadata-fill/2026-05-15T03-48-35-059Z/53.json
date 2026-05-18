@@ -1,0 +1,139 @@
+{
+  "title": "53",
+  "description": "Auto generated metadata for 53",
+  "tags": [
+    "53"
+  ],
+  "style": "",
+  "rarity": "",
+  "category": "card",
+  "character": "",
+  "color": "",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "53.jpg",
+    "syncSourceId": "local-gallery:53.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.99,
+      "visualLayer": {
+        "primaryColors": [
+          "brown",
+          "orange",
+          "white",
+          "black"
+        ],
+        "styleTags": [
+          "anime",
+          "digital-art",
+          "school-uniform",
+          "surreal"
+        ],
+        "compositionTags": [
+          "centered",
+          "close-up",
+          "sitting",
+          "legs-crossed"
+        ],
+        "subjectFocus": "female anime character",
+        "raritySignals": [
+          "high-detail",
+          "unique-expression",
+          "limited-edition-style"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "playful",
+          "cozy",
+          "adorable"
+        ],
+        "toneTags": [
+          "warm",
+          "gentle",
+          "soft"
+        ],
+        "energyLevel": "low",
+        "dramaticIntensity": 0.2
+      },
+      "characterLayer": {
+        "entityType": "human",
+        "genderPresentation": "female",
+        "agePresentation": "teen",
+        "archetypeTags": [
+          "schoolgirl",
+          "student",
+          "cute-girl"
+        ],
+        "poseTags": [
+          "sitting",
+          "cross-legged",
+          "hugging-knees"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "indoor",
+          "window-side",
+          "bright-room"
+        ],
+        "genreTags": [
+          "school-life",
+          "slice-of-life",
+          "fantasy"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "school-uniform",
+          "socks",
+          "shoes"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "school uniform",
+          "cute character",
+          "sitting pose",
+          "brown hair"
+        ],
+        "collectorHooks": [
+          "unique expression",
+          "high detail",
+          "limited edition style"
+        ],
+        "marketingAngles": [
+          "adorable schoolgirl",
+          "cozy indoor scene",
+          "soft color palette"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "collectors",
+          "gacha players"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Cute Anime Schoolgirl Sitting with Crossed Legs",
+      "shopifyTitle": "Anime Girl in School Uniform Sitting Pose",
+      "shortName": "Schoolgirl Sitting",
+      "slug": "schoolgirl-sitting",
+      "namingVersion": "v1",
+      "confidence": 0.98,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

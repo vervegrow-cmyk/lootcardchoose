@@ -1,0 +1,158 @@
+{
+  "title": "Pink haired Girl in White Lingerie",
+  "description": "A playful anime card featuring a damsel in a indoor setting.",
+  "tags": [
+    "anime girl",
+    "pink hair",
+    "white lingerie",
+    "seductive pose",
+    "digital art",
+    "playful",
+    "seductive",
+    "cheerful",
+    "flirty",
+    "damsel",
+    "playful girl",
+    "seductive character"
+  ],
+  "style": "anime",
+  "rarity": "SSR",
+  "category": "card",
+  "character": "human female - damsel",
+  "color": "pink white black",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "微信图片_20260512172637_5529_2.jpg",
+    "syncSourceId": "local-gallery:微信图片_20260512172637_5529_2.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "pink",
+          "white",
+          "black"
+        ],
+        "styleTags": [
+          "anime",
+          "digital art",
+          "illustration",
+          "soft lighting",
+          "glow effect"
+        ],
+        "compositionTags": [
+          "centered subject",
+          "high contrast",
+          "shallow depth of field",
+          "dynamic pose",
+          "background character"
+        ],
+        "subjectFocus": "pink-haired girl in lingerie",
+        "raritySignals": [
+          "high detail",
+          "unique character design",
+          "limited edition potential"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "playful",
+          "seductive",
+          "cheerful",
+          "flirty"
+        ],
+        "toneTags": [
+          "sweet",
+          "whimsical",
+          "lighthearted"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.7
+      },
+      "characterLayer": {
+        "entityType": "human female",
+        "genderPresentation": "female",
+        "agePresentation": "teen",
+        "archetypeTags": [
+          "damsel",
+          "playful girl",
+          "seductive character",
+          "anime girl"
+        ],
+        "poseTags": [
+          "arms raised",
+          "lying down",
+          "exposed",
+          "relaxed"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "indoor",
+          "bedroom",
+          "window light",
+          "dark background"
+        ],
+        "genreTags": [
+          "fantasy",
+          "anime",
+          "erotic",
+          "fan art"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "lingerie",
+          "white bow",
+          "gloves",
+          "ghost-like creature"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "pink hair",
+          "white lingerie",
+          "seductive pose",
+          "digital art"
+        ],
+        "collectorHooks": [
+          "unique character design",
+          "high detail artwork",
+          "limited edition potential"
+        ],
+        "marketingAngles": [
+          "fan art collection",
+          "anime aesthetic",
+          "collectible digital card"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "digital art collectors",
+          "gaming community",
+          "fan art enthusiasts"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Pink-haired Girl in White Lingerie",
+      "shopifyTitle": "Pink-haired Girl in White Lingerie - Digital Art Collectible",
+      "shortName": "Pink Lingerie Girl",
+      "slug": "pink-lingerie-girl",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

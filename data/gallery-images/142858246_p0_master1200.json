@@ -1,0 +1,187 @@
+{
+  "title": "Green-Eyed Elf Girl in Night Garden",
+  "description": "A cute anime-style elf girl with green eyes and silver hair, wearing a white and green outfit, sitting among glowing flowers at night.",
+  "tags": [
+    "elf",
+    "ani",
+    "female character",
+    "green eyes",
+    "silver hair",
+    "night",
+    "flowers",
+    "glowing",
+    "fantasy",
+    "collectible",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "premium",
+    "collectible card",
+    "luxury"
+  ],
+  "style": "black gold anime",
+  "rarity": "SSR",
+  "category": "anime",
+  "character": "female character",
+  "color": "white and green",
+  "mood": "cute",
+  "scene": "night garden",
+  "price": 150,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "zh": {
+      "title": "绿眼精灵少女夜花园",
+      "description": "一位可爱的动漫风格精灵少女，绿眼睛银发，穿着白绿相间的服装，坐在夜晚发光的花丛中。",
+      "tags": [
+        "精灵",
+        "动漫",
+        "女性角色",
+        "绿眼睛",
+        "银发",
+        "夜晚",
+        "花朵",
+        "发光",
+        "幻想",
+        "收藏卡"
+      ]
+    },
+    "filename": "142858246_p0_master1200.jpg",
+    "syncSourceId": "local-gallery:142858246_p0_master1200.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "white",
+          "green",
+          "gold"
+        ],
+        "styleTags": [
+          "anime",
+          "fantasy",
+          "glow",
+          "detailed",
+          "high contrast"
+        ],
+        "compositionTags": [
+          "low angle",
+          "centered",
+          "close-up",
+          "sitting",
+          "night scene"
+        ],
+        "subjectFocus": "elf girl",
+        "raritySignals": [
+          "premium",
+          "luxury",
+          "collectible"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "cute",
+          "serene",
+          "dreamy",
+          "alluring"
+        ],
+        "toneTags": [
+          "soft",
+          "magical",
+          "whimsical",
+          "ethereal"
+        ],
+        "energyLevel": "low",
+        "dramaticIntensity": 0.3
+      },
+      "characterLayer": {
+        "entityType": "elf",
+        "genderPresentation": "female",
+        "agePresentation": "teen",
+        "archetypeTags": [
+          "princess",
+          "nature spirit",
+          "forest maiden"
+        ],
+        "poseTags": [
+          "sitting",
+          "posture",
+          "revealing",
+          "back view"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "night garden",
+          "forest",
+          "moonlit",
+          "magical flora"
+        ],
+        "genreTags": [
+          "fantasy",
+          "anime",
+          "mythology"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "glowing flowers",
+          "armor",
+          "ornate dress",
+          "headpiece"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime elf girl",
+          "green eyed girl",
+          "night garden collectible",
+          "ssr anime card",
+          "fantasy girl"
+        ],
+        "collectorHooks": [
+          "limited edition",
+          "high rarity",
+          "premium art",
+          "exclusive design"
+        ],
+        "marketingAngles": [
+          "cute fantasy aesthetic",
+          "luxury collectible",
+          "anime art lovers",
+          "gaming and card collectors"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "collectors",
+          "gacha players",
+          "fantasy enthusiasts"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Green-Eyed Elf Girl in Night Garden",
+      "shopifyTitle": "Green-Eyed Elf Girl in Night Garden - SSR Collectible Card",
+      "shortName": "Elf Girl Night Garden",
+      "slug": "elf-girl-night-garden",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Emerald Princess SSR"
+  }
+}

@@ -1,0 +1,158 @@
+{
+  "title": "Elegant Heroine Portrait",
+  "description": "A collectible soft shading card with pink and orange tones, romantic styling, and a polished fantasy heroine showcase inspired by outdoor scenes.",
+  "tags": [
+    "anime girl lace attire",
+    "elegant anime illustration",
+    "pink corset girl",
+    "outdoor balcony art",
+    "elegant",
+    "confident",
+    "playful",
+    "fantasy heroine",
+    "fashion model",
+    "goddess",
+    "anime",
+    "digital art",
+    "illustration",
+    "soft shading",
+    "high detail"
+  ],
+  "style": "anime",
+  "rarity": "",
+  "category": "card",
+  "character": "human fantasy heroine",
+  "color": "pink orange blue",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "微信图片_20260512172618_5523_2.jpg",
+    "syncSourceId": "local-gallery:微信图片_20260512172618_5523_2.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "pink",
+          "orange",
+          "blue"
+        ],
+        "styleTags": [
+          "anime",
+          "digital-art",
+          "illustration",
+          "soft-shading",
+          "high-detail"
+        ],
+        "compositionTags": [
+          "over-the-shoulder",
+          "three-quarter-view",
+          "balanced-framing",
+          "architectural-background"
+        ],
+        "subjectFocus": "female character in lingerie",
+        "raritySignals": [
+          "high-detail rendering",
+          "character-centric composition",
+          "vibrant color palette"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "seductive",
+          "confident",
+          "playful"
+        ],
+        "toneTags": [
+          "romantic",
+          "luxurious",
+          "elegant"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.85
+      },
+      "characterLayer": {
+        "entityType": "human",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "seductress",
+          "fashion-model",
+          "goddess"
+        ],
+        "poseTags": [
+          "back-view",
+          "curved-posture",
+          "hand-on-rail",
+          "glance-over-shoulder"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "outdoor",
+          "balcony",
+          "classical-architecture"
+        ],
+        "genreTags": [
+          "fantasy",
+          "erotic-illustration",
+          "romantic-comedy"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "corset",
+          "lace-underwear",
+          "earrings",
+          "balustrade"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl lingerie",
+          "seductive anime illustration",
+          "pink corset girl",
+          "outdoor balcony art"
+        ],
+        "collectorHooks": [
+          "high-detail digital art",
+          "character-focused composition",
+          "vibrant color palette"
+        ],
+        "marketingAngles": [
+          "luxury aesthetic",
+          "romantic fantasy theme",
+          "high-energy seduction"
+        ],
+        "audienceTags": [
+          "anime collectors",
+          "digital art enthusiasts",
+          "fashion illustration fans"
+        ],
+        "safetyFlags": [
+          "explicit content",
+          "erotic theme"
+        ]
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Seductive Anime Girl in Pink Lingerie",
+      "shopifyTitle": "Anime Girl in Pink Corset on Balcony",
+      "shortName": "Pink Corset Girl",
+      "slug": "pink-corset-girl",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Crimson Enchantress Elegance"
+  }
+}

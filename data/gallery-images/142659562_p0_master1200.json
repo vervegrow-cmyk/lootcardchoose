@@ -1,0 +1,168 @@
+{
+  "title": "Purple Cat-Eared Girl Eating Strawberry Parfait",
+  "description": "A cute anime girl with purple hair and cat ears enjoys a strawberry parfait in a cozy café setting.",
+  "tags": [
+    "ani",
+    "female character",
+    "cat ears",
+    "strawberry parfait",
+    "cafe",
+    "cute",
+    "purple hair",
+    "dessert",
+    "indoor",
+    "sugar",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "collectible card"
+  ],
+  "style": "cute anime",
+  "rarity": "SR",
+  "category": "anime",
+  "character": "female character",
+  "color": "purple and white",
+  "mood": "sweet and relaxed",
+  "scene": "cafe interior",
+  "price": 150,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "filename": "142659562_p0_master1200.jpg",
+    "syncSourceId": "local-gallery:142659562_p0_master1200.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "purple",
+          "white",
+          "brown"
+        ],
+        "styleTags": [
+          "cute anime",
+          "soft shading",
+          "detailed background",
+          "character focus"
+        ],
+        "compositionTags": [
+          "centered subject",
+          "eye-level shot",
+          "foreground dessert",
+          "warm lighting"
+        ],
+        "subjectFocus": "girl eating dessert",
+        "raritySignals": [
+          "sr rarity",
+          "collectible card",
+          "high detail"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "sweet",
+          "relaxed",
+          "content",
+          "cozy"
+        ],
+        "toneTags": [
+          "wholesome",
+          "gentle",
+          "nostalgic"
+        ],
+        "energyLevel": "low",
+        "dramaticIntensity": 0.1
+      },
+      "characterLayer": {
+        "entityType": "anime girl",
+        "genderPresentation": "female",
+        "agePresentation": "teen",
+        "archetypeTags": [
+          "cute",
+          "sweet",
+          "dessert lover",
+          "cafe patron"
+        ],
+        "poseTags": [
+          "seated",
+          "eating",
+          "holding spoon",
+          "looking forward"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "cafe interior",
+          "indoor",
+          "wooden furniture",
+          "window view"
+        ],
+        "genreTags": [
+          "anime",
+          "slice of life",
+          "fantasy"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "strawberry parfait",
+          "spoon",
+          "heart necklace",
+          "cat ears"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "cat ears",
+          "strawberry parfait",
+          "cafe",
+          "collectible card",
+          "cute anime"
+        ],
+        "collectorHooks": [
+          "sr rarity",
+          "detailed art",
+          "character expression",
+          "food prop"
+        ],
+        "marketingAngles": [
+          "cute aesthetic",
+          "dessert theme",
+          "cozy cafe vibe",
+          "anime collectible"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "collectors",
+          "gacha players",
+          "cute art lovers"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Purple Cat-Eared Girl Eating Strawberry Parfait",
+      "shopifyTitle": "Purple Cat-Eared Girl Eating Strawberry Parfait - SR Collectible Card",
+      "shortName": "Cat Ears Parfait Girl",
+      "slug": "cat-ears-parfait-girl",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Lavender Dessert Maiden"
+  }
+}

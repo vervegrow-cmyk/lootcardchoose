@@ -1,6 +1,38 @@
+export type GalleryPricingTier = "budget" | "standard" | "premium" | "collector";
+
 export type GalleryEnergyLevel = "low" | "medium" | "high";
 
-export type GalleryVisualLayer = {
+export type GalleryCardIntelligenceMetadata = {
+  intelligenceVersion: "v1";
+  visualLayer: {
+    visualStyle: string[];
+    colorPalette: string[];
+    artStyle: string[];
+  };
+  emotionalLayer: {
+    mood: string[];
+    atmosphere: string[];
+  };
+  characterLayer: {
+    characterType: string[];
+    genderPresentation?: string;
+    roleArchetype: string[];
+  };
+  worldbuildingLayer: {
+    universe: string[];
+    theme: string[];
+    faction: string[];
+  };
+  commerceLayer: {
+    rarity?: string;
+    pricingTier: GalleryPricingTier;
+    collectorScore: number;
+    waifuScore: number;
+    battleScore: number;
+  };
+};
+
+export type GalleryLegacyVisualLayerFields = {
   primaryColors: string[];
   styleTags: string[];
   compositionTags: string[];
@@ -8,22 +40,21 @@ export type GalleryVisualLayer = {
   raritySignals: string[];
 };
 
-export type GalleryEmotionalLayer = {
+export type GalleryLegacyEmotionalLayerFields = {
   moodTags: string[];
   toneTags: string[];
   energyLevel: GalleryEnergyLevel;
   dramaticIntensity: number;
 };
 
-export type GalleryCharacterLayer = {
+export type GalleryLegacyCharacterLayerFields = {
   entityType: string;
-  genderPresentation: string;
   agePresentation: string;
   archetypeTags: string[];
   poseTags: string[];
 };
 
-export type GalleryWorldbuildingLayer = {
+export type GalleryLegacyWorldbuildingLayerFields = {
   settingTags: string[];
   genreTags: string[];
   factionTags: string[];
@@ -31,7 +62,7 @@ export type GalleryWorldbuildingLayer = {
   powerSystemTags: string[];
 };
 
-export type GalleryCommerceLayer = {
+export type GalleryLegacyCommerceLayerFields = {
   searchKeywords: string[];
   collectorHooks: string[];
   marketingAngles: string[];
@@ -39,6 +70,17 @@ export type GalleryCommerceLayer = {
   safetyFlags: string[];
   category?: string;
 };
+
+export type GalleryVisualLayer = GalleryCardIntelligenceMetadata["visualLayer"] & GalleryLegacyVisualLayerFields;
+
+export type GalleryEmotionalLayer = GalleryCardIntelligenceMetadata["emotionalLayer"] & GalleryLegacyEmotionalLayerFields;
+
+export type GalleryCharacterLayer = GalleryCardIntelligenceMetadata["characterLayer"] & GalleryLegacyCharacterLayerFields;
+
+export type GalleryWorldbuildingLayer = GalleryCardIntelligenceMetadata["worldbuildingLayer"] &
+  GalleryLegacyWorldbuildingLayerFields;
+
+export type GalleryCommerceLayer = GalleryCardIntelligenceMetadata["commerceLayer"] & GalleryLegacyCommerceLayerFields;
 
 export type GalleryIntelligenceAudit = {
   needsHumanReview: boolean;
@@ -49,8 +91,7 @@ export type GalleryIntelligenceAudit = {
   notes: string[];
 };
 
-export type GalleryMetadataIntelligence = {
-  intelligenceVersion: "v1";
+export type GalleryMetadataIntelligence = GalleryCardIntelligenceMetadata & {
   confidence: number;
   visualLayer: GalleryVisualLayer;
   emotionalLayer: GalleryEmotionalLayer;

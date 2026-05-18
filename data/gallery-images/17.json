@@ -1,0 +1,183 @@
+{
+  "title": "Blue-haired Female Character in Fur-Collar Outfit",
+  "description": "A female anime character with blue hair and a white fur collar, wearing a revealing blue and black outfit with tassels and gloves.",
+  "tags": [
+    "ani",
+    "female character",
+    "blue hair",
+    "fur collar",
+    "revealing outfit",
+    "tassels",
+    "gloves",
+    "collectible",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "collectible card"
+  ],
+  "style": "black gold anime",
+  "rarity": "UR",
+  "category": "anime",
+  "character": "female character",
+  "color": "blue and black",
+  "mood": "seductive",
+  "scene": "studio",
+  "price": 150,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "zh": {
+      "title": "蓝发女性角色毛领装",
+      "description": "蓝发女性动漫角色，穿着白色毛领和蓝黑露肤装束，配有流苏和手套。",
+      "tags": [
+        "动漫",
+        "女性角色",
+        "蓝发",
+        "毛领",
+        "露肤装",
+        "流苏",
+        "手套",
+        "收藏卡"
+      ]
+    },
+    "filename": "17.jpg",
+    "syncSourceId": "local-gallery:17.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "blue",
+          "black",
+          "white"
+        ],
+        "styleTags": [
+          "anime",
+          "digital art",
+          "high detail",
+          "glow effect",
+          "studio lighting"
+        ],
+        "compositionTags": [
+          "centered",
+          "low angle",
+          "close-up",
+          "sitting pose",
+          "full body"
+        ],
+        "subjectFocus": "female character",
+        "raritySignals": [
+          "collectible",
+          "premium artwork"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "seductive",
+          "alluring",
+          "confident",
+          "playful"
+        ],
+        "toneTags": [
+          "soft",
+          "luxurious",
+          "elegant",
+          "provocative"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.85
+      },
+      "characterLayer": {
+        "entityType": "anime girl",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "seductress",
+          "fashion model",
+          "fantasy warrior",
+          "luxury icon"
+        ],
+        "poseTags": [
+          "sitting",
+          "kneeling",
+          "hand on thigh",
+          "gaze forward"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "studio",
+          "neutral background",
+          "isolated subject"
+        ],
+        "genreTags": [
+          "anime",
+          "fantasy",
+          "erotic",
+          "luxury"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "fur collar",
+          "tassels",
+          "gloves",
+          "belt",
+          "high heels"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "blue hair",
+          "fur collar outfit",
+          "seductive anime",
+          "collectible card",
+          "ur rarity"
+        ],
+        "collectorHooks": [
+          "limited edition",
+          "high detail artwork",
+          "premium rarity",
+          "exclusive design"
+        ],
+        "marketingAngles": [
+          "luxury aesthetic",
+          "seductive appeal",
+          "anime fan favorite",
+          "collector s item"
+        ],
+        "audienceTags": [
+          "anime collectors",
+          "gaming community",
+          "digital art enthusiasts",
+          "fashion collectors"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Blue-haired Seductress in Fur-Collar Outfit",
+      "shopifyTitle": "Blue-haired Seductress in Fur-Collar Outfit - UR Collectible Card",
+      "shortName": "Blue Hair Seductress",
+      "slug": "blue-hair-seductress-fur-collar-outfit",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Sapphire Enchantress Tcg"
+  }
+}

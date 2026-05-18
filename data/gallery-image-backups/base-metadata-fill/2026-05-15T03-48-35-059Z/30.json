@@ -1,0 +1,144 @@
+{
+  "title": "30",
+  "description": "Auto generated metadata for 30",
+  "tags": [
+    "30"
+  ],
+  "style": "",
+  "rarity": "",
+  "category": "card",
+  "character": "",
+  "color": "",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "30.jpg",
+    "syncSourceId": "local-gallery:30.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "orange",
+          "blue",
+          "white"
+        ],
+        "styleTags": [
+          "anime",
+          "digital-art",
+          "illustration",
+          "watercolor-effect"
+        ],
+        "compositionTags": [
+          "centered-subject",
+          "symmetrical-framing",
+          "close-up",
+          "eye-level-shot"
+        ],
+        "subjectFocus": "female character in bikini",
+        "raritySignals": [
+          "signature-watermark",
+          "artist-name-embedded"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "playful",
+          "cheerful",
+          "romantic",
+          "cozy"
+        ],
+        "toneTags": [
+          "warm",
+          "lighthearted",
+          "adorable"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.3
+      },
+      "characterLayer": {
+        "entityType": "humanoid",
+        "genderPresentation": "female",
+        "agePresentation": "young-adult",
+        "archetypeTags": [
+          "beach-babe",
+          "love-interest",
+          "fashion-model"
+        ],
+        "poseTags": [
+          "heart-hand-gesture",
+          "smiling",
+          "winking",
+          "front-facing"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "beach",
+          "ocean",
+          "rocky-coastline",
+          "daytime"
+        ],
+        "genreTags": [
+          "fantasy",
+          "anime",
+          "erotic-illustration"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "bikini",
+          "necklace",
+          "hair-accessories",
+          "tattoo"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl beach",
+          "orange bikini",
+          "heart hands",
+          "lootcard",
+          "vrennnime"
+        ],
+        "collectorHooks": [
+          "artist signature",
+          "limited edition",
+          "fan-favorite pose"
+        ],
+        "marketingAngles": [
+          "summer vibes",
+          "romantic aesthetic",
+          "collector s edition"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "digital art collectors",
+          "gacha game players"
+        ],
+        "safetyFlags": [
+          "explicit-content",
+          "erotic-illustration"
+        ]
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Beach Heart Hands",
+      "shopifyTitle": "Beach Heart Hands - Anime Girl in Orange Bikini",
+      "shortName": "Beach Heart Hands",
+      "slug": "beach-heart-hands",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

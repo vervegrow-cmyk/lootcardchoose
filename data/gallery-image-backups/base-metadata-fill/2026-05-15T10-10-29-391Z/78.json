@@ -1,0 +1,156 @@
+{
+  "title": "Fantasy Heroine Bedroom Anime",
+  "description": "A collectible hyper realistic card with purple and white tones, soft styling, and a polished fantasy heroine showcase inspired by bedroom scenes.",
+  "tags": [
+    "anime girl",
+    "purple outfit",
+    "bed scene",
+    "elegant pose",
+    "high detail",
+    "elegant",
+    "playful",
+    "glamorous",
+    "fantasy heroine",
+    "fashion forward",
+    "anime",
+    "digital art",
+    "hyper realistic",
+    "glow effect"
+  ],
+  "style": "anime",
+  "rarity": "SSR",
+  "category": "card",
+  "character": "female anime character fantasy heroine",
+  "color": "purple white black",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "78.jpg",
+    "syncSourceId": "local-gallery:78.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "purple",
+          "white",
+          "black"
+        ],
+        "styleTags": [
+          "anime",
+          "digital-art",
+          "hyper-realistic",
+          "glow-effect"
+        ],
+        "compositionTags": [
+          "centered-subject",
+          "close-up",
+          "bed-scene",
+          "high-contrast"
+        ],
+        "subjectFocus": "female character in revealing outfit",
+        "raritySignals": [
+          "high-detail",
+          "limited-edition-style",
+          "collector-grade"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "seductive",
+          "playful",
+          "alluring"
+        ],
+        "toneTags": [
+          "soft",
+          "intimate",
+          "dreamy"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.85
+      },
+      "characterLayer": {
+        "entityType": "female anime character",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "seductress",
+          "playful",
+          "fashion-forward"
+        ],
+        "poseTags": [
+          "lying-down",
+          "hands-on-hips",
+          "gaze-at-viewer",
+          "exposed-shoulders"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "bedroom",
+          "indoor",
+          "luxury"
+        ],
+        "genreTags": [
+          "erotic-anime",
+          "fan-art",
+          "character-design"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "bedding",
+          "cat-ears",
+          "fishnet-stockings",
+          "glitter-bow"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "purple outfit",
+          "bed scene",
+          "seductive pose",
+          "high detail"
+        ],
+        "collectorHooks": [
+          "limited edition",
+          "high quality",
+          "fan favorite"
+        ],
+        "marketingAngles": [
+          "collector s item",
+          "fan art showcase",
+          "character appreciation"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "gaming community",
+          "digital art collectors"
+        ],
+        "safetyFlags": [
+          "explicit content",
+          "erotic theme"
+        ]
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Seductive Anime Girl in Purple Outfit",
+      "shopifyTitle": "Anime Girl in Purple Outfit - Collector's Card",
+      "shortName": "Purple Outfit Girl",
+      "slug": "purple-outfit-girl",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

@@ -1,0 +1,169 @@
+{
+  "title": "Maid Portrait Anime",
+  "description": "A collectible hyperrealistic card with purple and black tones, vibrant styling, and a polished maid showcase inspired by stage scenes.",
+  "tags": [
+    "anime maid performance",
+    "stage showgirl",
+    "glow lighting art",
+    "female character card",
+    "digital collectible",
+    "playful",
+    "confident",
+    "glamorous",
+    "enthusiastic",
+    "maid",
+    "performer",
+    "stage diva",
+    "entertainer",
+    "anime",
+    "digital art"
+  ],
+  "style": "anime",
+  "rarity": "SSR",
+  "category": "card",
+  "character": "female maid",
+  "color": "purple black white gold",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "39.jpg",
+    "syncSourceId": "local-gallery:39.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "purple",
+          "black",
+          "white",
+          "gold"
+        ],
+        "styleTags": [
+          "anime",
+          "digital art",
+          "hyperrealistic",
+          "glow effect",
+          "stage lighting"
+        ],
+        "compositionTags": [
+          "centered composition",
+          "close up",
+          "dynamic angle",
+          "high contrast",
+          "shallow depth of field"
+        ],
+        "subjectFocus": "female character in performance attire",
+        "raritySignals": [
+          "high detail rendering",
+          "exclusive pose",
+          "limited edition potential"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "playful",
+          "confident",
+          "alluring",
+          "enthusiastic"
+        ],
+        "toneTags": [
+          "vibrant",
+          "energetic",
+          "showy"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.85
+      },
+      "characterLayer": {
+        "entityType": "human female",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "maid",
+          "performer",
+          "stage diva",
+          "entertainer"
+        ],
+        "poseTags": [
+          "sitting pose",
+          "stage pose",
+          "interactive pose",
+          "exposed pose"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "stage",
+          "nightclub",
+          "performance venue",
+          "light show"
+        ],
+        "genreTags": [
+          "erotic anime",
+          "adult entertainment",
+          "fashion show",
+          "live performance"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "pole",
+          "headband",
+          "gloves",
+          "fishnet stockings"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime maid performance",
+          "stage showgirl",
+          "glow lighting art",
+          "female character card",
+          "digital collectible"
+        ],
+        "collectorHooks": [
+          "limited edition",
+          "exclusive pose",
+          "high detail rendering",
+          "rare character design"
+        ],
+        "marketingAngles": [
+          "visual sensation",
+          "emotional connection",
+          "collector desire",
+          "digital art appreciation"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "digital art collectors",
+          "erotic anime community",
+          "gaming community"
+        ],
+        "safetyFlags": [
+          "explicit content",
+          "adult themes",
+          "sexualized pose"
+        ]
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Stage Performance Maid",
+      "shopifyTitle": "Stage Performance Maid - Digital Collectible Card",
+      "shortName": "StageMaid",
+      "slug": "stage-maid",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Crimson Stage Diva"
+  }
+}

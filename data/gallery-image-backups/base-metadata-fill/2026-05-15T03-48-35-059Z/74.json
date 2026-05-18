@@ -1,0 +1,141 @@
+{
+  "title": "74",
+  "description": "Auto generated metadata for 74",
+  "tags": [
+    "74"
+  ],
+  "style": "",
+  "rarity": "",
+  "category": "card",
+  "character": "",
+  "color": "",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "74.jpg",
+    "syncSourceId": "local-gallery:74.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "blue",
+          "black",
+          "white"
+        ],
+        "styleTags": [
+          "anime",
+          "digital art",
+          "illustration",
+          "sexy"
+        ],
+        "compositionTags": [
+          "centered",
+          "close up",
+          "dynamic pose",
+          "high contrast"
+        ],
+        "subjectFocus": "female character",
+        "raritySignals": [
+          "high detail",
+          "artistic rendering",
+          "character focus"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "playful",
+          "seductive",
+          "confident"
+        ],
+        "toneTags": [
+          "lighthearted",
+          "flirty",
+          "alluring"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.75
+      },
+      "characterLayer": {
+        "entityType": "human female",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "seductress",
+          "playful girl",
+          "cosplay"
+        ],
+        "poseTags": [
+          "armpit exposed",
+          "arms raised",
+          "bent knees",
+          "body curved"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "abstract background",
+          "dark space"
+        ],
+        "genreTags": [
+          "fantasy",
+          "erotic",
+          "anime style"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "cowprint bikini",
+          "ear cuffs",
+          "necklace"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "blue hair",
+          "anime girl",
+          "sexy bikini",
+          "digital art",
+          "collectible card"
+        ],
+        "collectorHooks": [
+          "limited artistic style",
+          "high detail rendering",
+          "character focus"
+        ],
+        "marketingAngles": [
+          "fan art collection",
+          "anime lovers",
+          "digital art appreciation"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "digital art collectors",
+          "erotic art lovers"
+        ],
+        "safetyFlags": [
+          "explicit content",
+          "sexualized character"
+        ]
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Blue Hair Seductress in Cowprint Bikini",
+      "shopifyTitle": "Blue Hair Seductress in Cowprint Bikini - Digital Art Collectible",
+      "shortName": "Blue Hair Seductress",
+      "slug": "blue-hair-seductress-cowprint-bikini",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

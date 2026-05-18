@@ -1,0 +1,160 @@
+{
+  "title": "Seductive Anime Woman in Black Lace Lingerie",
+  "description": "A seductive digital art card featuring a seductress in a indoor setting.",
+  "tags": [
+    "anime lingerie",
+    "seductive female character",
+    "luxury lingerie art",
+    "digital art collection",
+    "high detail illustration",
+    "seductive",
+    "confident",
+    "alluring",
+    "seductress",
+    "luxury icon",
+    "fashion model",
+    "digital art"
+  ],
+  "style": "digital art",
+  "rarity": "SSR",
+  "category": "card",
+  "character": "human female - seductress",
+  "color": "black white gold",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "微信图片_20260512172559_5515_2.jpg",
+    "syncSourceId": "local-gallery:微信图片_20260512172559_5515_2.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "black",
+          "white",
+          "gold"
+        ],
+        "styleTags": [
+          "digital art",
+          "anime",
+          "hyperrealistic",
+          "illustration"
+        ],
+        "compositionTags": [
+          "centered subject",
+          "full body",
+          "high contrast lighting",
+          "window backdrop"
+        ],
+        "subjectFocus": "female character in lingerie",
+        "raritySignals": [
+          "high detail rendering",
+          "premium artistic quality",
+          "collector-grade visuals"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "seductive",
+          "confident",
+          "alluring"
+        ],
+        "toneTags": [
+          "luxurious",
+          "intimate",
+          "elegant"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.85
+      },
+      "characterLayer": {
+        "entityType": "human female",
+        "genderPresentation": "female",
+        "agePresentation": "adult",
+        "archetypeTags": [
+          "seductress",
+          "luxury icon",
+          "fashion model"
+        ],
+        "poseTags": [
+          "armpit lift",
+          "hand on head",
+          "body curves emphasis",
+          "slight smile"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "indoor",
+          "luxury room",
+          "sunlit interior"
+        ],
+        "genreTags": [
+          "erotic art",
+          "fashion",
+          "character design"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "black lace bra",
+          "black lace panties",
+          "gold earrings",
+          "potted plant",
+          "wooden furniture",
+          "framed picture"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime lingerie",
+          "seductive female character",
+          "luxury lingerie art",
+          "digital art collection",
+          "high detail illustration"
+        ],
+        "collectorHooks": [
+          "limited edition art",
+          "premium visual quality",
+          "unique pose and expression",
+          "highly detailed rendering"
+        ],
+        "marketingAngles": [
+          "luxury aesthetic",
+          "seductive illustration",
+          "collector grade digital art",
+          "character design focus"
+        ],
+        "audienceTags": [
+          "anime collectors",
+          "digital art lovers",
+          "luxury art appreciators",
+          "fashion illustration enthusiasts"
+        ],
+        "safetyFlags": [
+          "explicit content",
+          "adult themes",
+          "suggestive pose"
+        ]
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Seductive Anime Woman in Black Lace Lingerie",
+      "shopifyTitle": "Seductive Anime Woman in Black Lace Lingerie - Digital Art Collectible",
+      "shortName": "Black Lace Seduction",
+      "slug": "black-lace-seduction",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

@@ -1,0 +1,155 @@
+{
+  "title": "Beach Heart Gesture",
+  "description": "A playful anime card featuring a beach babe in a beach setting.",
+  "tags": [
+    "anime beach girl",
+    "bikini art",
+    "heart gesture",
+    "tropical anime",
+    "playful",
+    "flirty",
+    "cheerful",
+    "romantic",
+    "beach babe",
+    "love interest",
+    "playful girl",
+    "anime"
+  ],
+  "style": "anime",
+  "rarity": "SSR",
+  "category": "card",
+  "character": "human female - beach babe",
+  "color": "blue black skin tone white",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "35.jpg",
+    "syncSourceId": "local-gallery:35.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "blue",
+          "black",
+          "skin tone",
+          "white"
+        ],
+        "styleTags": [
+          "anime",
+          "digital art",
+          "illustration",
+          "beach theme",
+          "heart gesture"
+        ],
+        "compositionTags": [
+          "centered subject",
+          "full body",
+          "dynamic pose",
+          "background framing"
+        ],
+        "subjectFocus": "female character in bikini",
+        "raritySignals": [
+          "patreon watermark",
+          "artist signature",
+          "limited edition context"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "playful",
+          "flirty",
+          "cheerful",
+          "romantic"
+        ],
+        "toneTags": [
+          "light-hearted",
+          "whimsical",
+          "sweet"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.3
+      },
+      "characterLayer": {
+        "entityType": "human female",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "beach babe",
+          "love interest",
+          "playful girl"
+        ],
+        "poseTags": [
+          "heart gesture",
+          "bikini pose",
+          "sitting on beach",
+          "winking"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "beach",
+          "ocean",
+          "tropical",
+          "sunny day"
+        ],
+        "genreTags": [
+          "fantasy",
+          "romance",
+          "slice of life"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "bikini",
+          "heart-shaped hand gesture",
+          "palm tree"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime beach girl",
+          "bikini art",
+          "heart gesture",
+          "tropical anime",
+          "patreon art"
+        ],
+        "collectorHooks": [
+          "artist signature",
+          "limited edition",
+          "patreon exclusive"
+        ],
+        "marketingAngles": [
+          "romantic beach vibe",
+          "playful character design",
+          "tropical summer aesthetic"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "digital art collectors",
+          "beach theme lovers",
+          "patreon supporters"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Beach Heart Gesture",
+      "shopifyTitle": "Beach Heart Gesture - Anime Girl in Bikini",
+      "shortName": "Beach Heart",
+      "slug": "beach-heart-gesture",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

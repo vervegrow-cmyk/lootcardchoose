@@ -1,0 +1,154 @@
+{
+  "title": "Military Maid Stage",
+  "description": "A collectible 3d render card with light blue and black tones, vibrant styling, and a polished military maid showcase inspired by stage scenes.",
+  "tags": [
+    "anime girl",
+    "pole dancer",
+    "glow stage",
+    "3d render",
+    "elegant",
+    "playful",
+    "confident",
+    "military maid",
+    "stage performer",
+    "fashion model",
+    "digital art",
+    "anime",
+    "glow effect"
+  ],
+  "style": "digital art",
+  "rarity": "",
+  "category": "card",
+  "character": "female military maid",
+  "color": "light blue black purple",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "38.jpg",
+    "syncSourceId": "local-gallery:38.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "light blue",
+          "black",
+          "purple"
+        ],
+        "styleTags": [
+          "digital art",
+          "anime",
+          "3d render",
+          "glow effect"
+        ],
+        "compositionTags": [
+          "centered subject",
+          "dynamic pose",
+          "stage lighting",
+          "foreground focus"
+        ],
+        "subjectFocus": "female character in revealing outfit",
+        "raritySignals": [
+          "high detail",
+          "professional lighting",
+          "character design"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "seductive",
+          "playful",
+          "confident"
+        ],
+        "toneTags": [
+          "vibrant",
+          "energetic",
+          "alluring"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.85
+      },
+      "characterLayer": {
+        "entityType": "female humanoid",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "military maid",
+          "stage performer",
+          "fashion model"
+        ],
+        "poseTags": [
+          "pole dancing",
+          "leaning",
+          "exposed back",
+          "glamorous"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "stage",
+          "performance venue",
+          "nightclub",
+          "theater"
+        ],
+        "genreTags": [
+          "anime",
+          "erotic",
+          "fantasy",
+          "drama"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "pole",
+          "headpiece",
+          "gloves",
+          "lace lingerie"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "pole dancer",
+          "glow stage",
+          "3d render",
+          "seductive"
+        ],
+        "collectorHooks": [
+          "high detail",
+          "dynamic pose",
+          "unique character design"
+        ],
+        "marketingAngles": [
+          "visual appeal",
+          "emotional engagement",
+          "collector rarity"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "digital art collectors",
+          "erotic art enthusiasts"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "38 - Seductive Pole Dancer in Glowing Stage",
+      "shopifyTitle": "38 Seductive Pole Dancer Glowing Stage",
+      "shortName": "38 Pole Dancer",
+      "slug": "38-pole-dancer",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

@@ -1,0 +1,158 @@
+{
+  "title": "Azure Bunny Girl Beach",
+  "description": "A collectible 3d render card with blue and white tones, bright styling, and a polished bunny girl showcase inspired by beach scenes.",
+  "tags": [
+    "bunny girl",
+    "anime bikini",
+    "furry character",
+    "beach girl",
+    "playful",
+    "cheerful",
+    "relaxed",
+    "sunshine",
+    "beach muse",
+    "anime",
+    "digital art",
+    "illustration",
+    "3d render"
+  ],
+  "style": "anime",
+  "rarity": "SSR",
+  "category": "card",
+  "character": "bunny girl",
+  "color": "blue white black skin tone",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "37.jpg",
+    "syncSourceId": "local-gallery:37.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.99,
+      "visualLayer": {
+        "primaryColors": [
+          "blue",
+          "white",
+          "black",
+          "skin tone"
+        ],
+        "styleTags": [
+          "anime",
+          "digital art",
+          "illustration",
+          "3d render"
+        ],
+        "compositionTags": [
+          "centered composition",
+          "close-up",
+          "low angle",
+          "sitting pose"
+        ],
+        "subjectFocus": "female character in bikini",
+        "raritySignals": [
+          "patreon watermark",
+          "artist signature"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "playful",
+          "cheerful",
+          "relaxed",
+          "sunshine"
+        ],
+        "toneTags": [
+          "bright",
+          "lighthearted",
+          "whimsical"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.2
+      },
+      "characterLayer": {
+        "entityType": "humanoid",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "bunny girl",
+          "beach babe",
+          "furry character"
+        ],
+        "poseTags": [
+          "sitting",
+          "cross-legged",
+          "relaxed",
+          "bikini pose"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "outdoor",
+          "beach",
+          "grass field",
+          "daytime"
+        ],
+        "genreTags": [
+          "fantasy",
+          "anime",
+          "furry",
+          "erotic"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "bikini",
+          "bell collar",
+          "rabbit ears"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "bunny girl",
+          "anime bikini",
+          "furry character",
+          "beach girl",
+          "patreon art"
+        ],
+        "collectorHooks": [
+          "artist signature",
+          "limited edition",
+          "exclusive patreon"
+        ],
+        "marketingAngles": [
+          "fan art",
+          "character collection",
+          "digital collectible"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "furry community",
+          "digital art collectors",
+          "patreon supporters"
+        ],
+        "safetyFlags": [
+          "explicit content",
+          "erotic imagery"
+        ]
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Bunny Girl in Bikini",
+      "shopifyTitle": "Bunny Girl in Bikini - Digital Collectible",
+      "shortName": "Bunny Girl",
+      "slug": "bunny-girl-in-bikini",
+      "namingVersion": "v1",
+      "confidence": 0.98,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

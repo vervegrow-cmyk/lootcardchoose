@@ -1,0 +1,165 @@
+{
+  "title": "Mystic Kimono Goddess",
+  "description": "A collectible hyperrealistic card with light gray and blue tones, soft styling, and a polished mystic showcase inspired by japanese kimono scenes.",
+  "tags": [
+    "anime girl",
+    "japanese kimono",
+    "elegant pose",
+    "digital art",
+    "goddess",
+    "elegant",
+    "calm",
+    "serene",
+    "mystic",
+    "noble",
+    "fantasy heroine",
+    "traditionalist",
+    "anime",
+    "digital illustration",
+    "hyperrealistic"
+  ],
+  "style": "anime",
+  "rarity": "SSR",
+  "category": "card",
+  "character": "female mystic warrior",
+  "color": "light gray blue skin tone",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "56.jpg",
+    "syncSourceId": "local-gallery:56.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "light gray",
+          "blue",
+          "skin tone"
+        ],
+        "styleTags": [
+          "anime",
+          "digital illustration",
+          "hyperrealistic",
+          "soft lighting"
+        ],
+        "compositionTags": [
+          "centered subject",
+          "medium shot",
+          "partial framing",
+          "depth of field"
+        ],
+        "subjectFocus": "female character in traditional attire",
+        "raritySignals": [
+          "high detail",
+          "character-centric",
+          "artistic rendering"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "seductive",
+          "calm",
+          "elegant",
+          "serene"
+        ],
+        "toneTags": [
+          "soft",
+          "luxurious",
+          "intimate"
+        ],
+        "energyLevel": "low",
+        "dramaticIntensity": 0.3
+      },
+      "characterLayer": {
+        "entityType": "female humanoid",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "mystic",
+          "noble",
+          "seductress",
+          "traditionalist"
+        ],
+        "poseTags": [
+          "sitting",
+          "half-reclined",
+          "hand on pillar",
+          "gaze directed"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "traditional japanese",
+          "wooden architecture",
+          "outdoor",
+          "sunlit"
+        ],
+        "genreTags": [
+          "fantasy",
+          "anime",
+          "erotic art"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "kimono",
+          "obi belt",
+          "hair ornament",
+          "wooden pillar"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "japanese kimono",
+          "seductive pose",
+          "digital art",
+          "goddess"
+        ],
+        "collectorHooks": [
+          "high detail rendering",
+          "unique character design",
+          "limited edition",
+          "artistic quality"
+        ],
+        "marketingAngles": [
+          "collector s item",
+          "digital art showcase",
+          "character appreciation",
+          "mood-driven collection"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "digital art collectors",
+          "fantasy enthusiasts",
+          "erotic art collectors"
+        ],
+        "safetyFlags": [
+          "explicit content",
+          "adult themes",
+          "suggestive imagery"
+        ]
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Seductive Anime Goddess in Kimono",
+      "shopifyTitle": "Anime Goddess in Traditional Kimono - Digital Art Collectible",
+      "shortName": "Goddess Kimono",
+      "slug": "goddess-kimono",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Celestial Kimono Enchantress"
+  }
+}

@@ -1,0 +1,156 @@
+{
+  "title": "微信图片 20260512172719 5532 2",
+  "description": "Auto generated metadata for 微信图片 20260512172719 5532 2",
+  "tags": [
+    "微信图片",
+    "20260512172719",
+    "5532",
+    "2"
+  ],
+  "style": "",
+  "rarity": "",
+  "category": "card",
+  "character": "",
+  "color": "",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "微信图片_20260512172719_5532_2.jpg",
+    "syncSourceId": "local-gallery:微信图片_20260512172719_5532_2.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "teal",
+          "pink",
+          "white",
+          "green"
+        ],
+        "styleTags": [
+          "anime",
+          "digital-art",
+          "illustration",
+          "hyperrealistic",
+          "soft-shading"
+        ],
+        "compositionTags": [
+          "centered-subject",
+          "full-body",
+          "symmetrical",
+          "natural-light",
+          "depth-of-field"
+        ],
+        "subjectFocus": "female character in tropical setting",
+        "raritySignals": [
+          "high-detail",
+          "unique-character-design",
+          "limited-edition-potential"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "serene",
+          "calm",
+          "innocent",
+          "vulnerable",
+          "peaceful"
+        ],
+        "toneTags": [
+          "soft",
+          "dreamy",
+          "gentle",
+          "romantic"
+        ],
+        "energyLevel": "low",
+        "dramaticIntensity": 0.2
+      },
+      "characterLayer": {
+        "entityType": "human",
+        "genderPresentation": "female",
+        "agePresentation": "young-adult",
+        "archetypeTags": [
+          "princess",
+          "goddess",
+          "nature-child",
+          "forest-dweller"
+        ],
+        "poseTags": [
+          "hands-on-chest",
+          "looking-forward",
+          "neutral-expression",
+          "soft-gaze"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "tropical-jungle",
+          "forest-clearing",
+          "lush-vegetation",
+          "natural-landscape"
+        ],
+        "genreTags": [
+          "fantasy",
+          "adventure",
+          "romance",
+          "mythology"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "hairpins",
+          "flowers",
+          "transparent-clothing",
+          "leafy-backdrop"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "tropical fantasy",
+          "beautiful girl",
+          "jungle goddess",
+          "soft art"
+        ],
+        "collectorHooks": [
+          "unique character design",
+          "high-detail illustration",
+          "limited edition",
+          "emotional appeal"
+        ],
+        "marketingAngles": [
+          "nature-inspired beauty",
+          "serene fantasy aesthetic",
+          "collector s art piece",
+          "digital collectible"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "digital art collectors",
+          "fantasy lovers",
+          "gaming community",
+          "art enthusiasts"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Tropical Goddess in Serene Jungle",
+      "shopifyTitle": "Tropical Goddess in Serene Jungle - Digital Collectible Art",
+      "shortName": "TropicalGoddess",
+      "slug": "tropical-goddess-in-serene-jungle",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

@@ -1,0 +1,154 @@
+{
+  "title": "Blue Haired Anime Girl In Luxury Chair",
+  "description": "A stylish character design character card with blue and white tones, centered, and indoor appeal.",
+  "tags": [
+    "anime girl",
+    "blue haired character",
+    "luxury chair",
+    "fantasy illustration",
+    "playful",
+    "confident",
+    "glamorous",
+    "military",
+    "royal",
+    "demoness",
+    "mage",
+    "anime",
+    "illustration",
+    "digital art",
+    "character design"
+  ],
+  "style": "anime",
+  "rarity": "SSR",
+  "category": "card",
+  "character": "humanoid military",
+  "color": "blue white",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "6.jpg",
+    "syncSourceId": "local-gallery:6.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "blue",
+          "white"
+        ],
+        "styleTags": [
+          "anime",
+          "illustration",
+          "digital-art",
+          "character-design"
+        ],
+        "compositionTags": [
+          "centered",
+          "full-body",
+          "high-detail",
+          "isolated-background"
+        ],
+        "subjectFocus": "female character in elaborate outfit",
+        "raritySignals": [
+          "high-detail rendering",
+          "character-centric composition",
+          "premium illustration style"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "playful",
+          "confident",
+          "alluring"
+        ],
+        "toneTags": [
+          "lighthearted",
+          "elegant",
+          "feminine"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.75
+      },
+      "characterLayer": {
+        "entityType": "humanoid",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "military",
+          "royal",
+          "demoness",
+          "mage"
+        ],
+        "poseTags": [
+          "seated",
+          "relaxed",
+          "cross-legged",
+          "hand-on-chin"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "indoor",
+          "luxury",
+          "theater",
+          "palace"
+        ],
+        "genreTags": [
+          "fantasy",
+          "anime",
+          "role-playing-game",
+          "visual-novel"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "armchair",
+          "gloves",
+          "high-heeled shoes"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "blue-haired character",
+          "luxury chair",
+          "fantasy illustration"
+        ],
+        "collectorHooks": [
+          "high-detail art",
+          "unique character design",
+          "limited edition collectible"
+        ],
+        "marketingAngles": [
+          "character showcase",
+          "premium digital art",
+          "fan favorite"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "gaming community",
+          "digital art collectors"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Blue-Haired Anime Girl in Luxury Chair",
+      "shopifyTitle": "Blue-Haired Anime Girl in Luxury Chair - Digital Collectible",
+      "shortName": "Blue-Haired Girl",
+      "slug": "blue-haired-girl-luxury-chair",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

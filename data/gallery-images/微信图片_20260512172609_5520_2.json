@@ -1,0 +1,156 @@
+{
+  "title": "Elegant Warrior Portrait",
+  "description": "A collectible character design card with white and purple tones, bold styling, and a polished warrior showcase inspired by fantasy scenes.",
+  "tags": [
+    "anime warrior girl",
+    "fantasy character art",
+    "digital illustration",
+    "collectible card",
+    "confident",
+    "playful",
+    "assertive",
+    "energetic",
+    "warrior",
+    "martial artist",
+    "mythological being",
+    "anime",
+    "digital art",
+    "illustration",
+    "character design"
+  ],
+  "style": "anime",
+  "rarity": "",
+  "category": "card",
+  "character": "warrior",
+  "color": "white purple blue orange",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "微信图片_20260512172609_5520_2.jpg",
+    "syncSourceId": "local-gallery:微信图片_20260512172609_5520_2.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "white",
+          "purple",
+          "blue",
+          "orange"
+        ],
+        "styleTags": [
+          "anime",
+          "digital-art",
+          "illustration",
+          "character-design"
+        ],
+        "compositionTags": [
+          "centered-subject",
+          "dynamic-pose",
+          "foreground-focus",
+          "high-contrast"
+        ],
+        "subjectFocus": "female warrior character",
+        "raritySignals": [
+          "high-detail",
+          "unique-visuals",
+          "character-centric"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "confident",
+          "playful",
+          "assertive",
+          "energetic"
+        ],
+        "toneTags": [
+          "bold",
+          "vibrant",
+          "uplifting"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.85
+      },
+      "characterLayer": {
+        "entityType": "humanoid",
+        "genderPresentation": "female",
+        "agePresentation": "young-adult",
+        "archetypeTags": [
+          "warrior",
+          "martial-artist",
+          "mythological-being"
+        ],
+        "poseTags": [
+          "pointing-forward",
+          "action-pose",
+          "confident-stance"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "fantasy",
+          "mythological",
+          "battlefield"
+        ],
+        "genreTags": [
+          "action",
+          "adventure",
+          "fantasy"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "weapon",
+          "armor",
+          "headgear",
+          "belt"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime warrior girl",
+          "fantasy character art",
+          "digital illustration",
+          "collectible card"
+        ],
+        "collectorHooks": [
+          "unique character design",
+          "high-energy pose",
+          "vibrant color palette"
+        ],
+        "marketingAngles": [
+          "character-driven collectible",
+          "dynamic visual appeal",
+          "fantasy genre appeal"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "collectors",
+          "gaming community",
+          "digital art enthusiasts"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Confident Warrior Girl with Horns",
+      "shopifyTitle": "Anime Fantasy Warrior Character Art",
+      "shortName": "Warrior Girl Card",
+      "slug": "warrior-girl-card",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Celestial Warrior Lumina"
+  }
+}

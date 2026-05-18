@@ -1,0 +1,145 @@
+{
+  "title": "55",
+  "description": "Auto generated metadata for 55",
+  "tags": [
+    "55"
+  ],
+  "style": "",
+  "rarity": "",
+  "category": "card",
+  "character": "",
+  "color": "",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "55.jpg",
+    "syncSourceId": "local-gallery:55.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "pink",
+          "white",
+          "black"
+        ],
+        "styleTags": [
+          "anime",
+          "illustration",
+          "digital-art",
+          "character-design"
+        ],
+        "compositionTags": [
+          "close-up",
+          "low-angle",
+          "partial-body"
+        ],
+        "subjectFocus": "female character in fishnet stockings",
+        "raritySignals": [
+          "high-detail",
+          "limited-edition",
+          "collector-item"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "seductive",
+          "relaxed",
+          "playful",
+          "alluring"
+        ],
+        "toneTags": [
+          "soft",
+          "warm",
+          "intimate",
+          "dreamy"
+        ],
+        "energyLevel": "low",
+        "dramaticIntensity": 0.3
+      },
+      "characterLayer": {
+        "entityType": "humanoid",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "heroine",
+          "warrior",
+          "fantasy-character"
+        ],
+        "poseTags": [
+          "lying-down",
+          "cross-legged",
+          "relaxed",
+          "bed-rest"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "bedroom",
+          "indoor",
+          "luxury",
+          "private-space"
+        ],
+        "genreTags": [
+          "fantasy",
+          "anime",
+          "game-art",
+          "cosplay"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "fishnet-stockings",
+          "headband",
+          "armor"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "fishnet stockings",
+          "bed scene",
+          "character art",
+          "limited edition"
+        ],
+        "collectorHooks": [
+          "high-detail artwork",
+          "unique pose",
+          "character design",
+          "rare edition"
+        ],
+        "marketingAngles": [
+          "fan art collection",
+          "gaming culture",
+          "anime merchandise",
+          "collector s item"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "gaming community",
+          "digital art collectors",
+          "cosplay enthusiasts"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Pink-Haired Anime Girl in Fishnet Stockings",
+      "shopifyTitle": "Anime Girl in Fishnet Stockings - Limited Edition Collectible Card",
+      "shortName": "Fishnet Anime Girl",
+      "slug": "fishnet-anime-girl",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

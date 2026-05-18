@@ -1,0 +1,157 @@
+{
+  "title": "Elegant Warrior Fantasy Anime",
+  "description": "A collectible anime card with purple and blue tones, bold styling, and a polished warrior showcase inspired by fantasy scenes.",
+  "tags": [
+    "anime girl",
+    "character art fantasy art",
+    "fantasy character",
+    "digital illustration",
+    "intense",
+    "elegant",
+    "powerful",
+    "dominant",
+    "warrior",
+    "heroine",
+    "anime",
+    "digital art",
+    "illustration",
+    "character art"
+  ],
+  "style": "anime",
+  "rarity": "SSR",
+  "category": "card",
+  "character": "female character warrior",
+  "color": "purple blue gold black",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "59.jpg",
+    "syncSourceId": "local-gallery:59.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "purple",
+          "blue",
+          "gold",
+          "black"
+        ],
+        "styleTags": [
+          "anime",
+          "digital-art",
+          "illustration",
+          "erotic"
+        ],
+        "compositionTags": [
+          "close-up",
+          "dynamic-angle",
+          "low-angle-shot",
+          "overhead-view"
+        ],
+        "subjectFocus": "female character in revealing pose",
+        "raritySignals": [
+          "high-detail",
+          "limited-edition-style",
+          "collector-grade-art"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "intense",
+          "seductive",
+          "powerful",
+          "dominant"
+        ],
+        "toneTags": [
+          "bold",
+          "explicit",
+          "provocative"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.85
+      },
+      "characterLayer": {
+        "entityType": "female character",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "warrior",
+          "heroine",
+          "fantasy-character"
+        ],
+        "poseTags": [
+          "dominant",
+          "revealing",
+          "powerful",
+          "erotic"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "fantasy",
+          "indoor",
+          "wooden-structure"
+        ],
+        "genreTags": [
+          "fantasy",
+          "erotic-fantasy",
+          "anime-style"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "armor",
+          "costume",
+          "accessories"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "erotic fantasy art",
+          "fantasy character",
+          "digital illustration"
+        ],
+        "collectorHooks": [
+          "high-detail artwork",
+          "limited edition",
+          "collector s item"
+        ],
+        "marketingAngles": [
+          "artistic expression",
+          "fan favorite",
+          "exclusive design"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "fantasy collectors",
+          "digital art enthusiasts"
+        ],
+        "safetyFlags": [
+          "explicit content",
+          "erotic imagery",
+          "adult-themed"
+        ]
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "59 - Anime Girl Fantasy Art",
+      "shopifyTitle": "Anime Girl Fantasy Art - Collectible Card 59",
+      "shortName": "Card 59",
+      "slug": "card-59",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

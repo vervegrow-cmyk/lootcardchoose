@@ -1,0 +1,173 @@
+{
+  "title": "Seductive Anime Girl in Purple Lingerie",
+  "description": "A seductive anime card featuring a seductress in a indoor setting.",
+  "tags": [
+    "anime girl",
+    "seductive character art",
+    "purple lingerie",
+    "high detail digital illustration",
+    "female character card",
+    "seductive",
+    "confident",
+    "alluring",
+    "calm",
+    "playful",
+    "seductress",
+    "beauty"
+  ],
+  "style": "anime",
+  "rarity": "SSR",
+  "category": "card",
+  "character": "human female - seductress",
+  "color": "purple black skin tone white",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "微信图片_20260512172602_5518_2.jpg",
+    "syncSourceId": "local-gallery:微信图片_20260512172602_5518_2.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "purple",
+          "black",
+          "skin tone",
+          "white"
+        ],
+        "styleTags": [
+          "anime",
+          "digital illustration",
+          "high detail",
+          "glow effect",
+          "soft lighting"
+        ],
+        "compositionTags": [
+          "close-up",
+          "centered subject",
+          "upper body focus",
+          "symmetrical framing",
+          "shallow depth of field"
+        ],
+        "subjectFocus": "female character in revealing outfit",
+        "raritySignals": [
+          "high detail rendering",
+          "character-specific design",
+          "unique color palette",
+          "emotional expression"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "seductive",
+          "confident",
+          "alluring",
+          "calm",
+          "playful"
+        ],
+        "toneTags": [
+          "soft",
+          "warm",
+          "intimate",
+          "gentle",
+          "appealing"
+        ],
+        "energyLevel": "medium",
+        "dramaticIntensity": 0.65
+      },
+      "characterLayer": {
+        "entityType": "human female",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "seductress",
+          "beauty",
+          "fashion icon",
+          "mystique"
+        ],
+        "poseTags": [
+          "front-facing",
+          "slight smile",
+          "relaxed posture",
+          "shoulder tilt",
+          "gaze contact"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "indoor",
+          "traditional architecture",
+          "wooden structure",
+          "window background"
+        ],
+        "genreTags": [
+          "fantasy",
+          "erotic anime",
+          "character art",
+          "digital art"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "purple lingerie",
+          "flower pattern",
+          "belt",
+          "ruffled fabric"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "seductive character art",
+          "purple lingerie",
+          "high detail digital illustration",
+          "female character card"
+        ],
+        "collectorHooks": [
+          "unique character design",
+          "high-quality rendering",
+          "emotional expression",
+          "limited edition appeal",
+          "fan favorite aesthetic"
+        ],
+        "marketingAngles": [
+          "collectible art piece",
+          "digital collectible card",
+          "character appreciation",
+          "fan art style",
+          "visual storytelling"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "digital art collectors",
+          "character art enthusiasts",
+          "erotic anime collectors",
+          "gaming community"
+        ],
+        "safetyFlags": [
+          "explicit content",
+          "suggestive imagery",
+          "adult themes"
+        ]
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Seductive Anime Girl in Purple Lingerie",
+      "shopifyTitle": "Anime Girl in Purple Lingerie - Digital Collectible Card",
+      "shortName": "Purple Lingerie Girl",
+      "slug": "purple-lingerie-girl",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

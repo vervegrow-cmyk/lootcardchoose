@@ -1,0 +1,162 @@
+{
+  "title": "Elegant Gothic Warrior",
+  "description": "A collectible hyperrealistic card with pink and black tones, bold styling, and a polished fantasy heroine showcase inspired by character art fantasy scenes.",
+  "tags": [
+    "anime girl",
+    "character art fantasy",
+    "gothic church",
+    "powerful woman",
+    "elegant pose",
+    "elegant",
+    "powerful",
+    "confident",
+    "intense",
+    "fantasy heroine",
+    "warrior",
+    "anime",
+    "digital art",
+    "hyperrealistic",
+    "character art"
+  ],
+  "style": "anime",
+  "rarity": "",
+  "category": "card",
+  "character": "female fantasy heroine",
+  "color": "pink black white",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "54.jpg",
+    "syncSourceId": "local-gallery:54.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "pink",
+          "black",
+          "white"
+        ],
+        "styleTags": [
+          "anime",
+          "digital art",
+          "hyperrealistic",
+          "erotic"
+        ],
+        "compositionTags": [
+          "centered",
+          "close up",
+          "low angle",
+          "dramatic lighting"
+        ],
+        "subjectFocus": "female character in revealing outfit",
+        "raritySignals": [
+          "high detail",
+          "complex composition",
+          "unique pose"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "seductive",
+          "powerful",
+          "confident",
+          "intense"
+        ],
+        "toneTags": [
+          "bold",
+          "provocative",
+          "dramatic"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.85
+      },
+      "characterLayer": {
+        "entityType": "female",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "seductress",
+          "warrior",
+          "powerful woman"
+        ],
+        "poseTags": [
+          "dominant",
+          "revealing",
+          "hands on hips",
+          "looking down"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "gothic church",
+          "arched corridors",
+          "sunlit interior"
+        ],
+        "genreTags": [
+          "fantasy",
+          "erotic fantasy",
+          "anime fantasy"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "cape",
+          "armor",
+          "fishnet tights",
+          "belt"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "erotic fantasy",
+          "gothic church",
+          "powerful woman",
+          "seductive pose"
+        ],
+        "collectorHooks": [
+          "high detail",
+          "unique composition",
+          "provocative art",
+          "anime style"
+        ],
+        "marketingAngles": [
+          "collector s edition",
+          "fan favorite",
+          "high-impact visual",
+          "unique character design"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "erotic fantasy collectors",
+          "digital art enthusiasts",
+          "gaming community"
+        ],
+        "safetyFlags": [
+          "explicit content",
+          "erotic theme"
+        ]
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Seductive Warrior in Gothic Church",
+      "shopifyTitle": "Seductive Warrior in Gothic Church - Digital Art Collectible",
+      "shortName": "Gothic Seductress",
+      "slug": "gothic-seductress",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Crimson Shadow Duelist"
+  }
+}

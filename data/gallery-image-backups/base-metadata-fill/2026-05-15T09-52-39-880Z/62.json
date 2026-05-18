@@ -1,0 +1,161 @@
+{
+  "title": "Seductive Anime Girl in Blue Outfit",
+  "description": "A seductive anime card featuring a seductress in a bedroom setting.",
+  "tags": [
+    "anime girl",
+    "seductive pose",
+    "blue outfit",
+    "bed scene",
+    "game character",
+    "seductive",
+    "relaxed",
+    "playful",
+    "intimate",
+    "seductress",
+    "heroine",
+    "fantasy character"
+  ],
+  "style": "anime",
+  "rarity": "SSR",
+  "category": "card",
+  "character": "female humanoid - seductress",
+  "color": "blue white black skin tone",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "62.jpg",
+    "syncSourceId": "local-gallery:62.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "blue",
+          "white",
+          "black",
+          "skin tone"
+        ],
+        "styleTags": [
+          "anime",
+          "digital art",
+          "illustration",
+          "high detail",
+          "glow effect"
+        ],
+        "compositionTags": [
+          "centered subject",
+          "bed scene",
+          "close-up",
+          "dynamic pose",
+          "soft lighting"
+        ],
+        "subjectFocus": "female character in revealing outfit",
+        "raritySignals": [
+          "high detail",
+          "unique pose",
+          "character-specific design"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "seductive",
+          "relaxed",
+          "playful",
+          "intimate"
+        ],
+        "toneTags": [
+          "soft",
+          "warm",
+          "romantic",
+          "dreamy"
+        ],
+        "energyLevel": "medium",
+        "dramaticIntensity": 0.3
+      },
+      "characterLayer": {
+        "entityType": "female humanoid",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "seductress",
+          "heroine",
+          "fantasy character",
+          "game character"
+        ],
+        "poseTags": [
+          "lying down",
+          "arms raised",
+          "head tilted",
+          "exposed back"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "bedroom",
+          "indoor",
+          "private space"
+        ],
+        "genreTags": [
+          "fantasy",
+          "anime",
+          "game art",
+          "erotic"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "pillow",
+          "white fur",
+          "blue outfit",
+          "gold trim"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "seductive pose",
+          "blue outfit",
+          "bed scene",
+          "game character"
+        ],
+        "collectorHooks": [
+          "unique character design",
+          "high detail artwork",
+          "limited edition"
+        ],
+        "marketingAngles": [
+          "fan art collection",
+          "character showcase",
+          "visual appeal"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "game collectors",
+          "digital art enthusiasts"
+        ],
+        "safetyFlags": [
+          "explicit content",
+          "suggestive imagery"
+        ]
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Seductive Anime Girl in Blue Outfit",
+      "shopifyTitle": "Anime Girl Seductive Pose on Bed",
+      "shortName": "Blue Outfit Seduction",
+      "slug": "blue-outfit-seduction",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

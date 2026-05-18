@@ -1,0 +1,152 @@
+{
+  "title": "Beachside Anime Girl In Bikini",
+  "description": "A stylish high detail character card with beige and blue tones, centered, and beach appeal.",
+  "tags": [
+    "anime beach girl",
+    "summer bikini",
+    "anime character card",
+    "beach anime girl",
+    "happy",
+    "playful",
+    "cheerful",
+    "beach babe",
+    "sun kissed",
+    "summer girl",
+    "anime",
+    "digital art",
+    "illustration",
+    "high detail"
+  ],
+  "style": "anime",
+  "rarity": "",
+  "category": "card",
+  "character": "human beach babe",
+  "color": "beige blue black orange",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "52.jpg",
+    "syncSourceId": "local-gallery:52.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.99,
+      "visualLayer": {
+        "primaryColors": [
+          "beige",
+          "blue",
+          "black",
+          "orange"
+        ],
+        "styleTags": [
+          "anime",
+          "digital-art",
+          "illustration",
+          "high-detail"
+        ],
+        "compositionTags": [
+          "centered",
+          "close-up",
+          "portrait",
+          "symmetrical"
+        ],
+        "subjectFocus": "female character",
+        "raritySignals": [
+          "high-detail rendering",
+          "character-centric composition",
+          "vibrant color palette"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "happy",
+          "playful",
+          "cheerful"
+        ],
+        "toneTags": [
+          "lighthearted",
+          "joyful",
+          "summery"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.2
+      },
+      "characterLayer": {
+        "entityType": "human",
+        "genderPresentation": "female",
+        "agePresentation": "teen",
+        "archetypeTags": [
+          "beach-babe",
+          "sun-kissed",
+          "summer-girl"
+        ],
+        "poseTags": [
+          "front-facing",
+          "hands-on-hips",
+          "smiling",
+          "relaxed"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "beach",
+          "ocean",
+          "sunny-day"
+        ],
+        "genreTags": [
+          "fantasy",
+          "slice-of-life",
+          "idol"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "bikini",
+          "flower-clip",
+          "cooler"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime beach girl",
+          "summer bikini",
+          "anime character card",
+          "beach anime girl"
+        ],
+        "collectorHooks": [
+          "high-detail digital art",
+          "character-centric design",
+          "vibrant summer aesthetic"
+        ],
+        "marketingAngles": [
+          "summer collection",
+          "beach-themed collectible",
+          "anime idol aesthetic"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "digital art collectors",
+          "summer enthusiasts"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Beachside Anime Girl in Bikini",
+      "shopifyTitle": "Anime Beach Girl Collectible Card",
+      "shortName": "Beach Anime Girl",
+      "slug": "beach-anime-girl",
+      "namingVersion": "v1",
+      "confidence": 0.98,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

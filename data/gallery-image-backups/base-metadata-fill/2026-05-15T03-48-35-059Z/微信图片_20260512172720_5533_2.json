@@ -1,0 +1,141 @@
+{
+  "title": "微信图片 20260512172720 5533 2",
+  "description": "Auto generated metadata for 微信图片 20260512172720 5533 2",
+  "tags": [
+    "微信图片",
+    "20260512172720",
+    "5533",
+    "2"
+  ],
+  "style": "",
+  "rarity": "",
+  "category": "card",
+  "character": "",
+  "color": "",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "微信图片_20260512172720_5533_2.jpg",
+    "syncSourceId": "local-gallery:微信图片_20260512172720_5533_2.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "pink",
+          "cyan",
+          "purple"
+        ],
+        "styleTags": [
+          "anime",
+          "digital-art",
+          "illustration",
+          "character-design"
+        ],
+        "compositionTags": [
+          "portrait",
+          "close-up",
+          "centered-subject",
+          "soft-background"
+        ],
+        "subjectFocus": "female anime character",
+        "raritySignals": [
+          "high-detail",
+          "character-centric",
+          "stylized-art"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "playful",
+          "sweet",
+          "gentle"
+        ],
+        "toneTags": [
+          "soft",
+          "pastel",
+          "romantic"
+        ],
+        "energyLevel": "medium",
+        "dramaticIntensity": 0.3
+      },
+      "characterLayer": {
+        "entityType": "human",
+        "genderPresentation": "female",
+        "agePresentation": "young-adult",
+        "archetypeTags": [
+          "princess",
+          "maid",
+          "fairy-tale-character"
+        ],
+        "poseTags": [
+          "self-aware",
+          "hand-on-shoulder",
+          "looking-at-viewer"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "fantasy",
+          "dreamlike",
+          "studio-setting"
+        ],
+        "genreTags": [
+          "anime",
+          "manga",
+          "fantasy-art"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "flower-ornaments",
+          "frilly-clothing",
+          "heart-decorations"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "blue hair",
+          "pink dress",
+          "flower hairpins",
+          "character art"
+        ],
+        "collectorHooks": [
+          "limited-edition",
+          "character-focused",
+          "high-detail-art"
+        ],
+        "marketingAngles": [
+          "fan-art",
+          "collectible",
+          "digital-art-collection"
+        ],
+        "audienceTags": [
+          "anime-fans",
+          "manga-lovers",
+          "digital-art-collectors"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Cute Anime Girl with Blue Hair and Pink Dress",
+      "shopifyTitle": "Anime Girl Portrait with Flower Hairpins",
+      "shortName": "Blue Hair Anime Girl",
+      "slug": "blue-hair-anime-girl",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

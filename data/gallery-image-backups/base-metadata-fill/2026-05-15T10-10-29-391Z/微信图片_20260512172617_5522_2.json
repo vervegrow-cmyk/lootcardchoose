@@ -1,0 +1,162 @@
+{
+  "title": "Fantasy Heroine Outdoor",
+  "description": "A collectible anime card with orange and pink tones, soft styling, and a polished fantasy heroine showcase inspired by outdoor scenes.",
+  "tags": [
+    "anime girl lace attire",
+    "character art illustration",
+    "squatting pose",
+    "orange hair",
+    "pink lace attire",
+    "elegant",
+    "playful",
+    "confident",
+    "fantasy heroine",
+    "playful lover",
+    "luxury icon",
+    "anime",
+    "digital art",
+    "illustration",
+    "character art"
+  ],
+  "style": "anime",
+  "rarity": "SSR",
+  "category": "card",
+  "character": "human fantasy heroine",
+  "color": "orange pink white blue",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "微信图片_20260512172617_5522_2.jpg",
+    "syncSourceId": "local-gallery:微信图片_20260512172617_5522_2.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "orange",
+          "pink",
+          "white",
+          "blue"
+        ],
+        "styleTags": [
+          "anime",
+          "digital-art",
+          "illustration",
+          "erotic"
+        ],
+        "compositionTags": [
+          "back-view",
+          "squatting",
+          "arched-frame",
+          "sunlight"
+        ],
+        "subjectFocus": "female character in lingerie",
+        "raritySignals": [
+          "high-detail",
+          "artistic-rendering",
+          "limited-edition-style"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "seductive",
+          "playful",
+          "confident"
+        ],
+        "toneTags": [
+          "soft",
+          "warm",
+          "luxurious"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.85
+      },
+      "characterLayer": {
+        "entityType": "human",
+        "genderPresentation": "female",
+        "agePresentation": "young-adult",
+        "archetypeTags": [
+          "seductress",
+          "playful-lover",
+          "luxury-icon"
+        ],
+        "poseTags": [
+          "squatting",
+          "back-facing",
+          "curved-posture"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "outdoor",
+          "balcony",
+          "arched-architecture",
+          "sunny-day"
+        ],
+        "genreTags": [
+          "erotic-illustration",
+          "fantasy",
+          "romantic"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "lingerie",
+          "lace",
+          "earrings",
+          "high-heels"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl lingerie",
+          "erotic illustration",
+          "squatting pose",
+          "orange hair",
+          "pink lingerie"
+        ],
+        "collectorHooks": [
+          "limited edition",
+          "high detail",
+          "artistic style",
+          "unique pose"
+        ],
+        "marketingAngles": [
+          "luxury aesthetic",
+          "seductive appeal",
+          "collector s item",
+          "fan art"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "erotic art collectors",
+          "digital art enthusiasts",
+          "gaming community"
+        ],
+        "safetyFlags": [
+          "explicit-content",
+          "erotic",
+          "adult-themed"
+        ]
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Seductive Orange-Haired Girl in Pink Lingerie",
+      "shopifyTitle": "Seductive Orange-Haired Girl in Pink Lingerie - Digital Art Collectible",
+      "shortName": "Orange Hair Lingerie Girl",
+      "slug": "orange-hair-lingerie-girl",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

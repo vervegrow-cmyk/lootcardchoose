@@ -12,14 +12,37 @@ import { recommendationFeedbackService } from "../services/recommendation-feedba
 import { orderService } from "../services/order.service";
 import { shopifyService } from "../services/shopify.service";
 import type { RecommendationFeedbackEvent } from "../types/recommendation-feedback.types";
+import { parseValidationCliOptions, saveValidationArtifact } from "./validation-artifact";
+
+const QUERY = "Show me 10 black gold SSR female cards";
+
+type FeedbackValidationReport = {
+  runAt: string;
+  artifactType: "feedback_validation";
+  query: string;
+  normalFlow: {
+    orderNumber: string;
+    eventCounts: Record<string, number>;
+    selectionOccurred: boolean;
+    checkoutOccurred: boolean;
+    paidOccurred: boolean;
+    allExpectedEventsPresent: boolean;
+    sessionLinked: boolean;
+    orderLinked: boolean;
+  };
+  failureIsolation: {
+    outputPath: string;
+    orderNumber: string;
+    mainFlowStatus: "passed";
+  };
+  findings: string[];
+};
 
 const ensure = (condition: unknown, message: string): void => {
   if (!condition) {
     throw new Error(message);
   }
 };
-
-const QUERY = "Show me 10 black gold SSR female cards";
 
 const buildMockCheckout = (imageUrl: string, orderNumber: string) => ({
   orderNumber,
@@ -74,7 +97,93 @@ const findEvent = (
   eventType: RecommendationFeedbackEvent["eventType"]
 ): RecommendationFeedbackEvent | undefined => events.find((event) => event.eventType === eventType);
 
+const countEventTypes = (events: RecommendationFeedbackEvent[]): Record<string, number> =>
+  events.reduce<Record<string, number>>((acc, event) => {
+    acc[event.eventType] = (acc[event.eventType] ?? 0) + 1;
+    return acc;
+  }, {});
+
+const buildReport = (
+  orderNumber: string,
+  events: RecommendationFeedbackEvent[],
+  failureIsolation: FeedbackValidationReport["failureIsolation"]
+): FeedbackValidationReport => {
+  const searchEvent = findEvent(events, "search");
+  const selectionEvent = findEvent(events, "selection");
+  const checkoutEvent = findEvent(events, "checkout_created");
+  const paidEvent = findEvent(events, "purchase_completed");
+  const uniqueSessionIds = new Set(events.map((event) => event.sessionId).filter(Boolean));
+  const linkedOrderEvents = events.filter((event) => event.orderNumber === orderNumber);
+
+  const normalFlow: FeedbackValidationReport["normalFlow"] = {
+    orderNumber,
+    eventCounts: countEventTypes(events),
+    selectionOccurred: Boolean(selectionEvent?.selectedCardId),
+    checkoutOccurred: checkoutEvent?.checkoutCreated === true,
+    paidOccurred: paidEvent?.purchased === true,
+    allExpectedEventsPresent: Boolean(searchEvent && selectionEvent && checkoutEvent && paidEvent),
+    sessionLinked: uniqueSessionIds.size === 1,
+    orderLinked:
+      linkedOrderEvents.some((event) => event.eventType === "checkout_created") &&
+      linkedOrderEvents.some((event) => event.eventType === "purchase_completed"),
+  };
+
+  const findings: string[] = [];
+  if (!normalFlow.selectionOccurred) {
+    findings.push("selection event missing from validation flow");
+  }
+  if (!normalFlow.checkoutOccurred) {
+    findings.push("checkout event missing from validation flow");
+  }
+  if (!normalFlow.paidOccurred) {
+    findings.push("purchase_completed event missing from validation flow");
+  }
+  if (!normalFlow.sessionLinked) {
+    findings.push("feedback events were not consistently linked by sessionId");
+  }
+  if (!normalFlow.orderLinked) {
+    findings.push("checkout and purchase events were not consistently linked by orderNumber");
+  }
+  if (findings.length === 0) {
+    findings.push("feedback validation flow completed with search, selection, checkout, and paid events linked");
+  }
+
+  return {
+    runAt: new Date().toISOString(),
+    artifactType: "feedback_validation",
+    query: QUERY,
+    normalFlow,
+    failureIsolation,
+    findings,
+  };
+};
+
+const renderConsoleSummary = (report: FeedbackValidationReport): void => {
+  console.log("## Feedback Validation");
+  console.log(`- query: ${report.query}`);
+  console.log(`- selection occurred: ${report.normalFlow.selectionOccurred}`);
+  console.log(`- checkout occurred: ${report.normalFlow.checkoutOccurred}`);
+  console.log(`- paid occurred: ${report.normalFlow.paidOccurred}`);
+  console.log(`- all expected events present: ${report.normalFlow.allExpectedEventsPresent}`);
+  console.log(`- session linked: ${report.normalFlow.sessionLinked}`);
+  console.log(`- order linked: ${report.normalFlow.orderLinked}`);
+  console.log(`- event counts: ${JSON.stringify(report.normalFlow.eventCounts)}`);
+
+  console.log("");
+  console.log("## Findings");
+  report.findings.forEach((finding) => {
+    console.log(`- ${finding}`);
+  });
+
+  console.log("");
+  console.log("## Failure Isolation");
+  console.log(`- output path: ${report.failureIsolation.outputPath}`);
+  console.log(`- order number: ${report.failureIsolation.orderNumber}`);
+  console.log(`- main flow status: ${report.failureIsolation.mainFlowStatus}`);
+};
+
 const main = async (): Promise<void> => {
+  const options = parseValidationCliOptions(process.argv.slice(2));
   const originalCreateProductFromGalleryCard = shopifyService.createProductFromGalleryCard;
   const testLogPath = path.join(process.cwd(), "reports", `recommendation-feedback-test-${Date.now()}.jsonl`);
 
@@ -114,23 +223,6 @@ const main = async (): Promise<void> => {
       "Expected top10AfterRerank <= 10"
     );
 
-    console.log(
-      JSON.stringify(
-        {
-          normalFlow: {
-            orderNumber: normalFlow.orderNumber,
-            eventTypes: events.map((event) => event.eventType),
-            searchEvent,
-            selectionEvent,
-            checkoutEvent,
-            paidEvent,
-          },
-        },
-        null,
-        2
-      )
-    );
-
     const failingOutputPath = path.join(process.cwd(), "reports", `recommendation-feedback-blocked-${Date.now()}`);
     await mkdir(failingOutputPath, { recursive: true });
     recommendationFeedbackService.setOutputPathForTesting(failingOutputPath);
@@ -138,19 +230,31 @@ const main = async (): Promise<void> => {
     const failureIsolatedFlow = await runFlow(`fail-${Date.now()}`);
     ensure(failureIsolatedFlow.orderNumber, "Expected failure-isolated flow to complete");
 
-    console.log(
-      JSON.stringify(
-        {
-          failureIsolation: {
-            outputPath: failingOutputPath,
-            orderNumber: failureIsolatedFlow.orderNumber,
-            mainFlowStatus: "passed",
+    const report = buildReport(normalFlow.orderNumber, events, {
+      outputPath: failingOutputPath,
+      orderNumber: failureIsolatedFlow.orderNumber,
+      mainFlowStatus: "passed",
+    });
+
+    if (options.json) {
+      const artifactPath = await saveValidationArtifact(report, {
+        outputPath: options.outputPath,
+        prefix: "feedback-validation",
+      });
+      console.log(
+        JSON.stringify(
+          {
+            ...report,
+            artifactPath,
           },
-        },
-        null,
-        2
-      )
-    );
+          null,
+          2
+        )
+      );
+      return;
+    }
+
+    renderConsoleSummary(report);
   } finally {
     shopifyService.createProductFromGalleryCard = originalCreateProductFromGalleryCard;
     recommendationFeedbackService.setOutputPathForTesting(null);

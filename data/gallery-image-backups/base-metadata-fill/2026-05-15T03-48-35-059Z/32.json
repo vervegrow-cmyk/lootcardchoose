@@ -1,0 +1,166 @@
+{
+  "title": "32",
+  "description": "Auto generated metadata for 32",
+  "tags": [
+    "32"
+  ],
+  "style": "",
+  "rarity": "",
+  "category": "card",
+  "character": "",
+  "color": "",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "32.jpg",
+    "syncSourceId": "local-gallery:32.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "white",
+          "black",
+          "silver"
+        ],
+        "styleTags": [
+          "anime",
+          "digital art",
+          "illustration",
+          "hyperrealistic",
+          "character design"
+        ],
+        "compositionTags": [
+          "centered composition",
+          "full body",
+          "close up",
+          "symmetrical",
+          "dynamic pose"
+        ],
+        "subjectFocus": "female character in fast food uniform",
+        "raritySignals": [
+          "artist signature",
+          "patreon watermark",
+          "unique design"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "playful",
+          "cheerful",
+          "flirtatious",
+          "adorable",
+          "energetic"
+        ],
+        "toneTags": [
+          "lighthearted",
+          "whimsical",
+          "kawaii",
+          "vibrant"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.3
+      },
+      "characterLayer": {
+        "entityType": "human female",
+        "genderPresentation": "female",
+        "agePresentation": "teen to young adult",
+        "archetypeTags": [
+          "fast food employee",
+          "maid",
+          "servant",
+          "anime girl",
+          "mcdonalds employee"
+        ],
+        "poseTags": [
+          "hands out",
+          "cheerful gesture",
+          "blushing",
+          "looking at viewer",
+          "playful pose"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "fast food restaurant",
+          "mcdonalds",
+          "cafe",
+          "indoor",
+          "modern interior"
+        ],
+        "genreTags": [
+          "anime",
+          "fantasy",
+          "doujinshi",
+          "fan art",
+          "character art"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "uniform",
+          "apron",
+          "headband",
+          "fast food counter",
+          "menu board",
+          "hamburger"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime mcdonalds employee",
+          "fast food girl",
+          "mcdonalds character",
+          "anime fast food",
+          "blushing girl",
+          "patreon art"
+        ],
+        "collectorHooks": [
+          "artist signature",
+          "unique design",
+          "limited edition",
+          "fan art",
+          "digital collectible"
+        ],
+        "marketingAngles": [
+          "kawaii style",
+          "fast food theme",
+          "anime character",
+          "patreon creator",
+          "digital art collection"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "digital art collectors",
+          "fast food enthusiasts",
+          "patreon supporters",
+          "character art lovers"
+        ],
+        "safetyFlags": [
+          "explicit content",
+          "sexualized pose",
+          "blushing expression",
+          "fan art"
+        ]
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "McDonald's Anime Girl in Uniform",
+      "shopifyTitle": "McDonald's Anime Girl in Uniform - Digital Art Collectible",
+      "shortName": "McDonalds Anime Girl",
+      "slug": "mcdonalds-anime-girl",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

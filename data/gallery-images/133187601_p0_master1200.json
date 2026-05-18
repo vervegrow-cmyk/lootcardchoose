@@ -1,0 +1,151 @@
+{
+  "title": "Cute Girl in Red Outfit with Clover Motif",
+  "description": "A cheerful anime-style girl in a red outfit adorned with clover patterns, making a peace sign with a fluffy companion nearby.",
+  "tags": [
+    "ani",
+    "cute",
+    "female character",
+    "clover",
+    "red outfit",
+    "peace sign",
+    "fluffy companion",
+    "collectible",
+    "anime",
+    "female",
+    "girl",
+    "anime girl",
+    "beauty",
+    "collectible card"
+  ],
+  "style": "anime",
+  "rarity": "SSR",
+  "category": "anime",
+  "character": "female character",
+  "color": "red",
+  "mood": "cheerful",
+  "scene": "studio",
+  "price": 150,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "filename": "133187601_p0_master1200.jpg",
+    "syncSourceId": "local-gallery:133187601_p0_master1200.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.99,
+      "visualLayer": {
+        "primaryColors": [
+          "white",
+          "pink"
+        ],
+        "styleTags": [
+          "anime",
+          "illustration",
+          "digital art"
+        ],
+        "compositionTags": [
+          "centered subject",
+          "bright background",
+          "fluffy companion"
+        ],
+        "subjectFocus": "girl with clover motif",
+        "raritySignals": [
+          "collectible card"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "cheerful",
+          "playful",
+          "happy"
+        ],
+        "toneTags": [
+          "whimsical",
+          "lighthearted",
+          "joyful"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.2
+      },
+      "characterLayer": {
+        "entityType": "humanoid",
+        "genderPresentation": "female",
+        "agePresentation": "child",
+        "archetypeTags": [
+          "cute",
+          "friendly",
+          "adventurer"
+        ],
+        "poseTags": [
+          "peace sign",
+          "smiling",
+          "cheerful"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "studio",
+          "neutral background",
+          "fantasy"
+        ],
+        "genreTags": [
+          "anime",
+          "fantasy",
+          "adventure"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "clover",
+          "backpack",
+          "fluffy companion"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "clover motif",
+          "peace sign",
+          "collectible card"
+        ],
+        "collectorHooks": [
+          "limited edition",
+          "rare character",
+          "cute design"
+        ],
+        "marketingAngles": [
+          "cute collectible",
+          "anime fan favorite",
+          "limited rarity"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "collectors",
+          "gacha players"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Cute Girl in Red Outfit with Clover Motif",
+      "shopifyTitle": "Cute Girl in Red Outfit with Clover Motif - SSR Collectible Card",
+      "shortName": "Clover Girl SSR",
+      "slug": "clover-girl-ssr",
+      "namingVersion": "v1",
+      "confidence": 0.98,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Crimson Clover Charmer"
+  }
+}

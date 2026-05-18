@@ -1,0 +1,178 @@
+{
+  "title": "Anime Girl in Shiny Black Outfit",
+  "description": "A female anime character with silver hair wearing a shiny black outfit, posing intimately.",
+  "tags": [
+    "ani",
+    "female character",
+    "shiny black",
+    "intimate pose",
+    "silver hair",
+    "collectible",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "collectible card"
+  ],
+  "style": "shiny black anime",
+  "rarity": "UR",
+  "category": "anime",
+  "character": "female character",
+  "color": "black",
+  "mood": "intimate",
+  "scene": "close-up",
+  "price": 100,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "zh": {
+      "title": "动漫女孩穿着闪亮黑色服装",
+      "description": "一位银发女性动漫角色穿着闪亮黑色服装，摆出亲密姿势。",
+      "tags": [
+        "动漫",
+        "女性角色",
+        "闪亮黑色",
+        "亲密姿势",
+        "银发",
+        "收藏卡"
+      ]
+    },
+    "filename": "13.jpg",
+    "syncSourceId": "local-gallery:13.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "black",
+          "silver",
+          "white"
+        ],
+        "styleTags": [
+          "shiny",
+          "glamorous",
+          "high contrast",
+          "anime",
+          "digital art"
+        ],
+        "compositionTags": [
+          "close-up",
+          "intimate framing",
+          "dynamic pose",
+          "body focus",
+          "partial background"
+        ],
+        "subjectFocus": "female anime character",
+        "raritySignals": [
+          "collectible",
+          "premium artwork"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "intimate",
+          "seductive",
+          "alluring",
+          "elegant"
+        ],
+        "toneTags": [
+          "soft",
+          "luxurious",
+          "mystical"
+        ],
+        "energyLevel": "medium",
+        "dramaticIntensity": 0.7
+      },
+      "characterLayer": {
+        "entityType": "anime girl",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "seductress",
+          "glamour",
+          "mystic",
+          "warrior"
+        ],
+        "poseTags": [
+          "curled",
+          "reclining",
+          "intimate",
+          "posed",
+          "dynamic"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "abstract",
+          "studio",
+          "minimalist",
+          "neutral background"
+        ],
+        "genreTags": [
+          "anime",
+          "fantasy",
+          "erotic"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "outfit",
+          "armor",
+          "accessories",
+          "headpiece"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "shiny black outfit",
+          "intimate pose",
+          "silver hair",
+          "collectible card",
+          "anime art"
+        ],
+        "collectorHooks": [
+          "ur rarity",
+          "premium digital art",
+          "exclusive design",
+          "high detail"
+        ],
+        "marketingAngles": [
+          "luxury aesthetic",
+          "emotional appeal",
+          "collector s edition",
+          "fan favorite"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "collectors",
+          "digital art lovers",
+          "gaming community"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Anime Girl in Shiny Black Outfit",
+      "shopifyTitle": "Anime Girl in Shiny Black Outfit - UR Collectible Card",
+      "shortName": "Shiny Black Anime Girl",
+      "slug": "shiny-black-anime-girl",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Obsidian Warrior UR"
+  }
+}

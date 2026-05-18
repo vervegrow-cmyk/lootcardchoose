@@ -1,0 +1,166 @@
+{
+  "title": "Pink-haired Maid Girl with Heart-shaped Bust",
+  "description": "A cute anime-style pink-haired maid girl with purple eyes, wearing a red and white maid outfit, holding a tray with a drink. Her chest has a heart-shaped marking.",
+  "tags": [
+    "maid",
+    "ani",
+    "pink hair",
+    "purple eyes",
+    "heart",
+    "female character",
+    "collectible",
+    "cute",
+    "maid outfit",
+    "tray",
+    "drink",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "collectible card"
+  ],
+  "style": "anime",
+  "rarity": "UR",
+  "category": "anime",
+  "character": "female character",
+  "color": "pink and red",
+  "mood": "cute",
+  "scene": "indoor",
+  "price": 100,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "filename": "142761890-2aff27833f4eca24ee4dbd934703cf76_p0_master1200.jpg",
+    "syncSourceId": "local-gallery:142761890-2aff27833f4eca24ee4dbd934703cf76_p0_master1200.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "pink",
+          "white"
+        ],
+        "styleTags": [
+          "anime",
+          "illustration",
+          "digital art"
+        ],
+        "compositionTags": [
+          "centered subject",
+          "close-up",
+          "full body",
+          "tray in hand",
+          "heart-shaped marking"
+        ],
+        "subjectFocus": "pink-haired maid girl",
+        "raritySignals": [
+          "collectible card",
+          "high detail"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "cute",
+          "playful",
+          "sweet",
+          "adorable"
+        ],
+        "toneTags": [
+          "whimsical",
+          "charming",
+          "gentle"
+        ],
+        "energyLevel": "medium",
+        "dramaticIntensity": 0.3
+      },
+      "characterLayer": {
+        "entityType": "female character",
+        "genderPresentation": "female",
+        "agePresentation": "teenage",
+        "archetypeTags": [
+          "maid",
+          "service girl",
+          "cute girl"
+        ],
+        "poseTags": [
+          "standing",
+          "smiling",
+          "holding tray",
+          "looking at viewer"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "indoor",
+          "cafe",
+          "restaurant"
+        ],
+        "genreTags": [
+          "anime",
+          "fantasy",
+          "chibi"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "tray",
+          "drink",
+          "heart-shaped marking",
+          "maid outfit"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "pink maid anime",
+          "cute maid girl",
+          "heart bust maid",
+          "anime collectible card",
+          "maid outfit"
+        ],
+        "collectorHooks": [
+          "ur rarity",
+          "heart-shaped bust",
+          "pink hair",
+          "purple eyes",
+          "cute anime girl"
+        ],
+        "marketingAngles": [
+          "cute aesthetic",
+          "collectible art",
+          "anime fan merchandise",
+          "limited edition"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "collectors",
+          "gacha players",
+          "furry fans",
+          "maid enthusiasts"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Pink-haired Maid Girl with Heart-shaped Bust",
+      "shopifyTitle": "Pink-haired Maid Girl with Heart-shaped Bust - UR Collectible Card",
+      "shortName": "Pink Maid Heart Bust",
+      "slug": "pink-maid-heart-bust",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Crimson Heart Maid"
+  }
+}

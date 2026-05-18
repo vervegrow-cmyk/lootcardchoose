@@ -1,0 +1,166 @@
+{
+  "title": "Anime Girl In Traditional Armor",
+  "description": "A stylish high detail character card with blue and white tones, low angle shot, and indoor appeal.",
+  "tags": [
+    "anime girl",
+    "samurai girl",
+    "fantasy character",
+    "high detail illustration",
+    "collectible card",
+    "elegant",
+    "playful",
+    "confident",
+    "glamorous",
+    "warrior",
+    "samurai",
+    "miko",
+    "fantasy heroine",
+    "anime",
+    "digital art"
+  ],
+  "style": "anime",
+  "rarity": "SSR",
+  "category": "card",
+  "character": "female character warrior",
+  "color": "blue white gold pink",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "57.jpg",
+    "syncSourceId": "local-gallery:57.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "blue",
+          "white",
+          "gold",
+          "pink"
+        ],
+        "styleTags": [
+          "anime",
+          "digital-art",
+          "illustration",
+          "high-detail",
+          "3d-render"
+        ],
+        "compositionTags": [
+          "low-angle-shot",
+          "centered-subject",
+          "close-up",
+          "dramatic-lighting",
+          "shallow-depth-of-field"
+        ],
+        "subjectFocus": "female character in traditional-inspired outfit",
+        "raritySignals": [
+          "high-detail rendering",
+          "limited edition style",
+          "collector-grade composition"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "seductive",
+          "playful",
+          "confident",
+          "alluring"
+        ],
+        "toneTags": [
+          "warm",
+          "intimate",
+          "soft",
+          "luxurious"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.85
+      },
+      "characterLayer": {
+        "entityType": "female character",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "warrior",
+          "samurai",
+          "miko",
+          "fantasy-heroine"
+        ],
+        "poseTags": [
+          "looking-down",
+          "half-body",
+          "slightly-crouched",
+          "hands-on-hips"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "indoor",
+          "traditional-japanese",
+          "wooden-architecture",
+          "shoji-screen"
+        ],
+        "genreTags": [
+          "fantasy",
+          "anime",
+          "manga",
+          "game-art"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "armor",
+          "kimono-style-clothing",
+          "ornamental-bow",
+          "necklace",
+          "sash"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "samurai girl",
+          "fantasy character",
+          "high-detail illustration",
+          "collectible card"
+        ],
+        "collectorHooks": [
+          "limited edition",
+          "high-artistry",
+          "rare composition",
+          "collector-grade quality"
+        ],
+        "marketingAngles": [
+          "visual appeal",
+          "emotional connection",
+          "collector value",
+          "artistic excellence"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "gaming community",
+          "digital art collectors",
+          "fantasy enthusiasts"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Anime Girl in Traditional Armor",
+      "shopifyTitle": "Anime Girl in Traditional Armor Collectible Card",
+      "shortName": "Anime Girl Card",
+      "slug": "anime-girl-traditional-armor-card",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

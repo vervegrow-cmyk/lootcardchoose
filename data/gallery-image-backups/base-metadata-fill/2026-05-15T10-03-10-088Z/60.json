@@ -1,0 +1,172 @@
+{
+  "title": "Fantasy Queen With Blue And Gold Armor",
+  "description": "A stylish high detail character card with blue and gold tones, low angle, and castle interior appeal.",
+  "tags": [
+    "anime girl",
+    "fantasy queen",
+    "character art fantasy art",
+    "high detail illustration",
+    "blue and gold costume",
+    "glamorous",
+    "elegant",
+    "confident",
+    "playful",
+    "princess",
+    "warrior",
+    "celestial being",
+    "anime",
+    "digital illustration",
+    "high detail"
+  ],
+  "style": "anime",
+  "rarity": "SSR",
+  "category": "card",
+  "character": "female humanoid princess",
+  "color": "blue gold skin tone",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "60.jpg",
+    "syncSourceId": "local-gallery:60.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "blue",
+          "gold",
+          "skin tone"
+        ],
+        "styleTags": [
+          "anime",
+          "digital illustration",
+          "high detail",
+          "glow effect",
+          "dynamic lighting"
+        ],
+        "compositionTags": [
+          "low angle",
+          "close-up",
+          "centered subject",
+          "foreground emphasis",
+          "shallow depth of field"
+        ],
+        "subjectFocus": "female character with exaggerated curves",
+        "raritySignals": [
+          "high production value",
+          "detailed costume",
+          "unique headgear",
+          "professional lighting"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "alluring",
+          "seductive",
+          "confident",
+          "playful"
+        ],
+        "toneTags": [
+          "luxurious",
+          "opulent",
+          "fantasy",
+          "erotic"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.85
+      },
+      "characterLayer": {
+        "entityType": "female humanoid",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "princess",
+          "warrior",
+          "fantasy queen",
+          "celestial being"
+        ],
+        "poseTags": [
+          "curved posture",
+          "hands on hips",
+          "looking down",
+          "exaggerated hip sway"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "castle interior",
+          "royal chamber",
+          "gothic architecture",
+          "wooden ceiling"
+        ],
+        "genreTags": [
+          "fantasy",
+          "erotic fantasy",
+          "anime",
+          "game art"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "ornate crown",
+          "blue and gold armor",
+          "flowing cape",
+          "golden accessories"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "fantasy queen",
+          "erotic fantasy art",
+          "high detail illustration",
+          "blue and gold costume"
+        ],
+        "collectorHooks": [
+          "unique pose",
+          "detailed costume",
+          "high production value",
+          "limited edition",
+          "exclusive character design"
+        ],
+        "marketingAngles": [
+          "collectible fantasy art",
+          "digital illustration",
+          "anime style",
+          "luxury fantasy theme",
+          "erotic fantasy collectible"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "fantasy collectors",
+          "digital art enthusiasts",
+          "erotic fantasy collectors",
+          "game art collectors"
+        ],
+        "safetyFlags": [
+          "explicit content",
+          "erotic theme",
+          "adult-oriented"
+        ]
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Fantasy Queen with Blue and Gold Armor",
+      "shopifyTitle": "Fantasy Queen with Blue and Gold Armor - Digital Art Collectible",
+      "shortName": "Fantasy Queen",
+      "slug": "fantasy-queen-blue-gold-armor",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

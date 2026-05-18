@@ -1,0 +1,146 @@
+{
+  "title": "Bunny Girl Casino Queen",
+  "description": "A stylish hyperrealistic character card with pink and black tones, centered, and casino appeal.",
+  "tags": [
+    "bunny girl casino",
+    "anime girl card",
+    "luxury fantasy art",
+    "elegant",
+    "confident",
+    "luxurious",
+    "bunny girl",
+    "casino queen",
+    "glamorous",
+    "anime",
+    "hyperrealistic",
+    "digital art"
+  ],
+  "style": "anime",
+  "rarity": "SSR",
+  "category": "card",
+  "character": "female humanoid bunny girl",
+  "color": "pink black gold",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "46.jpg",
+    "syncSourceId": "local-gallery:46.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "pink",
+          "black",
+          "gold"
+        ],
+        "styleTags": [
+          "anime",
+          "hyperrealistic",
+          "digital-art"
+        ],
+        "compositionTags": [
+          "centered",
+          "close-up",
+          "high-detail"
+        ],
+        "subjectFocus": "female character with bunny ears",
+        "raritySignals": [
+          "high-detail rendering",
+          "unique character design",
+          "luxury setting"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "seductive",
+          "confident",
+          "luxurious"
+        ],
+        "toneTags": [
+          "playful",
+          "alluring",
+          "elegant"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.85
+      },
+      "characterLayer": {
+        "entityType": "female humanoid",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "bunny girl",
+          "casino queen",
+          "glamorous"
+        ],
+        "poseTags": [
+          "sitting",
+          "front-facing",
+          "hands on table"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "casino",
+          "luxury interior",
+          "gaming table"
+        ],
+        "genreTags": [
+          "fantasy",
+          "erotic anime",
+          "dystopian"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "bunny ears",
+          "choker",
+          "gaming chips",
+          "roulette table"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "bunny girl casino",
+          "anime girl card",
+          "luxury fantasy art"
+        ],
+        "collectorHooks": [
+          "unique character design",
+          "high-detail rendering",
+          "limited edition"
+        ],
+        "marketingAngles": [
+          "seductive fantasy",
+          "luxury gaming theme",
+          "anime collectible"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "gaming enthusiasts",
+          "digital art collectors"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Bunny Girl Casino Queen",
+      "shopifyTitle": "Bunny Girl Casino Queen - Digital Art Collectible",
+      "shortName": "Bunny Casino Queen",
+      "slug": "bunny-casino-queen",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

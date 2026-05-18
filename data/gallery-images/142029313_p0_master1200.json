@@ -1,0 +1,192 @@
+{
+  "title": "Anime Girl with White Wings Collectible Card",
+  "description": "A beautiful anime girl with long dark hair and white feathered wings, sitting gracefully in a magical, glowing blue environment.",
+  "tags": [
+    "ani",
+    "female character",
+    "white wings",
+    "magic",
+    "glowing",
+    "fantasy",
+    "collectible",
+    "gacha",
+    "goddess",
+    "angelic",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "premium",
+    "collectible card",
+    "luxury"
+  ],
+  "style": "anime fantasy",
+  "rarity": "SSR",
+  "category": "anime",
+  "character": "female character",
+  "color": "purple and blue",
+  "mood": "serene",
+  "scene": "magical landscape",
+  "price": 150,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "zh": {
+      "title": "带白色翅膀的动漫女孩收藏卡",
+      "description": "一位美丽的动漫女孩，有着长长的黑发和白色的羽翼，优雅地坐在一个发光的蓝色魔法环境中。",
+      "tags": [
+        "动漫",
+        "女性角色",
+        "白色翅膀",
+        "魔法",
+        "发光",
+        "幻想",
+        "收藏卡",
+        "扭蛋",
+        "女神",
+        "天使"
+      ]
+    },
+    "filename": "142029313_p0_master1200.jpg",
+    "syncSourceId": "local-gallery:142029313_p0_master1200.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "purple",
+          "blue",
+          "white"
+        ],
+        "styleTags": [
+          "anime",
+          "fantasy",
+          "illustration",
+          "digital art"
+        ],
+        "compositionTags": [
+          "centered subject",
+          "soft lighting",
+          "glowing particles",
+          "floating elements"
+        ],
+        "subjectFocus": "female anime character with white wings",
+        "raritySignals": [
+          "ssr rarity",
+          "premium collectible",
+          "luxury aesthetic"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "serene",
+          "peaceful",
+          "dreamy",
+          "ethereal"
+        ],
+        "toneTags": [
+          "calm",
+          "magical",
+          "divine",
+          "gentle"
+        ],
+        "energyLevel": "low",
+        "dramaticIntensity": 0.2
+      },
+      "characterLayer": {
+        "entityType": "goddess",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "angelic",
+          "magical being",
+          "celestial",
+          "goddess"
+        ],
+        "poseTags": [
+          "sitting",
+          "graceful",
+          "relaxed",
+          "contemplative"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "magical landscape",
+          "celestial realm",
+          "floating islands",
+          "glowing environment"
+        ],
+        "genreTags": [
+          "fantasy",
+          "anime",
+          "mythology",
+          "spiritual"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "white feathered wings",
+          "glowing particles",
+          "floating creatures",
+          "ornate clothing"
+        ],
+        "powerSystemTags": [
+          "magic",
+          "divine energy",
+          "elemental aura"
+        ]
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "white wings",
+          "magic girl",
+          "ssr collectible",
+          "gacha card",
+          "anime fantasy"
+        ],
+        "collectorHooks": [
+          "premium rarity",
+          "luxury aesthetic",
+          "limited edition",
+          "goddess character"
+        ],
+        "marketingAngles": [
+          "serene beauty",
+          "celestial theme",
+          "fantasy collectible",
+          "gacha game asset"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "collectors",
+          "gacha players",
+          "fantasy enthusiasts"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Serene Goddess with White Wings",
+      "shopifyTitle": "Serene Goddess with White Wings - SSR Collectible Card",
+      "shortName": "Goddess Wings SSR",
+      "slug": "goddess-wings-ssr",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Celestial Winged Goddess"
+  }
+}

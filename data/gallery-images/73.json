@@ -1,0 +1,170 @@
+{
+  "title": "Bedroom Heroine Portrait",
+  "description": "A collectible hyperrealistic card with light blue and black tones, soft styling, and a polished fantasy heroine showcase inspired by light blue hair scenes.",
+  "tags": [
+    "anime girl",
+    "elegant character",
+    "glamorous artwork",
+    "light blue hair",
+    "bedroom scene",
+    "elegant",
+    "playful",
+    "intimate",
+    "romantic",
+    "fantasy heroine",
+    "glamour",
+    "femme fatale",
+    "mystical",
+    "digital art",
+    "anime"
+  ],
+  "style": "digital art",
+  "rarity": "SSR",
+  "category": "card",
+  "character": "female character fantasy heroine",
+  "color": "light blue black peach brown",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "73.jpg",
+    "syncSourceId": "local-gallery:73.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "light blue",
+          "black",
+          "peach",
+          "brown"
+        ],
+        "styleTags": [
+          "digital art",
+          "anime",
+          "hyperrealistic",
+          "glow",
+          "soft lighting"
+        ],
+        "compositionTags": [
+          "centered subject",
+          "close-up",
+          "low angle",
+          "bedroom setting",
+          "heart motifs"
+        ],
+        "subjectFocus": "female character with light blue hair",
+        "raritySignals": [
+          "high detail",
+          "unique pose",
+          "glamorous aesthetic",
+          "limited edition potential"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "seductive",
+          "playful",
+          "intimate",
+          "romantic"
+        ],
+        "toneTags": [
+          "soft",
+          "warm",
+          "dreamy"
+        ],
+        "energyLevel": "medium",
+        "dramaticIntensity": 0.65
+      },
+      "characterLayer": {
+        "entityType": "female character",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "seductress",
+          "glamour",
+          "femme fatale",
+          "mystical"
+        ],
+        "poseTags": [
+          "sitting",
+          "curved posture",
+          "hand on chest",
+          "looking over shoulder"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "bedroom",
+          "traditional interior",
+          "wooden architecture",
+          "indoor"
+        ],
+        "genreTags": [
+          "fantasy",
+          "anime",
+          "erotic art",
+          "character design"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "lamp",
+          "red ribbon",
+          "earrings",
+          "black outfit"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "seductive character",
+          "glamorous artwork",
+          "light blue hair",
+          "bedroom scene"
+        ],
+        "collectorHooks": [
+          "limited edition",
+          "high detail",
+          "unique pose",
+          "fan favorite"
+        ],
+        "marketingAngles": [
+          "collector s item",
+          "wall art",
+          "digital collectible",
+          "fan art"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "digital art collectors",
+          "gaming community",
+          "erotic art enthusiasts"
+        ],
+        "safetyFlags": [
+          "explicit content",
+          "adult themes",
+          "suggestive imagery"
+        ]
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Seductive Anime Girl with Light Blue Hair",
+      "shopifyTitle": "Seductive Anime Girl with Light Blue Hair - Digital Art Collectible",
+      "shortName": "Blue Hair Seductress",
+      "slug": "blue-hair-seductress",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Sapphire Enchantress Portrait"
+  }
+}

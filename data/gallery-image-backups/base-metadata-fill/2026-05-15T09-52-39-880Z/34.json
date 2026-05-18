@@ -1,0 +1,149 @@
+{
+  "title": "Beachside Seduction",
+  "description": "A relaxed anime card featuring a beach-babe in a beach setting.",
+  "tags": [
+    "anime beach girl",
+    "bikini illustration",
+    "female character card",
+    "relaxed",
+    "playful",
+    "seductive",
+    "beach-babe",
+    "summer-girl",
+    "fantasy-character",
+    "anime",
+    "digital-art",
+    "illustration"
+  ],
+  "style": "anime",
+  "rarity": "SSR",
+  "category": "card",
+  "character": "human - beach-babe",
+  "color": "beige blue black",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "34.jpg",
+    "syncSourceId": "local-gallery:34.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "beige",
+          "blue",
+          "black"
+        ],
+        "styleTags": [
+          "anime",
+          "digital-art",
+          "illustration",
+          "hyperrealistic"
+        ],
+        "compositionTags": [
+          "close-up",
+          "centered-framing",
+          "low-angle-shot"
+        ],
+        "subjectFocus": "female character in bikini",
+        "raritySignals": [
+          "patreon-artist-watermark",
+          "limited-edition-artist-signature"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "relaxed",
+          "playful",
+          "seductive"
+        ],
+        "toneTags": [
+          "warm",
+          "sunlit",
+          "cozy"
+        ],
+        "energyLevel": "medium",
+        "dramaticIntensity": 0.3
+      },
+      "characterLayer": {
+        "entityType": "human",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "beach-babe",
+          "summer-girl",
+          "fantasy-character"
+        ],
+        "poseTags": [
+          "sitting",
+          "cross-legged",
+          "looking-at-viewer"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "beach",
+          "tropical",
+          "outdoor"
+        ],
+        "genreTags": [
+          "fantasy",
+          "erotic",
+          "adventure"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "wooden-lounge-chair",
+          "bikini",
+          "beach-accessories"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime beach girl",
+          "bikini illustration",
+          "patreon art",
+          "female character card"
+        ],
+        "collectorHooks": [
+          "artist signature",
+          "limited edition",
+          "high detail artwork"
+        ],
+        "marketingAngles": [
+          "summer collection",
+          "fan art appreciation",
+          "digital collectible"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "digital art collectors",
+          "gacha game players"
+        ],
+        "safetyFlags": [
+          "explicit content",
+          "erotic theme"
+        ]
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Beachside Seduction",
+      "shopifyTitle": "Beachside Seduction - Digital Art Collectible",
+      "shortName": "Beach Seduction",
+      "slug": "beach-seduction",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

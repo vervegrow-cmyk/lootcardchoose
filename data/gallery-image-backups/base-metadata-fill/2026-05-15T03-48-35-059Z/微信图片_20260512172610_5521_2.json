@@ -1,0 +1,147 @@
+{
+  "title": "微信图片 20260512172610 5521 2",
+  "description": "Auto generated metadata for 微信图片 20260512172610 5521 2",
+  "tags": [
+    "微信图片",
+    "20260512172610",
+    "5521",
+    "2"
+  ],
+  "style": "",
+  "rarity": "",
+  "category": "card",
+  "character": "",
+  "color": "",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "微信图片_20260512172610_5521_2.jpg",
+    "syncSourceId": "local-gallery:微信图片_20260512172610_5521_2.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "white",
+          "blue",
+          "green"
+        ],
+        "styleTags": [
+          "anime",
+          "digital-art",
+          "illustration",
+          "high-detail",
+          "4k"
+        ],
+        "compositionTags": [
+          "centered",
+          "close-up",
+          "sitting",
+          "partial-body",
+          "dynamic-pose"
+        ],
+        "subjectFocus": "female character with horns",
+        "raritySignals": [
+          "4k",
+          "high-detail",
+          "digital-art"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "playful",
+          "confident",
+          "alluring"
+        ],
+        "toneTags": [
+          "lighthearted",
+          "vibrant",
+          "whimsical"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.7
+      },
+      "characterLayer": {
+        "entityType": "humanoid",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "mythical",
+          "fantasy",
+          "celestial",
+          "divine"
+        ],
+        "poseTags": [
+          "sitting",
+          "relaxed",
+          "posed",
+          "seductive"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "outdoor",
+          "natural",
+          "forest",
+          "mythical"
+        ],
+        "genreTags": [
+          "fantasy",
+          "anime",
+          "mythology"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "horned-headwear",
+          "traditional-clothing",
+          "belt"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "mythical character",
+          "fantasy illustration",
+          "4k digital art",
+          "sitting pose"
+        ],
+        "collectorHooks": [
+          "high-detail artwork",
+          "unique character design",
+          "limited edition 4k"
+        ],
+        "marketingAngles": [
+          "collectible digital art",
+          "anime fan art",
+          "fantasy character collection"
+        ],
+        "audienceTags": [
+          "anime collectors",
+          "digital art enthusiasts",
+          "fantasy fans",
+          "gaming community"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Mythical Anime Girl with Horns",
+      "shopifyTitle": "Mythical Anime Girl with Horns - 4K Digital Art",
+      "shortName": "Mythical Horned Girl",
+      "slug": "mythical-horned-girl",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

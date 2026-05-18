@@ -1,0 +1,188 @@
+{
+  "title": "Angel Wings Girl in White Kimono",
+  "description": "A cute anime girl with purple hair and angel wings, wearing a white kimono and holding her hands out, standing in a dimly lit alleyway.",
+  "tags": [
+    "ani",
+    "female character",
+    "angel wings",
+    "white kimono",
+    "purple hair",
+    "cute",
+    "alleyway",
+    "night scene",
+    "collectible",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "collectible card"
+  ],
+  "style": "black gold anime",
+  "rarity": "SSR",
+  "category": "anime",
+  "character": "female character",
+  "color": "white and purple",
+  "mood": "gentle and serene",
+  "scene": "night alleyway",
+  "price": 150,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "zh": {
+      "title": "白和服天使翅膀少女",
+      "description": "一位可爱的动漫少女，紫色头发，天使翅膀，穿着白色和服，双手捧着，站在昏暗的巷子里。",
+      "tags": [
+        "动漫",
+        "女性角色",
+        "天使翅膀",
+        "白色和服",
+        "紫色头发",
+        "可爱",
+        "巷子",
+        "夜景",
+        "收藏卡"
+      ]
+    },
+    "filename": "142704634_p2_master1200.jpg",
+    "syncSourceId": "local-gallery:142704634_p2_master1200.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "white",
+          "purple"
+        ],
+        "styleTags": [
+          "anime",
+          "black gold anime",
+          "high detail",
+          "glow effects",
+          "soft lighting"
+        ],
+        "compositionTags": [
+          "centered subject",
+          "symmetrical framing",
+          "low angle",
+          "shallow depth of field"
+        ],
+        "subjectFocus": "anime girl with angel wings",
+        "raritySignals": [
+          "ssr rarity",
+          "collectible card",
+          "premium visual quality"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "gentle",
+          "serene",
+          "peaceful",
+          "dreamy"
+        ],
+        "toneTags": [
+          "soft",
+          "calm",
+          "ethereal",
+          "whimsical"
+        ],
+        "energyLevel": "low",
+        "dramaticIntensity": 0.2
+      },
+      "characterLayer": {
+        "entityType": "anime girl",
+        "genderPresentation": "female",
+        "agePresentation": "teenage",
+        "archetypeTags": [
+          "angel",
+          "princess",
+          "mystic",
+          "celestial being"
+        ],
+        "poseTags": [
+          "hands outstretched",
+          "receptive posture",
+          "gentle expression"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "night alleyway",
+          "urban",
+          "dimly lit",
+          "urban fantasy"
+        ],
+        "genreTags": [
+          "anime",
+          "fantasy",
+          "manga",
+          "visual novel"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "white kimono",
+          "angel wings",
+          "glowing particles",
+          "hand gesture"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "angel wings",
+          "white kimono",
+          "purple hair",
+          "ssr collectible",
+          "anime collectible card",
+          "female character",
+          "night alleyway"
+        ],
+        "collectorHooks": [
+          "limited edition",
+          "high rarity",
+          "premium art",
+          "collector s item",
+          "anime fan favorite"
+        ],
+        "marketingAngles": [
+          "gentle beauty",
+          "celestial charm",
+          "dreamy aesthetic",
+          "urban fantasy",
+          "anime collectible"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "collectible card collectors",
+          "visual novel enthusiasts",
+          "manga lovers",
+          "gacha game players"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Angel Wings Girl in White Kimono",
+      "shopifyTitle": "SSR Collectible Card: Angel Wings Girl in White Kimono",
+      "shortName": "Angel Wings Girl",
+      "slug": "angel-wings-girl-white-kimono",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Celestial Kimono Angel"
+  }
+}

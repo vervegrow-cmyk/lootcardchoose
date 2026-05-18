@@ -1,0 +1,173 @@
+{
+  "title": "Cute Anime Girl in Red Outfit",
+  "description": "A cheerful anime girl with blonde hair and red eyes, wearing a red outfit with floral patterns and a scarf, posing with a playful expression.",
+  "tags": [
+    "ani",
+    "female character",
+    "cute",
+    "red outfit",
+    "floral",
+    "scarf",
+    "playful",
+    "illustration",
+    "collectible",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "collectible card"
+  ],
+  "style": "black gold anime",
+  "rarity": "SSR",
+  "category": "anime",
+  "character": "female character",
+  "color": "red and white",
+  "mood": "playful",
+  "scene": "portrait",
+  "price": 150,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "zh": {
+      "title": "可爱的动漫女孩",
+      "description": "一位金发红眼的动漫女孩，穿着带有花卉图案的红色服装和围巾，表情活泼可爱。",
+      "tags": [
+        "动漫",
+        "女性角色",
+        "可爱",
+        "红色服装",
+        "花卉",
+        "围巾",
+        "活泼",
+        "插画",
+        "收藏卡"
+      ]
+    },
+    "filename": "115860521_p1_master1200.jpg",
+    "syncSourceId": "local-gallery:115860521_p1_master1200.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "white",
+          "black"
+        ],
+        "styleTags": [
+          "anime",
+          "illustration",
+          "portrait",
+          "digital art"
+        ],
+        "compositionTags": [
+          "centered",
+          "full-body",
+          "close-up",
+          "soft background"
+        ],
+        "subjectFocus": "anime girl",
+        "raritySignals": [
+          "collectible card",
+          "high rarity"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "playful",
+          "cheerful",
+          "adorable"
+        ],
+        "toneTags": [
+          "bright",
+          "whimsical",
+          "gentle"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.3
+      },
+      "characterLayer": {
+        "entityType": "humanoid",
+        "genderPresentation": "female",
+        "agePresentation": "child",
+        "archetypeTags": [
+          "schoolgirl",
+          "cute character"
+        ],
+        "poseTags": [
+          "hugging scarf",
+          "playful expression",
+          "standing"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "studio",
+          "portrait studio",
+          "neutral background"
+        ],
+        "genreTags": [
+          "anime",
+          "fantasy",
+          "chibi"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "scarf",
+          "outfit",
+          "belt"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "cute collectible",
+          "red outfit",
+          "ssr card",
+          "fucota art"
+        ],
+        "collectorHooks": [
+          "limited edition",
+          "high rarity",
+          "artist signature",
+          "collectible card"
+        ],
+        "marketingAngles": [
+          "cute aesthetic",
+          "anime fan appeal",
+          "collector s item",
+          "digital art"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "collectors",
+          "gacha players",
+          "digital art lovers"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Cute Anime Girl in Red Outfit",
+      "shopifyTitle": "Cute Anime Girl in Red Outfit - SSR Collectible Card",
+      "shortName": "Red Outfit Girl",
+      "slug": "red-outfit-girl",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Crimson Blossom Maiden"
+  }
+}

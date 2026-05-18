@@ -1,0 +1,168 @@
+{
+  "title": "Elegant Heroine Portrait",
+  "description": "A collectible soft shading card with orange and blue tones, whimsical styling, and a polished onmyoji showcase inspired by onsen scenes.",
+  "tags": [
+    "anime onsen girl",
+    "bath time illustration",
+    "female character art",
+    "digital art collectible",
+    "relaxed",
+    "playful",
+    "serene",
+    "cozy",
+    "onmyoji",
+    "onmyoji style",
+    "bath time",
+    "relaxed character",
+    "anime",
+    "digital art",
+    "illustration"
+  ],
+  "style": "anime",
+  "rarity": "SSR",
+  "category": "card",
+  "character": "human onmyoji",
+  "color": "orange blue white gray",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "微信图片_20260512172620_5525_2.jpg",
+    "syncSourceId": "local-gallery:微信图片_20260512172620_5525_2.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "orange",
+          "blue",
+          "white",
+          "gray"
+        ],
+        "styleTags": [
+          "anime",
+          "digital-art",
+          "illustration",
+          "soft-shading",
+          "watercolor-effect"
+        ],
+        "compositionTags": [
+          "centered-subject",
+          "low-angle-shot",
+          "partial-body",
+          "natural-light",
+          "background-blur"
+        ],
+        "subjectFocus": "female character in onsen",
+        "raritySignals": [
+          "digital-art",
+          "artist-signature",
+          "limited-edition-appeal"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "relaxed",
+          "playful",
+          "serene",
+          "cozy"
+        ],
+        "toneTags": [
+          "whimsical",
+          "gentle",
+          "calm"
+        ],
+        "energyLevel": "low",
+        "dramaticIntensity": 0.2
+      },
+      "characterLayer": {
+        "entityType": "human",
+        "genderPresentation": "female",
+        "agePresentation": "young-adult",
+        "archetypeTags": [
+          "onmyoji",
+          "onmyoji-style",
+          "bath-time",
+          "relaxed-character"
+        ],
+        "poseTags": [
+          "bathing",
+          "crouching",
+          "hands-on-knees",
+          "half-naked",
+          "water-splash"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "onsen",
+          "outdoor-bath",
+          "mountain-view",
+          "rocky-landscape",
+          "wooden-structure"
+        ],
+        "genreTags": [
+          "fantasy",
+          "slice-of-life",
+          "romantic-comedy",
+          "yuri"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "bath-water",
+          "bath-towel",
+          "tattoo",
+          "earrings",
+          "wooden-roof"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime onsen girl",
+          "bath time illustration",
+          "female character art",
+          "digital art collectible",
+          "vrennnime"
+        ],
+        "collectorHooks": [
+          "artist signature",
+          "limited edition",
+          "unique tattoo design",
+          "soft shading style"
+        ],
+        "marketingAngles": [
+          "relaxing scene",
+          "character art",
+          "onmyoji style",
+          "bath time aesthetic"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "digital art collectors",
+          "onmyoji enthusiasts",
+          "bath culture lovers"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Onsen Girl in Soft Light",
+      "shopifyTitle": "Onsen Girl in Soft Light - Digital Art Collectible",
+      "shortName": "Onsen Girl",
+      "slug": "onsen-girl-soft-light",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Sapphire Heroine SSR"
+  }
+}

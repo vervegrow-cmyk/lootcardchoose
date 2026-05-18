@@ -1,0 +1,146 @@
+{
+  "title": "Teal Lingerie Glamorous Character In Opulent Lounge",
+  "description": "A stylish high detail character card with teal and gold tones, centered subject, and luxury lounge appeal.",
+  "tags": [
+    "anime elegant woman",
+    "luxury lingerie illustration",
+    "high detail character art",
+    "elegant",
+    "luxurious",
+    "intimate",
+    "glamorous character",
+    "luxury icon",
+    "femme fatale",
+    "anime",
+    "digital art",
+    "illustration",
+    "high detail"
+  ],
+  "style": "anime",
+  "rarity": "",
+  "category": "card",
+  "character": "human glamorous character",
+  "color": "teal gold cream",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "微信图片_20260512172627_5527_2.jpg",
+    "syncSourceId": "local-gallery:微信图片_20260512172627_5527_2.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "teal",
+          "gold",
+          "cream"
+        ],
+        "styleTags": [
+          "anime",
+          "digital-art",
+          "illustration",
+          "high-detail"
+        ],
+        "compositionTags": [
+          "centered-subject",
+          "low-angle-shot",
+          "foreground-focus"
+        ],
+        "subjectFocus": "female character in lingerie",
+        "raritySignals": [
+          "exclusive-photos",
+          "patreon-link"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "seductive",
+          "luxurious",
+          "intimate"
+        ],
+        "toneTags": [
+          "opulent",
+          "elegant",
+          "alluring"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.85
+      },
+      "characterLayer": {
+        "entityType": "human",
+        "genderPresentation": "female",
+        "agePresentation": "young-adult",
+        "archetypeTags": [
+          "seductress",
+          "luxury-icon",
+          "femme-fatale"
+        ],
+        "poseTags": [
+          "leaning-forward",
+          "hands-on-table",
+          "confident-gaze"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "luxury-lounge",
+          "opulent-interior",
+          "evening-scene"
+        ],
+        "genreTags": [
+          "erotic-illustration",
+          "fashion-art",
+          "character-design"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "wine-glass",
+          "chandelier",
+          "luxury-furniture"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime seductive woman",
+          "luxury lingerie illustration",
+          "high-detail character art"
+        ],
+        "collectorHooks": [
+          "exclusive-content",
+          "patreon-featured",
+          "limited-edition"
+        ],
+        "marketingAngles": [
+          "luxury aesthetic",
+          "collector s item",
+          "digital art collection"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "digital art collectors",
+          "luxury illustration enthusiasts"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Teal Lingerie Seductress in Opulent Lounge",
+      "shopifyTitle": "Teal Lingerie Seductress in Opulent Lounge - Digital Art Collectible",
+      "shortName": "Teal Seductress",
+      "slug": "teal-seductress-opulent-lounge",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

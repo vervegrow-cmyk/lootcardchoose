@@ -1,0 +1,165 @@
+{
+  "title": "Elegant Beach Heroine",
+  "description": "A collectible high detail card with blue and pink tones, lighthearted styling, and a polished beach muse showcase inspired by beach scenes.",
+  "tags": [
+    "anime swimsuit girl",
+    "beach anime girl",
+    "blue bikini",
+    "summer illustration",
+    "fantasy character art",
+    "playful",
+    "elegant",
+    "confident",
+    "relaxed",
+    "beach muse",
+    "swimsuit model",
+    "fantasy character",
+    "anime",
+    "digital art",
+    "illustration"
+  ],
+  "style": "anime",
+  "rarity": "SSR",
+  "category": "card",
+  "character": "beach attendant",
+  "color": "blue pink white",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "72.jpg",
+    "syncSourceId": "local-gallery:72.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.99,
+      "visualLayer": {
+        "primaryColors": [
+          "blue",
+          "pink",
+          "white"
+        ],
+        "styleTags": [
+          "anime",
+          "digital-art",
+          "illustration",
+          "high-detail",
+          "glow-effect"
+        ],
+        "compositionTags": [
+          "centered-subject",
+          "close-up",
+          "full-body",
+          "dynamic-angle",
+          "shallow-depth-of-field"
+        ],
+        "subjectFocus": "female character in swimwear",
+        "raritySignals": [
+          "high-artistic-quality",
+          "detailed-rendering",
+          "limited-edition-potential"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "playful",
+          "seductive",
+          "confident",
+          "relaxed"
+        ],
+        "toneTags": [
+          "lighthearted",
+          "vibrant",
+          "summer-vibe"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.7
+      },
+      "characterLayer": {
+        "entityType": "humanoid",
+        "genderPresentation": "female",
+        "agePresentation": "young-adult",
+        "archetypeTags": [
+          "beach-babe",
+          "swimsuit-model",
+          "fantasy-character"
+        ],
+        "poseTags": [
+          "bent-over",
+          "hands-on-hips",
+          "looking-up",
+          "playful-pose"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "beach",
+          "outdoor",
+          "summer-day",
+          "tropical"
+        ],
+        "genreTags": [
+          "fantasy",
+          "erotic-illustration",
+          "anime-style"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "umbrella",
+          "swimwear",
+          "accessories",
+          "beach-toys"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime swimsuit girl",
+          "beach anime girl",
+          "blue bikini",
+          "summer illustration",
+          "fantasy character art"
+        ],
+        "collectorHooks": [
+          "high-detail artwork",
+          "limited edition",
+          "unique character design",
+          "summer-themed collectible"
+        ],
+        "marketingAngles": [
+          "summer collection",
+          "anime fan art",
+          "digital collectible card",
+          "gacha-style art"
+        ],
+        "audienceTags": [
+          "anime collectors",
+          "digital art enthusiasts",
+          "gacha game players",
+          "summer lovers"
+        ],
+        "safetyFlags": [
+          "explicit-content",
+          "erotic-illustration"
+        ]
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Summer Beach Anime Girl in Blue Bikini",
+      "shopifyTitle": "Summer Beach Anime Girl in Blue Bikini - Digital Collectible Card",
+      "shortName": "Summer Beach Girl",
+      "slug": "summer-beach-girl-blue-bikini",
+      "namingVersion": "v1",
+      "confidence": 0.98,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Azure Heroine SSR"
+  }
+}

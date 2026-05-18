@@ -1,0 +1,147 @@
+{
+  "title": "Winged Fairy Girl Eating Bread",
+  "description": "A stylish anime character card with white and purple tones, close up, and fantasy appeal.",
+  "tags": [
+    "anime girl",
+    "fairy character",
+    "winged mask",
+    "eating bread",
+    "digital art",
+    "playful",
+    "serene",
+    "content",
+    "angelic",
+    "fairy",
+    "mystical",
+    "anime",
+    "illustration"
+  ],
+  "style": "anime",
+  "rarity": "SSR",
+  "category": "card",
+  "character": "humanoid angelic",
+  "color": "white purple gold",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "5.jpg",
+    "syncSourceId": "local-gallery:5.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "white",
+          "purple",
+          "gold"
+        ],
+        "styleTags": [
+          "anime",
+          "digital art",
+          "illustration"
+        ],
+        "compositionTags": [
+          "close-up",
+          "centered",
+          "soft lighting"
+        ],
+        "subjectFocus": "female character with wings and mask",
+        "raritySignals": [
+          "high detail",
+          "unique design",
+          "limited edition potential"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "playful",
+          "serene",
+          "content"
+        ],
+        "toneTags": [
+          "whimsical",
+          "gentle",
+          "sweet"
+        ],
+        "energyLevel": "low",
+        "dramaticIntensity": 0.2
+      },
+      "characterLayer": {
+        "entityType": "humanoid",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "angelic",
+          "fairy",
+          "mystical"
+        ],
+        "poseTags": [
+          "relaxed",
+          "reclining",
+          "eating"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "fantasy",
+          "mythical",
+          "celestial"
+        ],
+        "genreTags": [
+          "anime",
+          "fantasy",
+          "adventure"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "winged mask",
+          "bread"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "fairy character",
+          "winged mask",
+          "eating bread",
+          "digital art"
+        ],
+        "collectorHooks": [
+          "unique design",
+          "high detail",
+          "limited edition potential"
+        ],
+        "marketingAngles": [
+          "whimsical fantasy art",
+          "relatable cute character",
+          "collectible digital card"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "digital art collectors",
+          "fantasy enthusiasts"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Winged Fairy Girl Eating Bread",
+      "shopifyTitle": "Winged Fairy Girl Eating Bread - Digital Art Collectible",
+      "shortName": "Fairy Bread Girl",
+      "slug": "winged-fairy-girl-eating-bread",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

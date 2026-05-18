@@ -1,0 +1,186 @@
+{
+  "title": "Blue-haired Bunny Girl in Brown Outfit",
+  "description": "A blue-haired female anime character with bunny ears wearing a shiny brown outfit and thigh-high stockings, posing in an indoor setting.",
+  "tags": [
+    "ani",
+    "female character",
+    "bunny ears",
+    "blue hair",
+    "brown outfit",
+    "thigh high stockings",
+    "collectible",
+    "gaming",
+    "illustration",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "collectible card"
+  ],
+  "style": "black gold anime",
+  "rarity": "SSR",
+  "category": "anime",
+  "character": "female character",
+  "color": "brown and blue",
+  "mood": "playful",
+  "scene": "indoor",
+  "price": 150,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "zh": {
+      "title": "蓝发兔耳女孩棕色服装",
+      "description": "一位蓝发兔耳的女性动漫角色，穿着闪亮的棕色服装和过膝袜，在室内摆姿势。",
+      "tags": [
+        "动漫",
+        "女性角色",
+        "兔耳",
+        "蓝发",
+        "棕色服装",
+        "过膝袜",
+        "收藏卡",
+        "游戏",
+        "插画"
+      ]
+    },
+    "filename": "18.jpg",
+    "syncSourceId": "local-gallery:18.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "brown",
+          "blue",
+          "gold"
+        ],
+        "styleTags": [
+          "anime",
+          "shiny",
+          "glow",
+          "high detail",
+          "illustration"
+        ],
+        "compositionTags": [
+          "centered",
+          "low angle",
+          "full body",
+          "dynamic pose",
+          "close-up"
+        ],
+        "subjectFocus": "female anime character",
+        "raritySignals": [
+          "collectible",
+          "premium"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "playful",
+          "seductive",
+          "alluring",
+          "cheerful"
+        ],
+        "toneTags": [
+          "lighthearted",
+          "flirty",
+          "vibrant"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.7
+      },
+      "characterLayer": {
+        "entityType": "anime girl",
+        "genderPresentation": "female",
+        "agePresentation": "teen",
+        "archetypeTags": [
+          "bunny girl",
+          "servant",
+          "maid",
+          "playful companion"
+        ],
+        "poseTags": [
+          "bent over",
+          "showing backside",
+          "hands on hips",
+          "seductive"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "indoor",
+          "room",
+          "domestic",
+          "interior"
+        ],
+        "genreTags": [
+          "anime",
+          "fantasy",
+          "gaming",
+          "collectible"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "bunny ears",
+          "thigh high stockings",
+          "brown outfit",
+          "blue hair"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "bunny ears",
+          "blue hair",
+          "brown outfit",
+          "thigh high stockings",
+          "ssr collectible",
+          "gaming card",
+          "illustration"
+        ],
+        "collectorHooks": [
+          "rare ssr",
+          "high detail art",
+          "playful character",
+          "premium collectible"
+        ],
+        "marketingAngles": [
+          "visual appeal",
+          "character design",
+          "limited edition",
+          "fan favorite"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "gaming collectors",
+          "digital art lovers",
+          "collectible card enthusiasts"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Blue-haired Bunny Girl in Brown Outfit",
+      "shopifyTitle": "Blue-haired Bunny Girl in Brown Outfit - SSR Collectible Card",
+      "shortName": "Bunny Girl SSR",
+      "slug": "blue-haired-bunny-girl-brown-outfit-ssr",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Sapphire Bunny Maiden"
+  }
+}

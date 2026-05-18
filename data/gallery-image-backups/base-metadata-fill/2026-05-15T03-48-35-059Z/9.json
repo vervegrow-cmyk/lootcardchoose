@@ -1,0 +1,155 @@
+{
+  "title": "9",
+  "description": "Auto generated metadata for 9",
+  "tags": [
+    "9"
+  ],
+  "style": "",
+  "rarity": "",
+  "category": "card",
+  "character": "",
+  "color": "",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "9.jpg",
+    "syncSourceId": "local-gallery:9.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "blue",
+          "white",
+          "gold",
+          "orange"
+        ],
+        "styleTags": [
+          "anime",
+          "digital art",
+          "hyperrealistic",
+          "glow effect"
+        ],
+        "compositionTags": [
+          "low angle",
+          "full body",
+          "dynamic pose",
+          "isolated subject"
+        ],
+        "subjectFocus": "female character in fantasy attire",
+        "raritySignals": [
+          "high detail",
+          "complex costume",
+          "unique headgear"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "playful",
+          "seductive",
+          "elegant",
+          "powerful"
+        ],
+        "toneTags": [
+          "luxurious",
+          "mythic",
+          "celestial"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.85
+      },
+      "characterLayer": {
+        "entityType": "humanoid",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "warrior",
+          "priestess",
+          "divine being",
+          "celestial guardian"
+        ],
+        "poseTags": [
+          "kneeling",
+          "rear view",
+          "exposed back",
+          "dramatic angle"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "mythical",
+          "celestial",
+          "fantasy",
+          "divine domain"
+        ],
+        "genreTags": [
+          "fantasy",
+          "mythology",
+          "godlike",
+          "epic"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "ornate headgear",
+          "golden weapon",
+          "blue tassel",
+          "golden belt"
+        ],
+        "powerSystemTags": [
+          "divine power",
+          "celestial magic",
+          "mythic weapon"
+        ]
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "fantasy warrior",
+          "celestial goddess",
+          "high detail art",
+          "mythical character"
+        ],
+        "collectorHooks": [
+          "limited edition",
+          "high detail",
+          "unique costume",
+          "rare pose",
+          "celestial theme"
+        ],
+        "marketingAngles": [
+          "epic fantasy art",
+          "mythological character",
+          "luxury digital collectible",
+          "celestial goddess",
+          "anime collector s item"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "digital art collectors",
+          "fantasy enthusiasts",
+          "mythology lovers",
+          "gaming community"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Celestial Warrior Goddess",
+      "shopifyTitle": "Celestial Warrior Goddess - Digital Art Collectible",
+      "shortName": "Celestial Warrior",
+      "slug": "celestial-warrior-goddess",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

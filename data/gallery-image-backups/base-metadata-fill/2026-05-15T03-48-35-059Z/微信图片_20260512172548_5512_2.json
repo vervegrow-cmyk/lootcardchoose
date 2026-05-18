@@ -1,0 +1,144 @@
+{
+  "title": "微信图片 20260512172548 5512 2",
+  "description": "Auto generated metadata for 微信图片 20260512172548 5512 2",
+  "tags": [
+    "微信图片",
+    "20260512172548",
+    "5512",
+    "2"
+  ],
+  "style": "",
+  "rarity": "",
+  "category": "card",
+  "character": "",
+  "color": "",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "微信图片_20260512172548_5512_2.jpg",
+    "syncSourceId": "local-gallery:微信图片_20260512172548_5512_2.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "pink",
+          "blue",
+          "white"
+        ],
+        "styleTags": [
+          "anime",
+          "digital-art",
+          "illustration",
+          "watercolor-effect"
+        ],
+        "compositionTags": [
+          "centered-subject",
+          "symmetrical",
+          "high-detail",
+          "soft-focus-background"
+        ],
+        "subjectFocus": "mermaid",
+        "raritySignals": [
+          "high-detail",
+          "unique-character-design",
+          "limited-edition-potential"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "serene",
+          "playful",
+          "dreamy",
+          "calm"
+        ],
+        "toneTags": [
+          "soft",
+          "gentle",
+          "ethereal"
+        ],
+        "energyLevel": "low",
+        "dramaticIntensity": 0.2
+      },
+      "characterLayer": {
+        "entityType": "mermaid",
+        "genderPresentation": "female",
+        "agePresentation": "young-adult",
+        "archetypeTags": [
+          "princess",
+          "sea-queen",
+          "mythical-being"
+        ],
+        "poseTags": [
+          "sitting",
+          "relaxed",
+          "front-facing",
+          "hands-on-knees"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "underwater",
+          "ocean",
+          "coral-reef",
+          "sunlight-dappled"
+        ],
+        "genreTags": [
+          "fantasy",
+          "mythology",
+          "adventure"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "shell-breastplate",
+          "tail-fins",
+          "pearl-ornaments"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "mermaid",
+          "anime-girl",
+          "underwater",
+          "sea-creature",
+          "digital-art"
+        ],
+        "collectorHooks": [
+          "unique-character-design",
+          "high-detail-illustration",
+          "limited-edition-potential"
+        ],
+        "marketingAngles": [
+          "dreamy-aesthetic",
+          "fantasy-collection",
+          "anime-lovers"
+        ],
+        "audienceTags": [
+          "anime-fans",
+          "digital-art-collectors",
+          "fantasy-art-lovers"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Serene Mermaid in Sunlit Depths",
+      "shopifyTitle": "Serene Mermaid in Sunlit Depths - Digital Art Collectible",
+      "shortName": "Mermaid Underwater",
+      "slug": "serene-mermaid-underwater",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

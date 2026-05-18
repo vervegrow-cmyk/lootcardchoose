@@ -1,0 +1,164 @@
+{
+  "title": "Silver-haired Girl in Starry Tights on Bed",
+  "description": "A silver-haired anime girl with red eyes lounges on a bed, wearing a revealing outfit with starry purple tights and black lace accents.",
+  "tags": [
+    "ani",
+    "female character",
+    "bed",
+    "starry tights",
+    "silver hair",
+    "red eyes",
+    "lounging",
+    "black lace",
+    "collectible",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "collectible card"
+  ],
+  "style": "black lace anime",
+  "rarity": "UR",
+  "category": "anime",
+  "character": "female character",
+  "color": "purple and black",
+  "mood": "relaxed",
+  "scene": "bedroom",
+  "price": 150,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "filename": "142504854_p0_master1200.jpg",
+    "syncSourceId": "local-gallery:142504854_p0_master1200.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "purple",
+          "black",
+          "white"
+        ],
+        "styleTags": [
+          "anime",
+          "black lace",
+          "glow",
+          "starry",
+          "shimmer"
+        ],
+        "compositionTags": [
+          "lounging",
+          "close-up",
+          "partial body",
+          "soft lighting"
+        ],
+        "subjectFocus": "silver-haired anime girl",
+        "raritySignals": [
+          "collectible card",
+          "high detail"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "relaxed",
+          "seductive",
+          "dreamy",
+          "calm"
+        ],
+        "toneTags": [
+          "soft",
+          "intimate",
+          "gentle"
+        ],
+        "energyLevel": "low",
+        "dramaticIntensity": 0.3
+      },
+      "characterLayer": {
+        "entityType": "female character",
+        "genderPresentation": "female",
+        "agePresentation": "teen",
+        "archetypeTags": [
+          "lounging beauty",
+          "cosplay",
+          "fashion model"
+        ],
+        "poseTags": [
+          "reclining",
+          "cross-legged",
+          "arm over head"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "bedroom",
+          "night",
+          "indoor"
+        ],
+        "genreTags": [
+          "anime",
+          "fantasy",
+          "erotic"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "tights",
+          "lace",
+          "pillow",
+          "headboard"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "starry tights",
+          "silver hair",
+          "bed scene",
+          "black lace",
+          "collectible card"
+        ],
+        "collectorHooks": [
+          "ur rarity",
+          "detailed artwork",
+          "unique pose",
+          "colorful design"
+        ],
+        "marketingAngles": [
+          "visual appeal",
+          "character design",
+          "limited edition",
+          "fan favorite"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "collectors",
+          "gacha players",
+          "cosplayers"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Silver-haired Girl in Starry Tights on Bed",
+      "shopifyTitle": "Silver-haired Girl in Starry Tights on Bed - UR Collectible Card",
+      "shortName": "Starry Tights Girl",
+      "slug": "starry-tights-girl",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Lunar Lace Enchantress"
+  }
+}

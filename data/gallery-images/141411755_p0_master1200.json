@@ -1,0 +1,191 @@
+{
+  "title": "LootCardChoose: A Cute Girl in Red Outfit with Lanterns",
+  "description": "A cheerful anime-style girl in a red and white outfit holding a skewer of food, surrounded by glowing lanterns in a traditional East Asian town at night.",
+  "tags": [
+    "ani",
+    "female character",
+    "lanterns",
+    "night",
+    "festive",
+    "cute",
+    "traditional",
+    "food",
+    "collectible",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "collectible card"
+  ],
+  "style": "anime",
+  "rarity": "SSR",
+  "category": "anime",
+  "character": "female character",
+  "color": "red and white",
+  "mood": "joyful",
+  "scene": "traditional East Asian town",
+  "price": 150,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "zh": {
+      "title": "LootCardChoose: 穿红色服装的可爱女孩与灯笼",
+      "description": "一个穿着红白服装的动漫风格女孩，手持食物串，周围环绕着发光的灯笼，背景是夜晚的传统东亚城镇。",
+      "tags": [
+        "动漫",
+        "女孩",
+        "灯笼",
+        "夜晚",
+        "节日气氛",
+        "可爱",
+        "传统",
+        "食物",
+        "收藏卡"
+      ]
+    },
+    "filename": "141411755_p0_master1200.jpg",
+    "syncSourceId": "local-gallery:141411755_p0_master1200.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "white",
+          "gold",
+          "blue"
+        ],
+        "styleTags": [
+          "anime",
+          "illustration",
+          "digital art",
+          "fantasy"
+        ],
+        "compositionTags": [
+          "centered subject",
+          "dynamic pose",
+          "layered background",
+          "symmetrical framing"
+        ],
+        "subjectFocus": "anime girl holding food skewer",
+        "raritySignals": [
+          "ssr rarity",
+          "high detail",
+          "festive theme",
+          "limited edition potential"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "joyful",
+          "festive",
+          "playful",
+          "whimsical"
+        ],
+        "toneTags": [
+          "warm",
+          "celebratory",
+          "lighthearted"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.7
+      },
+      "characterLayer": {
+        "entityType": "anime girl",
+        "genderPresentation": "female",
+        "agePresentation": "teen",
+        "archetypeTags": [
+          "celebrant",
+          "festive spirit",
+          "cute mascot",
+          "street performer"
+        ],
+        "poseTags": [
+          "jumping",
+          "mid-air",
+          "arms raised",
+          "playful gesture"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "traditional east asian town",
+          "night festival",
+          "lantern festival",
+          "street market"
+        ],
+        "genreTags": [
+          "fantasy",
+          "anime",
+          "adventure",
+          "cultural celebration"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "food skewer",
+          "lanterns",
+          "traditional architecture",
+          "decorative masks",
+          "rabbit plush"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "red outfit",
+          "lantern festival",
+          "festive collectible",
+          "ssr card",
+          "cute anime",
+          "traditional town",
+          "food skewer",
+          "celebration"
+        ],
+        "collectorHooks": [
+          "limited edition",
+          "high rarity",
+          "festive theme",
+          "dynamic pose",
+          "cute character design"
+        ],
+        "marketingAngles": [
+          "festive celebration",
+          "cute character appeal",
+          "high detail art",
+          "collectible rarity",
+          "cultural fusion"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "collectors",
+          "gacha players",
+          "festival enthusiasts",
+          "cute aesthetic lovers"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "LootCardChoose: A Cute Girl in Red Outfit with Lanterns",
+      "shopifyTitle": "LootCardChoose - Anime Girl in Red Outfit with Lanterns - SSR Collectible Card",
+      "shortName": "LootCardChoose",
+      "slug": "lootcardchoose-anime-girl-red-outfit-lanterns",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Crimson Lantern Festival Maiden"
+  }
+}

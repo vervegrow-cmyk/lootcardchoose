@@ -25,6 +25,9 @@ export type SearchGalleryOutput = {
   recoverySignals: string[];
   recoveryThreshold: number;
   recoveryRejectedReason: string | null;
+  recoveryBroadCandidatePoolUsed: boolean;
+  recoveryScoredCandidateCount: number;
+  recoveryAcceptedCount: number;
   recoveryTriggered: boolean;
   recoveryResultCount: number;
   curatorNarrationUsed: boolean;
@@ -208,6 +211,9 @@ export const searchGallerySkill: SkillHandler<SearchGalleryInput, SearchGalleryO
         recoverySignals: searchResult.recoverySignals,
         recoveryThreshold: searchResult.recoveryThreshold,
         recoveryRejectedReason: searchResult.recoveryRejectedReason,
+        recoveryBroadCandidatePoolUsed: searchResult.recoveryBroadCandidatePoolUsed,
+        recoveryScoredCandidateCount: searchResult.recoveryScoredCandidateCount,
+        recoveryAcceptedCount: searchResult.recoveryAcceptedCount,
         recoveryTriggered: searchResult.recoveryTriggered,
         recoveryResultCount: searchResult.recoveryResultCount,
         curatorNarrationUsed: searchResult.curatorNarrationUsed,
@@ -251,6 +257,9 @@ export const searchGallerySkill: SkillHandler<SearchGalleryInput, SearchGalleryO
       recoverySignals: searchResult.recoverySignals,
       recoveryThreshold: searchResult.recoveryThreshold,
       recoveryRejectedReason: searchResult.recoveryRejectedReason,
+      recoveryBroadCandidatePoolUsed: searchResult.recoveryBroadCandidatePoolUsed,
+      recoveryScoredCandidateCount: searchResult.recoveryScoredCandidateCount,
+      recoveryAcceptedCount: searchResult.recoveryAcceptedCount,
       recoveryTriggered: searchResult.recoveryTriggered,
       recoveryResultCount: searchResult.recoveryResultCount,
       curatorNarrationUsed: searchResult.curatorNarrationUsed,

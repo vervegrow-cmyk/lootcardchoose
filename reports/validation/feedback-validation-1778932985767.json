@@ -1,0 +1,28 @@
+{
+  "runAt": "2026-05-16T12:03:05.767Z",
+  "artifactType": "feedback_validation",
+  "query": "Show me 10 black gold SSR female cards",
+  "normalFlow": {
+    "orderNumber": "LC-1778932972160",
+    "eventCounts": {
+      "search": 1,
+      "selection": 1,
+      "checkout_created": 1,
+      "purchase_completed": 1
+    },
+    "selectionOccurred": true,
+    "checkoutOccurred": true,
+    "paidOccurred": true,
+    "allExpectedEventsPresent": true,
+    "sessionLinked": true,
+    "orderLinked": true
+  },
+  "failureIsolation": {
+    "outputPath": "D:\\桌面文件下载\\LOOTCARDCHOOSE\\reports\\recommendation-feedback-blocked-1778932975068",
+    "orderNumber": "LC-1778932984177",
+    "mainFlowStatus": "passed"
+  },
+  "findings": [
+    "feedback validation flow completed with search, selection, checkout, and paid events linked"
+  ]
+}

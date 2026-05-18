@@ -1,0 +1,153 @@
+{
+  "title": "Purple Hair Girl in White Lingerie",
+  "description": "A cheerful anime girl with purple hair and blue flower accessory, wearing white lingerie, standing in a traditional Japanese room.",
+  "tags": [
+    "ani",
+    "female character",
+    "purple hair",
+    "white lingerie",
+    "traditional japanese room",
+    "cheerful",
+    "collectible",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "collectible card"
+  ],
+  "style": "anime",
+  "rarity": "SSR",
+  "category": "anime",
+  "character": "female character",
+  "color": "white and purple",
+  "mood": "cheerful",
+  "scene": "traditional japanese room",
+  "price": 150,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "filename": "20.jpg",
+    "syncSourceId": "local-gallery:20.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "white",
+          "purple"
+        ],
+        "styleTags": [
+          "anime",
+          "digital art",
+          "illustration"
+        ],
+        "compositionTags": [
+          "centered composition",
+          "full body",
+          "doorway framing"
+        ],
+        "subjectFocus": "female character in lingerie",
+        "raritySignals": [
+          "ssr rarity",
+          "high detail",
+          "collectible card"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "cheerful",
+          "playful",
+          "flirty"
+        ],
+        "toneTags": [
+          "bright",
+          "warm",
+          "inviting"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.7
+      },
+      "characterLayer": {
+        "entityType": "anime girl",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "seductive",
+          "playful",
+          "charming"
+        ],
+        "poseTags": [
+          "standing",
+          "hands on door",
+          "smiling"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "traditional japanese room",
+          "wooden interior",
+          "shoji screen"
+        ],
+        "genreTags": [
+          "anime",
+          "fantasy",
+          "erotic"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "white lingerie",
+          "blue flower accessory",
+          "door"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "purple hair",
+          "white lingerie",
+          "japanese room",
+          "ssr collectible"
+        ],
+        "collectorHooks": [
+          "limited edition",
+          "high detail art",
+          "rare character"
+        ],
+        "marketingAngles": [
+          "visual appeal",
+          "emotional connection",
+          "collectible value"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "collectors",
+          "gacha game players"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Purple Hair Girl in White Lingerie",
+      "shopifyTitle": "Anime Girl with Purple Hair in White Lingerie - SSR Collectible Card",
+      "shortName": "Purple Hair Lingerie Girl",
+      "slug": "purple-hair-girl-white-lingerie",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Mystic Violet Enchantress"
+  }
+}

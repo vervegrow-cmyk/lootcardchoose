@@ -1,0 +1,181 @@
+{
+  "title": "Blonde Female Character in Black Bikini at Beach",
+  "description": "A blonde anime-style female character lounging on a beach in a black bikini, with palm trees and ocean in the background.",
+  "tags": [
+    "ani",
+    "female character",
+    "beach",
+    "bikini",
+    "blonde",
+    "sum r",
+    "ocean",
+    "palm tree",
+    "collectible",
+    "black gold",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "SSR",
+    "collectible card"
+  ],
+  "style": "black gold anime",
+  "rarity": "SSR",
+  "category": "anime",
+  "character": "female character",
+  "color": "black",
+  "mood": "relaxed",
+  "scene": "beach",
+  "price": 150,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "zh": {
+      "title": "海滩上的金发女性角色",
+      "description": "一位金发动漫风格的女性角色穿着黑色比基尼在海滩上放松，背景是棕榈树和海洋。",
+      "tags": [
+        "动漫",
+        "女性角色",
+        "海滩",
+        "比基尼",
+        "金发",
+        "夏天",
+        "海洋",
+        "棕榈树",
+        "收藏卡",
+        "黑金"
+      ]
+    },
+    "filename": "141684177-72d0d4b53ee3d1d118726abc151e0811_p1_master1200.jpg",
+    "syncSourceId": "local-gallery:141684177-72d0d4b53ee3d1d118726abc151e0811_p1_master1200.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "black",
+          "beige",
+          "blue"
+        ],
+        "styleTags": [
+          "anime",
+          "high detail",
+          "glow effect",
+          "soft shading"
+        ],
+        "compositionTags": [
+          "centered subject",
+          "low angle",
+          "foreground element",
+          "background depth"
+        ],
+        "subjectFocus": "female character in bikini",
+        "raritySignals": [
+          "black gold",
+          "collectible card"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "relaxed",
+          "serene",
+          "content"
+        ],
+        "toneTags": [
+          "calm",
+          "warm",
+          "inviting"
+        ],
+        "energyLevel": "low",
+        "dramaticIntensity": 0.15
+      },
+      "characterLayer": {
+        "entityType": "anime girl",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "lounge",
+          "beach beauty",
+          "summer girl"
+        ],
+        "poseTags": [
+          "lounging",
+          "hand to chin",
+          "side profile",
+          "relaxed posture"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "beach",
+          "tropical",
+          "ocean",
+          "sunny day"
+        ],
+        "genreTags": [
+          "anime",
+          "fantasy",
+          "idol"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "bikini",
+          "wooden bench",
+          "palm tree"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime beach girl",
+          "black bikini",
+          "ssr collectible",
+          "tropical anime",
+          "anime girl collectible"
+        ],
+        "collectorHooks": [
+          "black gold design",
+          "ssr rarity",
+          "high detail artwork",
+          "tropical theme"
+        ],
+        "marketingAngles": [
+          "summer collection",
+          "beach relaxation vibe",
+          "anime idol aesthetic",
+          "premium collectible"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "collectors",
+          "gacha players",
+          "beach lovers",
+          "ssr collectors"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Blonde Anime Girl in Black Bikini at Tropical Beach",
+      "shopifyTitle": "SSR Collectible: Blonde Anime Girl in Black Bikini at Beach",
+      "shortName": "Beach Blonde SSR",
+      "slug": "beach-blonde-ssr",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Golden Beach Idol Ssr"
+  }
+}

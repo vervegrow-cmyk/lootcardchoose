@@ -1,0 +1,158 @@
+{
+  "title": "Blue Hair Beach Babe",
+  "description": "A seductive anime card featuring a beach babe in a beach setting.",
+  "tags": [
+    "anime girl beach",
+    "blue hair bikini",
+    "night ocean art",
+    "seductive anime",
+    "seductive",
+    "playful",
+    "calm",
+    "serene",
+    "beach babe",
+    "water woman",
+    "fashion model",
+    "anime"
+  ],
+  "style": "anime",
+  "rarity": "SSR",
+  "category": "card",
+  "character": "human - beach babe",
+  "color": "blue black beige",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "44.jpg",
+    "syncSourceId": "local-gallery:44.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "blue",
+          "black",
+          "beige"
+        ],
+        "styleTags": [
+          "anime",
+          "digital art",
+          "illustration",
+          "hyperrealistic",
+          "glow effect"
+        ],
+        "compositionTags": [
+          "close up",
+          "centered",
+          "low angle",
+          "shallow depth of field",
+          "water reflection"
+        ],
+        "subjectFocus": "female character in bikini",
+        "raritySignals": [
+          "high detail",
+          "premium rendering",
+          "character focus"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "seductive",
+          "playful",
+          "calm",
+          "serene"
+        ],
+        "toneTags": [
+          "soft",
+          "warm",
+          "luminous",
+          "dreamy"
+        ],
+        "energyLevel": "medium",
+        "dramaticIntensity": 0.65
+      },
+      "characterLayer": {
+        "entityType": "human",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "beach babe",
+          "water woman",
+          "fashion model"
+        ],
+        "poseTags": [
+          "leaning forward",
+          "hand on chest",
+          "smiling",
+          "looking at viewer"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "beach",
+          "ocean",
+          "night",
+          "starlit"
+        ],
+        "genreTags": [
+          "fantasy",
+          "romantic",
+          "adventure"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "bikini",
+          "earrings",
+          "wet hair",
+          "water droplets"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl beach",
+          "blue hair bikini",
+          "night ocean art",
+          "seductive anime"
+        ],
+        "collectorHooks": [
+          "limited edition",
+          "high detail rendering",
+          "character art",
+          "collector s item"
+        ],
+        "marketingAngles": [
+          "beach aesthetic",
+          "anime fashion",
+          "premium digital art",
+          "collector s edition"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "digital art collectors",
+          "beach lovers",
+          "fashion enthusiasts"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Blue Hair Beach Babe",
+      "shopifyTitle": "Blue Hair Beach Babe - Premium Digital Art",
+      "shortName": "Blue Hair Beach Babe",
+      "slug": "blue-hair-beach-babe",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

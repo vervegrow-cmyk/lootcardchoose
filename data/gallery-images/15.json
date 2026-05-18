@@ -1,0 +1,208 @@
+{
+  "title": "Anime Female Character with Lightning Sword",
+  "description": "A female anime character in a detailed outfit wielding a glowing sword surrounded by lightning effects.",
+  "tags": [
+    "ani",
+    "female character",
+    "sword",
+    "lightning",
+    "fantasy",
+    "collectible",
+    "art",
+    "gacha",
+    "goddess",
+    "magical",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "premium",
+    "collectible card",
+    "luxury"
+  ],
+  "style": "black gold anime",
+  "rarity": "SSR",
+  "category": "anime",
+  "character": "female character",
+  "color": "purple and gold",
+  "mood": "powerful",
+  "scene": "battle",
+  "price": 150,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "zh": {
+      "title": "动漫女性角色持闪电剑",
+      "description": "一位身着精致服饰、手持发光剑的动漫女性角色，周围环绕着闪电效果。",
+      "tags": [
+        "动漫",
+        "女性角色",
+        "剑",
+        "闪电",
+        "奇幻",
+        "收藏卡",
+        "艺术",
+        "抽卡",
+        "女神",
+        "魔法"
+      ]
+    },
+    "filename": "15.jpg",
+    "syncSourceId": "local-gallery:15.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9824999999999999,
+      "visualLayer": {
+        "primaryColors": [
+          "purple",
+          "gold",
+          "white",
+          "black"
+        ],
+        "styleTags": [
+          "anime",
+          "fantasy",
+          "magical",
+          "gacha",
+          "black gold"
+        ],
+        "compositionTags": [
+          "centered",
+          "dynamic pose",
+          "high contrast",
+          "dramatic lighting",
+          "full-body"
+        ],
+        "subjectFocus": "female anime character with glowing sword",
+        "raritySignals": [
+          "premium",
+          "luxury",
+          "collectible card"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "powerful",
+          "dominant",
+          "intense",
+          "fierce",
+          "majestic"
+        ],
+        "toneTags": [
+          "epic",
+          "heroic",
+          "mythic",
+          "divine",
+          "battle-ready"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.9
+      },
+      "characterLayer": {
+        "entityType": "goddess",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "warrior",
+          "magician",
+          "divine being",
+          "heroine",
+          "battle maiden"
+        ],
+        "poseTags": [
+          "crouching",
+          "sword raised",
+          "power stance",
+          "dynamic",
+          "confident"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "battlefield",
+          "mythical realm",
+          "spiritual domain",
+          "abstract space"
+        ],
+        "genreTags": [
+          "fantasy",
+          "anime",
+          "action",
+          "magic",
+          "gacha game"
+        ],
+        "factionTags": [
+          "divine faction",
+          "heroic order",
+          "celestial army"
+        ],
+        "propTags": [
+          "glowing sword",
+          "lightning",
+          "magical weapon",
+          "ornate armor",
+          "symbolic belt"
+        ],
+        "powerSystemTags": [
+          "elemental magic",
+          "lightning magic",
+          "divine power",
+          "arcane energy"
+        ]
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime goddess",
+          "lightning sword",
+          "ssr collectible",
+          "gacha card",
+          "fantasy girl"
+        ],
+        "collectorHooks": [
+          "limited edition",
+          "high rarity",
+          "premium art",
+          "exclusive design",
+          "gacha game"
+        ],
+        "marketingAngles": [
+          "powerful fantasy heroine",
+          "divine battle magic",
+          "luxury collectible",
+          "anime art masterpiece",
+          "gacha game asset"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "gacha collectors",
+          "fantasy gamers",
+          "collectible card enthusiasts",
+          "digital art lovers"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "SSR Anime Goddess with Lightning Sword",
+      "shopifyTitle": "Anime Goddess with Lightning Sword - SSR Collectible Card",
+      "shortName": "Lightning Goddess SSR",
+      "slug": "lightning-goddess-ssr",
+      "namingVersion": "v1",
+      "confidence": 0.98,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Celestial Lightning Goddess"
+  }
+}

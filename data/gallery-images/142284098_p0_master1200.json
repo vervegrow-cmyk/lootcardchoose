@@ -1,0 +1,183 @@
+{
+  "title": "Cute Anime Girl Reading Book in Bed",
+  "description": "A pink-haired anime girl with blue accents lounges on a bed, reading an open book. She wears a light purple lingerie set and has cat-like ears.",
+  "tags": [
+    "ani",
+    "female character",
+    "bed",
+    "reading",
+    "book",
+    "cute",
+    "pink hair",
+    "purple lingerie",
+    "cat ears",
+    "sleepwear",
+    "indoor",
+    "soft lighting",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "collectible card"
+  ],
+  "style": "soft anime",
+  "rarity": "SR",
+  "category": "anime",
+  "character": "female character",
+  "color": "pink and purple",
+  "mood": "relaxed",
+  "scene": "bedroom",
+  "price": 150,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "zh": {
+      "title": "床上阅读的可爱动漫女孩",
+      "description": "一位粉发蓝饰的动漫女孩穿着淡紫色睡衣，慵懒地躺在床上阅读一本书，拥有猫耳。",
+      "tags": [
+        "动漫",
+        "女性角色",
+        "床",
+        "阅读",
+        "书本",
+        "可爱",
+        "粉发",
+        "紫色睡衣",
+        "猫耳",
+        "睡衣",
+        "室内",
+        "柔和灯光"
+      ]
+    },
+    "filename": "142284098_p0_master1200.jpg",
+    "syncSourceId": "local-gallery:142284098_p0_master1200.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "pink",
+          "purple",
+          "white"
+        ],
+        "styleTags": [
+          "soft anime",
+          "illustrative",
+          "digital art"
+        ],
+        "compositionTags": [
+          "centered subject",
+          "diagonal lines",
+          "warm lighting"
+        ],
+        "subjectFocus": "anime girl reading book",
+        "raritySignals": [
+          "sr rarity",
+          "collectible card",
+          "high detail"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "relaxed",
+          "cozy",
+          "peaceful"
+        ],
+        "toneTags": [
+          "gentle",
+          "dreamy",
+          "calm"
+        ],
+        "energyLevel": "low",
+        "dramaticIntensity": 0.1
+      },
+      "characterLayer": {
+        "entityType": "anime girl",
+        "genderPresentation": "female",
+        "agePresentation": "teen",
+        "archetypeTags": [
+          "catgirl",
+          "sleeping beauty",
+          "bookworm"
+        ],
+        "poseTags": [
+          "lounging",
+          "reading",
+          "hand on chin"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "bedroom",
+          "indoor",
+          "private space"
+        ],
+        "genreTags": [
+          "anime",
+          "fantasy",
+          "slice of life"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "book",
+          "pillow",
+          "cat ears"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "reading book",
+          "catgirl",
+          "bedroom",
+          "soft anime",
+          "collectible card",
+          "pink hair",
+          "purple lingerie"
+        ],
+        "collectorHooks": [
+          "sr rarity",
+          "detailed illustration",
+          "relaxed mood",
+          "unique pose"
+        ],
+        "marketingAngles": [
+          "cozy aesthetic",
+          "relatable character",
+          "high-quality art",
+          "limited edition"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "collectors",
+          "gacha players",
+          "digital art lovers"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Cute Anime Girl Reading Book in Bed",
+      "shopifyTitle": "Anime Girl Reading Book in Bed - Collectible Card",
+      "shortName": "Reading Girl Card",
+      "slug": "reading-girl-card",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Violet Empress SR"
+  }
+}

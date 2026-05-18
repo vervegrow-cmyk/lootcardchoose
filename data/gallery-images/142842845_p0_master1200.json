@@ -1,0 +1,172 @@
+{
+  "title": "Pink-haired Girl in Red Bikini Floating in Lotus Pond",
+  "description": "A beautiful pink-haired anime girl in a red bikini relaxing in a serene pond with floating lotus flowers and lily pads.",
+  "tags": [
+    "ani",
+    "female character",
+    "bikini",
+    "lotus pond",
+    "pink hair",
+    "red",
+    "water",
+    "relaxing",
+    "goddess",
+    "swimming",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "collectible card"
+  ],
+  "style": "anime",
+  "rarity": "SSR",
+  "category": "anime",
+  "character": "female character",
+  "color": "red",
+  "mood": "serene",
+  "scene": "pond",
+  "price": 150,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "zh": {
+      "title": "粉发少女身着红色比基尼漂浮在荷花池中",
+      "description": "一位美丽的粉发动漫少女身着红色比基尼，悠闲地漂浮在宁静的荷花池中，周围有浮萍和荷花。",
+      "tags": [
+        "动漫",
+        "女性角色",
+        "比基尼",
+        "荷花池",
+        "粉色头发",
+        "红色",
+        "水",
+        "放松",
+        "女神",
+        "游泳"
+      ]
+    },
+    "filename": "142842845_p0_master1200.jpg",
+    "syncSourceId": "local-gallery:142842845_p0_master1200.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "pink",
+          "blue"
+        ],
+        "styleTags": [
+          "anime",
+          "digital art",
+          "illustration"
+        ],
+        "compositionTags": [
+          "centered subject",
+          "symmetrical",
+          "water reflection"
+        ],
+        "subjectFocus": "pink-haired girl in red bikini",
+        "raritySignals": [
+          "goddess",
+          "collectible card"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "serene",
+          "relaxing",
+          "peaceful"
+        ],
+        "toneTags": [
+          "calm",
+          "elegant",
+          "dreamy"
+        ],
+        "energyLevel": "low",
+        "dramaticIntensity": 0.2
+      },
+      "characterLayer": {
+        "entityType": "female character",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "goddess",
+          "beauty",
+          "anime girl"
+        ],
+        "poseTags": [
+          "floating",
+          "relaxing",
+          "arms raised"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "lotus pond",
+          "water",
+          "lily pads"
+        ],
+        "genreTags": [
+          "anime",
+          "fantasy",
+          "mythology"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "bikini",
+          "lotus flower",
+          "headpiece"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "pink hair",
+          "red bikini",
+          "lotus pond",
+          "ssr collectible",
+          "goddess"
+        ],
+        "collectorHooks": [
+          "rare ssr",
+          "goddess archetype",
+          "serene scene"
+        ],
+        "marketingAngles": [
+          "beauty",
+          "relaxation",
+          "fantasy world"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "collectors",
+          "gacha players"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Pink-haired Girl in Red Bikini Floating in Lotus Pond",
+      "shopifyTitle": "SSR Collectible: Pink-haired Girl in Red Bikini Floating in Lotus Pond",
+      "shortName": "Lotus Goddess",
+      "slug": "lotus-goddess",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Scarlet Goddess SSR"
+  }
+}

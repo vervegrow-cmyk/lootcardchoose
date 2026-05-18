@@ -1,0 +1,156 @@
+{
+  "title": "Blue Haired Warrior With Crossed Arms",
+  "description": "A stylish hyperrealistic character card with blue and white tones, centered, and indoor appeal.",
+  "tags": [
+    "anime girl",
+    "fantasy character",
+    "blue hair",
+    "crossed arms",
+    "digital art",
+    "surprised",
+    "playful",
+    "confident",
+    "warrior",
+    "mage",
+    "heroine",
+    "anime",
+    "hyperrealistic",
+    "illustration"
+  ],
+  "style": "anime",
+  "rarity": "SSR",
+  "category": "card",
+  "character": "humanoid warrior",
+  "color": "blue white black",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "61.jpg",
+    "syncSourceId": "local-gallery:61.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "blue",
+          "white",
+          "black"
+        ],
+        "styleTags": [
+          "anime",
+          "digital art",
+          "hyperrealistic",
+          "illustration"
+        ],
+        "compositionTags": [
+          "centered",
+          "close up",
+          "full body",
+          "dramatic lighting"
+        ],
+        "subjectFocus": "female character with arms crossed",
+        "raritySignals": [
+          "high detail",
+          "complex pose",
+          "intricate costume"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "surprised",
+          "playful",
+          "confident"
+        ],
+        "toneTags": [
+          "vibrant",
+          "energetic",
+          "alluring"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.85
+      },
+      "characterLayer": {
+        "entityType": "humanoid",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "warrior",
+          "mage",
+          "heroine"
+        ],
+        "poseTags": [
+          "arms crossed",
+          "defiant",
+          "protective"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "indoor",
+          "wooden interior",
+          "castle",
+          "manor"
+        ],
+        "genreTags": [
+          "fantasy",
+          "action",
+          "adventure"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "armor",
+          "cloak",
+          "necklace",
+          "weapons"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "fantasy character",
+          "blue hair",
+          "crossed arms",
+          "digital art"
+        ],
+        "collectorHooks": [
+          "limited edition",
+          "high detail",
+          "unique pose",
+          "collectible card"
+        ],
+        "marketingAngles": [
+          "character design",
+          "art style",
+          "fan favorite",
+          "rare collectible"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "gaming community",
+          "digital art collectors",
+          "fantasy lovers"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Blue-Haired Warrior with Crossed Arms",
+      "shopifyTitle": "Blue-Haired Warrior with Crossed Arms - Collectible Card",
+      "shortName": "Blue Hair Warrior",
+      "slug": "blue-hair-warrior",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

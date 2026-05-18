@@ -1,0 +1,174 @@
+{
+  "title": "Blue-haired Girl in Bikini at Beach",
+  "description": "A blue-haired anime girl in a white bikini posing on a sunny beach with ocean waves in the background.",
+  "tags": [
+    "ani",
+    "female character",
+    "beach",
+    "bikini",
+    "blue hair",
+    "ocean",
+    "sum r",
+    "collectible",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "collectible card"
+  ],
+  "style": "anime",
+  "rarity": "UR",
+  "category": "anime",
+  "character": "female character",
+  "color": "blue and white",
+  "mood": "playful",
+  "scene": "beach",
+  "price": 100,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "zh": {
+      "title": "蓝发女孩海滩比基尼",
+      "description": "一位蓝发动漫女孩穿着白色比基尼在阳光明媚的海滩上摆姿势，背景是海浪。",
+      "tags": [
+        "动漫",
+        "女性角色",
+        "海滩",
+        "比基尼",
+        "蓝色头发",
+        "海洋",
+        "夏天",
+        "收藏卡"
+      ]
+    },
+    "filename": "138403464_p2_master1200.jpg",
+    "syncSourceId": "local-gallery:138403464_p2_master1200.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "blue",
+          "white",
+          "beige"
+        ],
+        "styleTags": [
+          "anime",
+          "digital art",
+          "high detail",
+          "glow effect"
+        ],
+        "compositionTags": [
+          "centered subject",
+          "full body",
+          "background blur",
+          "sunlight"
+        ],
+        "subjectFocus": "blue-haired anime girl",
+        "raritySignals": [
+          "ur rarity",
+          "collectible card",
+          "high detail rendering"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "playful",
+          "sunny",
+          "relaxed",
+          "attractive"
+        ],
+        "toneTags": [
+          "bright",
+          "cheerful",
+          "serene"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.3
+      },
+      "characterLayer": {
+        "entityType": "female character",
+        "genderPresentation": "female",
+        "agePresentation": "teen",
+        "archetypeTags": [
+          "beach babe",
+          "anime idol",
+          "water goddess"
+        ],
+        "poseTags": [
+          "posing",
+          "hands on shoulders",
+          "looking at viewer"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "beach",
+          "ocean",
+          "sunny day",
+          "cliffside"
+        ],
+        "genreTags": [
+          "anime",
+          "fantasy",
+          "adventure"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "bikini",
+          "headband",
+          "sword"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl beach bikini",
+          "blue hair collectible",
+          "anime collectible card",
+          "female character card"
+        ],
+        "collectorHooks": [
+          "ur rarity",
+          "high detail art",
+          "unique pose",
+          "blue hair aesthetic"
+        ],
+        "marketingAngles": [
+          "beach vacation vibe",
+          "anime fan collectible",
+          "high quality digital art"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "collectors",
+          "gacha game players",
+          "digital art lovers"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Blue-haired Girl in Bikini at Beach",
+      "shopifyTitle": "Blue-haired Anime Girl in Bikini at Beach - UR Collectible Card",
+      "shortName": "Blue Hair Beach Girl",
+      "slug": "blue-hair-beach-girl",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Sapphire Goddess UR"
+  }
+}

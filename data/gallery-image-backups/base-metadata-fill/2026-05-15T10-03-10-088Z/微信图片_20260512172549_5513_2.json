@@ -1,0 +1,161 @@
+{
+  "title": "Pink Mermaid In Coral Reef",
+  "description": "A stylish fantasy character card with pink and blue tones, centered subject, and underwater appeal.",
+  "tags": [
+    "mermaid anime",
+    "underwater girl",
+    "pink mermaid",
+    "collectible card art",
+    "joyful",
+    "playful",
+    "serene",
+    "magical",
+    "princess",
+    "mermaid",
+    "adventurer",
+    "heroine",
+    "anime",
+    "illustration",
+    "digital art"
+  ],
+  "style": "anime",
+  "rarity": "",
+  "category": "card",
+  "character": "humanoid creature princess",
+  "color": "pink blue gold",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "微信图片_20260512172549_5513_2.jpg",
+    "syncSourceId": "local-gallery:微信图片_20260512172549_5513_2.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "pink",
+          "blue",
+          "gold"
+        ],
+        "styleTags": [
+          "anime",
+          "illustration",
+          "digital-art",
+          "fantasy"
+        ],
+        "compositionTags": [
+          "centered-subject",
+          "dynamic-pose",
+          "full-body",
+          "symmetrical-layout"
+        ],
+        "subjectFocus": "mermaid",
+        "raritySignals": [
+          "high-detail",
+          "vibrant-colors",
+          "character-centric",
+          "collectible-art"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "joyful",
+          "playful",
+          "serene",
+          "magical"
+        ],
+        "toneTags": [
+          "uplifting",
+          "whimsical",
+          "dreamy"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.3
+      },
+      "characterLayer": {
+        "entityType": "humanoid-creature",
+        "genderPresentation": "female",
+        "agePresentation": "young-adult",
+        "archetypeTags": [
+          "princess",
+          "mermaid",
+          "adventurer",
+          "heroine"
+        ],
+        "poseTags": [
+          "graceful",
+          "confident",
+          "smiling",
+          "interactive"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "underwater",
+          "ocean",
+          "coral-reef",
+          "aquatic-environment"
+        ],
+        "genreTags": [
+          "fantasy",
+          "adventure",
+          "anime",
+          "mythology"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "mermaid-tail",
+          "coral",
+          "seashells",
+          "bubble"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "mermaid anime",
+          "underwater girl",
+          "pink mermaid",
+          "collectible card art"
+        ],
+        "collectorHooks": [
+          "limited-edition",
+          "high-detail-art",
+          "character-focused",
+          "rare-color-scheme"
+        ],
+        "marketingAngles": [
+          "fantasy collectible",
+          "anime fan art",
+          "mermaid-themed",
+          "aquatic beauty"
+        ],
+        "audienceTags": [
+          "anime collectors",
+          "fantasy enthusiasts",
+          "mermaid lovers",
+          "digital-art fans"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Pink Mermaid in Coral Reef",
+      "shopifyTitle": "Pink Mermaid Underwater Collectible Card Art",
+      "shortName": "Pink Mermaid Card",
+      "slug": "pink-mermaid-underwater-card",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

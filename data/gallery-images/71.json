@@ -1,0 +1,168 @@
+{
+  "title": "Bedroom Maid Portrait",
+  "description": "A collectible anime card with purple and white tones, intimate styling, and a polished maid showcase inspired by bedroom scenes.",
+  "tags": [
+    "maid anime",
+    "anime character art girl",
+    "purple hair maid",
+    "elegant maid",
+    "anime card",
+    "elegant",
+    "playful",
+    "confident",
+    "flirtatious",
+    "maid",
+    "servant",
+    "femme fatale",
+    "demoness",
+    "anime",
+    "illustration"
+  ],
+  "style": "anime",
+  "rarity": "SSR",
+  "category": "card",
+  "character": "female maid",
+  "color": "purple white black brown",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "71.jpg",
+    "syncSourceId": "local-gallery:71.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "purple",
+          "white",
+          "black",
+          "brown"
+        ],
+        "styleTags": [
+          "anime",
+          "illustration",
+          "digital-art",
+          "erotic"
+        ],
+        "compositionTags": [
+          "centered",
+          "close-up",
+          "full-body",
+          "high-detail"
+        ],
+        "subjectFocus": "female character in maid outfit",
+        "raritySignals": [
+          "high-detail",
+          "explicit",
+          "character-centric"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "seductive",
+          "playful",
+          "confident",
+          "flirtatious"
+        ],
+        "toneTags": [
+          "intimate",
+          "provocative",
+          "soft",
+          "warm"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.85
+      },
+      "characterLayer": {
+        "entityType": "female",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "maid",
+          "servant",
+          "femme-fatale",
+          "demoness"
+        ],
+        "poseTags": [
+          "hands-on-chest",
+          "standing",
+          "front-facing",
+          "curved-body"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "bedroom",
+          "indoor",
+          "luxury",
+          "private-room"
+        ],
+        "genreTags": [
+          "erotic-comedy",
+          "fantasy",
+          "hentai",
+          "manga"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "maid-clothing",
+          "gloves",
+          "apron",
+          "headpiece"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "maid anime",
+          "erotic anime girl",
+          "purple hair maid",
+          "seductive maid",
+          "anime card"
+        ],
+        "collectorHooks": [
+          "high-detail art",
+          "character design",
+          "explicit content",
+          "limited edition"
+        ],
+        "marketingAngles": [
+          "fan art collection",
+          "erotic anime aesthetic",
+          "character showcase",
+          "collector s item"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "erotic content collectors",
+          "manga enthusiasts",
+          "digital art collectors"
+        ],
+        "safetyFlags": [
+          "explicit content",
+          "erotic",
+          "adult-themed"
+        ]
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Seductive Purple-Haired Maid in Bedroom",
+      "shopifyTitle": "Seductive Purple-Haired Maid in Bedroom - Anime Card",
+      "shortName": "Purple Maid Seduction",
+      "slug": "purple-maid-seduction",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Elegant Violet Maid"
+  }
+}

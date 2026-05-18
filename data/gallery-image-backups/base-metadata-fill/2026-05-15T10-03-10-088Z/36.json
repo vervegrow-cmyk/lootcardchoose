@@ -1,0 +1,165 @@
+{
+  "title": "Anime Girl In Bikini At Forest Beach",
+  "description": "A stylish soft shading character card with light blue and white tones, close up, and outdoor appeal.",
+  "tags": [
+    "anime girl",
+    "beach bikini",
+    "manga art",
+    "playful",
+    "cheerful",
+    "flirty",
+    "relaxed",
+    "schoolgirl",
+    "manga girl",
+    "idol",
+    "beach babe",
+    "anime",
+    "digital art",
+    "illustration",
+    "soft shading"
+  ],
+  "style": "anime",
+  "rarity": "SSR",
+  "category": "card",
+  "character": "humanoid schoolgirl",
+  "color": "light blue white black skin tone",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "36.jpg",
+    "syncSourceId": "local-gallery:36.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "light blue",
+          "white",
+          "black",
+          "skin tone"
+        ],
+        "styleTags": [
+          "anime",
+          "digital art",
+          "illustration",
+          "soft shading",
+          "glow effect"
+        ],
+        "compositionTags": [
+          "close-up",
+          "side view",
+          "partial body",
+          "low angle",
+          "foreground focus"
+        ],
+        "subjectFocus": "female character in bikini",
+        "raritySignals": [
+          "signature watermark",
+          "artist branding",
+          "patreon attribution"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "playful",
+          "cheerful",
+          "flirty",
+          "relaxed"
+        ],
+        "toneTags": [
+          "lighthearted",
+          "whimsical",
+          "sensual"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.3
+      },
+      "characterLayer": {
+        "entityType": "humanoid",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "schoolgirl",
+          "manga girl",
+          "idol",
+          "beach babe"
+        ],
+        "poseTags": [
+          "sitting",
+          "back view",
+          "looking over shoulder",
+          "slightly turned"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "outdoor",
+          "forest",
+          "beach",
+          "nature"
+        ],
+        "genreTags": [
+          "fantasy",
+          "manga",
+          "anime",
+          "erotic"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "bikini",
+          "headband",
+          "hair accessory",
+          "tree"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "beach bikini",
+          "manga art",
+          "patreon art",
+          "vrennime"
+        ],
+        "collectorHooks": [
+          "artist signature",
+          "exclusive patreon content",
+          "limited edition"
+        ],
+        "marketingAngles": [
+          "fan art collection",
+          "character design showcase",
+          "digital collectible"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "manga collectors",
+          "digital art enthusiasts",
+          "patreon supporters"
+        ],
+        "safetyFlags": [
+          "explicit content",
+          "sensual imagery"
+        ]
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Anime Girl in Bikini at Forest Beach",
+      "shopifyTitle": "Anime Girl in Bikini at Forest Beach - Digital Collectible",
+      "shortName": "Forest Beach Girl",
+      "slug": "forest-beach-girl",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

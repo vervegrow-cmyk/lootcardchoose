@@ -1,0 +1,150 @@
+{
+  "title": "Underwater Goddess in Orange Bikini",
+  "description": "A playful anime card featuring a mermaid in a underwater setting.",
+  "tags": [
+    "anime girl",
+    "underwater art",
+    "swimming girl",
+    "beach goddess",
+    "playful",
+    "cheerful",
+    "serene",
+    "mermaid",
+    "aquatic goddess",
+    "anime",
+    "digital art",
+    "illustration"
+  ],
+  "style": "anime",
+  "rarity": "SSR",
+  "category": "card",
+  "character": "humanoid - mermaid",
+  "color": "orange blue pink",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "28.jpg",
+    "syncSourceId": "local-gallery:28.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "orange",
+          "blue",
+          "pink"
+        ],
+        "styleTags": [
+          "anime",
+          "digital art",
+          "illustration",
+          "watercolor effect"
+        ],
+        "compositionTags": [
+          "centered subject",
+          "low angle",
+          "full body",
+          "dynamic pose"
+        ],
+        "subjectFocus": "female character in bikini",
+        "raritySignals": [
+          "signature watermark",
+          "artist credit"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "playful",
+          "cheerful",
+          "serene"
+        ],
+        "toneTags": [
+          "lighthearted",
+          "vibrant",
+          "whimsical"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.3
+      },
+      "characterLayer": {
+        "entityType": "humanoid",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "mermaid",
+          "aquatic goddess",
+          "beach goddess"
+        ],
+        "poseTags": [
+          "swimming",
+          "posing",
+          "playful",
+          "flirtatious"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "underwater",
+          "ocean",
+          "coral reef"
+        ],
+        "genreTags": [
+          "fantasy",
+          "adventure",
+          "romance"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "bikini",
+          "necklace",
+          "tattoo",
+          "seashell"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "underwater art",
+          "swimming girl",
+          "beach goddess",
+          "vrennnime"
+        ],
+        "collectorHooks": [
+          "artist signature",
+          "limited edition",
+          "fan favorite"
+        ],
+        "marketingAngles": [
+          "collector s item",
+          "digital art print",
+          "fan art"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "digital art collectors",
+          "gacha game players"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Underwater Goddess in Orange Bikini",
+      "shopifyTitle": "Underwater Goddess in Orange Bikini - Digital Art by Vrennnime",
+      "shortName": "Underwater Goddess",
+      "slug": "underwater-goddess-orange-bikini",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

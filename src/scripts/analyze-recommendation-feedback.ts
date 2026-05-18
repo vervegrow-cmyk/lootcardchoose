@@ -1,4 +1,4 @@
-import { access, readdir, readFile } from "node:fs/promises";
+import { access, readdir, readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import type { RecommendationFeedbackEvent } from "../types/recommendation-feedback.types";
 import type {
@@ -10,6 +10,7 @@ import type {
   RecommendationFeedbackAnalyticsTopCard,
   RecommendationFeedbackAnalyticsTopQuery,
 } from "../types/recommendation-feedback-analytics.types";
+import { saveValidationArtifact } from "./validation-artifact";
 
 const DEFAULT_LIMIT = 20;
 const DEFAULT_FILE_PATH = path.join(process.cwd(), "reports", "recommendation-feedback.jsonl");
@@ -21,6 +22,8 @@ type FeedbackCardSummary = NonNullable<
 const parseArgs = (argv: string[]): RecommendationFeedbackAnalyticsCliOptions => {
   let json = false;
   let limit = DEFAULT_LIMIT;
+  let file: string | null = null;
+  let outputPath: string | null = null;
 
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
@@ -36,10 +39,26 @@ const parseArgs = (argv: string[]): RecommendationFeedbackAnalyticsCliOptions =>
         limit = parsed;
         index += 1;
       }
+      continue;
+    }
+
+    if (arg === "--file") {
+      file = argv[index + 1] ?? null;
+      if (file) {
+        index += 1;
+      }
+      continue;
+    }
+
+    if (arg === "--output") {
+      outputPath = argv[index + 1] ?? null;
+      if (outputPath) {
+        index += 1;
+      }
     }
   }
 
-  return { json, limit };
+  return { json, limit, file, outputPath };
 };
 
 const formatPercent = (value: number): string => `${(value * 100).toFixed(1)}%`;
@@ -125,12 +144,34 @@ const toTopCards = (
     }))
   ).slice(0, limit);
 
-const resolveSource = async (): Promise<RecommendationFeedbackAnalyticsSource> => {
+const resolveSource = async (requestedFile: string | null): Promise<RecommendationFeedbackAnalyticsSource> => {
+  if (requestedFile) {
+    try {
+      const content = await readFile(requestedFile, "utf8");
+      return {
+        file: requestedFile,
+        selectedBy: "explicit",
+        usedFallbackFile: false,
+        missing: false,
+        content,
+      };
+    } catch {
+      return {
+        file: requestedFile,
+        selectedBy: "explicit",
+        usedFallbackFile: false,
+        missing: true,
+        content: "",
+      };
+    }
+  }
+
   try {
     await access(DEFAULT_FILE_PATH);
     const content = await readFile(DEFAULT_FILE_PATH, "utf8");
     return {
       file: DEFAULT_FILE_PATH,
+      selectedBy: "default",
       usedFallbackFile: false,
       missing: false,
       content,
@@ -145,6 +186,7 @@ const resolveSource = async (): Promise<RecommendationFeedbackAnalyticsSource> =
   } catch {
     return {
       file: null,
+      selectedBy: "newest_report",
       usedFallbackFile: false,
       missing: true,
       content: "",
@@ -158,36 +200,38 @@ const resolveSource = async (): Promise<RecommendationFeedbackAnalyticsSource> =
   if (candidateFiles.length === 0) {
     return {
       file: null,
+      selectedBy: "newest_report",
       usedFallbackFile: false,
       missing: true,
       content: "",
     };
   }
 
-  const filesWithContent = await Promise.all(
+  const filesWithMeta = await Promise.all(
     candidateFiles.map(async (filePath) => {
-      const content = await readFile(filePath, "utf8");
-      const lines = content
-        .split(/\r?\n/)
-        .map((line) => line.trim())
-        .filter(Boolean).length;
-      return { filePath, content, lines };
+      const [content, fileStat] = await Promise.all([readFile(filePath, "utf8"), stat(filePath)]);
+      return {
+        filePath,
+        content,
+        modifiedMs: fileStat.mtimeMs,
+      };
     })
   );
 
-  filesWithContent.sort((left, right) => {
-    if (right.lines !== left.lines) {
-      return right.lines - left.lines;
+  filesWithMeta.sort((left, right) => {
+    if (right.modifiedMs !== left.modifiedMs) {
+      return right.modifiedMs - left.modifiedMs;
     }
     return right.filePath.localeCompare(left.filePath);
   });
 
-  const best = filesWithContent[0];
+  const newest = filesWithMeta[0];
   return {
-    file: best.filePath,
+    file: newest.filePath,
+    selectedBy: "newest_report",
     usedFallbackFile: true,
     missing: false,
-    content: best.content,
+    content: newest.content,
   };
 };
 
@@ -210,11 +254,71 @@ const parseLines = (content: string): RecommendationFeedbackAnalyticsParsedLine[
       }
     });
 
+const buildInterpretation = (summary: RecommendationFeedbackAnalyticsSummary) => {
+  const findings: string[] = [];
+
+  if (summary.searchCount === 0) {
+    findings.push("no search events found in the analyzed feedback file");
+  }
+  if (summary.purchaseCount > 0 && summary.orphanPurchaseCount > 0) {
+    findings.push(`found ${summary.orphanPurchaseCount} orphan purchase events`);
+  }
+  if (summary.usedFallbackRate >= 0.5 && summary.searchCount >= 3) {
+    findings.push(`fallback usage is elevated at ${formatPercent(summary.usedFallbackRate)}`);
+  }
+  if (summary.sessionsWithNoRankingChange > summary.sessionsWithRerank && summary.searchCount >= 4) {
+    findings.push("no-ranking-change sessions currently outnumber reranked sessions");
+  }
+  if (summary.selectionCount === 0 && summary.searchCount > 0) {
+    findings.push("searches were recorded but no selections were recorded");
+  }
+  if (summary.checkoutCount === 0 && summary.selectionCount > 0) {
+    findings.push("selections were recorded but no checkout creation was recorded");
+  }
+  if (summary.purchaseCount === 0 && summary.checkoutCount > 0) {
+    findings.push("checkouts were recorded but no purchases were recorded");
+  }
+
+  if (findings.length === 0) {
+    findings.push("analytics did not show a clear V1 validation anomaly in this sample");
+  }
+
+  return {
+    status: findings[0] === "analytics did not show a clear V1 validation anomaly in this sample" ? "healthy" : "observe",
+    findings,
+  } as const;
+};
+
+const buildRecommendationV2Gate = (summary: RecommendationFeedbackAnalyticsSummary) => {
+  const reasons: string[] = [];
+
+  if (summary.searchCount >= 8 && summary.usedFallbackRate >= 0.8) {
+    reasons.push(`fallback rate remained very high across ${summary.searchCount} searches`);
+  }
+  if (summary.searchCount >= 8 && summary.searchToSelectionRate <= 0.1) {
+    reasons.push("search to selection conversion stayed very weak across a meaningful sample");
+  }
+  if (summary.checkoutCount >= 5 && summary.checkoutToPurchaseRate <= 0.1) {
+    reasons.push("checkout to purchase conversion stayed very weak across a meaningful sample");
+  }
+  if (summary.searchCount >= 8 && summary.sessionsWithRerank === 0) {
+    reasons.push("rerank never changed ranking across a meaningful sample");
+  }
+  if (summary.purchaseCount >= 3 && summary.orphanPurchaseCount >= 2) {
+    reasons.push("orphan purchases appeared repeatedly in real analytics");
+  }
+
+  return {
+    status: reasons.length > 0 ? "re_evaluate" : "not_needed",
+    reasons: reasons.length > 0 ? reasons : ["current validation data does not justify Recommendation V2"],
+  } as const;
+};
+
 const buildReport = (
   parsedEvents: RecommendationFeedbackEvent[],
   totalLines: number,
   invalidLines: number,
-  file: string | null,
+  source: RecommendationFeedbackAnalyticsSource,
   limit: number
 ): RecommendationFeedbackAnalyticsReport => {
   let searchCount = 0;
@@ -282,7 +386,7 @@ const buildReport = (
   const usedFallbackRate = safeRate(fallbackSearchCount, searchCount);
 
   const summary: RecommendationFeedbackAnalyticsSummary = {
-    file,
+    file: source.file,
     totalLines,
     parsedLines: parsedEvents.length,
     invalidLines,
@@ -300,10 +404,15 @@ const buildReport = (
   };
 
   return {
-    file,
+    file: source.file,
     totalLines,
     parsedLines: parsedEvents.length,
     invalidLines,
+    source: {
+      file: source.file,
+      selectedBy: source.selectedBy,
+      usedFallbackFile: source.usedFallbackFile,
+    },
     summary,
     conversion: {
       searchToSelectionRate,
@@ -316,22 +425,22 @@ const buildReport = (
       sessionsWithRerank,
       sessionsWithNoRankingChange,
     },
+    interpretation: buildInterpretation(summary),
+    recommendationV2Gate: buildRecommendationV2Gate(summary),
     topQueries: toTopQueries(queryCounts, limit),
     topSelectedCards: toTopCards(selectedCardCounts, selectedCardTitles, limit),
     topPurchasedCards: toTopCards(purchasedCardCounts, purchasedCardTitles, limit),
   };
 };
 
-const renderMarkdown = (
-  report: RecommendationFeedbackAnalyticsReport,
-  source: RecommendationFeedbackAnalyticsSource
-): string => {
+const renderMarkdown = (report: RecommendationFeedbackAnalyticsReport): string => {
   const lines: string[] = [];
 
   lines.push("## Summary");
   lines.push(`- file: ${report.file ?? "not found"}`);
-  if (source.usedFallbackFile && report.file) {
-    lines.push(`- note: default feedback file was missing; analyzed latest fallback file instead`);
+  lines.push(`- source selected by: ${report.source.selectedBy}`);
+  if (report.source.usedFallbackFile && report.file) {
+    lines.push("- note: default feedback file was missing; analyzed newest matching report instead");
   }
   lines.push(`- total lines: ${report.totalLines}`);
   lines.push(`- parsed lines: ${report.parsedLines}`);
@@ -353,6 +462,20 @@ const renderMarkdown = (
   lines.push(`- orphan purchase count: ${report.rerankHealth.orphanPurchaseCount}`);
   lines.push(`- sessions with rerank: ${report.rerankHealth.sessionsWithRerank}`);
   lines.push(`- sessions with no ranking change: ${report.rerankHealth.sessionsWithNoRankingChange}`);
+
+  lines.push("");
+  lines.push("## Interpretation");
+  lines.push(`- status: ${report.interpretation.status}`);
+  report.interpretation.findings.forEach((finding) => {
+    lines.push(`- ${finding}`);
+  });
+
+  lines.push("");
+  lines.push("## Recommendation V2 Gate");
+  lines.push(`- status: ${report.recommendationV2Gate.status}`);
+  report.recommendationV2Gate.reasons.forEach((reason) => {
+    lines.push(`- ${reason}`);
+  });
 
   lines.push("");
   lines.push("## Top Queries");
@@ -390,18 +513,18 @@ const renderMarkdown = (
 
 const main = async (): Promise<void> => {
   const options = parseArgs(process.argv.slice(2));
-  const source = await resolveSource();
+  const source = await resolveSource(options.file);
 
   if (source.missing || !source.file) {
     const message = {
-      file: DEFAULT_FILE_PATH,
+      file: options.file ?? DEFAULT_FILE_PATH,
       message: "No recommendation feedback JSONL file found. Run gallery:test-recommendation-feedback or generate production feedback first.",
     };
     if (options.json) {
       console.log(JSON.stringify(message, null, 2));
     } else {
       console.log("## Summary");
-      console.log(`- file: ${DEFAULT_FILE_PATH}`);
+      console.log(`- file: ${options.file ?? DEFAULT_FILE_PATH}`);
       console.log(`- message: ${message.message}`);
     }
     return;
@@ -413,14 +536,27 @@ const main = async (): Promise<void> => {
     .map((entry) => entry.event);
   const invalidLines = parsedLines.length - validEvents.length;
 
-  const report = buildReport(validEvents, parsedLines.length, invalidLines, source.file, options.limit);
+  const report = buildReport(validEvents, parsedLines.length, invalidLines, source, options.limit);
 
   if (options.json) {
-    console.log(JSON.stringify(report, null, 2));
+    const artifactPath = await saveValidationArtifact(report, {
+      outputPath: options.outputPath,
+      prefix: "analytics-validation",
+    });
+    console.log(
+      JSON.stringify(
+        {
+          ...report,
+          artifactPath,
+        },
+        null,
+        2
+      )
+    );
     return;
   }
 
-  console.log(renderMarkdown(report, source));
+  console.log(renderMarkdown(report));
 };
 
 main().catch((error) => {

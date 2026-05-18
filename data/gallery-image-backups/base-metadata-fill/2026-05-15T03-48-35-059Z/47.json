@@ -1,0 +1,141 @@
+{
+  "title": "47",
+  "description": "Auto generated metadata for 47",
+  "tags": [
+    "47"
+  ],
+  "style": "",
+  "rarity": "",
+  "category": "card",
+  "character": "",
+  "color": "",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "47.jpg",
+    "syncSourceId": "local-gallery:47.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "pink",
+          "blue",
+          "green",
+          "gold"
+        ],
+        "styleTags": [
+          "anime",
+          "digital-art",
+          "glow-effect",
+          "high-detail"
+        ],
+        "compositionTags": [
+          "centered-subject",
+          "symmetrical-pose",
+          "close-up",
+          "eye-level"
+        ],
+        "subjectFocus": "female character with bunny ears",
+        "raritySignals": [
+          "high-detail rendering",
+          "unique character design",
+          "vibrant color palette"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "playful",
+          "confident",
+          "seductive",
+          "casual"
+        ],
+        "toneTags": [
+          "lighthearted",
+          "entertaining"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.3
+      },
+      "characterLayer": {
+        "entityType": "female humanoid",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "gaming-girl",
+          "casino-lady",
+          "bunny-girl"
+        ],
+        "poseTags": [
+          "lying-down",
+          "peace-sign",
+          "relaxed",
+          "showing-off"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "casino",
+          "gambling-table",
+          "indoor"
+        ],
+        "genreTags": [
+          "fantasy",
+          "anime-style",
+          "gaming"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "chips",
+          "cards",
+          "bunny-ears",
+          "gaming-table"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime bunny girl",
+          "casino girl",
+          "gaming girl",
+          "pink hair",
+          "blue outfit"
+        ],
+        "collectorHooks": [
+          "unique character design",
+          "high-detail art",
+          "vibrant colors"
+        ],
+        "marketingAngles": [
+          "fun and playful vibe",
+          "perfect for anime fans",
+          "great for gaming enthusiasts"
+        ],
+        "audienceTags": [
+          "anime collectors",
+          "gaming fans",
+          "casino-themed collectors"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Bunny Girl at the Casino",
+      "shopifyTitle": "Bunny Girl at the Casino - Collectible Card",
+      "shortName": "BunnyCasinoGirl",
+      "slug": "bunny-girl-at-the-casino",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

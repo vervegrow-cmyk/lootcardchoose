@@ -1,0 +1,163 @@
+{
+  "title": "Beach Babe In Bikini Art",
+  "description": "A stylish hyperrealistic character card with blue and beige tones, low angle shot, and beach appeal.",
+  "tags": [
+    "anime beach girl",
+    "summer bikini art",
+    "anime character art illustration",
+    "female character art",
+    "stylish",
+    "playful",
+    "relaxed",
+    "sunshine",
+    "beach babe",
+    "summer girl",
+    "anime mermaid",
+    "anime",
+    "digital art",
+    "illustration",
+    "hyperrealistic"
+  ],
+  "style": "anime",
+  "rarity": "",
+  "category": "card",
+  "character": "human beach babe",
+  "color": "blue beige black",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "33.jpg",
+    "syncSourceId": "local-gallery:33.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "blue",
+          "beige",
+          "black"
+        ],
+        "styleTags": [
+          "anime",
+          "digital-art",
+          "illustration",
+          "hyperrealistic",
+          "beach-art"
+        ],
+        "compositionTags": [
+          "low-angle-shot",
+          "full-body",
+          "dynamic-pose",
+          "centered-subject",
+          "background-blur"
+        ],
+        "subjectFocus": "female character in bikini",
+        "raritySignals": [
+          "patreon-artist",
+          "exclusive-content",
+          "artist-signature"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "sensual",
+          "playful",
+          "relaxed",
+          "sunshine"
+        ],
+        "toneTags": [
+          "cheerful",
+          "lighthearted",
+          "summer-vibe"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.3
+      },
+      "characterLayer": {
+        "entityType": "human",
+        "genderPresentation": "female",
+        "agePresentation": "young-adult",
+        "archetypeTags": [
+          "beach-babe",
+          "summer-girl",
+          "anime-mermaid"
+        ],
+        "poseTags": [
+          "bent-over",
+          "back-view",
+          "hands-on-hips",
+          "curvy-pose"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "beach",
+          "ocean",
+          "tropical",
+          "summer-day"
+        ],
+        "genreTags": [
+          "erotic-art",
+          "fan-art",
+          "character-art"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "bikini",
+          "swimsuit",
+          "hair-clip",
+          "tropical-leaf"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime beach girl",
+          "summer bikini art",
+          "patreon artist",
+          "erotic anime illustration",
+          "female character art"
+        ],
+        "collectorHooks": [
+          "artist signature",
+          "exclusive patreon content",
+          "high-detail digital art"
+        ],
+        "marketingAngles": [
+          "summer collection",
+          "beach-themed art",
+          "fan favorite character",
+          "limited edition"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "digital art collectors",
+          "erotic art enthusiasts",
+          "patreon supporters"
+        ],
+        "safetyFlags": [
+          "explicit-content",
+          "adult-themed"
+        ]
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Beach Babe in Bikini - Exclusive Patreo n Art",
+      "shopifyTitle": "Anime Beach Girl Art - Exclusive Digital Illustration",
+      "shortName": "BeachBabeBikini",
+      "slug": "beach-babe-bikini-exclusive-art",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

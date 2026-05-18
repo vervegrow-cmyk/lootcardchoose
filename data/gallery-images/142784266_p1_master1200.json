@@ -1,0 +1,169 @@
+{
+  "title": "Beachside Anime Girl in Red Bikini",
+  "description": "A blonde anime girl in a red bikini posing by the ocean with floral hair accessories.",
+  "tags": [
+    "ani",
+    "female character",
+    "beach",
+    "bikini",
+    "ocean",
+    "sum r",
+    "blonde hair",
+    "red",
+    "collectible",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "collectible card"
+  ],
+  "style": "anime",
+  "rarity": "UR",
+  "category": "anime",
+  "character": "female character",
+  "color": "red",
+  "mood": "playful",
+  "scene": "beach",
+  "price": 100,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "zh": {
+      "title": "海滩边的动漫女孩",
+      "description": "一位金发动漫女孩穿着红色比基尼在海边摆姿势，头戴花饰。",
+      "tags": [
+        "动漫",
+        "女性角色",
+        "海滩",
+        "比基尼",
+        "海洋",
+        "夏天",
+        "金发",
+        "红色",
+        "收藏卡"
+      ]
+    },
+    "filename": "142784266_p1_master1200.jpg",
+    "syncSourceId": "local-gallery:142784266_p1_master1200.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "blue",
+          "beige"
+        ],
+        "styleTags": [
+          "anime",
+          "digital art",
+          "illustration"
+        ],
+        "compositionTags": [
+          "centered subject",
+          "close-up",
+          "shallow depth of field"
+        ],
+        "subjectFocus": "blonde anime girl",
+        "raritySignals": [
+          "collectible card"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "playful",
+          "cheerful",
+          "alluring"
+        ],
+        "toneTags": [
+          "lighthearted",
+          "vibrant"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.7
+      },
+      "characterLayer": {
+        "entityType": "female character",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "beach babe",
+          "summer girl",
+          "fashionable"
+        ],
+        "poseTags": [
+          "posing",
+          "hands on hips",
+          "looking at viewer"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "beach",
+          "ocean",
+          "tropical"
+        ],
+        "genreTags": [
+          "anime",
+          "fantasy",
+          "adventure"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "red bikini",
+          "floral hair accessory",
+          "seashell"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "beach bikini",
+          "red bikini",
+          "blonde anime",
+          "collectible card",
+          "anime collectible"
+        ],
+        "collectorHooks": [
+          "ur rarity",
+          "limited edition",
+          "exclusive artwork"
+        ],
+        "marketingAngles": [
+          "summer vibes",
+          "beach aesthetic",
+          "anime fashion"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "collectors",
+          "gacha players",
+          "digital art lovers"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Beachside Anime Girl in Red Bikini",
+      "shopifyTitle": "Anime Girl in Red Bikini - Beach Collectible Card",
+      "shortName": "Red Bikini Beach Girl",
+      "slug": "anime-girl-red-bikini-beach",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Crimson Beach Goddess"
+  }
+}

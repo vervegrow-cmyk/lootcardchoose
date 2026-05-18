@@ -1,0 +1,153 @@
+{
+  "title": "Fantasy Heroine Luxury Bedroom Anime",
+  "description": "A collectible high detail card with blue and orange tones, luxurious styling, and a polished fantasy heroine showcase inspired by luxury bedroom scenes.",
+  "tags": [
+    "anime female character",
+    "luxury outfit illustration",
+    "elegant woman art",
+    "digital art collection",
+    "elegant",
+    "confident",
+    "glamorous",
+    "fantasy heroine",
+    "luxury icon",
+    "fashion model",
+    "anime",
+    "digital art",
+    "illustration",
+    "high detail"
+  ],
+  "style": "anime",
+  "rarity": "SSR",
+  "category": "card",
+  "character": "female fantasy heroine",
+  "color": "blue orange gold beige",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "微信图片_20260512172628_5528_2.jpg",
+    "syncSourceId": "local-gallery:微信图片_20260512172628_5528_2.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "blue",
+          "orange",
+          "gold",
+          "beige"
+        ],
+        "styleTags": [
+          "anime",
+          "digital art",
+          "illustration",
+          "high detail"
+        ],
+        "compositionTags": [
+          "centered subject",
+          "dynamic pose",
+          "close up",
+          "dramatic lighting"
+        ],
+        "subjectFocus": "female character in bra",
+        "raritySignals": [
+          "exclusive photography",
+          "high quality rendering"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "seductive",
+          "confident",
+          "alluring"
+        ],
+        "toneTags": [
+          "luxurious",
+          "intimate",
+          "opulent"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.85
+      },
+      "characterLayer": {
+        "entityType": "human female",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "seductress",
+          "luxury icon",
+          "fashion model"
+        ],
+        "poseTags": [
+          "hand on head",
+          "body twist",
+          "gaze direct"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "luxury bedroom",
+          "indoor",
+          "evening"
+        ],
+        "genreTags": [
+          "fantasy",
+          "erotic illustration",
+          "character art"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "lamp",
+          "mirror",
+          "silk sash"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime female character",
+          "luxury bra illustration",
+          "seductive woman art",
+          "digital art collection"
+        ],
+        "collectorHooks": [
+          "exclusive photography",
+          "high detail rendering",
+          "limited edition style"
+        ],
+        "marketingAngles": [
+          "luxury lifestyle",
+          "character collection",
+          "digital art appreciation"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "digital art collectors",
+          "luxury art lovers"
+        ],
+        "safetyFlags": [
+          "explicit content",
+          "erotic illustration"
+        ]
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Seductive Anime Woman in Luxury Bedroom",
+      "shopifyTitle": "Seductive Anime Woman in Luxury Bedroom - Digital Art Collectible",
+      "shortName": "Luxury Bedroom Seduction",
+      "slug": "luxury-bedroom-seduction",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

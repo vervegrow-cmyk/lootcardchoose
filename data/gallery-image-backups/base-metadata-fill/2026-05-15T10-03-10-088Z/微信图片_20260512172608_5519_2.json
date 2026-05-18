@@ -1,0 +1,164 @@
+{
+  "title": "Anime Girl With Teal Hair And Horns",
+  "description": "A stylish character portrait character card with white and teal tones, centered subject, and abstract appeal.",
+  "tags": [
+    "anime girl",
+    "character art",
+    "fantasy portrait",
+    "digital collectible",
+    "high detail",
+    "joyful",
+    "confident",
+    "playful",
+    "energetic",
+    "fighter",
+    "heroine",
+    "celestial being",
+    "mythological",
+    "anime",
+    "digital art"
+  ],
+  "style": "anime",
+  "rarity": "SSR",
+  "category": "card",
+  "character": "humanoid fighter",
+  "color": "white teal orange purple",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "微信图片_20260512172608_5519_2.jpg",
+    "syncSourceId": "local-gallery:微信图片_20260512172608_5519_2.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "white",
+          "teal",
+          "orange",
+          "purple"
+        ],
+        "styleTags": [
+          "anime",
+          "digital art",
+          "character portrait",
+          "high detail",
+          "vibrant"
+        ],
+        "compositionTags": [
+          "centered subject",
+          "dynamic pose",
+          "close up",
+          "symmetrical composition",
+          "high contrast"
+        ],
+        "subjectFocus": "female anime character with horns and teal hair",
+        "raritySignals": [
+          "high detail rendering",
+          "vibrant color palette",
+          "dynamic pose",
+          "character portrait"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "joyful",
+          "confident",
+          "playful",
+          "energetic"
+        ],
+        "toneTags": [
+          "uplifting",
+          "lighthearted",
+          "cheerful"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.75
+      },
+      "characterLayer": {
+        "entityType": "humanoid",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "fighter",
+          "heroine",
+          "celestial being",
+          "mythological"
+        ],
+        "poseTags": [
+          "arms raised",
+          "smiling",
+          "dynamic",
+          "showcasing"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "abstract",
+          "non specific",
+          "fantasy"
+        ],
+        "genreTags": [
+          "anime",
+          "fantasy",
+          "mythology",
+          "action"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "horned headpiece",
+          "earrings",
+          "battle wear",
+          "symbolic emblems"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "character art",
+          "fantasy portrait",
+          "digital collectible",
+          "high detail"
+        ],
+        "collectorHooks": [
+          "limited edition",
+          "unique design",
+          "high detail rendering",
+          "dynamic pose"
+        ],
+        "marketingAngles": [
+          "character showcase",
+          "emotional appeal",
+          "visual spectacle",
+          "fan favorite"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "digital art collectors",
+          "fantasy enthusiasts",
+          "gaming community"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Anime Girl with Teal Hair and Horns",
+      "shopifyTitle": "Anime Character Portrait - Teal Hair and Horns",
+      "shortName": "Teal Hair Horned Girl",
+      "slug": "teal-hair-horned-girl",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

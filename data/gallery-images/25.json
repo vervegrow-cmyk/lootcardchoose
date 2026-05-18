@@ -1,0 +1,157 @@
+{
+  "title": "Anime Girl in Red Outfit with Goggles",
+  "description": "A cheerful anime girl with brown hair and red bow, wearing a red and white outfit with goggles, sitting under cherry blossom trees.",
+  "tags": [
+    "ani",
+    "female character",
+    "cherry blossom",
+    "goggles",
+    "red outfit",
+    "sitting",
+    "spring",
+    "pink background",
+    "collectible",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "collectible card"
+  ],
+  "style": "anime",
+  "rarity": "UR",
+  "category": "anime",
+  "character": "female character",
+  "color": "red and white",
+  "mood": "cheerful",
+  "scene": "cherry blossom garden",
+  "price": 100,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "filename": "25.jpg",
+    "syncSourceId": "local-gallery:25.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "white",
+          "pink"
+        ],
+        "styleTags": [
+          "anime",
+          "illustration",
+          "digital art"
+        ],
+        "compositionTags": [
+          "centered subject",
+          "sitting pose",
+          "background framing"
+        ],
+        "subjectFocus": "anime girl",
+        "raritySignals": [
+          "collectible card",
+          "patreon vrenname"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "cheerful",
+          "playful",
+          "serene"
+        ],
+        "toneTags": [
+          "bright",
+          "whimsical",
+          "gentle"
+        ],
+        "energyLevel": "medium",
+        "dramaticIntensity": 0.3
+      },
+      "characterLayer": {
+        "entityType": "human",
+        "genderPresentation": "female",
+        "agePresentation": "teen",
+        "archetypeTags": [
+          "adventurer",
+          "heroine",
+          "fashionable"
+        ],
+        "poseTags": [
+          "sitting",
+          "relaxed",
+          "front-facing"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "cherry blossom garden",
+          "spring",
+          "outdoor"
+        ],
+        "genreTags": [
+          "anime",
+          "fantasy",
+          "adventure"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "goggles",
+          "red bow",
+          "corset outfit",
+          "leggings"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "cherry blossom",
+          "red outfit",
+          "goggles",
+          "collectible card",
+          "anime art"
+        ],
+        "collectorHooks": [
+          "ur rarity",
+          "patreon exclusive",
+          "limited edition"
+        ],
+        "marketingAngles": [
+          "spring aesthetic",
+          "fashionable anime character",
+          "goggles accessory"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "collectors",
+          "gacha game players",
+          "digital art lovers"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Anime Girl in Red Outfit with Goggles",
+      "shopifyTitle": "Anime Girl in Red Outfit with Goggles - Collectible Card",
+      "shortName": "Red Outfit Anime Girl",
+      "slug": "anime-girl-red-outfit-goggles",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Crimson Blossom Adventurer"
+  }
+}

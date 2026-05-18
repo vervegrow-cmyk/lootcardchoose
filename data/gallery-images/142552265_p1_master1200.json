@@ -1,0 +1,182 @@
+{
+  "title": "Sleeping Female Character in Blue Silk Dress",
+  "description": "A beautiful female character with long blonde hair and red eyes, wearing a light blue silk dress, lying on a bed with pillows.",
+  "tags": [
+    "ani",
+    "female character",
+    "sleeping",
+    "blue dress",
+    "bed",
+    "long hair",
+    "red eyes",
+    "silky",
+    "soft lighting",
+    "collectible",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "collectible card"
+  ],
+  "style": "soft anime",
+  "rarity": "SSR",
+  "category": "anime",
+  "character": "female character",
+  "color": "blue",
+  "mood": "calm",
+  "scene": "bedroom",
+  "price": 150,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "zh": {
+      "title": "身穿蓝色丝绸睡衣的女性角色",
+      "description": "一位拥有金色长发和红色眼睛的美丽女性角色，穿着浅蓝色丝绸睡衣，躺在铺有枕头的床上。",
+      "tags": [
+        "动漫",
+        "女性角色",
+        "睡觉",
+        "蓝色睡衣",
+        "床",
+        "长发",
+        "红眼睛",
+        "丝滑",
+        "柔和光线",
+        "收藏卡"
+      ]
+    },
+    "filename": "142552265_p1_master1200.jpg",
+    "syncSourceId": "local-gallery:142552265_p1_master1200.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "blue",
+          "white",
+          "blonde"
+        ],
+        "styleTags": [
+          "soft anime",
+          "illustration",
+          "digital art",
+          "silk texture"
+        ],
+        "compositionTags": [
+          "centered subject",
+          "bedroom setting",
+          "pillow background",
+          "soft lighting"
+        ],
+        "subjectFocus": "female character in bed",
+        "raritySignals": [
+          "ssr rarity",
+          "collectible card",
+          "high detail"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "calm",
+          "serene",
+          "peaceful",
+          "sleepy"
+        ],
+        "toneTags": [
+          "gentle",
+          "dreamy",
+          "soft",
+          "intimate"
+        ],
+        "energyLevel": "low",
+        "dramaticIntensity": 0.2
+      },
+      "characterLayer": {
+        "entityType": "anime girl",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "sleeping beauty",
+          "bedroom muse",
+          "delicate"
+        ],
+        "poseTags": [
+          "lying down",
+          "half-covered",
+          "resting",
+          "bed pose"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "bedroom",
+          "private space",
+          "indoor"
+        ],
+        "genreTags": [
+          "anime",
+          "fantasy",
+          "character art"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "pillows",
+          "blue silk dress",
+          "hair ornament"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl sleeping",
+          "blue silk dress",
+          "bedroom anime",
+          "ssr collectible",
+          "soft anime art"
+        ],
+        "collectorHooks": [
+          "high detail",
+          "rare ssr",
+          "sleeping pose",
+          "silky texture",
+          "red eyes"
+        ],
+        "marketingAngles": [
+          "dreamy aesthetic",
+          "bedroom collection",
+          "soft anime style",
+          "collector s edition"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "collectible card collectors",
+          "digital art lovers",
+          "feminine aesthetic"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Sleeping Anime Girl in Blue Silk Dress",
+      "shopifyTitle": "Sleeping Anime Girl in Blue Silk Dress - SSR Collectible Card",
+      "shortName": "Sleeping Blue Silk Girl",
+      "slug": "sleeping-blue-silk-girl",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Sapphire Dream Slumber"
+  }
+}

@@ -1,0 +1,158 @@
+{
+  "title": "Pink-haired Mermaid Girl in Blue Bikini",
+  "description": "A cute anime-style girl with pink hair and blue horns, wearing a white bikini with a blue bow, standing in clear blue water.",
+  "tags": [
+    "ani",
+    "rmaid",
+    "female character",
+    "bikini",
+    "blue hair",
+    "pink hair",
+    "water",
+    "beach",
+    "cute",
+    "swimming",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "collectible card"
+  ],
+  "style": "anime",
+  "rarity": "UR",
+  "category": "anime",
+  "character": "female character",
+  "color": "blue and pink",
+  "mood": "cute and cheerful",
+  "scene": "beach",
+  "price": 150,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "filename": "142051941_p0_master1200.jpg",
+    "syncSourceId": "local-gallery:142051941_p0_master1200.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.99,
+      "visualLayer": {
+        "primaryColors": [
+          "blue",
+          "pink"
+        ],
+        "styleTags": [
+          "anime",
+          "digital art",
+          "illustration"
+        ],
+        "compositionTags": [
+          "centered subject",
+          "full-body shot",
+          "water background"
+        ],
+        "subjectFocus": "female anime character",
+        "raritySignals": [
+          "ur rarity",
+          "collectible card",
+          "high detail"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "cute",
+          "cheerful",
+          "playful"
+        ],
+        "toneTags": [
+          "bright",
+          "whimsical",
+          "serene"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.3
+      },
+      "characterLayer": {
+        "entityType": "mermaid",
+        "genderPresentation": "female",
+        "agePresentation": "teen",
+        "archetypeTags": [
+          "beauty",
+          "princess",
+          "water spirit"
+        ],
+        "poseTags": [
+          "standing",
+          "smiling",
+          "relaxed"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "beach",
+          "ocean",
+          "water"
+        ],
+        "genreTags": [
+          "fantasy",
+          "anime",
+          "mermaid lore"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "bikini",
+          "blue bow",
+          "water droplets"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime mermaid",
+          "pink hair girl",
+          "blue bikini",
+          "collectible card",
+          "cute anime girl"
+        ],
+        "collectorHooks": [
+          "ur rarity",
+          "high detail art",
+          "unique character design"
+        ],
+        "marketingAngles": [
+          "beauty",
+          "fantasy",
+          "collectible",
+          "anime fan"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "mermaid lovers",
+          "collectors",
+          "gacha players"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Pink-haired Mermaid Girl in Blue Bikini",
+      "shopifyTitle": "Pink-haired Mermaid Girl in Blue Bikini - UR Collectible Card",
+      "shortName": "Pink Mermaid Card",
+      "slug": "pink-mermaid-card",
+      "namingVersion": "v1",
+      "confidence": 0.98,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Sapphire Mermaid Enchantress"
+  }
+}

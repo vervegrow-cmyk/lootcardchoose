@@ -1,0 +1,151 @@
+{
+  "title": "45",
+  "description": "Auto generated metadata for 45",
+  "tags": [
+    "45"
+  ],
+  "style": "",
+  "rarity": "",
+  "category": "card",
+  "character": "",
+  "color": "",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "45.jpg",
+    "syncSourceId": "local-gallery:45.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "black",
+          "blue",
+          "white",
+          "beige"
+        ],
+        "styleTags": [
+          "anime",
+          "digital-art",
+          "hyperrealistic",
+          "glow-effect"
+        ],
+        "compositionTags": [
+          "close-up",
+          "low-angle",
+          "centered-subject",
+          "partial-body"
+        ],
+        "subjectFocus": "female character in swimwear",
+        "raritySignals": [
+          "high-detail",
+          "unique-pose",
+          "limited-edition-style"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "seductive",
+          "relaxed",
+          "intimate",
+          "calm"
+        ],
+        "toneTags": [
+          "soft",
+          "dreamy",
+          "romantic",
+          "nighttime"
+        ],
+        "energyLevel": "low",
+        "dramaticIntensity": 0.3
+      },
+      "characterLayer": {
+        "entityType": "human",
+        "genderPresentation": "female",
+        "agePresentation": "young-adult",
+        "archetypeTags": [
+          "beach-babe",
+          "night-club-girl",
+          "luxury-lifestyle"
+        ],
+        "poseTags": [
+          "reclining",
+          "cross-legged",
+          "relaxed",
+          "looking-at-viewer"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "beach",
+          "night",
+          "ocean-view",
+          "tropical"
+        ],
+        "genreTags": [
+          "fantasy",
+          "erotic",
+          "romantic-comedy",
+          "slice-of-life"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "swimwear",
+          "earrings",
+          "blanket",
+          "lamp"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl beach",
+          "nighttime swimwear",
+          "seductive anime",
+          "luxury beach scene"
+        ],
+        "collectorHooks": [
+          "unique pose",
+          "high-detail art",
+          "limited edition",
+          "collector s item"
+        ],
+        "marketingAngles": [
+          "relaxing summer vibes",
+          "luxury lifestyle",
+          "romantic night scene",
+          "collectible art"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "digital art collectors",
+          "erotic art lovers",
+          "beach lovers"
+        ],
+        "safetyFlags": [
+          "explicit content",
+          "adult-themed",
+          "suggestive imagery"
+        ]
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Night Beach Seduction",
+      "shopifyTitle": "Night Beach Seduction - Anime Girl in Swimwear",
+      "shortName": "Night Beach Seduction",
+      "slug": "night-beach-seduction",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

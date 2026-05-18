@@ -1,0 +1,162 @@
+{
+  "title": "Cute Bunny Girl at Casino Table",
+  "description": "A cheerful anime-style female character in bunny ears and a revealing outfit poses at a casino table with a playful expression.",
+  "tags": [
+    "ani",
+    "female character",
+    "bunny ears",
+    "casino",
+    "gaming",
+    "cute",
+    "black gold",
+    "collectible",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "SSR",
+    "collectible card"
+  ],
+  "style": "black gold anime",
+  "rarity": "UR",
+  "category": "anime",
+  "character": "female character",
+  "color": "black and gold",
+  "mood": "playful",
+  "scene": "casino",
+  "price": 100,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "filename": "23.jpg",
+    "syncSourceId": "local-gallery:23.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "black",
+          "gold",
+          "skin tone"
+        ],
+        "styleTags": [
+          "anime",
+          "high detail",
+          "glow",
+          "soft shading"
+        ],
+        "compositionTags": [
+          "centered subject",
+          "close-up",
+          "dynamic pose",
+          "eye contact"
+        ],
+        "subjectFocus": "female anime character",
+        "raritySignals": [
+          "collectible card"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "playful",
+          "cheerful",
+          "alluring",
+          "confident"
+        ],
+        "toneTags": [
+          "lighthearted",
+          "seductive",
+          "entertaining"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.75
+      },
+      "characterLayer": {
+        "entityType": "anime girl",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "bunny girl",
+          "casino hostess",
+          "playful seductress"
+        ],
+        "poseTags": [
+          "hand gesture",
+          "smiling",
+          "leaning forward",
+          "posing"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "casino",
+          "gaming table",
+          "luxury interior"
+        ],
+        "genreTags": [
+          "anime",
+          "fantasy",
+          "gaming"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "bunny ears",
+          "gaming chips",
+          "casino table",
+          "gloves"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "bunny ears",
+          "casino",
+          "collectible card",
+          "playful anime"
+        ],
+        "collectorHooks": [
+          "ur rarity",
+          "black gold style",
+          "exclusive art",
+          "patreon artist"
+        ],
+        "marketingAngles": [
+          "cute and seductive",
+          "gaming theme",
+          "high detail art",
+          "anime collector"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "gaming enthusiasts",
+          "collectible card collectors",
+          "patreon supporters"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Cute Bunny Girl at Casino Table",
+      "shopifyTitle": "Cute Bunny Girl at Casino Table - Collectible Card",
+      "shortName": "Bunny Girl Casino",
+      "slug": "bunny-girl-casino",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Golden Bunny Casino Charmer"
+  }
+}

@@ -1,0 +1,164 @@
+{
+  "title": "Elegant Beach Heroine",
+  "description": "A collectible sunset card with teal and pink tones, soft styling, and a polished beauty showcase inspired by sunset beach scenes.",
+  "tags": [
+    "anime girl",
+    "sunset beach",
+    "bikini art",
+    "teal hair",
+    "pink flowers",
+    "serene",
+    "romantic",
+    "dreamy",
+    "calm",
+    "beauty",
+    "nature lover",
+    "fashion icon",
+    "mythical beauty",
+    "anime",
+    "digital art"
+  ],
+  "style": "anime",
+  "rarity": "SSR",
+  "category": "card",
+  "character": "human beauty",
+  "color": "teal pink orange",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "微信图片_20260512172718_5531_2.jpg",
+    "syncSourceId": "local-gallery:微信图片_20260512172718_5531_2.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "teal",
+          "pink",
+          "orange"
+        ],
+        "styleTags": [
+          "anime",
+          "digital-art",
+          "illustration",
+          "sunset",
+          "watercolor-effect"
+        ],
+        "compositionTags": [
+          "centered-subject",
+          "golden-ratio",
+          "symmetrical-framing",
+          "foreground-floral",
+          "background-sunset"
+        ],
+        "subjectFocus": "female character in bikini",
+        "raritySignals": [
+          "high-detail",
+          "character-centric",
+          "limited-edition-art",
+          "signature-style"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "serene",
+          "romantic",
+          "dreamy",
+          "calm"
+        ],
+        "toneTags": [
+          "soft",
+          "warm",
+          "ethereal"
+        ],
+        "energyLevel": "low",
+        "dramaticIntensity": 0.3
+      },
+      "characterLayer": {
+        "entityType": "human",
+        "genderPresentation": "female",
+        "agePresentation": "young-adult",
+        "archetypeTags": [
+          "beauty",
+          "nature-lover",
+          "fashion-icon",
+          "mythical-beauty"
+        ],
+        "poseTags": [
+          "arms-crossed",
+          "confident",
+          "gaze-forward",
+          "relaxed"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "sunset",
+          "riverbank",
+          "natural-landscape",
+          "mountain-view"
+        ],
+        "genreTags": [
+          "fantasy",
+          "romantic-comedy",
+          "adventure"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "bikini",
+          "flower-ornament",
+          "hair-clip",
+          "pink-flowers"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "sunset beach",
+          "bikini art",
+          "teal hair",
+          "pink flowers"
+        ],
+        "collectorHooks": [
+          "limited edition",
+          "signature style",
+          "high detail",
+          "rare character design"
+        ],
+        "marketingAngles": [
+          "collectible art",
+          "digital collectible",
+          "character appreciation",
+          "landscape beauty"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "digital art collectors",
+          "fashion enthusiasts",
+          "nature lovers"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Teal Hair Beauty in Sunset",
+      "shopifyTitle": "Teal Hair Beauty in Sunset - Digital Collectible Art",
+      "shortName": "Teal Hair Beauty",
+      "slug": "teal-hair-beauty-in-sunset",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Sunset Teal Enchantress"
+  }
+}

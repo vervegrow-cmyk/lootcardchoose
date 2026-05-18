@@ -1,0 +1,1305 @@
+{
+  "summary": {
+    "dateKey": "2026-05-16",
+    "timezone": "Asia/Shanghai",
+    "sourceFile": "D:\\桌面文件下载\\LOOTCARDCHOOSE\\reports\\recommendation-feedback.jsonl",
+    "sourceWindowStart": "2026-05-16T05:55:52.487Z",
+    "sourceWindowEnd": "2026-05-16T12:20:59.074Z",
+    "searchCount": 14,
+    "impressions": 140,
+    "selections": 28,
+    "checkoutCreated": 14,
+    "purchases": 0,
+    "selectionRate": 0.2,
+    "checkoutRate": 0.5,
+    "purchaseRate": 0,
+    "parsedLineCount": 60,
+    "invalidLineCount": 0
+  },
+  "funnel": {
+    "impressions": 140,
+    "selections": 28,
+    "checkoutCreated": 14,
+    "purchases": 0,
+    "selectionRate": 0.2,
+    "checkoutRate": 0.5,
+    "purchaseRate": 0
+  },
+  "metadataPerformance": {
+    "rarity": [
+      {
+        "bucket": "SSR",
+        "impressions": 126,
+        "selections": 28,
+        "checkoutCreated": 14,
+        "purchases": 0,
+        "selectionRate": 0.2222222222222222,
+        "checkoutRate": 0.5,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "UR",
+        "impressions": 14,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      }
+    ],
+    "style": [
+      {
+        "bucket": "black gold anime",
+        "impressions": 137,
+        "selections": 28,
+        "checkoutCreated": 14,
+        "purchases": 0,
+        "selectionRate": 0.20437956204379562,
+        "checkoutRate": 0.5,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "blue gold anime",
+        "impressions": 3,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      }
+    ],
+    "character": [
+      {
+        "bucket": "female character",
+        "impressions": 140,
+        "selections": 28,
+        "checkoutCreated": 14,
+        "purchases": 0,
+        "selectionRate": 0.2,
+        "checkoutRate": 0.5,
+        "purchaseRate": 0
+      }
+    ],
+    "color": [
+      {
+        "bucket": "red black gold",
+        "impressions": 14,
+        "selections": 28,
+        "checkoutCreated": 14,
+        "purchases": 0,
+        "selectionRate": 2,
+        "checkoutRate": 0.5,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "blue and gold",
+        "impressions": 17,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "black",
+        "impressions": 14,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "black and gold",
+        "impressions": 14,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "black and green",
+        "impressions": 14,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "black and white",
+        "impressions": 14,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "red and black",
+        "impressions": 14,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "red and white",
+        "impressions": 14,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "purple and gold",
+        "impressions": 13,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "white and purple",
+        "impressions": 11,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "brown and blue",
+        "impressions": 1,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      }
+    ],
+    "title": [
+      {
+        "bucket": "Red Corseted Female Character Collectible Card",
+        "impressions": 14,
+        "selections": 28,
+        "checkoutCreated": 14,
+        "purchases": 0,
+        "selectionRate": 2,
+        "checkoutRate": 0.5,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "Anime Female Teacher in Classroom",
+        "impressions": 14,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "Blonde Female Character in Black Bikini at Beach",
+        "impressions": 14,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "Blue-haired Female Character in Gold and Black Bikini",
+        "impressions": 14,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "Cute Anime Girl in Red Outfit",
+        "impressions": 14,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "Cute Bunny Girl at Casino Table",
+        "impressions": 14,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "Red and Black Anime Female Character on Ship",
+        "impressions": 14,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "Whispering Secret Anime Girl Collectible Card",
+        "impressions": 14,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "Anime Female Character with Lightning Sword",
+        "impressions": 13,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "Angel Wings Girl in White Kimono",
+        "impressions": 11,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "Goddess of the Sea",
+        "impressions": 3,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "Blue-haired Bunny Girl in Brown Outfit",
+        "impressions": 1,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      }
+    ],
+    "priceTier": [
+      {
+        "bucket": "<10",
+        "impressions": 0,
+        "selections": 0,
+        "checkoutCreated": 14,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "30+",
+        "impressions": 140,
+        "selections": 28,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0.2,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      }
+    ],
+    "visualStyle": [
+      {
+        "bucket": "anime",
+        "impressions": 140,
+        "selections": 28,
+        "checkoutCreated": 14,
+        "purchases": 0,
+        "selectionRate": 0.2,
+        "checkoutRate": 0.5,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "black gold",
+        "impressions": 140,
+        "selections": 28,
+        "checkoutCreated": 14,
+        "purchases": 0,
+        "selectionRate": 0.2,
+        "checkoutRate": 0.5,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "illustration",
+        "impressions": 29,
+        "selections": 28,
+        "checkoutCreated": 14,
+        "purchases": 0,
+        "selectionRate": 0.9655172413793104,
+        "checkoutRate": 0.5,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "fantasy",
+        "impressions": 44,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "fantasy art",
+        "impressions": 44,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "portrait",
+        "impressions": 31,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "holy",
+        "impressions": 24,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "dark fantasy",
+        "impressions": 14,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      }
+    ],
+    "moodTags": [
+      {
+        "bucket": "mysterious",
+        "impressions": 56,
+        "selections": 28,
+        "checkoutCreated": 14,
+        "purchases": 0,
+        "selectionRate": 0.5,
+        "checkoutRate": 0.5,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "cute",
+        "impressions": 71,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "elegant",
+        "impressions": 44,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "battlefield",
+        "impressions": 27,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "divine",
+        "impressions": 27,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "celestial",
+        "impressions": 24,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "romantic",
+        "impressions": 17,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "boss like",
+        "impressions": 14,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "fierce",
+        "impressions": 14,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "regal",
+        "impressions": 14,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "void",
+        "impressions": 14,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "calm",
+        "impressions": 11,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      }
+    ],
+    "toneTags": [
+      {
+        "bucket": "unknown",
+        "impressions": 85,
+        "selections": 28,
+        "checkoutCreated": 14,
+        "purchases": 0,
+        "selectionRate": 0.32941176470588235,
+        "checkoutRate": 0.5,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "battlefield",
+        "impressions": 27,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "celestial",
+        "impressions": 24,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "romantic",
+        "impressions": 17,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "regal",
+        "impressions": 14,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "void",
+        "impressions": 14,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      }
+    ],
+    "characterTypes": [
+      {
+        "bucket": "anime girl",
+        "impressions": 140,
+        "selections": 28,
+        "checkoutCreated": 14,
+        "purchases": 0,
+        "selectionRate": 0.2,
+        "checkoutRate": 0.5,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "female",
+        "impressions": 140,
+        "selections": 28,
+        "checkoutCreated": 14,
+        "purchases": 0,
+        "selectionRate": 0.2,
+        "checkoutRate": 0.5,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "goddess",
+        "impressions": 16,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "queen",
+        "impressions": 14,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "warrior",
+        "impressions": 14,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      }
+    ],
+    "archetypeTags": [
+      {
+        "bucket": "unknown",
+        "impressions": 112,
+        "selections": 28,
+        "checkoutCreated": 14,
+        "purchases": 0,
+        "selectionRate": 0.25,
+        "checkoutRate": 0.5,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "fighter",
+        "impressions": 14,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "idol",
+        "impressions": 14,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "ruler",
+        "impressions": 14,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      }
+    ],
+    "settingTags": [
+      {
+        "bucket": "eclipse queen",
+        "impressions": 140,
+        "selections": 28,
+        "checkoutCreated": 14,
+        "purchases": 0,
+        "selectionRate": 0.2,
+        "checkoutRate": 0.5,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "luxury",
+        "impressions": 140,
+        "selections": 28,
+        "checkoutCreated": 14,
+        "purchases": 0,
+        "selectionRate": 0.2,
+        "checkoutRate": 0.5,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "romance",
+        "impressions": 70,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "divinity",
+        "impressions": 16,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "power",
+        "impressions": 14,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "queen's circle",
+        "impressions": 14,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "royalty",
+        "impressions": 14,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      }
+    ],
+    "genreTags": [
+      {
+        "bucket": "luxury",
+        "impressions": 140,
+        "selections": 28,
+        "checkoutCreated": 14,
+        "purchases": 0,
+        "selectionRate": 0.2,
+        "checkoutRate": 0.5,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "romance",
+        "impressions": 70,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "divinity",
+        "impressions": 16,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "power",
+        "impressions": 14,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "royalty",
+        "impressions": 14,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      }
+    ],
+    "colorHints": [
+      {
+        "bucket": "gold",
+        "impressions": 140,
+        "selections": 28,
+        "checkoutCreated": 14,
+        "purchases": 0,
+        "selectionRate": 0.2,
+        "checkoutRate": 0.5,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "black",
+        "impressions": 137,
+        "selections": 28,
+        "checkoutCreated": 14,
+        "purchases": 0,
+        "selectionRate": 0.20437956204379562,
+        "checkoutRate": 0.5,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "red",
+        "impressions": 45,
+        "selections": 28,
+        "checkoutCreated": 14,
+        "purchases": 0,
+        "selectionRate": 0.6222222222222222,
+        "checkoutRate": 0.5,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "white",
+        "impressions": 39,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "purple",
+        "impressions": 38,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "blue",
+        "impressions": 18,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "green",
+        "impressions": 14,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      },
+      {
+        "bucket": "silver",
+        "impressions": 14,
+        "selections": 0,
+        "checkoutCreated": 0,
+        "purchases": 0,
+        "selectionRate": 0,
+        "checkoutRate": 0,
+        "purchaseRate": 0
+      }
+    ]
+  },
+  "topConvertingStyles": [
+    {
+      "bucket": "black gold anime",
+      "impressions": 137,
+      "selections": 28,
+      "checkoutCreated": 14,
+      "purchases": 0,
+      "selectionRate": 0.20437956204379562,
+      "checkoutRate": 0.5,
+      "purchaseRate": 0
+    }
+  ],
+  "topPurchasedMetadata": {
+    "rarity": [],
+    "style": [],
+    "character": [],
+    "color": [],
+    "title": [],
+    "priceTier": [],
+    "visualStyle": [],
+    "moodTags": [],
+    "toneTags": [],
+    "characterTypes": [],
+    "archetypeTags": [],
+    "settingTags": [],
+    "genreTags": [],
+    "colorHints": []
+  },
+  "checkoutDropoff": [
+    {
+      "bucket": "Red Corseted Female Character Collectible Card",
+      "title": "Red Corseted Female Character Collectible Card",
+      "checkoutCreated": 14,
+      "purchases": 0,
+      "dropoffCount": 14,
+      "dropoffRate": 1
+    }
+  ],
+  "lowPerformingRecommendations": [
+    {
+      "cardId": "Anime Female Teacher in Classroom",
+      "title": "Anime Female Teacher in Classroom",
+      "impressions": 14,
+      "selections": 0,
+      "checkoutCreated": 0,
+      "purchases": 0,
+      "selectionRate": 0,
+      "checkoutRate": 0,
+      "purchaseRate": 0
+    },
+    {
+      "cardId": "Blonde Female Character in Black Bikini at Beach",
+      "title": "Blonde Female Character in Black Bikini at Beach",
+      "impressions": 14,
+      "selections": 0,
+      "checkoutCreated": 0,
+      "purchases": 0,
+      "selectionRate": 0,
+      "checkoutRate": 0,
+      "purchaseRate": 0
+    },
+    {
+      "cardId": "Blue-haired Female Character in Gold and Black Bikini",
+      "title": "Blue-haired Female Character in Gold and Black Bikini",
+      "impressions": 14,
+      "selections": 0,
+      "checkoutCreated": 0,
+      "purchases": 0,
+      "selectionRate": 0,
+      "checkoutRate": 0,
+      "purchaseRate": 0
+    },
+    {
+      "cardId": "Cute Anime Girl in Red Outfit",
+      "title": "Cute Anime Girl in Red Outfit",
+      "impressions": 14,
+      "selections": 0,
+      "checkoutCreated": 0,
+      "purchases": 0,
+      "selectionRate": 0,
+      "checkoutRate": 0,
+      "purchaseRate": 0
+    },
+    {
+      "cardId": "Cute Bunny Girl at Casino Table",
+      "title": "Cute Bunny Girl at Casino Table",
+      "impressions": 14,
+      "selections": 0,
+      "checkoutCreated": 0,
+      "purchases": 0,
+      "selectionRate": 0,
+      "checkoutRate": 0,
+      "purchaseRate": 0
+    },
+    {
+      "cardId": "Red and Black Anime Female Character on Ship",
+      "title": "Red and Black Anime Female Character on Ship",
+      "impressions": 14,
+      "selections": 0,
+      "checkoutCreated": 0,
+      "purchases": 0,
+      "selectionRate": 0,
+      "checkoutRate": 0,
+      "purchaseRate": 0
+    },
+    {
+      "cardId": "Whispering Secret Anime Girl Collectible Card",
+      "title": "Whispering Secret Anime Girl Collectible Card",
+      "impressions": 14,
+      "selections": 0,
+      "checkoutCreated": 0,
+      "purchases": 0,
+      "selectionRate": 0,
+      "checkoutRate": 0,
+      "purchaseRate": 0
+    },
+    {
+      "cardId": "Anime Female Character with Lightning Sword",
+      "title": "Anime Female Character with Lightning Sword",
+      "impressions": 13,
+      "selections": 0,
+      "checkoutCreated": 0,
+      "purchases": 0,
+      "selectionRate": 0,
+      "checkoutRate": 0,
+      "purchaseRate": 0
+    },
+    {
+      "cardId": "Angel Wings Girl in White Kimono",
+      "title": "Angel Wings Girl in White Kimono",
+      "impressions": 11,
+      "selections": 0,
+      "checkoutCreated": 0,
+      "purchases": 0,
+      "selectionRate": 0,
+      "checkoutRate": 0,
+      "purchaseRate": 0
+    },
+    {
+      "cardId": "Red Corseted Female Character Collectible Card",
+      "title": "Red Corseted Female Character Collectible Card",
+      "impressions": 14,
+      "selections": 28,
+      "checkoutCreated": 14,
+      "purchases": 0,
+      "selectionRate": 2,
+      "checkoutRate": 0.5,
+      "purchaseRate": 0
+    }
+  ],
+  "selectionAnalytics": {
+    "totalSelections": 28,
+    "rankedSelections": 28,
+    "top1SelectionRate": {
+      "numerator": 28,
+      "denominator": 28,
+      "rate": 1,
+      "insufficientData": false
+    },
+    "top3SelectionRate": {
+      "numerator": 28,
+      "denominator": 28,
+      "rate": 1,
+      "insufficientData": false
+    },
+    "top5SelectionRate": {
+      "numerator": 28,
+      "denominator": 28,
+      "rate": 1,
+      "insufficientData": false
+    }
+  },
+  "conversionAnalytics": {
+    "searchCount": 14,
+    "selectionCount": 28,
+    "checkoutCreatedCount": 14,
+    "paidCount": 0,
+    "searchToSelect": {
+      "numerator": 28,
+      "denominator": 14,
+      "rate": 2,
+      "insufficientData": false
+    },
+    "selectToCheckout": {
+      "numerator": 14,
+      "denominator": 28,
+      "rate": 0.5,
+      "insufficientData": false
+    },
+    "checkoutToPaid": {
+      "numerator": 0,
+      "denominator": 14,
+      "rate": 0,
+      "insufficientData": false
+    }
+  },
+  "weakMatchAnalytics": {
+    "queries": [
+      {
+        "bucketType": "query",
+        "bucket": "show me 10 black gold ssr female cards",
+        "searchCount": 14,
+        "selectionCount": 28,
+        "checkoutCount": 14,
+        "paidCount": 0,
+        "top1MissCount": 0,
+        "top3MissCount": 0,
+        "observation": "show me 10 black gold ssr female cards checkouts are not converting to paid"
+      }
+    ],
+    "archetypes": []
+  },
+  "metadataCoverageAnalytics": {
+    "totalActiveCards": 104,
+    "cardsWithAnyIntelligence": 104,
+    "fieldCoverage": [
+      {
+        "field": "visualStyle",
+        "totalActiveCards": 104,
+        "cardsWithAnyIntelligence": 104,
+        "cardsWithField": 104,
+        "coverageRate": 1,
+        "insufficientData": false
+      },
+      {
+        "field": "moodTags",
+        "totalActiveCards": 104,
+        "cardsWithAnyIntelligence": 104,
+        "cardsWithField": 104,
+        "coverageRate": 1,
+        "insufficientData": false
+      },
+      {
+        "field": "toneTags",
+        "totalActiveCards": 104,
+        "cardsWithAnyIntelligence": 104,
+        "cardsWithField": 68,
+        "coverageRate": 0.6538461538461539,
+        "insufficientData": false
+      },
+      {
+        "field": "characterTypes",
+        "totalActiveCards": 104,
+        "cardsWithAnyIntelligence": 104,
+        "cardsWithField": 104,
+        "coverageRate": 1,
+        "insufficientData": false
+      },
+      {
+        "field": "archetypeTags",
+        "totalActiveCards": 104,
+        "cardsWithAnyIntelligence": 104,
+        "cardsWithField": 28,
+        "coverageRate": 0.2692307692307692,
+        "insufficientData": false
+      },
+      {
+        "field": "settingTags",
+        "totalActiveCards": 104,
+        "cardsWithAnyIntelligence": 104,
+        "cardsWithField": 104,
+        "coverageRate": 1,
+        "insufficientData": false
+      },
+      {
+        "field": "genreTags",
+        "totalActiveCards": 104,
+        "cardsWithAnyIntelligence": 104,
+        "cardsWithField": 93,
+        "coverageRate": 0.8942307692307693,
+        "insufficientData": false
+      },
+      {
+        "field": "colorHints",
+        "totalActiveCards": 104,
+        "cardsWithAnyIntelligence": 104,
+        "cardsWithField": 102,
+        "coverageRate": 0.9807692307692307,
+        "insufficientData": false
+      }
+    ],
+    "sparseFamilies": [
+      {
+        "family": "boss_like",
+        "cardsMatched": 0,
+        "totalActiveCards": 104,
+        "coverageRate": 0,
+        "insufficientData": false
+      },
+      {
+        "family": "cyberpunk",
+        "cardsMatched": 0,
+        "totalActiveCards": 104,
+        "coverageRate": 0,
+        "insufficientData": false
+      },
+      {
+        "family": "empress",
+        "cardsMatched": 0,
+        "totalActiveCards": 104,
+        "coverageRate": 0,
+        "insufficientData": false
+      },
+      {
+        "family": "mecha",
+        "cardsMatched": 0,
+        "totalActiveCards": 104,
+        "coverageRate": 0,
+        "insufficientData": false
+      },
+      {
+        "family": "priestess",
+        "cardsMatched": 1,
+        "totalActiveCards": 104,
+        "coverageRate": 0.009615384615384616,
+        "insufficientData": false
+      },
+      {
+        "family": "goddess",
+        "cardsMatched": 12,
+        "totalActiveCards": 104,
+        "coverageRate": 0.11538461538461539,
+        "insufficientData": false
+      },
+      {
+        "family": "warrior",
+        "cardsMatched": 15,
+        "totalActiveCards": 104,
+        "coverageRate": 0.14423076923076922,
+        "insufficientData": false
+      },
+      {
+        "family": "holy",
+        "cardsMatched": 18,
+        "totalActiveCards": 104,
+        "coverageRate": 0.17307692307692307,
+        "insufficientData": false
+      },
+      {
+        "family": "divine",
+        "cardsMatched": 25,
+        "totalActiveCards": 104,
+        "coverageRate": 0.2403846153846154,
+        "insufficientData": false
+      },
+      {
+        "family": "queen",
+        "cardsMatched": 101,
+        "totalActiveCards": 104,
+        "coverageRate": 0.9711538461538461,
+        "insufficientData": false
+      }
+    ]
+  },
+  "parserStabilityAnalytics": {
+    "searchEvents": 14,
+    "telemetryKnownEvents": 1,
+    "unknownTelemetryEvents": 13,
+    "timeoutRatio": {
+      "numerator": 1,
+      "denominator": 14,
+      "rate": 0.07142857142857142,
+      "insufficientData": false
+    },
+    "fallbackRatio": {
+      "numerator": 1,
+      "denominator": 14,
+      "rate": 0.07142857142857142,
+      "insufficientData": false
+    },
+    "rerankEffectivenessRatio": {
+      "numerator": 1,
+      "denominator": 14,
+      "rate": 0.07142857142857142,
+      "insufficientData": false
+    },
+    "outcomeBreakdown": [
+      {
+        "outcome": "unknown",
+        "count": 13
+      },
+      {
+        "outcome": "timeout_fallback",
+        "count": 1
+      }
+    ],
+    "fallbackReasonBreakdown": [
+      {
+        "outcome": "timeout",
+        "count": 1
+      }
+    ]
+  },
+  "generation": {
+    "generatedAt": "2026-05-16T12:24:54.339Z",
+    "minimumLowPerformanceImpressions": 10
+  }
+}

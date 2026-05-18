@@ -1,0 +1,196 @@
+{
+  "title": "Blonde Female Character Drinking Water in Classroom",
+  "description": "A blonde female anime character with glasses is sitting on a desk in a classroom, drinking from a water bottle. She wears a wet, transparent blouse and skirt, with sunlight streaming through the window.",
+  "tags": [
+    "ani",
+    "female character",
+    "classroom",
+    "drinking water",
+    "blonde hair",
+    "glasses",
+    "school",
+    "sunlight",
+    "wet clothes",
+    "collectible",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "collectible card"
+  ],
+  "style": "anime",
+  "rarity": "UR",
+  "category": "anime",
+  "character": "female character",
+  "color": "light skin, white blouse, dark skirt",
+  "mood": "relaxed, casual",
+  "scene": "classroom",
+  "price": 100,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "zh": {
+      "title": "金发女角色在教室喝水",
+      "description": "一位戴眼镜的金发女动漫角色坐在教室的课桌上，从水瓶中喝水。她穿着湿透的透明衬衫和短裙，阳光从窗户洒进来。",
+      "tags": [
+        "动漫",
+        "女性角色",
+        "教室",
+        "喝水",
+        "金发",
+        "眼镜",
+        "学校",
+        "阳光",
+        "湿衣服",
+        "收藏卡"
+      ]
+    },
+    "filename": "142344925-7cd852bc1caa73c5326c3c9ac04780de_p8_master1200.jpg",
+    "syncSourceId": "local-gallery:142344925-7cd852bc1caa73c5326c3c9ac04780de_p8_master1200.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "light skin",
+          "white",
+          "dark blue",
+          "beige"
+        ],
+        "styleTags": [
+          "anime",
+          "digital art",
+          "soft lighting",
+          "high detail",
+          "realistic shading"
+        ],
+        "compositionTags": [
+          "diagonal line",
+          "foreground focus",
+          "natural lighting",
+          "partial framing",
+          "reflection"
+        ],
+        "subjectFocus": "female character drinking water",
+        "raritySignals": [
+          "ur rarity",
+          "collectible card",
+          "high detail rendering",
+          "unique pose"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "relaxed",
+          "casual",
+          "sunny",
+          "refreshing",
+          "content"
+        ],
+        "toneTags": [
+          "warm",
+          "gentle",
+          "calm",
+          "inviting"
+        ],
+        "energyLevel": "low",
+        "dramaticIntensity": 0.2
+      },
+      "characterLayer": {
+        "entityType": "anime girl",
+        "genderPresentation": "female",
+        "agePresentation": "teen",
+        "archetypeTags": [
+          "schoolgirl",
+          "everyday student",
+          "relaxed character",
+          "water-drinker"
+        ],
+        "poseTags": [
+          "sitting",
+          "leaning",
+          "drinking",
+          "casual",
+          "relaxed"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "classroom",
+          "school",
+          "indoor",
+          "daytime",
+          "window-lit"
+        ],
+        "genreTags": [
+          "slice of life",
+          "school life",
+          "anime",
+          "daily routine"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "water bottle",
+          "desk",
+          "blackboard",
+          "school uniform",
+          "glasses"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl drinking water",
+          "schoolgirl collectible",
+          "classroom anime",
+          "wet blouse anime",
+          "ur rarity card"
+        ],
+        "collectorHooks": [
+          "unique pose",
+          "detailed rendering",
+          "sunlight effect",
+          "wet clothing detail",
+          "ur rarity"
+        ],
+        "marketingAngles": [
+          "relaxing daily life",
+          "school aesthetic",
+          "refreshing vibe",
+          "anime beauty",
+          "collectible art"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "collectors",
+          "schoolgirl lovers",
+          "digital art enthusiasts",
+          "gacha players"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Anime Girl Drinking Water in Classroom",
+      "shopifyTitle": "Anime Girl Drinking Water in Classroom - UR Collectible Card",
+      "shortName": "Water Break Schoolgirl",
+      "slug": "water-break-schoolgirl",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Radiant Scholar Hydration"
+  }
+}

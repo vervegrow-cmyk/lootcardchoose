@@ -1,0 +1,166 @@
+{
+  "title": "Intimate Kiss Between Two Female Characters",
+  "description": "Two nude female anime characters embracing and kissing passionately on a bed with soft lighting and heart motifs.",
+  "tags": [
+    "ani",
+    "female character",
+    "nude",
+    "kiss",
+    "intimate",
+    "bed",
+    "romantic",
+    "soft lighting",
+    "heart",
+    "art",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "collectible card"
+  ],
+  "style": "soft anime",
+  "rarity": "UR",
+  "category": "anime",
+  "character": "female character",
+  "color": "soft pastel",
+  "mood": "romantic",
+  "scene": "bedroom",
+  "price": 100,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "filename": "142571393_p0_master1200.jpg",
+    "syncSourceId": "local-gallery:142571393_p0_master1200.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "soft pastel",
+          "skin tone",
+          "light blue"
+        ],
+        "styleTags": [
+          "soft anime",
+          "digital painting",
+          "glow effect"
+        ],
+        "compositionTags": [
+          "close-up",
+          "centered framing",
+          "intimate angle",
+          "bed setting"
+        ],
+        "subjectFocus": "two female characters kissing",
+        "raritySignals": [
+          "collectible card",
+          "high detail"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "romantic",
+          "passionate",
+          "intimate",
+          "tender"
+        ],
+        "toneTags": [
+          "warm",
+          "soft",
+          "dreamy"
+        ],
+        "energyLevel": "medium",
+        "dramaticIntensity": 0.7
+      },
+      "characterLayer": {
+        "entityType": "female anime characters",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "romantic",
+          "lovers",
+          "innocent",
+          "beauty"
+        ],
+        "poseTags": [
+          "embracing",
+          "kissing",
+          "curled",
+          "intimate posture"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "bedroom",
+          "window light",
+          "indoor"
+        ],
+        "genreTags": [
+          "anime",
+          "romance",
+          "fantasy"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "pillow",
+          "window",
+          "heart motifs"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime kiss",
+          "nude anime girl",
+          "romantic anime art",
+          "soft anime",
+          "bedroom scene"
+        ],
+        "collectorHooks": [
+          "ur rarity",
+          "intimate moment",
+          "high detail",
+          "soft pastel art"
+        ],
+        "marketingAngles": [
+          "romantic anime collectors",
+          "soft anime art lovers",
+          "bedroom scene collectors"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "romance collectors",
+          "digital art collectors",
+          "soft anime lovers"
+        ],
+        "safetyFlags": [
+          "nude",
+          "intimate",
+          "romantic"
+        ]
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Intimate Kiss Between Two Female Anime Characters",
+      "shopifyTitle": "Intimate Kiss Between Two Female Anime Characters - UR Collectible Card",
+      "shortName": "Anime Kiss Card",
+      "slug": "anime-kiss-card",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Luminous Heartbond Collectible"
+  }
+}

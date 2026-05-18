@@ -1,0 +1,192 @@
+{
+  "title": "Blue-haired Female Character in Gold and Black Bikini",
+  "description": "A blue-haired female anime character with purple eyes wearing a gold and black bikini, posing in an elegant indoor setting.",
+  "tags": [
+    "ani",
+    "female character",
+    "blue hair",
+    "gold bikini",
+    "indoor",
+    "beautiful",
+    "collectible",
+    "gaming",
+    "fantasy",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "premium",
+    "collectible card",
+    "luxury"
+  ],
+  "style": "black gold anime",
+  "rarity": "SSR",
+  "category": "anime",
+  "character": "female character",
+  "color": "blue and gold",
+  "mood": "playful",
+  "scene": "indoor",
+  "price": 150,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "zh": {
+      "title": "蓝发女性角色穿着金黑比基尼",
+      "description": "一位蓝发紫眼的动漫女性角色穿着金黑比基尼，在优雅的室内场景中摆姿势。",
+      "tags": [
+        "动漫",
+        "女性角色",
+        "蓝发",
+        "金黑比基尼",
+        "室内",
+        "美丽",
+        "收藏卡",
+        "游戏",
+        "幻想"
+      ]
+    },
+    "filename": "19.jpg",
+    "syncSourceId": "local-gallery:19.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "blue",
+          "gold",
+          "black"
+        ],
+        "styleTags": [
+          "anime",
+          "luxury",
+          "high detail",
+          "glamorous",
+          "illustrative"
+        ],
+        "compositionTags": [
+          "centered",
+          "dynamic pose",
+          "close-up",
+          "shallow depth of field",
+          "lighting contrast"
+        ],
+        "subjectFocus": "female anime character",
+        "raritySignals": [
+          "premium",
+          "collectible",
+          "luxury"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "playful",
+          "alluring",
+          "confident",
+          "seductive",
+          "cheerful"
+        ],
+        "toneTags": [
+          "warm",
+          "elegant",
+          "vibrant",
+          "sparkling"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.75
+      },
+      "characterLayer": {
+        "entityType": "anime character",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "seductress",
+          "princess",
+          "goddess",
+          "celestial being"
+        ],
+        "poseTags": [
+          "leaning",
+          "curved",
+          "exposed",
+          "provocative",
+          "graceful"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "indoor",
+          "luxury room",
+          "elegant interior",
+          "classical decor"
+        ],
+        "genreTags": [
+          "fantasy",
+          "anime",
+          "gaming",
+          "cosplay"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "bikini",
+          "bell accessory",
+          "tassels",
+          "ornate jewelry"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "blue hair",
+          "gold bikini",
+          "ssr collectible",
+          "luxury anime card"
+        ],
+        "collectorHooks": [
+          "rarity",
+          "premium design",
+          "exclusive artwork",
+          "high detail",
+          "limited edition"
+        ],
+        "marketingAngles": [
+          "beauty",
+          "luxury",
+          "playful charm",
+          "fantasy allure",
+          "gaming collectible"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "gaming collectors",
+          "cosplayers",
+          "premium collectors",
+          "fashion enthusiasts"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Blue-haired Anime Girl in Gold Bikini - SSR Collectible",
+      "shopifyTitle": "SSR Collectible: Blue-haired Anime Girl in Gold Bikini",
+      "shortName": "Blue Hair Gold Bikini SSR",
+      "slug": "blue-hair-gold-bikini-ssr",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Sapphire Enchantress Gold Edition"
+  }
+}

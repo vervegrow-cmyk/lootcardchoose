@@ -1,0 +1,157 @@
+{
+  "title": "Elegant Maid Bedroom",
+  "description": "A collectible hyperrealistic card with purple and white tones, lighthearted styling, and a polished maid showcase inspired by bedroom scenes.",
+  "tags": [
+    "anime maid",
+    "purple hair girl",
+    "sleeping beauty",
+    "bedroom scene",
+    "digital art",
+    "playful",
+    "surprised",
+    "elegant",
+    "cozy",
+    "maid",
+    "playful girl",
+    "anime",
+    "hyperrealistic",
+    "glow effect"
+  ],
+  "style": "anime",
+  "rarity": "SSR",
+  "category": "card",
+  "character": "female maid",
+  "color": "purple white beige",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "41.jpg",
+    "syncSourceId": "local-gallery:41.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.99,
+      "visualLayer": {
+        "primaryColors": [
+          "purple",
+          "white",
+          "beige"
+        ],
+        "styleTags": [
+          "anime",
+          "digital art",
+          "hyperrealistic",
+          "glow effect"
+        ],
+        "compositionTags": [
+          "centered subject",
+          "close up",
+          "high contrast lighting",
+          "shallow depth of field"
+        ],
+        "subjectFocus": "female character in bed",
+        "raritySignals": [
+          "high detail rendering",
+          "unique character design",
+          "limited edition potential"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "playful",
+          "surprised",
+          "seductive",
+          "cozy"
+        ],
+        "toneTags": [
+          "lighthearted",
+          "intimate",
+          "whimsical"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.75
+      },
+      "characterLayer": {
+        "entityType": "human female",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "maid",
+          "sleeping beauty",
+          "playful girl"
+        ],
+        "poseTags": [
+          "lying on bed",
+          "hand gesture",
+          "half naked pose",
+          "relaxed posture"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "bedroom",
+          "nighttime",
+          "indoor",
+          "luxury room"
+        ],
+        "genreTags": [
+          "fantasy",
+          "erotic anime",
+          "doujinshi"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "window",
+          "nightstand",
+          "dress"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime maid",
+          "purple hair girl",
+          "sleeping beauty",
+          "bedroom scene",
+          "digital art"
+        ],
+        "collectorHooks": [
+          "limited edition",
+          "high detail rendering",
+          "unique character design"
+        ],
+        "marketingAngles": [
+          "collector s item",
+          "fan art collection",
+          "digital art display"
+        ],
+        "audienceTags": [
+          "anime fan",
+          "digital art lover",
+          "collectible card enthusiast"
+        ],
+        "safetyFlags": [
+          "explicit content",
+          "erotic theme"
+        ]
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Purple Hair Maid in Bed",
+      "shopifyTitle": "Purple Hair Maid in Bed - Digital Art Collectible Card",
+      "shortName": "Purple Maid Bed",
+      "slug": "purple-maid-bed",
+      "namingVersion": "v1",
+      "confidence": 0.98,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

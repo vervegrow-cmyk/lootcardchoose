@@ -1,0 +1,179 @@
+{
+  "title": "Anime Female Teacher in Classroom",
+  "description": "A blonde-haired anime female teacher wearing glasses, a white shirt, and black skirt, standing confidently in front of a chalkboard.",
+  "tags": [
+    "ani",
+    "female character",
+    "teacher",
+    "glasses",
+    "classroom",
+    "school",
+    "blonde hair",
+    "black skirt",
+    "white shirt",
+    "collectible",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "collectible card"
+  ],
+  "style": "black gold anime",
+  "rarity": "SSR",
+  "category": "anime",
+  "character": "female character",
+  "color": "black and white",
+  "mood": "confident",
+  "scene": "classroom",
+  "price": 150,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "zh": {
+      "title": "动漫女教师",
+      "description": "一位戴眼镜的金发动漫女教师，穿着白衬衫和黑裙子，自信地站在黑板前。",
+      "tags": [
+        "动漫",
+        "女性角色",
+        "教师",
+        "眼镜",
+        "教室",
+        "学校",
+        "金发",
+        "黑裙",
+        "白衬衫",
+        "收藏卡"
+      ]
+    },
+    "filename": "142344925-7cd852bc1caa73c5326c3c9ac04780de_p4_master1200.jpg",
+    "syncSourceId": "local-gallery:142344925-7cd852bc1caa73c5326c3c9ac04780de_p4_master1200.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "black",
+          "white",
+          "gold"
+        ],
+        "styleTags": [
+          "anime",
+          "digital art",
+          "glow effect",
+          "soft lighting"
+        ],
+        "compositionTags": [
+          "centered subject",
+          "medium shot",
+          "dynamic pose",
+          "background detail"
+        ],
+        "subjectFocus": "female teacher",
+        "raritySignals": [
+          "high detail",
+          "premium art style"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "confident",
+          "alluring",
+          "playful",
+          "charming"
+        ],
+        "toneTags": [
+          "warm",
+          "inviting",
+          "seductive"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.85
+      },
+      "characterLayer": {
+        "entityType": "human",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "teacher",
+          "schoolgirl",
+          "seductive educator"
+        ],
+        "poseTags": [
+          "hands on hips",
+          "looking forward",
+          "slightly tilted head"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "classroom",
+          "school",
+          "educational setting"
+        ],
+        "genreTags": [
+          "anime",
+          "school life",
+          "fantasy realism"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "chalkboard",
+          "glasses",
+          "white shirt",
+          "black skirt"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime teacher",
+          "schoolgirl",
+          "glasses",
+          "black skirt",
+          "ssr collectible"
+        ],
+        "collectorHooks": [
+          "high detail art",
+          "rare ssr rarity",
+          "emotional expression",
+          "unique pose"
+        ],
+        "marketingAngles": [
+          "educational fantasy",
+          "seductive teacher",
+          "anime beauty",
+          "classroom charm"
+        ],
+        "audienceTags": [
+          "anime collectors",
+          "schoolgirl fans",
+          "glasses lovers",
+          "ssr collectors"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Anime Female Teacher in Classroom",
+      "shopifyTitle": "Anime Female Teacher in Classroom - SSR Collectible Card",
+      "shortName": "Anime Teacher Card",
+      "slug": "anime-female-teacher-classroom",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Golden Scholar S Elegance"
+  }
+}

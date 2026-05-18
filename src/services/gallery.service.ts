@@ -38,6 +38,7 @@ export const REFRESH_PLANNER_TIMEOUT_MS = 8000;
 const RECOMMENDATION_CANDIDATE_LIMIT = 30;
 const RECOMMENDATION_SEARCH_SLICE_LIMIT = 10;
 const RECOMMENDATION_DEBUG_LIMIT = 10;
+const RECOVERY_BROAD_POOL_LIMIT = 100;
 
 let lastRecommendationDebugSnapshot: RecommendationDebugSnapshot | null = null;
 
@@ -88,6 +89,9 @@ export type GallerySearchResult = {
   recoverySignals: string[];
   recoveryThreshold: number;
   recoveryRejectedReason: string | null;
+  recoveryBroadCandidatePoolUsed: boolean;
+  recoveryScoredCandidateCount: number;
+  recoveryAcceptedCount: number;
   recoveryTriggered: boolean;
   recoveryResultCount: number;
   curatorNarrationUsed: boolean;
@@ -1070,6 +1074,9 @@ export const galleryService = {
     const recoverySignals = recoveryPlan?.signals ?? [];
     const recoveryThreshold = RECOVERY_MIN_MEANINGFUL_SCORE;
     let recoveryCandidateCount = 0;
+    let recoveryBroadCandidatePoolUsed = false;
+    let recoveryScoredCandidateCount = 0;
+    let recoveryAcceptedCount = 0;
     let recoveryTriggered = recoveryAttempted;
     let recoveryRejectedReason: string | null = recoveryAttempted ? "no_candidates_above_threshold" : null;
 
@@ -1085,7 +1092,7 @@ export const galleryService = {
       );
 
       if (recoveryPlan) {
-        const recoveryCandidates = await galleryRepository.search({
+        const keywordRecoveryCandidates = await galleryRepository.search({
           keywords: recoveryPlan.signals,
           tags: [],
           style: "",
@@ -1098,22 +1105,60 @@ export const galleryService = {
           limit,
           preferredKeywords: recoveryPlan.signals,
         });
-        const meaningfulRecoveryCandidates = recoveryCandidates.filter(
-          (card) => (card.score ?? 0) >= RECOVERY_MIN_MEANINGFUL_SCORE
-        );
+        recoveryCandidateCount = keywordRecoveryCandidates.length;
 
-        recoveryCandidateCount = recoveryCandidates.length;
-        if (meaningfulRecoveryCandidates.length > 0) {
-          candidateCards = dedupeCards([...candidateCards, ...meaningfulRecoveryCandidates]).slice(
-            0,
-            RECOMMENDATION_CANDIDATE_LIMIT
+        let recoveryCandidates = keywordRecoveryCandidates;
+        if (recoveryCandidates.length === 0) {
+          recoveryBroadCandidatePoolUsed = true;
+          recoveryCandidates = await galleryRepository.searchRecoveryCandidatePool({
+            signals: recoveryPlan.signals,
+            limit: RECOVERY_BROAD_POOL_LIMIT,
+            rarity: parsedQuery.rarity,
+            scene: parsedQuery.scene,
+          });
+
+          if (recoveryCandidates.length === 0) {
+            recoveryCandidates = await galleryRepository.getActiveGalleryCardsForRecommendation(RECOVERY_BROAD_POOL_LIMIT);
+          }
+
+          recoveryCandidateCount = recoveryCandidates.length;
+        }
+
+        if (recoveryCandidates.length > 0) {
+          const recoveryRecommendation = galleryRecommendationService.rerank({
+            parsedQuery,
+            intelligenceQuery: parsedQuery.intelligenceQuery,
+            candidates: recoveryCandidates,
+          });
+          const recoveryScoreByCardId = new Map(
+            recoveryRecommendation.scoreBreakdowns.map((entry) => [entry.cardId, entry.recommendationScore.finalScore])
           );
-          recoveryRejectedReason = null;
+          const acceptedRecoveryCandidates = dedupeCards(recoveryRecommendation.cards).filter(
+            (card) => (recoveryScoreByCardId.get(card.id) ?? 0) >= RECOVERY_MIN_MEANINGFUL_SCORE
+          );
+
+          recoveryScoredCandidateCount = recoveryRecommendation.scoreBreakdowns.length;
+          recoveryAcceptedCount = acceptedRecoveryCandidates.length;
+
+          if (acceptedRecoveryCandidates.length > 0) {
+            candidateCards = dedupeCards([...candidateCards, ...acceptedRecoveryCandidates]).slice(
+              0,
+              RECOMMENDATION_CANDIDATE_LIMIT
+            );
+            recoveryRejectedReason = null;
+          } else if (recoveryBroadCandidatePoolUsed) {
+            recoveryRejectedReason = "recovery_broad_pool_below_threshold";
+          }
+        } else if (recoveryBroadCandidatePoolUsed) {
+          recoveryRejectedReason = "recovery_broad_pool_empty";
         }
       }
     } catch (error) {
       candidateCards = resultsSource;
       recoveryCandidateCount = 0;
+      recoveryBroadCandidatePoolUsed = false;
+      recoveryScoredCandidateCount = 0;
+      recoveryAcceptedCount = 0;
       recoveryRejectedReason = recoveryAttempted ? "recovery_search_failed" : null;
       logger.warn("[GALLERY SERVICE] recommendation candidate fallback", {
         query,
@@ -1178,6 +1223,9 @@ export const galleryService = {
 
     if (recoveryAttempted && recoveryCandidateCount === 0) {
       recoveryRejectedReason = recoveryRejectedReason ?? "recovery_candidate_pool_empty";
+    } else if (recoveryAttempted && recoveryCandidateCount > 0 && recoveryAcceptedCount === 0) {
+      recoveryRejectedReason =
+        recoveryRejectedReason ?? (recoveryBroadCandidatePoolUsed ? "recovery_broad_pool_below_threshold" : "no_candidates_above_threshold");
     } else if (recoveryAttempted && recoveryCandidateCount > 0 && recoveryResultCount === 0) {
       recoveryRejectedReason = recoveryRejectedReason ?? "recovery_rerank_filtered_results";
     }
@@ -1192,6 +1240,9 @@ export const galleryService = {
       recoverySignals,
       recoveryThreshold,
       recoveryRejectedReason,
+      recoveryBroadCandidatePoolUsed,
+      recoveryScoredCandidateCount,
+      recoveryAcceptedCount,
       recoveryTriggered,
       recoveryResultCount,
       curatorNarrationUsed,
@@ -1213,6 +1264,9 @@ export const galleryService = {
       recoverySignals,
       recoveryThreshold,
       recoveryRejectedReason,
+      recoveryBroadCandidatePoolUsed,
+      recoveryScoredCandidateCount,
+      recoveryAcceptedCount,
       recoveryTriggered,
       recoveryResultCount,
       curatorNarrationUsed,

@@ -1,0 +1,168 @@
+{
+  "title": "Blue Jellyfish Girl in Water",
+  "description": "A serene anime girl with blue hair and a white dress adorned with blue ribbons, surrounded by glowing jellyfish in an underwater scene.",
+  "tags": [
+    "ani",
+    "female character",
+    "blue hair",
+    "jellyfish",
+    "underwater",
+    "water",
+    "gacha",
+    "collectible",
+    "beautiful",
+    "fantasy",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "premium",
+    "collectible card",
+    "luxury"
+  ],
+  "style": "blue anime",
+  "rarity": "SSR",
+  "category": "anime",
+  "character": "female character",
+  "color": "blue and white",
+  "mood": "calm and dreamy",
+  "scene": "underwater",
+  "price": 150,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "filename": "142800890_p0_master1200.jpg",
+    "syncSourceId": "local-gallery:142800890_p0_master1200.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.99,
+      "visualLayer": {
+        "primaryColors": [
+          "blue",
+          "white"
+        ],
+        "styleTags": [
+          "anime",
+          "watercolor",
+          "soft shading",
+          "glow effect"
+        ],
+        "compositionTags": [
+          "centered subject",
+          "symmetrical framing",
+          "floating elements",
+          "negative space"
+        ],
+        "subjectFocus": "anime girl",
+        "raritySignals": [
+          "premium",
+          "luxury"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "calm",
+          "dreamy",
+          "serene",
+          "ethereal"
+        ],
+        "toneTags": [
+          "gentle",
+          "whimsical",
+          "peaceful"
+        ],
+        "energyLevel": "low",
+        "dramaticIntensity": 0.2
+      },
+      "characterLayer": {
+        "entityType": "female character",
+        "genderPresentation": "female",
+        "agePresentation": "teen",
+        "archetypeTags": [
+          "princess",
+          "mermaid",
+          "aquatic maiden"
+        ],
+        "poseTags": [
+          "gazing",
+          "thoughtful",
+          "hand to chin",
+          "reclining"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "underwater",
+          "ocean",
+          "aquatic",
+          "jellyfish reef"
+        ],
+        "genreTags": [
+          "fantasy",
+          "anime",
+          "gacha",
+          "collectible"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "blue ribbon",
+          "white dress",
+          "jellyfish",
+          "water bubbles"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "blue hair",
+          "jellyfish",
+          "underwater",
+          "ssr collectible",
+          "anime collectible card"
+        ],
+        "collectorHooks": [
+          "limited edition",
+          "premium rarity",
+          "beautiful art",
+          "dreamy aesthetic"
+        ],
+        "marketingAngles": [
+          "luxury collectible",
+          "gacha fantasy",
+          "aquatic anime girl",
+          "serene underwater scene"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "gacha collectors",
+          "collectible card enthusiasts",
+          "fantasy lovers"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Blue Jellyfish Girl in Water",
+      "shopifyTitle": "Blue Jellyfish Girl in Water - SSR Collectible Card",
+      "shortName": "Blue Jellyfish Girl",
+      "slug": "blue-jellyfish-girl-in-water",
+      "namingVersion": "v1",
+      "confidence": 0.98,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Sapphire Ocean Maiden"
+  }
+}

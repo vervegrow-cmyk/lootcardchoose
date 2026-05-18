@@ -1,0 +1,155 @@
+{
+  "title": "Pink Haired Celestial Girl With Glow Effect",
+  "description": "A stylish glow effect character card with pink and gold tones, centered composition, and fantasy appeal.",
+  "tags": [
+    "anime girl",
+    "pink hair",
+    "glow effect",
+    "fairy",
+    "digital art",
+    "playful",
+    "elegant",
+    "confident",
+    "celestial being",
+    "mystic",
+    "goddess",
+    "anime",
+    "high detail"
+  ],
+  "style": "anime",
+  "rarity": "SSR",
+  "category": "card",
+  "character": "humanoid celestial being",
+  "color": "pink gold black",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "8.jpg",
+    "syncSourceId": "local-gallery:8.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "pink",
+          "gold",
+          "black"
+        ],
+        "styleTags": [
+          "anime",
+          "digital art",
+          "glow effect",
+          "high detail"
+        ],
+        "compositionTags": [
+          "centered composition",
+          "close up",
+          "dynamic pose",
+          "low angle shot"
+        ],
+        "subjectFocus": "female anime character",
+        "raritySignals": [
+          "high detail rendering",
+          "unique character design",
+          "limited edition potential"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "playful",
+          "seductive",
+          "confident"
+        ],
+        "toneTags": [
+          "luxurious",
+          "fantasy",
+          "dreamlike"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.85
+      },
+      "characterLayer": {
+        "entityType": "humanoid",
+        "genderPresentation": "female",
+        "agePresentation": "teen",
+        "archetypeTags": [
+          "celestial being",
+          "mystic",
+          "fairy",
+          "goddess"
+        ],
+        "poseTags": [
+          "reclining",
+          "cross legged",
+          "relaxed",
+          "alluring"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "fantasy",
+          "celestial",
+          "mythological"
+        ],
+        "genreTags": [
+          "anime",
+          "fantasy",
+          "erotic"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "horned headpiece",
+          "bell",
+          "golden armor",
+          "pink tail"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "pink hair",
+          "glow effect",
+          "fairy",
+          "digital art"
+        ],
+        "collectorHooks": [
+          "limited edition",
+          "high detail",
+          "unique design",
+          "rare character"
+        ],
+        "marketingAngles": [
+          "luxury aesthetic",
+          "fantasy allure",
+          "collector s item"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "digital art collectors",
+          "fantasy enthusiasts",
+          "gaming community"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Pink-Haired Celestial Girl with Glow Effect",
+      "shopifyTitle": "Pink-Haired Celestial Girl with Glow Effect - Digital Art Collectible",
+      "shortName": "Celestial Girl",
+      "slug": "celestial-girl-pink-hair-glow-effect",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

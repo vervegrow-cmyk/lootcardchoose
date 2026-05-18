@@ -1,0 +1,150 @@
+{
+  "title": "微信图片 20260512172600 5516 2",
+  "description": "Auto generated metadata for 微信图片 20260512172600 5516 2",
+  "tags": [
+    "微信图片",
+    "20260512172600",
+    "5516",
+    "2"
+  ],
+  "style": "",
+  "rarity": "",
+  "category": "card",
+  "character": "",
+  "color": "",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "微信图片_20260512172600_5516_2.jpg",
+    "syncSourceId": "local-gallery:微信图片_20260512172600_5516_2.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "beige",
+          "blue",
+          "black",
+          "orange"
+        ],
+        "styleTags": [
+          "digital art",
+          "anime",
+          "illustration",
+          "surrealism"
+        ],
+        "compositionTags": [
+          "centered composition",
+          "low angle shot",
+          "golden hour",
+          "soft lighting"
+        ],
+        "subjectFocus": "female character on beach",
+        "raritySignals": [
+          "high detail",
+          "artistic rendering",
+          "unique pose"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "relaxed",
+          "serene",
+          "sensual",
+          "calm"
+        ],
+        "toneTags": [
+          "warm",
+          "soft",
+          "dreamy",
+          "romantic"
+        ],
+        "energyLevel": "low",
+        "dramaticIntensity": 0.2
+      },
+      "characterLayer": {
+        "entityType": "human female",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "beach babe",
+          "sunbather",
+          "luxury lifestyle"
+        ],
+        "poseTags": [
+          "reclining",
+          "hand to face",
+          "barefoot",
+          "relaxed"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "beach",
+          "ocean",
+          "sunset",
+          "tropical"
+        ],
+        "genreTags": [
+          "fantasy",
+          "erotic",
+          "artistic"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "beach towel",
+          "swimsuit",
+          "sunscreen",
+          "sand"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "beach babe",
+          "anime beach",
+          "sunset art",
+          "digital illustration",
+          "female character"
+        ],
+        "collectorHooks": [
+          "limited edition",
+          "high detail art",
+          "unique pose",
+          "sunset theme"
+        ],
+        "marketingAngles": [
+          "luxury lifestyle",
+          "relaxation",
+          "summer vibes",
+          "artistic collection"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "digital art collectors",
+          "beach lovers",
+          "erotic art appreciators"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Beach Babe at Sunset",
+      "shopifyTitle": "Beach Babe at Sunset - Digital Art Collectible",
+      "shortName": "Beach Babe",
+      "slug": "beach-babe-at-sunset",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

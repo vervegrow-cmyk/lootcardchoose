@@ -1,0 +1,71 @@
+{
+  "file": "D:\\桌面文件下载\\LOOTCARDCHOOSE\\reports\\recommendation-feedback-test-1778909881472.jsonl",
+  "totalLines": 4,
+  "parsedLines": 4,
+  "invalidLines": 0,
+  "source": {
+    "file": "D:\\桌面文件下载\\LOOTCARDCHOOSE\\reports\\recommendation-feedback-test-1778909881472.jsonl",
+    "selectedBy": "newest_report",
+    "usedFallbackFile": true
+  },
+  "summary": {
+    "file": "D:\\桌面文件下载\\LOOTCARDCHOOSE\\reports\\recommendation-feedback-test-1778909881472.jsonl",
+    "totalLines": 4,
+    "parsedLines": 4,
+    "invalidLines": 0,
+    "searchCount": 1,
+    "selectionCount": 1,
+    "checkoutCount": 1,
+    "purchaseCount": 1,
+    "searchToSelectionRate": 1,
+    "selectionToCheckoutRate": 1,
+    "checkoutToPurchaseRate": 1,
+    "usedFallbackRate": 0,
+    "orphanPurchaseCount": 0,
+    "sessionsWithRerank": 1,
+    "sessionsWithNoRankingChange": 0
+  },
+  "conversion": {
+    "searchToSelectionRate": 1,
+    "selectionToCheckoutRate": 1,
+    "checkoutToPurchaseRate": 1
+  },
+  "rerankHealth": {
+    "usedFallbackRate": 0,
+    "orphanPurchaseCount": 0,
+    "sessionsWithRerank": 1,
+    "sessionsWithNoRankingChange": 0
+  },
+  "interpretation": {
+    "status": "healthy",
+    "findings": [
+      "analytics did not show a clear V1 validation anomaly in this sample"
+    ]
+  },
+  "recommendationV2Gate": {
+    "status": "not_needed",
+    "reasons": [
+      "current validation data does not justify Recommendation V2"
+    ]
+  },
+  "topQueries": [
+    {
+      "query": "Show me 10 black gold SSR female cards",
+      "count": 1
+    }
+  ],
+  "topSelectedCards": [
+    {
+      "cardId": "cmp3taxks000a3u72wrl5buez",
+      "title": "Red Corseted Female Character Collectible Card",
+      "count": 1
+    }
+  ],
+  "topPurchasedCards": [
+    {
+      "cardId": "cmp3taxks000a3u72wrl5buez",
+      "title": "Red Corseted Female Character Collectible Card",
+      "count": 1
+    }
+  ]
+}

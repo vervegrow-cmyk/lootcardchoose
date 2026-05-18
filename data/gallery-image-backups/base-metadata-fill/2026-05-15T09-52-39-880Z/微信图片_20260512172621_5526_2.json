@@ -1,0 +1,171 @@
+{
+  "title": "Pirate Girl on Ocean Boat",
+  "description": "An intense anime card featuring a pirate in a ocean setting.",
+  "tags": [
+    "anime girl",
+    "pirate character",
+    "ocean scene",
+    "high-detail art",
+    "limited edition",
+    "intense",
+    "seductive",
+    "confident",
+    "determined",
+    "pirate",
+    "heroine",
+    "adventurer"
+  ],
+  "style": "anime",
+  "rarity": "",
+  "category": "card",
+  "character": "fictional-character - pirate",
+  "color": "orange white blue",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "微信图片_20260512172621_5526_2.jpg",
+    "syncSourceId": "local-gallery:微信图片_20260512172621_5526_2.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "orange",
+          "white",
+          "blue"
+        ],
+        "styleTags": [
+          "anime",
+          "digital-art",
+          "illustration",
+          "hyper-realistic",
+          "watercolor-effect"
+        ],
+        "compositionTags": [
+          "centered-subject",
+          "close-up",
+          "low-angle",
+          "sunset-light",
+          "dramatic-shadow"
+        ],
+        "subjectFocus": "female character on boat",
+        "raritySignals": [
+          "high-detail",
+          "exclusive-watermark",
+          "limited-edition-look"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "intense",
+          "seductive",
+          "confident",
+          "determined"
+        ],
+        "toneTags": [
+          "serious",
+          "mature",
+          "powerful"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.85
+      },
+      "characterLayer": {
+        "entityType": "fictional-character",
+        "genderPresentation": "female",
+        "agePresentation": "young-adult",
+        "archetypeTags": [
+          "pirate",
+          "heroine",
+          "adventurer",
+          "strong-willed"
+        ],
+        "poseTags": [
+          "relaxed",
+          "lying-down",
+          "hand-on-head",
+          "exposed-shoulder"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "ocean",
+          "boat",
+          "sunset",
+          "tropical"
+        ],
+        "genreTags": [
+          "fantasy",
+          "adventure",
+          "manga",
+          "anime"
+        ],
+        "factionTags": [
+          "pirate-crew",
+          "sea-nation"
+        ],
+        "propTags": [
+          "boat",
+          "tattoo",
+          "clothing",
+          "water"
+        ],
+        "powerSystemTags": [
+          "combat",
+          "magic",
+          "strength"
+        ]
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "pirate character",
+          "ocean scene",
+          "high-detail art",
+          "limited edition"
+        ],
+        "collectorHooks": [
+          "exclusive watermark",
+          "high detail",
+          "rare character",
+          "dramatic pose"
+        ],
+        "marketingAngles": [
+          "collector s item",
+          "fan favorite",
+          "high-quality digital art",
+          "limited run"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "manga collectors",
+          "digital art enthusiasts",
+          "pirate-themed collectors"
+        ],
+        "safetyFlags": [
+          "explicit-content",
+          "nudity",
+          "adult-themed"
+        ]
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Pirate Girl on Ocean Boat",
+      "shopifyTitle": "Pirate Girl on Ocean Boat - Limited Edition Digital Art",
+      "shortName": "PirateGirlBoat",
+      "slug": "pirate-girl-on-ocean-boat",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

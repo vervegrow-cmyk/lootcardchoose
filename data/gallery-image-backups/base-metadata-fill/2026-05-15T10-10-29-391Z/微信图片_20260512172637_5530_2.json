@@ -1,0 +1,161 @@
+{
+  "title": "Elegant Fantasy Heroine Indoor Anime",
+  "description": "A collectible manga card with pink and white tones, soft styling, and a polished fantasy heroine showcase inspired by indoor scenes.",
+  "tags": [
+    "anime girl",
+    "pink hair",
+    "schoolgirl",
+    "manga art",
+    "digital illustration",
+    "confident",
+    "playful",
+    "elegant",
+    "calm",
+    "fantasy heroine",
+    "fashionable",
+    "anime",
+    "manga",
+    "high detail",
+    "shading"
+  ],
+  "style": "anime",
+  "rarity": "",
+  "category": "card",
+  "character": "schoolgirl",
+  "color": "pink white blue skin tone",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "微信图片_20260512172637_5530_2.jpg",
+    "syncSourceId": "local-gallery:微信图片_20260512172637_5530_2.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "pink",
+          "white",
+          "blue",
+          "skin tone"
+        ],
+        "styleTags": [
+          "anime",
+          "digital illustration",
+          "manga",
+          "high detail",
+          "shading"
+        ],
+        "compositionTags": [
+          "close-up",
+          "centered subject",
+          "partial framing",
+          "soft background"
+        ],
+        "subjectFocus": "female character with pink hair",
+        "raritySignals": [
+          "high detail rendering",
+          "character focus",
+          "artistic composition"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "confident",
+          "playful",
+          "seductive",
+          "calm"
+        ],
+        "toneTags": [
+          "soft",
+          "warm",
+          "intimate"
+        ],
+        "energyLevel": "medium",
+        "dramaticIntensity": 0.3
+      },
+      "characterLayer": {
+        "entityType": "humanoid",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "schoolgirl",
+          "seductress",
+          "fashionable",
+          "playful"
+        ],
+        "poseTags": [
+          "sitting",
+          "cross-legged",
+          "relaxed",
+          "looking at viewer"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "indoor",
+          "room",
+          "window background"
+        ],
+        "genreTags": [
+          "fantasy",
+          "anime",
+          "manga"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "shirt",
+          "skirt",
+          "hair accessories"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "pink hair",
+          "schoolgirl",
+          "manga art",
+          "digital illustration"
+        ],
+        "collectorHooks": [
+          "high detail artwork",
+          "character focus",
+          "unique pose",
+          "colorful design"
+        ],
+        "marketingAngles": [
+          "fan art collection",
+          "anime merchandise",
+          "digital collectible"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "manga collectors",
+          "digital art enthusiasts"
+        ],
+        "safetyFlags": [
+          "explicit content",
+          "suggestive pose"
+        ]
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Pink Hair Anime Girl in School Uniform",
+      "shopifyTitle": "Anime Girl with Pink Hair in School Uniform",
+      "shortName": "Pink Hair Anime Girl",
+      "slug": "pink-hair-anime-girl",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

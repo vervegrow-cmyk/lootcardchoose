@@ -1,0 +1,152 @@
+{
+  "runAt": "2026-05-16T05:39:04.762Z",
+  "artifactType": "recommendation_validation",
+  "queryCount": 8,
+  "queries": [
+    "给我10张黑金SSR女角色卡牌",
+    "像最终Boss一样的黑暗女王",
+    "圣洁神秘的白金女神",
+    "blue hair anime maid",
+    "gothic vampire queen",
+    "cyberpunk mecha girl",
+    "美女",
+    "来点酷的"
+  ],
+  "summary": {
+    "sessionsWithRerank": 3,
+    "sessionsWithMeaningfulRerank": 2,
+    "sessionsWithNoRankingChange": 5,
+    "fallbackCount": 2,
+    "fallbackRate": 0.25,
+    "fallbackFrequent": false
+  },
+  "findings": [
+    "recommendation validation did not show a clear V1 stability issue"
+  ],
+  "perQuery": [
+    {
+      "query": "给我10张黑金SSR女角色卡牌",
+      "language": "zh",
+      "resultCount": 10,
+      "candidateCount": 11,
+      "usedFallback": false,
+      "rerankHappened": true,
+      "rerankMeaningful": false,
+      "changedPositions": 1,
+      "topResultTitles": [
+        "Red Corseted Female Character Collectible Card",
+        "Red and Black Anime Female Character on Ship",
+        "Blonde Female Character in Black Bikini at Beach"
+      ],
+      "summary": "ranking changed, but impact stayed minor"
+    },
+    {
+      "query": "像最终Boss一样的黑暗女王",
+      "language": "zh",
+      "resultCount": 10,
+      "candidateCount": 17,
+      "usedFallback": false,
+      "rerankHappened": false,
+      "rerankMeaningful": false,
+      "changedPositions": 0,
+      "topResultTitles": [
+        "Anime Girl with White Wings Collectible Card",
+        "Red-Haired Female Character in Gothic Cathedral",
+        "Red and Black Anime Female Character on Ship"
+      ],
+      "summary": "no ranking change"
+    },
+    {
+      "query": "圣洁神秘的白金女神",
+      "language": "zh",
+      "resultCount": 10,
+      "candidateCount": 10,
+      "usedFallback": false,
+      "rerankHappened": true,
+      "rerankMeaningful": true,
+      "changedPositions": 6,
+      "topResultTitles": [
+        "Goddess of the Sea",
+        "Anime Female Character with Lightning Sword",
+        "Elegant Goddess Portrait"
+      ],
+      "summary": "Elegant Goddess Portrait moved from #4 to #3"
+    },
+    {
+      "query": "blue hair anime maid",
+      "language": "en",
+      "resultCount": 10,
+      "candidateCount": 10,
+      "usedFallback": false,
+      "rerankHappened": true,
+      "rerankMeaningful": true,
+      "changedPositions": 7,
+      "topResultTitles": [
+        "Blue-haired Bunny Girl in Brown Outfit",
+        "Pink-haired Maid Girl with Heart-shaped Bust",
+        "Blue Jellyfish Girl in Water"
+      ],
+      "summary": "Blue-haired Bunny Girl in Brown Outfit moved from #7 to #1"
+    },
+    {
+      "query": "gothic vampire queen",
+      "language": "en",
+      "resultCount": 10,
+      "candidateCount": 16,
+      "usedFallback": false,
+      "rerankHappened": false,
+      "rerankMeaningful": false,
+      "changedPositions": 0,
+      "topResultTitles": [
+        "Red-Haired Female Character in Gothic Cathedral",
+        "Whispering Secret Anime Girl Collectible Card",
+        "Anime Girl with White Wings Collectible Card"
+      ],
+      "summary": "no ranking change"
+    },
+    {
+      "query": "cyberpunk mecha girl",
+      "language": "en",
+      "resultCount": 10,
+      "candidateCount": 16,
+      "usedFallback": false,
+      "rerankHappened": false,
+      "rerankMeaningful": false,
+      "changedPositions": 0,
+      "topResultTitles": [
+        "Whispering Secret Anime Girl Collectible Card",
+        "Anime Girl with White Wings Collectible Card",
+        "Anime Girl in Kitchen"
+      ],
+      "summary": "no ranking change"
+    },
+    {
+      "query": "美女",
+      "language": "zh",
+      "resultCount": 10,
+      "candidateCount": 11,
+      "usedFallback": true,
+      "rerankHappened": false,
+      "rerankMeaningful": false,
+      "changedPositions": 0,
+      "topResultTitles": [
+        "Whispering Secret Anime Girl Collectible Card",
+        "Anime Girl with White Wings Collectible Card",
+        "Anime Girl in Kitchen"
+      ],
+      "summary": "fallback used during recommendation candidate resolution"
+    },
+    {
+      "query": "来点酷的",
+      "language": "zh",
+      "resultCount": 0,
+      "candidateCount": 0,
+      "usedFallback": true,
+      "rerankHappened": false,
+      "rerankMeaningful": false,
+      "changedPositions": 0,
+      "topResultTitles": [],
+      "summary": "fallback used during recommendation candidate resolution"
+    }
+  ]
+}

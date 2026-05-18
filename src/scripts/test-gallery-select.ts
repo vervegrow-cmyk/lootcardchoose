@@ -316,13 +316,21 @@ const main = async (): Promise<void> => {
     assert.equal(girlSearchResult.recoveryAttempted, false);
     assert.equal(girlSearchResult.recoveryTriggered, false);
     assert.equal(girlSearchResult.results.length > 0, true);
+    assert.ok(girlSearchResult.summaryText?.trim().length);
+    assert.equal(girlSearchResult.curatorNarrationUsed, true);
+    assert.equal(girlSearchResult.responseTextSource, "curator_summary");
 
     const zeroResultServiceResponse = await galleryService.searchGalleryCards(ZERO_RESULT_QUERY, "en");
     assert.equal(zeroResultServiceResponse.results.length, 0);
     assert.equal(zeroResultServiceResponse.recoveryAttempted, false);
     assert.equal(zeroResultServiceResponse.recoveryResultCount, 0);
+    assert.equal(zeroResultServiceResponse.recoveryBroadCandidatePoolUsed, false);
+    assert.equal(zeroResultServiceResponse.recoveryScoredCandidateCount, 0);
+    assert.equal(zeroResultServiceResponse.recoveryAcceptedCount, 0);
 
     const originalGallerySearch = galleryRepository.search;
+    const originalGetActiveGalleryCardsForRecommendation = galleryRepository.getActiveGalleryCardsForRecommendation;
+    const originalSearchRecoveryCandidatePool = galleryRepository.searchRecoveryCandidatePool;
     let recoveryPrimarySearchConsumed = false;
     galleryRepository.search = async (query) => {
       const normalizedKeywords = query.keywords.map((keyword) => keyword.trim().toLowerCase());
@@ -344,22 +352,60 @@ const main = async (): Promise<void> => {
       }
 
       if (isDeterministicRecoveryAttempt) {
-        return originalGallerySearch({
-          ...query,
-          keywords: ["girl"],
-          tags: [],
-          style: "",
-          rarity: "",
-          category: "",
-          character: "female character",
-          color: "",
-          mood: "",
-          scene: "",
-        });
+        return [];
       }
 
       return originalGallerySearch(query);
     };
+    galleryRepository.searchRecoveryCandidatePool = async (input) =>
+      (
+        await originalGallerySearch({
+          keywords: ["girl"],
+          tags: [],
+          style: "",
+          rarity: input.rarity ?? "",
+          category: "",
+          character: "female character",
+          color: "",
+          mood: "",
+          scene: input.scene ?? "",
+          limit: input.limit,
+          preferredKeywords: input.signals,
+        })
+      ).map((card, index) => ({
+        ...card,
+        title: index === 0 ? `Cyberpunk ${card.title}` : card.title,
+        description: `${card.description ?? ""} Neon cyberpunk futuristic city energy.`.trim(),
+        tags: [...new Set([...card.tags, "cyberpunk", "neon", "futuristic"])],
+        style: "cyberpunk",
+        metadata: {
+          intelligence: {
+            visualLayer: {
+              visualStyle: ["cyberpunk"],
+              styleTags: ["neon", "futuristic"],
+              subjectFocus: "cyberpunk heroine",
+            },
+            emotionalLayer: {
+              moodTags: ["electric"],
+              toneTags: ["futuristic"],
+            },
+            characterLayer: {
+              characterType: ["female character"],
+              archetypeTags: ["warrior"],
+              entityType: "cyberpunk heroine",
+            },
+            worldbuildingLayer: {
+              genreTags: ["cyberpunk", "sci-fi"],
+              settingTags: ["futuristic city"],
+            },
+            commerceLayer: {
+              searchKeywords: ["cyberpunk", "neon", "futuristic"],
+            },
+          },
+        },
+      }));
+    galleryRepository.getActiveGalleryCardsForRecommendation = async (limit) =>
+      originalGetActiveGalleryCardsForRecommendation(limit);
 
     try {
       const recoveryResponse = await searchGallerySkill(
@@ -383,6 +429,9 @@ const main = async (): Promise<void> => {
       assert.ok((recoveryResponse.recoverySignals ?? []).includes("neon"));
       assert.ok(Number(recoveryResponse.recoveryCandidateCount) > 0);
       assert.ok(Number(recoveryResponse.recoveryThreshold) > 0);
+      assert.equal(recoveryResponse.recoveryBroadCandidatePoolUsed, true);
+      assert.ok(Number(recoveryResponse.recoveryScoredCandidateCount) > 0);
+      assert.ok(Number(recoveryResponse.recoveryAcceptedCount) > 0);
       assert.ok(Number(recoveryResponse.recoveryResultCount) > 0);
       assert.equal(recoveryResponse.responseTextSource, "recovery");
 
@@ -405,6 +454,8 @@ const main = async (): Promise<void> => {
       assert.equal(getFirstSessionCardId(recoveryActiveSession), recoveryResponse.results[0]?.id ?? null);
     } finally {
       galleryRepository.search = originalGallerySearch;
+      galleryRepository.searchRecoveryCandidatePool = originalSearchRecoveryCandidatePool;
+      galleryRepository.getActiveGalleryCardsForRecommendation = originalGetActiveGalleryCardsForRecommendation;
     }
 
   const originalCreateProductFromGalleryCard = shopifyService.createProductFromGalleryCard;

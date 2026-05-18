@@ -1,0 +1,175 @@
+{
+  "title": "Anime Girl in Kitchen",
+  "description": "A beautiful anime girl with long silver hair and purple outfit standing in a modern kitchen, holding a cup.",
+  "tags": [
+    "ani",
+    "female character",
+    "kitchen",
+    "silver hair",
+    "purple outfit",
+    "collectible",
+    "gaming",
+    "art",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "collectible card"
+  ],
+  "style": "anime",
+  "rarity": "UR",
+  "category": "anime",
+  "character": "female character",
+  "color": "purple and silver",
+  "mood": "calm",
+  "scene": "kitchen",
+  "price": 100,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "zh": {
+      "title": "动漫少女在厨房",
+      "description": "一位美丽的动漫少女，有着银色长发和紫色服装，站在现代厨房里，手里拿着杯子。",
+      "tags": [
+        "动漫",
+        "女性角色",
+        "厨房",
+        "银发",
+        "紫色服装",
+        "收藏卡",
+        "游戏",
+        "艺术"
+      ]
+    },
+    "filename": "142494793_p4_master1200.jpg",
+    "syncSourceId": "local-gallery:142494793_p4_master1200.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "purple",
+          "silver",
+          "white"
+        ],
+        "styleTags": [
+          "anime",
+          "digital art",
+          "high detail",
+          "soft lighting"
+        ],
+        "compositionTags": [
+          "medium shot",
+          "three-quarter view",
+          "balanced framing",
+          "window backlight"
+        ],
+        "subjectFocus": "anime girl holding cup",
+        "raritySignals": [
+          "collectible card",
+          "gaming"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "calm",
+          "serene",
+          "relaxed"
+        ],
+        "toneTags": [
+          "gentle",
+          "whimsical",
+          "aesthetic"
+        ],
+        "energyLevel": "low",
+        "dramaticIntensity": 0.2
+      },
+      "characterLayer": {
+        "entityType": "female character",
+        "genderPresentation": "female",
+        "agePresentation": "teen",
+        "archetypeTags": [
+          "everyday girl",
+          "kitchen companion",
+          "anime idol"
+        ],
+        "poseTags": [
+          "standing",
+          "holding cup",
+          "slight turn",
+          "relaxed posture"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "modern kitchen",
+          "domestic scene",
+          "sunlit room"
+        ],
+        "genreTags": [
+          "anime",
+          "gaming",
+          "collectible"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "kitchen counter",
+          "window",
+          "curtains"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "kitchen scene",
+          "purple outfit",
+          "silver hair",
+          "collectible card",
+          "gaming art"
+        ],
+        "collectorHooks": [
+          "ur rarity",
+          "high detail art",
+          "gaming collectible",
+          "anime beauty"
+        ],
+        "marketingAngles": [
+          "home decor",
+          "gaming collection",
+          "anime fan art",
+          "digital collectible"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "gaming collectors",
+          "digital art lovers",
+          "collectible card enthusiasts"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Anime Girl in Kitchen",
+      "shopifyTitle": "Anime Girl in Kitchen - Collectible Card",
+      "shortName": "Kitchen Anime Girl",
+      "slug": "anime-girl-in-kitchen",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Silver Haired Kitchen Muse"
+  }
+}

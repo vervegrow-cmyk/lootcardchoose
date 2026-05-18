@@ -1,0 +1,180 @@
+{
+  "title": "Anime Girl in Traditional Outfit",
+  "description": "A cute anime girl with blonde hair and orange eyes poses cheerfully in a traditional Japanese outfit near a canal.",
+  "tags": [
+    "ani",
+    "female character",
+    "traditional outfit",
+    "Japanese",
+    "canal",
+    "cute",
+    "orange",
+    "blonde hair",
+    "collectible",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "collectible card"
+  ],
+  "style": "anime",
+  "rarity": "UR",
+  "category": "anime",
+  "character": "female character",
+  "color": "orange",
+  "mood": "cheerful",
+  "scene": "Japanese canal",
+  "price": 150,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "filename": "139631280_p2_master1200.jpg",
+    "syncSourceId": "local-gallery:139631280_p2_master1200.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "orange",
+          "white",
+          "brown",
+          "blue"
+        ],
+        "styleTags": [
+          "anime",
+          "digital art",
+          "high detail",
+          "glow effect",
+          "soft shading"
+        ],
+        "compositionTags": [
+          "centered subject",
+          "low angle",
+          "foreground framing",
+          "symmetrical background",
+          "shallow depth of field"
+        ],
+        "subjectFocus": "anime girl",
+        "raritySignals": [
+          "ur rarity",
+          "high detail rendering",
+          "unique outfit design",
+          "dynamic pose"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "cheerful",
+          "playful",
+          "lighthearted",
+          "joyful"
+        ],
+        "toneTags": [
+          "bright",
+          "warm",
+          "vibrant",
+          "optimistic"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.3
+      },
+      "characterLayer": {
+        "entityType": "anime character",
+        "genderPresentation": "female",
+        "agePresentation": "teen",
+        "archetypeTags": [
+          "heroine",
+          "celebrity",
+          "fashion icon",
+          "cute idol"
+        ],
+        "poseTags": [
+          "cheerful wave",
+          "playful stance",
+          "dynamic pose",
+          "half-body shot"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "japanese canal",
+          "traditional town",
+          "historic architecture",
+          "waterway"
+        ],
+        "genreTags": [
+          "fantasy",
+          "anime",
+          "manga",
+          "light novel"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "traditional outfit",
+          "accessories",
+          "headpiece",
+          "necklace",
+          "belt"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "traditional outfit",
+          "japanese canal",
+          "collectible card",
+          "ur rarity",
+          "anime collectible",
+          "female character",
+          "orange outfit",
+          "cute anime girl"
+        ],
+        "collectorHooks": [
+          "unique outfit design",
+          "high detail rendering",
+          "ur rarity",
+          "dynamic pose",
+          "vibrant color palette"
+        ],
+        "marketingAngles": [
+          "cute anime girl",
+          "traditional japanese aesthetic",
+          "high rarity collectible",
+          "fantasy worldbuilding",
+          "dynamic character pose"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "collectible card collectors",
+          "gaming community",
+          "digital art enthusiasts",
+          "fashion collectors"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Anime Girl in Traditional Outfit",
+      "shopifyTitle": "Anime Girl in Traditional Outfit - UR Collectible Card",
+      "shortName": "Anime Girl Collectible",
+      "slug": "anime-girl-traditional-outfit-ur-collectible",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Golden Idol Kimono"
+  }
+}

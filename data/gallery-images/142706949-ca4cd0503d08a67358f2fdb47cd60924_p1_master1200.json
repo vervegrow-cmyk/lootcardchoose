@@ -1,0 +1,171 @@
+{
+  "title": "Red and Black Anime Female Character on Ship",
+  "description": "A confident anime female character in red and black outfit with gold accents, standing on a ship deck against a bright sky.",
+  "tags": [
+    "ani",
+    "female character",
+    "red outfit",
+    "black gold",
+    "ship",
+    "ocean",
+    "collectible",
+    "gaming",
+    "fantasy",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "SSR",
+    "premium",
+    "collectible card",
+    "luxury"
+  ],
+  "style": "black gold anime",
+  "rarity": "SSR",
+  "category": "anime",
+  "character": "female character",
+  "color": "red and black",
+  "mood": "confident",
+  "scene": "ship at sea",
+  "price": 150,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "filename": "142706949-ca4cd0503d08a67358f2fdb47cd60924_p1_master1200.jpg",
+    "syncSourceId": "local-gallery:142706949-ca4cd0503d08a67358f2fdb47cd60924_p1_master1200.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "black",
+          "gold",
+          "white"
+        ],
+        "styleTags": [
+          "anime",
+          "fantasy",
+          "luxury",
+          "high detail",
+          "dynamic lighting"
+        ],
+        "compositionTags": [
+          "full body",
+          "diagonal pose",
+          "foreground focus",
+          "background depth"
+        ],
+        "subjectFocus": "female warrior",
+        "raritySignals": [
+          "premium",
+          "collectible",
+          "luxury"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "confident",
+          "determined",
+          "calm",
+          "powerful"
+        ],
+        "toneTags": [
+          "heroic",
+          "epic",
+          "adventurous"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.85
+      },
+      "characterLayer": {
+        "entityType": "warrior",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "ninja",
+          "samurai",
+          "pirate",
+          "mystic"
+        ],
+        "poseTags": [
+          "arms crossed",
+          "standing",
+          "combat-ready",
+          "assertive"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "ship",
+          "ocean",
+          "sea voyage",
+          "open sky"
+        ],
+        "genreTags": [
+          "fantasy",
+          "action",
+          "adventure",
+          "anime"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "armor",
+          "belt",
+          "accessories",
+          "ship deck"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "ssr collectible",
+          "red black outfit",
+          "ship battle",
+          "fantasy warrior"
+        ],
+        "collectorHooks": [
+          "limited edition",
+          "premium rarity",
+          "high detail art",
+          "character design"
+        ],
+        "marketingAngles": [
+          "epic adventure",
+          "luxury collectible",
+          "anime fan favorite",
+          "high rarity"
+        ],
+        "audienceTags": [
+          "anime collectors",
+          "gaming enthusiasts",
+          "fantasy fans",
+          "premium card collectors"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Red and Black Anime Female Warrior on Ship",
+      "shopifyTitle": "SSR Anime Female Warrior on Ship Collectible Card",
+      "shortName": "Red Warrior on Ship",
+      "slug": "red-warrior-on-ship",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Crimson Shadow Pirate Queen"
+  }
+}

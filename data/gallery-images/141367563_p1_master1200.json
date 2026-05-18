@@ -1,0 +1,151 @@
+{
+  "title": "Red Corseted Female Character Collectible Card",
+  "description": "A female anime character in a red and black corseted outfit with gold accents, posing seductively.",
+  "tags": [
+    "ani",
+    "female character",
+    "red corset",
+    "black gold",
+    "collectible",
+    "seductive pose",
+    "illustration",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "SSR",
+    "collectible card"
+  ],
+  "style": "black gold anime",
+  "rarity": "SSR",
+  "category": "anime",
+  "character": "female character",
+  "color": "red black gold",
+  "mood": "seductive",
+  "scene": "studio",
+  "price": 150,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "filename": "141367563_p1_master1200.jpg",
+    "syncSourceId": "local-gallery:141367563_p1_master1200.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "black",
+          "gold"
+        ],
+        "styleTags": [
+          "anime",
+          "illustration",
+          "studio"
+        ],
+        "compositionTags": [
+          "close-up",
+          "centered",
+          "dynamic pose"
+        ],
+        "subjectFocus": "female character",
+        "raritySignals": [
+          "collectible card"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "seductive",
+          "alluring",
+          "confident"
+        ],
+        "toneTags": [
+          "playful",
+          "elegant",
+          "intimate"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.85
+      },
+      "characterLayer": {
+        "entityType": "female character",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "seductress",
+          "heroine",
+          "fashion icon"
+        ],
+        "poseTags": [
+          "seductive pose",
+          "reclining",
+          "crossed legs"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "studio",
+          "neutral background"
+        ],
+        "genreTags": [
+          "anime",
+          "fantasy",
+          "adventure"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "corset",
+          "gold accents",
+          "accessories"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "red corset",
+          "seductive pose",
+          "ssr collectible",
+          "black gold outfit"
+        ],
+        "collectorHooks": [
+          "rare ssr rarity",
+          "high-drama illustration",
+          "limited edition collectible"
+        ],
+        "marketingAngles": [
+          "visual appeal",
+          "character design",
+          "collectible value"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "collectors",
+          "gacha game players"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Red Corseted Anime Girl - SSR Collectible",
+      "shopifyTitle": "Red Corseted Female Anime Character SSR Collectible Card",
+      "shortName": "Red Corset SSR",
+      "slug": "red-corset-ssr",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Crimson Enchantress Collectible"
+  }
+}

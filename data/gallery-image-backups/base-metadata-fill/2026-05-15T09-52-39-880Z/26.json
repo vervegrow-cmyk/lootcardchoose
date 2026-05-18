@@ -1,0 +1,165 @@
+{
+  "title": "Cherry Blossom Selfie",
+  "description": "A playful anime card featuring a fighter in a cherry-blossom-garden setting.",
+  "tags": [
+    "anime girl",
+    "cherry blossom",
+    "selfie pose",
+    "red outfit",
+    "goggles",
+    "v-sign",
+    "character art",
+    "playful",
+    "cheerful",
+    "confident",
+    "friendly",
+    "fighter"
+  ],
+  "style": "anime",
+  "rarity": "SSR",
+  "category": "card",
+  "character": "humanoid - fighter",
+  "color": "white brown pink",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "26.jpg",
+    "syncSourceId": "local-gallery:26.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "white",
+          "brown",
+          "pink"
+        ],
+        "styleTags": [
+          "anime",
+          "illustration",
+          "digital-art",
+          "character-design",
+          "selfie"
+        ],
+        "compositionTags": [
+          "centered-subject",
+          "close-up",
+          "eye-level",
+          "symmetrical",
+          "foreground-focus"
+        ],
+        "subjectFocus": "female anime character",
+        "raritySignals": [
+          "signature-watermark",
+          "artist-name",
+          "platform-credit"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "playful",
+          "cheerful",
+          "confident",
+          "friendly"
+        ],
+        "toneTags": [
+          "lighthearted",
+          "approachable",
+          "energetic"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.3
+      },
+      "characterLayer": {
+        "entityType": "humanoid",
+        "genderPresentation": "female",
+        "agePresentation": "teen",
+        "archetypeTags": [
+          "fighter",
+          "explorer",
+          "adventurer",
+          "heroine"
+        ],
+        "poseTags": [
+          "selfie",
+          "v-sign",
+          "smiling",
+          "cheerful",
+          "dynamic"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "cherry-blossom-garden",
+          "spring-outdoor",
+          "park",
+          "urban-path"
+        ],
+        "genreTags": [
+          "fantasy",
+          "action",
+          "adventure",
+          "role-playing-game"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "goggles",
+          "headband",
+          "belt",
+          "arm-band",
+          "weapon-accessory"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "cherry blossom",
+          "selfie pose",
+          "red outfit",
+          "goggles",
+          "v-sign",
+          "character art"
+        ],
+        "collectorHooks": [
+          "artist signature",
+          "platform credit",
+          "unique pose",
+          "limited edition"
+        ],
+        "marketingAngles": [
+          "fan-favorite",
+          "character showcase",
+          "spring theme",
+          "selfie style",
+          "collector s item"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "gaming community",
+          "digital art collectors",
+          "role-playing-game enthusiasts"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Cherry Blossom Selfie",
+      "shopifyTitle": "Cherry Blossom Selfie - Anime Girl Character Art",
+      "shortName": "Cherry Blossom Selfie",
+      "slug": "cherry-blossom-selfie",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

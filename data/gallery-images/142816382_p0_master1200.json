@@ -1,0 +1,187 @@
+{
+  "title": "Whispering Secret Anime Girl Collectible Card",
+  "description": "A cute anime girl with silver hair and green eyes, wearing a hooded cloak and making a shushing gesture.",
+  "tags": [
+    "ani",
+    "female character",
+    "cute",
+    "whispering",
+    "shushing",
+    "green eyes",
+    "silver hair",
+    "hooded cloak",
+    "collectible",
+    "gacha",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "collectible card"
+  ],
+  "style": "black gold anime",
+  "rarity": "SSR",
+  "category": "anime",
+  "character": "female character",
+  "color": "black and green",
+  "mood": "playful",
+  "scene": "portrait",
+  "price": 150,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "zh": {
+      "title": "窃语少女动漫收藏卡",
+      "description": "一位银发绿眼的可爱动漫女孩，穿着带兜帽的斗篷，做出嘘声手势。",
+      "tags": [
+        "动漫",
+        "女性角色",
+        "可爱",
+        "窃语",
+        "嘘声",
+        "绿眼睛",
+        "银发",
+        "兜帽斗篷",
+        "收藏卡",
+        "抽卡"
+      ]
+    },
+    "filename": "142816382_p0_master1200.jpg",
+    "syncSourceId": "local-gallery:142816382_p0_master1200.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "black",
+          "green",
+          "silver"
+        ],
+        "styleTags": [
+          "anime",
+          "chibi",
+          "illustration",
+          "digital art"
+        ],
+        "compositionTags": [
+          "portrait",
+          "centered",
+          "close-up",
+          "eye contact",
+          "hand gesture"
+        ],
+        "subjectFocus": "anime girl",
+        "raritySignals": [
+          "collectible",
+          "gacha"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "playful",
+          "mischievous",
+          "cozy",
+          "secretive"
+        ],
+        "toneTags": [
+          "whispering",
+          "gentle",
+          "curious"
+        ],
+        "energyLevel": "medium",
+        "dramaticIntensity": 0.3
+      },
+      "characterLayer": {
+        "entityType": "humanoid",
+        "genderPresentation": "female",
+        "agePresentation": "teen",
+        "archetypeTags": [
+          "mystic",
+          "noble",
+          "secret keeper",
+          "forest guardian"
+        ],
+        "poseTags": [
+          "shushing",
+          "smiling",
+          "blinking",
+          "finger to lips"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "fantasy",
+          "mystical",
+          "forest",
+          "hidden realm"
+        ],
+        "genreTags": [
+          "anime",
+          "fantasy",
+          "adventure",
+          "roleplay"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "hooded cloak",
+          "cat ears",
+          "emblem",
+          "green gem"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl collectible",
+          "shushing anime girl",
+          "green eyes silver hair",
+          "ssr gacha card",
+          "whispering secret"
+        ],
+        "collectorHooks": [
+          "rare ssr",
+          "limited edition",
+          "character design",
+          "emblem detail",
+          "eye-catching pose"
+        ],
+        "marketingAngles": [
+          "cute and mysterious",
+          "perfect for collectors",
+          "gacha game asset",
+          "high detail art",
+          "emotional connection"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "gacha collectors",
+          "digital art lovers",
+          "fantasy enthusiasts",
+          "female character collectors"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Whispering Secret Anime Girl Collectible Card",
+      "shopifyTitle": "Whispering Secret Anime Girl Collectible Card - SSR",
+      "shortName": "Whispering Secret Girl",
+      "slug": "whispering-secret-anime-girl",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Mystic Silver Enchantress"
+  }
+}

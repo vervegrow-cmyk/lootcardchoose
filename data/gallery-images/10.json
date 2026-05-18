@@ -1,0 +1,182 @@
+{
+  "title": "Goddess of the Sea",
+  "description": "A beautiful female character with red hair and blue attire, adorned with gold accessories and a crown, posing in a relaxed, sensual manner.",
+  "tags": [
+    "female character",
+    "ani",
+    "goddess",
+    "sea",
+    "blue",
+    "gold",
+    "collectible",
+    "fantasy",
+    "sensual",
+    "cute",
+    "art",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "premium",
+    "collectible card",
+    "luxury"
+  ],
+  "style": "blue gold anime",
+  "rarity": "SSR",
+  "category": "anime",
+  "character": "female character",
+  "color": "blue and gold",
+  "mood": "sensual",
+  "scene": "portrait",
+  "price": 150,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "zh": {
+      "title": "海之女神",
+      "description": "一位红发蓝衣的女性角色，佩戴着金色饰品和王冠，以放松而性感的姿态摆拍。",
+      "tags": [
+        "女性角色",
+        "动漫",
+        "女神",
+        "海洋",
+        "蓝色",
+        "金色",
+        "收藏卡",
+        "幻想",
+        "性感",
+        "可爱",
+        "艺术"
+      ]
+    },
+    "filename": "10.jpg",
+    "syncSourceId": "local-gallery:10.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "blue",
+          "gold"
+        ],
+        "styleTags": [
+          "anime",
+          "fantasy",
+          "luxury",
+          "portrait"
+        ],
+        "compositionTags": [
+          "centered",
+          "close-up",
+          "sensual",
+          "detailed"
+        ],
+        "subjectFocus": "female deity",
+        "raritySignals": [
+          "premium",
+          "collectible"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "sensual",
+          "cute",
+          "serene",
+          "alluring"
+        ],
+        "toneTags": [
+          "luxurious",
+          "divine",
+          "playful"
+        ],
+        "energyLevel": "medium",
+        "dramaticIntensity": 0.3
+      },
+      "characterLayer": {
+        "entityType": "goddess",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "sea goddess",
+          "divine maiden",
+          "luxury deity"
+        ],
+        "poseTags": [
+          "relaxed",
+          "sensual",
+          "posed",
+          "seductive"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "mythical",
+          "celestial",
+          "oceanic"
+        ],
+        "genreTags": [
+          "fantasy",
+          "anime",
+          "mythology"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "crown",
+          "gold accessories",
+          "blue robes",
+          "sandals"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime goddess",
+          "sea goddess card",
+          "blue gold anime",
+          "sensual anime girl",
+          "collectible card"
+        ],
+        "collectorHooks": [
+          "ssr rarity",
+          "luxury design",
+          "divine theme",
+          "high detail"
+        ],
+        "marketingAngles": [
+          "luxury collectible",
+          "fantasy art",
+          "premium anime"
+        ],
+        "audienceTags": [
+          "anime collectors",
+          "fantasy fans",
+          "luxury art buyers",
+          "gaming community"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Goddess of the Sea",
+      "shopifyTitle": "Goddess of the Sea - SSR Collectible Card",
+      "shortName": "Sea Goddess",
+      "slug": "sea-goddess",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Sapphire Sea Goddess"
+  }
+}

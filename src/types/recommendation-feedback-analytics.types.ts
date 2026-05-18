@@ -34,6 +34,11 @@ export type RecommendationFeedbackAnalyticsReport = {
   totalLines: number;
   parsedLines: number;
   invalidLines: number;
+  source: {
+    file: string | null;
+    selectedBy: "explicit" | "default" | "newest_report";
+    usedFallbackFile: boolean;
+  };
   summary: RecommendationFeedbackAnalyticsSummary;
   conversion: {
     searchToSelectionRate: number;
@@ -46,6 +51,14 @@ export type RecommendationFeedbackAnalyticsReport = {
     sessionsWithRerank: number;
     sessionsWithNoRankingChange: number;
   };
+  interpretation: {
+    status: "healthy" | "observe";
+    findings: string[];
+  };
+  recommendationV2Gate: {
+    status: "not_needed" | "re_evaluate";
+    reasons: string[];
+  };
   topQueries: RecommendationFeedbackAnalyticsTopQuery[];
   topSelectedCards: RecommendationFeedbackAnalyticsTopCard[];
   topPurchasedCards: RecommendationFeedbackAnalyticsTopCard[];
@@ -54,10 +67,13 @@ export type RecommendationFeedbackAnalyticsReport = {
 export type RecommendationFeedbackAnalyticsCliOptions = {
   json: boolean;
   limit: number;
+  file: string | null;
+  outputPath: string | null;
 };
 
 export type RecommendationFeedbackAnalyticsSource = {
   file: string | null;
+  selectedBy: "explicit" | "default" | "newest_report";
   usedFallbackFile: boolean;
   missing: boolean;
   content: string;

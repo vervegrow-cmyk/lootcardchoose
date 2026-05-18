@@ -1,0 +1,186 @@
+{
+  "title": "Purple-haired Female Character in Blue Kimono",
+  "description": "A female anime character with purple hair and a red hair ornament, partially covered by a blue kimono, lying on a bed.",
+  "tags": [
+    "ani",
+    "female character",
+    "purple hair",
+    "blue kimono",
+    "bed",
+    "sleeping",
+    "nude",
+    "art",
+    "illustration",
+    "collectible",
+    "female",
+    "girl",
+    "anime girl",
+    "anime",
+    "beauty",
+    "collectible card"
+  ],
+  "style": "anime",
+  "rarity": "UR",
+  "category": "anime",
+  "character": "female character",
+  "color": "blue and purple",
+  "mood": "sleepy",
+  "scene": "bedroom",
+  "price": 100,
+  "isActive": true,
+  "metadata": {
+    "source": "vision-ai",
+    "visionProvider": "siliconflow",
+    "visionModel": "Qwen/Qwen3-VL-8B-Instruct",
+    "confidence": 0.98,
+    "filename": "142249649_p0_master1200.jpg",
+    "syncSourceId": "local-gallery:142249649_p0_master1200.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.975,
+      "visualLayer": {
+        "primaryColors": [
+          "purple",
+          "blue",
+          "white"
+        ],
+        "styleTags": [
+          "anime",
+          "illustration",
+          "digital art",
+          "soft shading",
+          "high detail"
+        ],
+        "compositionTags": [
+          "close-up",
+          "partial nudity",
+          "bed scene",
+          "hair ornament",
+          "dramatic lighting"
+        ],
+        "subjectFocus": "female anime character",
+        "raritySignals": [
+          "ur rarity",
+          "high detail",
+          "collectible card",
+          "artistic quality"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "sleepy",
+          "relaxed",
+          "seductive",
+          "innocent",
+          "dreamy"
+        ],
+        "toneTags": [
+          "soft",
+          "gentle",
+          "intimate",
+          "calm",
+          "romantic"
+        ],
+        "energyLevel": "low",
+        "dramaticIntensity": 0.3
+      },
+      "characterLayer": {
+        "entityType": "anime girl",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "sleeping beauty",
+          "seductive girl",
+          "innocent girl",
+          "sleeping girl"
+        ],
+        "poseTags": [
+          "lying down",
+          "half-covered",
+          "sleeping",
+          "resting",
+          "bed pose"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "bedroom",
+          "private space",
+          "indoor",
+          "nighttime"
+        ],
+        "genreTags": [
+          "anime",
+          "fantasy",
+          "romance",
+          "sleeping scene",
+          "bed scene"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "blue kimono",
+          "red hair ornament",
+          "bedding",
+          "pillow"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl",
+          "purple hair",
+          "blue kimono",
+          "sleeping girl",
+          "nude anime",
+          "collectible card",
+          "anime art"
+        ],
+        "collectorHooks": [
+          "ur rarity",
+          "high detail",
+          "artistic quality",
+          "sleeping scene",
+          "bed scene"
+        ],
+        "marketingAngles": [
+          "sleepy beauty",
+          "seductive girl",
+          "anime art",
+          "collectible card",
+          "bed scene"
+        ],
+        "audienceTags": [
+          "anime fans",
+          "collectors",
+          "art lovers",
+          "gacha players",
+          "female anime characters"
+        ],
+        "safetyFlags": [
+          "nude",
+          "partial nudity",
+          "sleeping scene",
+          "bed scene"
+        ]
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Sleeping Anime Girl with Purple Hair in Blue Kimono",
+      "shopifyTitle": "Sleeping Anime Girl with Purple Hair in Blue Kimono - UR Collectible Card",
+      "shortName": "Sleeping Purple Hair Girl",
+      "slug": "sleeping-purple-hair-girl",
+      "namingVersion": "v1",
+      "confidence": 0.95,
+      "source": "vision-intelligence-v1"
+    },
+    "marketingTitle": "Moonlit Kimono Enchantress"
+  }
+}

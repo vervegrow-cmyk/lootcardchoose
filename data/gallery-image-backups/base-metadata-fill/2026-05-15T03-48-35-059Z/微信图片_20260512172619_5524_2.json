@@ -1,0 +1,143 @@
+{
+  "title": "微信图片 20260512172619 5524 2",
+  "description": "Auto generated metadata for 微信图片 20260512172619 5524 2",
+  "tags": [
+    "微信图片",
+    "20260512172619",
+    "5524",
+    "2"
+  ],
+  "style": "",
+  "rarity": "",
+  "category": "card",
+  "character": "",
+  "color": "",
+  "price": "0.00",
+  "isActive": true,
+  "metadata": {
+    "source": "filename-fallback",
+    "filename": "微信图片_20260512172619_5524_2.jpg",
+    "syncSourceId": "local-gallery:微信图片_20260512172619_5524_2.jpg",
+    "intelligence": {
+      "intelligenceVersion": "v1",
+      "confidence": 0.9875,
+      "visualLayer": {
+        "primaryColors": [
+          "gold",
+          "orange",
+          "white",
+          "brown"
+        ],
+        "styleTags": [
+          "anime",
+          "digital-art",
+          "hyperrealistic",
+          "glamour"
+        ],
+        "compositionTags": [
+          "centered-subject",
+          "close-up",
+          "high-contrast-lighting",
+          "dramatic-shadows"
+        ],
+        "subjectFocus": "female character in gold bikini",
+        "raritySignals": [
+          "high-detail-rendering",
+          "luxurious-materials",
+          "exclusive-scene"
+        ]
+      },
+      "emotionalLayer": {
+        "moodTags": [
+          "seductive",
+          "luxurious",
+          "confident",
+          "alluring"
+        ],
+        "toneTags": [
+          "opulent",
+          "intimate",
+          "sensual"
+        ],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.85
+      },
+      "characterLayer": {
+        "entityType": "human female",
+        "genderPresentation": "female",
+        "agePresentation": "young adult",
+        "archetypeTags": [
+          "luxury-lifestyle",
+          "celebrity",
+          "boudoir"
+        ],
+        "poseTags": [
+          "seated",
+          "relaxed",
+          "posed",
+          "hand-on-chin"
+        ]
+      },
+      "worldbuildingLayer": {
+        "settingTags": [
+          "bedroom",
+          "indoor",
+          "luxury-suite"
+        ],
+        "genreTags": [
+          "erotic-art",
+          "fashion",
+          "celebrity-portrait"
+        ],
+        "factionTags": [],
+        "propTags": [
+          "champagne-glass",
+          "gold-bathrobe",
+          "nightstand"
+        ],
+        "powerSystemTags": []
+      },
+      "commerceLayer": {
+        "searchKeywords": [
+          "anime girl gold bikini",
+          "luxury boudoir art",
+          "seductive anime portrait",
+          "gold-themed collectible"
+        ],
+        "collectorHooks": [
+          "high-detail digital art",
+          "exclusive luxury scene",
+          "rare character pose"
+        ],
+        "marketingAngles": [
+          "luxury lifestyle",
+          "celebrity glamour",
+          "collector s edition"
+        ],
+        "audienceTags": [
+          "anime collectors",
+          "digital art enthusiasts",
+          "luxury aesthetic fans"
+        ],
+        "safetyFlags": []
+      },
+      "audit": {
+        "needsHumanReview": false,
+        "missingFields": [],
+        "lowConfidenceFields": [],
+        "invalidTags": [],
+        "formatIssues": [],
+        "notes": []
+      }
+    },
+    "commerceNaming": {
+      "displayTitle": "Golden Glamour: Seductive Anime Girl in Luxury Boudoir",
+      "shopifyTitle": "Anime Girl in Gold Bikini - Luxury Boudoir Digital Art",
+      "shortName": "Golden Glamour",
+      "slug": "golden-glamour-anime-girl-gold-bikini",
+      "namingVersion": "v1",
+      "confidence": 0.97,
+      "source": "vision-intelligence-v1"
+    }
+  }
+}

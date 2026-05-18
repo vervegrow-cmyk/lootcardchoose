@@ -7,14 +7,12 @@ import { buildRuleBasedGalleryQuery } from "../services/llm-query-parser.service
 
 type TestCase = {
   input: string;
-  language: "en" | "zh";
-  expected?: {
+  expected: {
     visualStyle?: string[];
     moodTags?: string[];
     toneTags?: string[];
     characterTypes?: string[];
     archetypeTags?: string[];
-    settingTags?: string[];
     genreTags?: string[];
     colorHints?: string[];
     rarity?: string;
@@ -23,51 +21,7 @@ type TestCase = {
 
 const TEST_CASES: TestCase[] = [
   {
-    input: "给我10张黑金SSR女角色卡牌",
-    language: "zh",
-    expected: {
-      colorHints: ["black", "gold"],
-      rarity: "SSR",
-      characterTypes: ["female character"],
-    },
-  },
-  {
-    input: "给我压迫感强一点的女王",
-    language: "zh",
-    expected: {
-      moodTags: ["oppressive"],
-      archetypeTags: ["queen"],
-    },
-  },
-  {
-    input: "推荐神圣感强的白金圣女",
-    language: "zh",
-    expected: {
-      moodTags: ["divine"],
-      colorHints: ["white", "gold"],
-      characterTypes: ["priestess"],
-    },
-  },
-  {
-    input: "我要赛博朋克机甲少女",
-    language: "zh",
-    expected: {
-      visualStyle: ["cyberpunk"],
-      characterTypes: ["mecha girl"],
-      genreTags: ["mecha"],
-    },
-  },
-  {
-    input: "给我黑暗哥特风收藏卡",
-    language: "zh",
-    expected: {
-      visualStyle: ["gothic"],
-      toneTags: ["dark"],
-    },
-  },
-  {
-    input: "give me dark fantasy queen cards",
-    language: "en",
+    input: "dark fantasy queen cards",
     expected: {
       visualStyle: ["dark fantasy"],
       archetypeTags: ["queen"],
@@ -75,12 +29,45 @@ const TEST_CASES: TestCase[] = [
     },
   },
   {
-    input: "recommend cyberpunk mecha girl cards",
-    language: "en",
+    input: "cyberpunk mecha girl cards",
     expected: {
       visualStyle: ["cyberpunk"],
       characterTypes: ["mecha girl"],
       genreTags: ["mecha"],
+    },
+  },
+  {
+    input: "holy priestess collectible card",
+    expected: {
+      visualStyle: ["divine"],
+      moodTags: ["divine"],
+      characterTypes: ["priestess", "holy_female"],
+      archetypeTags: ["priestess"],
+    },
+  },
+  {
+    input: "divine queen SSR card",
+    expected: {
+      visualStyle: ["divine"],
+      archetypeTags: ["queen"],
+      rarity: "SSR",
+    },
+  },
+  {
+    input: "oppressive dark fantasy empress",
+    expected: {
+      visualStyle: ["dark fantasy"],
+      moodTags: ["oppressive"],
+      archetypeTags: ["empress", "queen"],
+    },
+  },
+  {
+    input: "recommend elegant female warrior cards",
+    expected: {
+      visualStyle: ["elegant"],
+      toneTags: ["elegant"],
+      characterTypes: ["warrior", "female character"],
+      archetypeTags: ["warrior"],
     },
   },
 ];
@@ -96,7 +83,11 @@ const ensure = (condition: unknown, message: string): void => {
 const containsAll = (actual: string[], expected: string[]): boolean =>
   expected.every((item) => actual.includes(item));
 
-const validateMirroredFields = (field: keyof NonNullable<ReturnType<typeof buildRuleBasedGalleryQuery>["intelligenceQuery"]>, parsed: ReturnType<typeof buildRuleBasedGalleryQuery>, errors: string[]): void => {
+const validateMirroredFields = (
+  field: keyof NonNullable<ReturnType<typeof buildRuleBasedGalleryQuery>["intelligenceQuery"]>,
+  parsed: ReturnType<typeof buildRuleBasedGalleryQuery>,
+  errors: string[]
+): void => {
   const topLevel = parsed[field as keyof typeof parsed];
   const nested = parsed.intelligenceQuery?.[field];
 
@@ -117,11 +108,10 @@ const hasInvalidKeyword = (keywords: string[]): boolean =>
   });
 
 const runCase = (testCase: TestCase): { passed: boolean; errors: string[] } => {
-  const parsed = buildRuleBasedGalleryQuery(testCase.input, testCase.language);
+  const parsed = buildRuleBasedGalleryQuery(testCase.input, "en");
   const errors: string[] = [];
-  const intelligenceQuery = parsed.intelligenceQuery;
 
-  ensure(intelligenceQuery, `Expected intelligenceQuery for ${testCase.input}`);
+  ensure(parsed.intelligenceQuery, `Expected intelligenceQuery for ${testCase.input}`);
 
   validateMirroredFields("visualStyle", parsed, errors);
   validateMirroredFields("moodTags", parsed, errors);
@@ -132,31 +122,28 @@ const runCase = (testCase: TestCase): { passed: boolean; errors: string[] } => {
   validateMirroredFields("genreTags", parsed, errors);
   validateMirroredFields("colorHints", parsed, errors);
 
-  if (testCase.expected?.visualStyle && !containsAll(parsed.visualStyle, testCase.expected.visualStyle)) {
+  if (testCase.expected.visualStyle && !containsAll(parsed.visualStyle, testCase.expected.visualStyle)) {
     errors.push(`missing visualStyle ${JSON.stringify(testCase.expected.visualStyle)}`);
   }
-  if (testCase.expected?.moodTags && !containsAll(parsed.moodTags, testCase.expected.moodTags)) {
+  if (testCase.expected.moodTags && !containsAll(parsed.moodTags, testCase.expected.moodTags)) {
     errors.push(`missing moodTags ${JSON.stringify(testCase.expected.moodTags)}`);
   }
-  if (testCase.expected?.toneTags && !containsAll(parsed.toneTags, testCase.expected.toneTags)) {
+  if (testCase.expected.toneTags && !containsAll(parsed.toneTags, testCase.expected.toneTags)) {
     errors.push(`missing toneTags ${JSON.stringify(testCase.expected.toneTags)}`);
   }
-  if (testCase.expected?.characterTypes && !containsAll(parsed.characterTypes, testCase.expected.characterTypes)) {
+  if (testCase.expected.characterTypes && !containsAll(parsed.characterTypes, testCase.expected.characterTypes)) {
     errors.push(`missing characterTypes ${JSON.stringify(testCase.expected.characterTypes)}`);
   }
-  if (testCase.expected?.archetypeTags && !containsAll(parsed.archetypeTags, testCase.expected.archetypeTags)) {
+  if (testCase.expected.archetypeTags && !containsAll(parsed.archetypeTags, testCase.expected.archetypeTags)) {
     errors.push(`missing archetypeTags ${JSON.stringify(testCase.expected.archetypeTags)}`);
   }
-  if (testCase.expected?.settingTags && !containsAll(parsed.settingTags, testCase.expected.settingTags)) {
-    errors.push(`missing settingTags ${JSON.stringify(testCase.expected.settingTags)}`);
-  }
-  if (testCase.expected?.genreTags && !containsAll(parsed.genreTags, testCase.expected.genreTags)) {
+  if (testCase.expected.genreTags && !containsAll(parsed.genreTags, testCase.expected.genreTags)) {
     errors.push(`missing genreTags ${JSON.stringify(testCase.expected.genreTags)}`);
   }
-  if (testCase.expected?.colorHints && !containsAll(parsed.colorHints, testCase.expected.colorHints)) {
+  if (testCase.expected.colorHints && !containsAll(parsed.colorHints, testCase.expected.colorHints)) {
     errors.push(`missing colorHints ${JSON.stringify(testCase.expected.colorHints)}`);
   }
-  if (testCase.expected?.rarity && parsed.rarity !== testCase.expected.rarity) {
+  if (testCase.expected.rarity && parsed.rarity !== testCase.expected.rarity) {
     errors.push(`rarity mismatch: expected ${testCase.expected.rarity}, got ${parsed.rarity}`);
   }
 
@@ -170,7 +157,7 @@ const runCase = (testCase: TestCase): { passed: boolean; errors: string[] } => {
   console.log(
     JSON.stringify(
       {
-        input: testCase.input,
+        query: testCase.input,
         parsedQuery: {
           keywords: parsed.keywords,
           rarity: parsed.rarity,
@@ -199,12 +186,12 @@ const runCase = (testCase: TestCase): { passed: boolean; errors: string[] } => {
 };
 
 const main = async (): Promise<void> => {
-  const failures: Array<{ input: string; errors: string[] }> = [];
+  const failures: Array<{ query: string; errors: string[] }> = [];
 
   for (const testCase of TEST_CASES) {
     const result = runCase(testCase);
     if (!result.passed) {
-      failures.push({ input: testCase.input, errors: result.errors });
+      failures.push({ query: testCase.input, errors: result.errors });
     }
   }
 

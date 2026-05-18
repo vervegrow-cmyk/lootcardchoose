@@ -46,6 +46,8 @@ type ScoredGalleryCard = {
 export type GalleryRepository = {
   search: (query: ParsedGallerySearchInput) => Promise<GalleryCardRecord[]>;
   findActiveExcluding: (input: { excludeIds?: string[]; limit?: number }) => Promise<GalleryCardRecord[]>;
+  getActiveGalleryCardsForRecommendation: (limit?: number) => Promise<GalleryCardRecord[]>;
+  searchRecoveryCandidatePool: (input: { signals: string[]; limit?: number; rarity?: string; scene?: string }) => Promise<GalleryCardRecord[]>;
   findManyByQuery: (query: { keywords: string[]; limit?: number }) => Promise<GalleryCardRecord[]>;
   findById: (cardId: string) => Promise<GalleryCardRecord | null>;
   upsertSyncedCard: (input: {
@@ -69,6 +71,20 @@ export type GalleryRepository = {
 
 const SEARCH_CANDIDATE_LIMIT = 200;
 const DEFAULT_REPOSITORY_LIMIT = 10;
+const MAX_RECOMMENDATION_POOL_LIMIT = 100;
+const SPARSE_THEME_EXPANSION_MAP = {
+  cyberpunk: ["cyberpunk", "neon", "tech noir"],
+  mecha: ["mecha", "robot", "android", "mechanical"],
+  robotic: ["robotic", "robot", "android", "mechanical"],
+  "sci-fi": ["sci-fi", "science fiction", "futuristic", "cyberpunk"],
+} as const;
+
+type SparseThemeToken = keyof typeof SPARSE_THEME_EXPANSION_MAP;
+const SPARSE_THEME_SCORING_TERMS = new Set(
+  Object.values(SPARSE_THEME_EXPANSION_MAP)
+    .flat()
+    .map((term) => term.trim().toLowerCase())
+);
 
 const normalizeSearchLimit = (value: unknown): number => {
   if (typeof value !== "number" || !Number.isFinite(value)) {
@@ -80,6 +96,18 @@ const normalizeSearchLimit = (value: unknown): number => {
   }
 
   return Math.min(Math.floor(value), DEFAULT_REPOSITORY_LIMIT);
+};
+
+const normalizeRecommendationPoolLimit = (value: unknown): number => {
+  if (typeof value !== "number" || !Number.isFinite(value)) {
+    return MAX_RECOMMENDATION_POOL_LIMIT;
+  }
+
+  if (value < 1) {
+    return MAX_RECOMMENDATION_POOL_LIMIT;
+  }
+
+  return Math.min(Math.floor(value), MAX_RECOMMENDATION_POOL_LIMIT);
 };
 
 const normalizeText = (value: string | null | undefined): string => (value ?? "").trim().toLowerCase();
@@ -133,6 +161,91 @@ const buildKeywordMatchers = (keyword: string): Prisma.GalleryCardWhereInput[] =
   { color: { contains: keyword, mode: "insensitive" } },
 ];
 
+const SPARSE_THEME_PATTERNS: Array<{ token: SparseThemeToken; patterns: RegExp[] }> = [
+  { token: "cyberpunk", patterns: [/\bcyberpunk\b/i, /\btech noir\b/i] },
+  { token: "mecha", patterns: [/\bmecha\b/i, /\bmech\b/i, /\bmecha[\s_-]*girl\b/i] },
+  { token: "robotic", patterns: [/\brobot(ic)?\b/i, /\bandroid\b/i, /\bmechanical\b/i] },
+  { token: "sci-fi", patterns: [/\bsci[-\s]?fi\b/i, /\bscience fiction\b/i, /\bfuturistic\b/i] },
+];
+
+const SPARSE_THEME_METADATA_ARRAY_PATHS = [
+  ["intelligence", "visualLayer", "visualStyle"],
+  ["intelligence", "visualLayer", "styleTags"],
+  ["intelligence", "characterLayer", "characterType"],
+  ["intelligence", "characterLayer", "archetypeTags"],
+  ["intelligence", "worldbuildingLayer", "genreTags"],
+  ["intelligence", "worldbuildingLayer", "settingTags"],
+  ["intelligence", "commerceLayer", "searchKeywords"],
+] as const;
+
+const SPARSE_THEME_METADATA_STRING_PATHS = [
+  ["intelligence", "characterLayer", "entityType"],
+  ["intelligence", "visualLayer", "subjectFocus"],
+] as const;
+
+const collectSparseThemeTokens = (input: ParsedGallerySearchInput): SparseThemeToken[] => {
+  const searchSpace = normalizeKeywords([
+    ...input.keywords,
+    ...input.tags,
+    ...(input.preferredKeywords ?? []),
+    ...(input.broadenKeywords ?? []),
+    input.style,
+    input.rarity,
+    input.category,
+    input.character,
+    input.color,
+    input.mood,
+    input.scene,
+  ])
+    .map((value) => normalizeText(value))
+    .join(" ");
+
+  const tokens: SparseThemeToken[] = [];
+
+  for (const rule of SPARSE_THEME_PATTERNS) {
+    if (rule.patterns.some((pattern) => pattern.test(searchSpace))) {
+      tokens.push(rule.token);
+    }
+  }
+
+  return tokens;
+};
+
+const buildSparseThemeMetadataMatchers = (input: ParsedGallerySearchInput): Prisma.GalleryCardWhereInput[] => {
+  const sparseThemeTokens = collectSparseThemeTokens(input);
+  if (sparseThemeTokens.length === 0) {
+    return [];
+  }
+
+  const expandedTerms = normalizeKeywords(
+    sparseThemeTokens.flatMap((token) => SPARSE_THEME_EXPANSION_MAP[token])
+  ).map((term) => normalizeText(term));
+
+  const matchers: Prisma.GalleryCardWhereInput[] = [];
+
+  for (const term of expandedTerms) {
+    for (const path of SPARSE_THEME_METADATA_ARRAY_PATHS) {
+      matchers.push({
+        metadata: {
+          path: [...path],
+          array_contains: [term],
+        },
+      });
+    }
+
+    for (const path of SPARSE_THEME_METADATA_STRING_PATHS) {
+      matchers.push({
+        metadata: {
+          path: [...path],
+          string_contains: term,
+        },
+      });
+    }
+  }
+
+  return matchers;
+};
+
 const buildAvoidMatchers = (keyword: string): Prisma.GalleryCardWhereInput => ({
   OR: buildKeywordMatchers(keyword),
 });
@@ -180,6 +293,8 @@ const buildSearchWhere = (input: ParsedGallerySearchInput): Prisma.GalleryCardWh
     orFilters.push({ description: { contains: input.scene, mode: "insensitive" } });
   }
 
+  orFilters.push(...buildSparseThemeMetadataMatchers(input));
+
   for (const avoidKeyword of avoidKeywords) {
     notFilters.push(buildAvoidMatchers(avoidKeyword));
   }
@@ -208,6 +323,7 @@ const computeKeywordSignal = (card: GalleryCardRecord, keyword: string): number 
   const character = normalizeText(card.character);
   const color = normalizeText(card.color);
   const metadata = stringifyMetadata(card.metadata);
+  const isSparseThemeKeyword = SPARSE_THEME_SCORING_TERMS.has(keyword);
   let score = 0;
 
   if (tagSet.has(keyword)) {
@@ -236,6 +352,30 @@ const computeKeywordSignal = (card: GalleryCardRecord, keyword: string): number 
   }
   if (metadata.includes(keyword)) {
     score += 2;
+  }
+
+  if (isSparseThemeKeyword) {
+    if (tagSet.has(keyword)) {
+      score += 6;
+    }
+    if (style.includes(keyword)) {
+      score += 4;
+    }
+    if (title.includes(keyword)) {
+      score += 4;
+    }
+    if (description.includes(keyword)) {
+      score += 3;
+    }
+    if (category.includes(keyword)) {
+      score += 4;
+    }
+    if (character.includes(keyword)) {
+      score += 4;
+    }
+    if (metadata.includes(keyword)) {
+      score += 8;
+    }
   }
 
   return score;
@@ -423,6 +563,45 @@ export const galleryRepository: GalleryRepository = {
       orderBy: { createdAt: "desc" },
       take: limit,
     });
+  },
+  async getActiveGalleryCardsForRecommendation(limit) {
+    const take = normalizeRecommendationPoolLimit(limit);
+    return prisma.galleryCard.findMany({
+      where: {
+        isActive: true,
+        NOT: {
+          imageUrl: {
+            contains: "placehold.co",
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+      take,
+    });
+  },
+  async searchRecoveryCandidatePool(input) {
+    const take = normalizeRecommendationPoolLimit(input.limit);
+    const recoveryInput: ParsedGallerySearchInput = {
+      keywords: [],
+      tags: [],
+      style: "",
+      rarity: input.rarity ?? "",
+      category: "",
+      character: "",
+      color: "",
+      mood: "",
+      scene: input.scene ?? "",
+      preferredKeywords: normalizeKeywords(input.signals),
+      limit: take,
+    };
+
+    const candidates = await prisma.galleryCard.findMany({
+      where: buildSearchWhere(recoveryInput),
+      take: SEARCH_CANDIDATE_LIMIT,
+      orderBy: { createdAt: "desc" },
+    });
+
+    return rankCards(candidates, recoveryInput).slice(0, take);
   },
   async findById(cardId) {
     return prisma.galleryCard.findFirst({
