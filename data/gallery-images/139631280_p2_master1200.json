@@ -36,126 +36,103 @@
     "syncSourceId": "local-gallery:139631280_p2_master1200.jpg",
     "intelligence": {
       "intelligenceVersion": "v1",
-      "confidence": 0.975,
+      "confidence": 0.95,
       "visualLayer": {
-        "primaryColors": [
-          "orange",
-          "white",
-          "brown",
-          "blue"
+        "visualStyle": [
+          "anime"
         ],
+        "colorPalette": [],
+        "artStyle": [
+          "anime"
+        ],
+        "primaryColors": [],
         "styleTags": [
-          "anime",
-          "digital art",
-          "high detail",
-          "glow effect",
-          "soft shading"
+          "anime"
         ],
-        "compositionTags": [
-          "centered subject",
-          "low angle",
-          "foreground framing",
-          "symmetrical background",
-          "shallow depth of field"
-        ],
-        "subjectFocus": "anime girl",
+        "compositionTags": [],
+        "subjectFocus": "anime_girl",
         "raritySignals": [
-          "ur rarity",
-          "high detail rendering",
-          "unique outfit design",
-          "dynamic pose"
+          "UR",
+          "collector"
         ]
       },
       "emotionalLayer": {
+        "mood": [
+          "cute"
+        ],
+        "atmosphere": [],
         "moodTags": [
-          "cheerful",
-          "playful",
-          "lighthearted",
-          "joyful"
+          "cute"
         ],
-        "toneTags": [
-          "bright",
-          "warm",
-          "vibrant",
-          "optimistic"
-        ],
-        "energyLevel": "high",
-        "dramaticIntensity": 0.3
+        "toneTags": [],
+        "energyLevel": "medium",
+        "dramaticIntensity": 0.35
       },
       "characterLayer": {
-        "entityType": "anime character",
-        "genderPresentation": "female",
-        "agePresentation": "teen",
-        "archetypeTags": [
-          "heroine",
-          "celebrity",
-          "fashion icon",
-          "cute idol"
+        "characterType": [
+          "anime_girl"
         ],
-        "poseTags": [
-          "cheerful wave",
-          "playful stance",
-          "dynamic pose",
-          "half-body shot"
-        ]
+        "genderPresentation": "female",
+        "roleArchetype": [
+          "idol"
+        ],
+        "entityType": "anime_girl",
+        "agePresentation": "",
+        "archetypeTags": [
+          "idol"
+        ],
+        "poseTags": []
       },
       "worldbuildingLayer": {
+        "universe": [
+          "Eclipse Queen"
+        ],
+        "theme": [
+          "romance"
+        ],
+        "faction": [],
         "settingTags": [
-          "japanese canal",
-          "traditional town",
-          "historic architecture",
-          "waterway"
+          "Eclipse Queen"
         ],
         "genreTags": [
-          "fantasy",
-          "anime",
-          "manga",
-          "light novel"
+          "romance"
         ],
         "factionTags": [],
-        "propTags": [
-          "traditional outfit",
-          "accessories",
-          "headpiece",
-          "necklace",
-          "belt"
-        ],
+        "propTags": [],
         "powerSystemTags": []
       },
       "commerceLayer": {
+        "rarity": "UR",
+        "pricingTier": "collector",
+        "collectorScore": 100,
+        "waifuScore": 100,
+        "battleScore": 60,
         "searchKeywords": [
-          "anime girl",
-          "traditional outfit",
-          "japanese canal",
-          "collectible card",
-          "ur rarity",
-          "anime collectible",
+          "anime",
+          "cute",
+          "anime_girl",
+          "Eclipse Queen",
+          "romance",
+          "ani",
           "female character",
-          "orange outfit",
-          "cute anime girl"
+          "traditional outfit",
+          "Japanese",
+          "canal",
+          "orange",
+          "blonde hair"
         ],
         "collectorHooks": [
-          "unique outfit design",
-          "high detail rendering",
-          "ur rarity",
-          "dynamic pose",
-          "vibrant color palette"
+          "collector",
+          "UR"
         ],
         "marketingAngles": [
-          "cute anime girl",
-          "traditional japanese aesthetic",
-          "high rarity collectible",
-          "fantasy worldbuilding",
-          "dynamic character pose"
+          "romance"
         ],
         "audienceTags": [
-          "anime fans",
-          "collectible card collectors",
-          "gaming community",
-          "digital art enthusiasts",
-          "fashion collectors"
+          "anime girl"
         ],
-        "safetyFlags": []
+        "safetyFlags": [],
+        "category": "anime"
       },
       "audit": {
         "needsHumanReview": false,
@@ -169,10 +146,10 @@
     "commerceNaming": {
       "displayTitle": "Anime Girl in Traditional Outfit",
       "shopifyTitle": "Anime Girl in Traditional Outfit - UR Collectible Card",
-      "shortName": "Anime Girl Collectible",
-      "slug": "anime-girl-traditional-outfit-ur-collectible",
+      "shortName": "Anime Girl in Traditional",
+      "slug": "anime-girl-in-traditional",
       "namingVersion": "v1",
-      "confidence": 0.95,
+      "confidence": 0.8,
       "source": "vision-intelligence-v1"
     },
     "marketingTitle": "Golden Idol Kimono"

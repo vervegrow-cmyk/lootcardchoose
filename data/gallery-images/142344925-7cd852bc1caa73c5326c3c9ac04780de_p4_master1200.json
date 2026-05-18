@@ -53,108 +53,109 @@
     "syncSourceId": "local-gallery:142344925-7cd852bc1caa73c5326c3c9ac04780de_p4_master1200.jpg",
     "intelligence": {
       "intelligenceVersion": "v1",
-      "confidence": 0.975,
+      "confidence": 0.95,
       "visualLayer": {
+        "visualStyle": [
+          "black_gold",
+          "anime"
+        ],
+        "colorPalette": [
+          "black",
+          "gold",
+          "white"
+        ],
+        "artStyle": [
+          "anime"
+        ],
         "primaryColors": [
           "black",
-          "white",
-          "gold"
+          "gold",
+          "white"
         ],
         "styleTags": [
-          "anime",
-          "digital art",
-          "glow effect",
-          "soft lighting"
+          "black_gold",
+          "anime"
         ],
-        "compositionTags": [
-          "centered subject",
-          "medium shot",
-          "dynamic pose",
-          "background detail"
-        ],
-        "subjectFocus": "female teacher",
+        "compositionTags": [],
+        "subjectFocus": "anime_girl",
         "raritySignals": [
-          "high detail",
-          "premium art style"
+          "SSR",
+          "collector"
         ]
       },
       "emotionalLayer": {
+        "mood": [
+          "mysterious"
+        ],
+        "atmosphere": [],
         "moodTags": [
-          "confident",
-          "alluring",
-          "playful",
-          "charming"
+          "mysterious"
         ],
-        "toneTags": [
-          "warm",
-          "inviting",
-          "seductive"
-        ],
-        "energyLevel": "high",
-        "dramaticIntensity": 0.85
+        "toneTags": [],
+        "energyLevel": "medium",
+        "dramaticIntensity": 0.5
       },
       "characterLayer": {
-        "entityType": "human",
-        "genderPresentation": "female",
-        "agePresentation": "young adult",
-        "archetypeTags": [
-          "teacher",
-          "schoolgirl",
-          "seductive educator"
+        "characterType": [
+          "anime_girl"
         ],
-        "poseTags": [
-          "hands on hips",
-          "looking forward",
-          "slightly tilted head"
-        ]
+        "genderPresentation": "female",
+        "roleArchetype": [],
+        "entityType": "anime_girl",
+        "agePresentation": "",
+        "archetypeTags": [],
+        "poseTags": []
       },
       "worldbuildingLayer": {
+        "universe": [
+          "Eclipse Queen"
+        ],
+        "theme": [
+          "luxury"
+        ],
+        "faction": [],
         "settingTags": [
-          "classroom",
-          "school",
-          "educational setting"
+          "Eclipse Queen"
         ],
         "genreTags": [
-          "anime",
-          "school life",
-          "fantasy realism"
+          "luxury"
         ],
         "factionTags": [],
-        "propTags": [
-          "chalkboard",
-          "glasses",
-          "white shirt",
-          "black skirt"
-        ],
+        "propTags": [],
         "powerSystemTags": []
       },
       "commerceLayer": {
+        "rarity": "SSR",
+        "pricingTier": "collector",
+        "collectorScore": 100,
+        "waifuScore": 100,
+        "battleScore": 60,
         "searchKeywords": [
-          "anime teacher",
-          "schoolgirl",
+          "black_gold",
+          "anime",
+          "mysterious",
+          "anime_girl",
+          "Eclipse Queen",
+          "luxury",
+          "ani",
+          "female character",
+          "teacher",
           "glasses",
-          "black skirt",
-          "ssr collectible"
+          "classroom",
+          "school"
         ],
         "collectorHooks": [
-          "high detail art",
-          "rare ssr rarity",
-          "emotional expression",
-          "unique pose"
+          "collector",
+          "SSR"
         ],
         "marketingAngles": [
-          "educational fantasy",
-          "seductive teacher",
-          "anime beauty",
-          "classroom charm"
+          "luxury"
         ],
         "audienceTags": [
-          "anime collectors",
-          "schoolgirl fans",
-          "glasses lovers",
-          "ssr collectors"
+          "anime girl"
         ],
-        "safetyFlags": []
+        "safetyFlags": [],
+        "category": "anime"
       },
       "audit": {
         "needsHumanReview": false,
@@ -168,10 +169,10 @@
     "commerceNaming": {
       "displayTitle": "Anime Female Teacher in Classroom",
       "shopifyTitle": "Anime Female Teacher in Classroom - SSR Collectible Card",
-      "shortName": "Anime Teacher Card",
-      "slug": "anime-female-teacher-classroom",
+      "shortName": "Anime Female Teacher in",
+      "slug": "anime-female-teacher-in",
       "namingVersion": "v1",
-      "confidence": 0.95,
+      "confidence": 0.8,
       "source": "vision-intelligence-v1"
     },
     "marketingTitle": "Golden Scholar S Elegance"

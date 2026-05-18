@@ -35,98 +35,103 @@
     "syncSourceId": "local-gallery:133187601_p0_master1200.jpg",
     "intelligence": {
       "intelligenceVersion": "v1",
-      "confidence": 0.99,
+      "confidence": 0.95,
       "visualLayer": {
+        "visualStyle": [
+          "anime"
+        ],
+        "colorPalette": [
+          "red"
+        ],
+        "artStyle": [
+          "anime"
+        ],
         "primaryColors": [
-          "white",
-          "pink"
+          "red"
         ],
         "styleTags": [
-          "anime",
-          "illustration",
-          "digital art"
+          "anime"
         ],
-        "compositionTags": [
-          "centered subject",
-          "bright background",
-          "fluffy companion"
-        ],
-        "subjectFocus": "girl with clover motif",
+        "compositionTags": [],
+        "subjectFocus": "anime_girl",
         "raritySignals": [
-          "collectible card"
+          "SSR",
+          "collector"
         ]
       },
       "emotionalLayer": {
+        "mood": [
+          "cute"
+        ],
+        "atmosphere": [],
         "moodTags": [
-          "cheerful",
-          "playful",
-          "happy"
+          "cute"
         ],
-        "toneTags": [
-          "whimsical",
-          "lighthearted",
-          "joyful"
-        ],
-        "energyLevel": "high",
-        "dramaticIntensity": 0.2
+        "toneTags": [],
+        "energyLevel": "medium",
+        "dramaticIntensity": 0.35
       },
       "characterLayer": {
-        "entityType": "humanoid",
-        "genderPresentation": "female",
-        "agePresentation": "child",
-        "archetypeTags": [
-          "cute",
-          "friendly",
-          "adventurer"
+        "characterType": [
+          "anime_girl"
         ],
-        "poseTags": [
-          "peace sign",
-          "smiling",
-          "cheerful"
-        ]
+        "genderPresentation": "female",
+        "roleArchetype": [],
+        "entityType": "anime_girl",
+        "agePresentation": "",
+        "archetypeTags": [],
+        "poseTags": []
       },
       "worldbuildingLayer": {
+        "universe": [
+          "Eclipse Queen"
+        ],
+        "theme": [
+          "romance"
+        ],
+        "faction": [],
         "settingTags": [
-          "studio",
-          "neutral background",
-          "fantasy"
+          "Eclipse Queen"
         ],
         "genreTags": [
-          "anime",
-          "fantasy",
-          "adventure"
+          "romance"
         ],
         "factionTags": [],
-        "propTags": [
-          "clover",
-          "backpack",
-          "fluffy companion"
-        ],
+        "propTags": [],
         "powerSystemTags": []
       },
       "commerceLayer": {
+        "rarity": "SSR",
+        "pricingTier": "collector",
+        "collectorScore": 95,
+        "waifuScore": 100,
+        "battleScore": 60,
         "searchKeywords": [
-          "anime girl",
-          "clover motif",
+          "anime",
+          "cute",
+          "anime_girl",
+          "Eclipse Queen",
+          "romance",
+          "ani",
+          "female character",
+          "clover",
+          "red outfit",
           "peace sign",
-          "collectible card"
+          "fluffy companion",
+          "collectible"
         ],
         "collectorHooks": [
-          "limited edition",
-          "rare character",
-          "cute design"
+          "collector",
+          "SSR"
         ],
         "marketingAngles": [
-          "cute collectible",
-          "anime fan favorite",
-          "limited rarity"
+          "romance"
         ],
         "audienceTags": [
-          "anime fans",
-          "collectors",
-          "gacha players"
+          "anime girl"
         ],
-        "safetyFlags": []
+        "safetyFlags": [],
+        "category": "anime"
       },
       "audit": {
         "needsHumanReview": false,
@@ -140,10 +145,10 @@
     "commerceNaming": {
       "displayTitle": "Cute Girl in Red Outfit with Clover Motif",
       "shopifyTitle": "Cute Girl in Red Outfit with Clover Motif - SSR Collectible Card",
-      "shortName": "Clover Girl SSR",
-      "slug": "clover-girl-ssr",
+      "shortName": "Cute Girl in Red",
+      "slug": "cute-girl-in-red",
       "namingVersion": "v1",
-      "confidence": 0.98,
+      "confidence": 0.8,
       "source": "vision-intelligence-v1"
     },
     "marketingTitle": "Crimson Clover Charmer"

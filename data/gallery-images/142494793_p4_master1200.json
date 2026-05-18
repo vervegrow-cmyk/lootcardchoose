@@ -49,108 +49,99 @@
     "syncSourceId": "local-gallery:142494793_p4_master1200.jpg",
     "intelligence": {
       "intelligenceVersion": "v1",
-      "confidence": 0.975,
+      "confidence": 0.95,
       "visualLayer": {
+        "visualStyle": [
+          "anime"
+        ],
+        "colorPalette": [
+          "purple",
+          "silver"
+        ],
+        "artStyle": [
+          "anime"
+        ],
         "primaryColors": [
           "purple",
-          "silver",
-          "white"
+          "silver"
         ],
         "styleTags": [
-          "anime",
-          "digital art",
-          "high detail",
-          "soft lighting"
+          "anime"
         ],
-        "compositionTags": [
-          "medium shot",
-          "three-quarter view",
-          "balanced framing",
-          "window backlight"
-        ],
-        "subjectFocus": "anime girl holding cup",
+        "compositionTags": [],
+        "subjectFocus": "anime_girl",
         "raritySignals": [
-          "collectible card",
-          "gaming"
+          "UR",
+          "collector"
         ]
       },
       "emotionalLayer": {
+        "mood": [
+          "mysterious"
+        ],
+        "atmosphere": [],
         "moodTags": [
-          "calm",
-          "serene",
-          "relaxed"
+          "mysterious"
         ],
-        "toneTags": [
-          "gentle",
-          "whimsical",
-          "aesthetic"
-        ],
-        "energyLevel": "low",
-        "dramaticIntensity": 0.2
+        "toneTags": [],
+        "energyLevel": "medium",
+        "dramaticIntensity": 0.5
       },
       "characterLayer": {
-        "entityType": "female character",
-        "genderPresentation": "female",
-        "agePresentation": "teen",
-        "archetypeTags": [
-          "everyday girl",
-          "kitchen companion",
-          "anime idol"
+        "characterType": [
+          "anime_girl"
         ],
-        "poseTags": [
-          "standing",
-          "holding cup",
-          "slight turn",
-          "relaxed posture"
-        ]
+        "genderPresentation": "female",
+        "roleArchetype": [],
+        "entityType": "anime_girl",
+        "agePresentation": "",
+        "archetypeTags": [],
+        "poseTags": []
       },
       "worldbuildingLayer": {
+        "universe": [
+          "Eclipse Queen"
+        ],
+        "theme": [],
+        "faction": [],
         "settingTags": [
-          "modern kitchen",
-          "domestic scene",
-          "sunlit room"
+          "Eclipse Queen"
         ],
-        "genreTags": [
-          "anime",
-          "gaming",
-          "collectible"
-        ],
+        "genreTags": [],
         "factionTags": [],
-        "propTags": [
-          "kitchen counter",
-          "window",
-          "curtains"
-        ],
+        "propTags": [],
         "powerSystemTags": []
       },
       "commerceLayer": {
+        "rarity": "UR",
+        "pricingTier": "collector",
+        "collectorScore": 100,
+        "waifuScore": 100,
+        "battleScore": 60,
         "searchKeywords": [
-          "anime girl",
-          "kitchen scene",
-          "purple outfit",
+          "anime",
+          "mysterious",
+          "anime_girl",
+          "Eclipse Queen",
+          "ani",
+          "female character",
+          "kitchen",
           "silver hair",
-          "collectible card",
-          "gaming art"
+          "purple outfit",
+          "collectible",
+          "gaming",
+          "art"
         ],
         "collectorHooks": [
-          "ur rarity",
-          "high detail art",
-          "gaming collectible",
-          "anime beauty"
+          "collector",
+          "UR"
         ],
-        "marketingAngles": [
-          "home decor",
-          "gaming collection",
-          "anime fan art",
-          "digital collectible"
-        ],
+        "marketingAngles": [],
         "audienceTags": [
-          "anime fans",
-          "gaming collectors",
-          "digital art lovers",
-          "collectible card enthusiasts"
+          "anime girl"
         ],
-        "safetyFlags": []
+        "safetyFlags": [],
+        "category": "anime"
       },
       "audit": {
         "needsHumanReview": false,
@@ -163,11 +154,11 @@
     },
     "commerceNaming": {
       "displayTitle": "Anime Girl in Kitchen",
-      "shopifyTitle": "Anime Girl in Kitchen - Collectible Card",
-      "shortName": "Kitchen Anime Girl",
+      "shopifyTitle": "Anime Girl in Kitchen - UR Collectible Card",
+      "shortName": "Anime Girl in Kitchen",
       "slug": "anime-girl-in-kitchen",
       "namingVersion": "v1",
-      "confidence": 0.95,
+      "confidence": 0.8,
       "source": "vision-intelligence-v1"
     },
     "marketingTitle": "Silver Haired Kitchen Muse"

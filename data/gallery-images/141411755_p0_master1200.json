@@ -51,122 +51,105 @@
     "syncSourceId": "local-gallery:141411755_p0_master1200.jpg",
     "intelligence": {
       "intelligenceVersion": "v1",
-      "confidence": 0.975,
+      "confidence": 0.95,
       "visualLayer": {
+        "visualStyle": [
+          "anime"
+        ],
+        "colorPalette": [
+          "red",
+          "white"
+        ],
+        "artStyle": [
+          "anime"
+        ],
         "primaryColors": [
-          "white",
-          "gold",
-          "blue"
+          "red",
+          "white"
         ],
         "styleTags": [
-          "anime",
-          "illustration",
-          "digital art",
-          "fantasy"
+          "anime"
         ],
-        "compositionTags": [
-          "centered subject",
-          "dynamic pose",
-          "layered background",
-          "symmetrical framing"
-        ],
-        "subjectFocus": "anime girl holding food skewer",
+        "compositionTags": [],
+        "subjectFocus": "anime_girl",
         "raritySignals": [
-          "ssr rarity",
-          "high detail",
-          "festive theme",
-          "limited edition potential"
+          "SSR",
+          "collector"
         ]
       },
       "emotionalLayer": {
+        "mood": [
+          "cute"
+        ],
+        "atmosphere": [],
         "moodTags": [
-          "joyful",
-          "festive",
-          "playful",
-          "whimsical"
+          "cute"
         ],
-        "toneTags": [
-          "warm",
-          "celebratory",
-          "lighthearted"
-        ],
-        "energyLevel": "high",
-        "dramaticIntensity": 0.7
+        "toneTags": [],
+        "energyLevel": "medium",
+        "dramaticIntensity": 0.35
       },
       "characterLayer": {
-        "entityType": "anime girl",
-        "genderPresentation": "female",
-        "agePresentation": "teen",
-        "archetypeTags": [
-          "celebrant",
-          "festive spirit",
-          "cute mascot",
-          "street performer"
+        "characterType": [
+          "anime_girl"
         ],
-        "poseTags": [
-          "jumping",
-          "mid-air",
-          "arms raised",
-          "playful gesture"
-        ]
+        "genderPresentation": "female",
+        "roleArchetype": [],
+        "entityType": "anime_girl",
+        "agePresentation": "",
+        "archetypeTags": [],
+        "poseTags": []
       },
       "worldbuildingLayer": {
+        "universe": [
+          "Eclipse Queen"
+        ],
+        "theme": [
+          "romance"
+        ],
+        "faction": [],
         "settingTags": [
-          "traditional east asian town",
-          "night festival",
-          "lantern festival",
-          "street market"
+          "Eclipse Queen"
         ],
         "genreTags": [
-          "fantasy",
-          "anime",
-          "adventure",
-          "cultural celebration"
+          "romance"
         ],
         "factionTags": [],
-        "propTags": [
-          "food skewer",
-          "lanterns",
-          "traditional architecture",
-          "decorative masks",
-          "rabbit plush"
-        ],
+        "propTags": [],
         "powerSystemTags": []
       },
       "commerceLayer": {
+        "rarity": "SSR",
+        "pricingTier": "collector",
+        "collectorScore": 95,
+        "waifuScore": 100,
+        "battleScore": 60,
         "searchKeywords": [
-          "anime girl",
-          "red outfit",
-          "lantern festival",
-          "festive collectible",
-          "ssr card",
-          "cute anime",
-          "traditional town",
-          "food skewer",
-          "celebration"
+          "anime",
+          "cute",
+          "anime_girl",
+          "Eclipse Queen",
+          "romance",
+          "ani",
+          "female character",
+          "lanterns",
+          "night",
+          "festive",
+          "traditional",
+          "food"
         ],
         "collectorHooks": [
-          "limited edition",
-          "high rarity",
-          "festive theme",
-          "dynamic pose",
-          "cute character design"
+          "collector",
+          "SSR"
         ],
         "marketingAngles": [
-          "festive celebration",
-          "cute character appeal",
-          "high detail art",
-          "collectible rarity",
-          "cultural fusion"
+          "romance"
         ],
         "audienceTags": [
-          "anime fans",
-          "collectors",
-          "gacha players",
-          "festival enthusiasts",
-          "cute aesthetic lovers"
+          "anime girl"
         ],
-        "safetyFlags": []
+        "safetyFlags": [],
+        "category": "anime"
       },
       "audit": {
         "needsHumanReview": false,
@@ -179,11 +162,11 @@
     },
     "commerceNaming": {
       "displayTitle": "LootCardChoose: A Cute Girl in Red Outfit with Lanterns",
-      "shopifyTitle": "LootCardChoose - Anime Girl in Red Outfit with Lanterns - SSR Collectible Card",
-      "shortName": "LootCardChoose",
-      "slug": "lootcardchoose-anime-girl-red-outfit-lanterns",
+      "shopifyTitle": "LootCardChoose: A Cute Girl in Red Outfit with Lanterns - SSR Collectible Card",
+      "shortName": "LootCardChoose: A Cute Girl",
+      "slug": "lootcardchoose-a-cute-girl",
       "namingVersion": "v1",
-      "confidence": 0.95,
+      "confidence": 0.8,
       "source": "vision-intelligence-v1"
     },
     "marketingTitle": "Crimson Lantern Festival Maiden"

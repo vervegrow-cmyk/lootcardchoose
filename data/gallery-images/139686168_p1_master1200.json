@@ -55,109 +55,115 @@
     "syncSourceId": "local-gallery:139686168_p1_master1200.jpg",
     "intelligence": {
       "intelligenceVersion": "v1",
-      "confidence": 0.99,
+      "confidence": 0.95,
       "visualLayer": {
-        "primaryColors": [
-          "pink",
+        "visualStyle": [
+          "holy",
+          "anime"
+        ],
+        "colorPalette": [
           "white",
-          "blue"
+          "pink"
+        ],
+        "artStyle": [
+          "anime"
+        ],
+        "primaryColors": [
+          "white",
+          "pink"
         ],
         "styleTags": [
-          "anime",
-          "digital art",
-          "soft lighting",
-          "glow effect"
+          "holy",
+          "anime"
         ],
-        "compositionTags": [
-          "centered subject",
-          "low angle",
-          "foreground focus",
-          "night scene"
-        ],
-        "subjectFocus": "pink-haired girl in hammock",
+        "compositionTags": [],
+        "subjectFocus": "anime_girl",
         "raritySignals": [
-          "ssr rarity",
-          "collectible card",
-          "high detail"
+          "SSR",
+          "collector"
         ]
       },
       "emotionalLayer": {
+        "mood": [
+          "divine",
+          "cute",
+          "calm"
+        ],
+        "atmosphere": [
+          "celestial"
+        ],
         "moodTags": [
-          "relaxed",
-          "serene",
-          "peaceful",
-          "cute"
+          "divine",
+          "cute",
+          "calm"
         ],
         "toneTags": [
-          "calm",
-          "dreamy",
-          "whimsical"
+          "celestial"
         ],
         "energyLevel": "low",
-        "dramaticIntensity": 0.2
+        "dramaticIntensity": 0.7
       },
       "characterLayer": {
-        "entityType": "female character",
-        "genderPresentation": "female",
-        "agePresentation": "teen",
-        "archetypeTags": [
-          "relaxing",
-          "beauty",
-          "feminine"
+        "characterType": [
+          "anime_girl"
         ],
-        "poseTags": [
-          "lounging",
-          "reclining",
-          "holding objects"
-        ]
+        "genderPresentation": "female",
+        "roleArchetype": [],
+        "entityType": "anime_girl",
+        "agePresentation": "",
+        "archetypeTags": [],
+        "poseTags": []
       },
       "worldbuildingLayer": {
+        "universe": [
+          "Eclipse Queen"
+        ],
+        "theme": [
+          "romance"
+        ],
+        "faction": [],
         "settingTags": [
-          "night",
-          "starry sky",
-          "water view",
-          "outdoor"
+          "Eclipse Queen"
         ],
         "genreTags": [
-          "anime",
-          "fantasy",
-          "romantic"
+          "romance"
         ],
         "factionTags": [],
-        "propTags": [
-          "hammock",
-          "glowing drink tags",
-          "white robe"
-        ],
+        "propTags": [],
         "powerSystemTags": []
       },
       "commerceLayer": {
+        "rarity": "SSR",
+        "pricingTier": "collector",
+        "collectorScore": 95,
+        "waifuScore": 100,
+        "battleScore": 60,
         "searchKeywords": [
-          "anime girl",
+          "holy",
+          "anime",
+          "divine",
+          "cute",
+          "calm",
+          "anime_girl",
+          "Eclipse Queen",
+          "romance",
+          "ani",
+          "female character",
           "pink hair",
-          "hammock",
-          "starry night",
-          "collectible card"
+          "horned"
         ],
         "collectorHooks": [
-          "rare ssr",
-          "beautiful art",
-          "relaxing scene",
-          "glowing drink"
+          "collector",
+          "SSR"
         ],
         "marketingAngles": [
-          "relaxation",
-          "beauty",
-          "nighttime fantasy",
-          "collectible art"
+          "romance"
         ],
         "audienceTags": [
-          "anime fans",
-          "collectors",
-          "gacha players",
-          "feminine aesthetics"
+          "anime girl"
         ],
-        "safetyFlags": []
+        "safetyFlags": [],
+        "category": "anime"
       },
       "audit": {
         "needsHumanReview": false,
@@ -170,11 +176,11 @@
     },
     "commerceNaming": {
       "displayTitle": "Pink-haired Girl in Hammock Under Starry Night",
-      "shopifyTitle": "SSR Collectible Card: Pink-haired Girl in Hammock Under Starry Night",
-      "shortName": "Pink Hair Hammock Girl",
-      "slug": "pink-hair-hammock-girl",
+      "shopifyTitle": "Pink-haired Girl in Hammock Under Starry Night - SSR Collectible Card",
+      "shortName": "Pink-haired Girl in Hammock",
+      "slug": "pink-haired-girl-in-hammock",
       "namingVersion": "v1",
-      "confidence": 0.98,
+      "confidence": 0.8,
       "source": "vision-intelligence-v1"
     },
     "marketingTitle": "Celestial Pink Serenity"

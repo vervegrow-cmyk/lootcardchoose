@@ -35,6 +35,14 @@ type DeepSeekResponse = {
   choices?: Array<{ message?: { content?: string } }>;
 };
 
+type IntentClassifierOutcome =
+  | "llm_success"
+  | "missing_api_key_fallback"
+  | "timeout_fallback"
+  | "non_200_fallback"
+  | "json_parse_failed_fallback"
+  | "network_error_fallback";
+
 const SEARCH_KEYWORDS = [
   "gallery",
   "search",
@@ -290,6 +298,25 @@ const isAbortError = (error: unknown): boolean =>
 
 const INTENT_TIMEOUT_ERROR = "LLM_INTENT_TIMEOUT";
 
+const logClassificationResult = (input: {
+  message: string;
+  language: SupportedLanguage;
+  hasActiveGallerySession: boolean;
+  result: IntentClassificationResult;
+  outcome: IntentClassifierOutcome;
+  latencyMs: number;
+}): void => {
+  logger.info("[LLM INTENT CLASSIFIER] completed", {
+    messageLength: input.message.length,
+    language: input.language,
+    hasActiveGallerySession: input.hasActiveGallerySession,
+    intent: input.result.intent,
+    outcome: input.outcome,
+    usedFallback: input.result.source === "fallback",
+    latencyMs: input.latencyMs,
+  });
+};
+
 export const llmIntentClassifierService = {
   async classify(
     message: string,
@@ -297,8 +324,10 @@ export const llmIntentClassifierService = {
       hasActiveGallerySession?: boolean;
     }
   ): Promise<IntentClassificationResult> {
+    const startedAt = Date.now();
     const env = loadEnv();
     const language = detectLanguage(message);
+    const hasActiveGallerySession = Boolean(options?.hasActiveGallerySession);
     const apiKey = env.deepseekApiKey;
     const baseUrl = env.deepseekBaseUrl;
     const model = env.deepseekModel;
@@ -308,7 +337,16 @@ export const llmIntentClassifierService = {
         message,
         reason: "missing_api_key",
       });
-      return fallbackIntentClassification(message, options, "missing_api_key");
+      const result = fallbackIntentClassification(message, options, "missing_api_key");
+      logClassificationResult({
+        message,
+        language,
+        hasActiveGallerySession,
+        result,
+        outcome: "missing_api_key_fallback",
+        latencyMs: Date.now() - startedAt,
+      });
+      return result;
     }
 
     const controller = new AbortController();
@@ -366,7 +404,16 @@ export const llmIntentClassifierService = {
           reason: "non_200",
           status: response.status,
         });
-        return fallbackIntentClassification(message, options, "non_200");
+        const result = fallbackIntentClassification(message, options, "non_200");
+        logClassificationResult({
+          message,
+          language,
+          hasActiveGallerySession,
+          result,
+          outcome: "non_200_fallback",
+          latencyMs: Date.now() - startedAt,
+        });
+        return result;
       }
 
       const content = response.payload.choices?.[0]?.message?.content?.trim() ?? "";
@@ -377,10 +424,27 @@ export const llmIntentClassifierService = {
           message,
           reason: "json_parse_failed",
         });
-        return fallbackIntentClassification(message, options, "json_parse_failed");
+        const result = fallbackIntentClassification(message, options, "json_parse_failed");
+        logClassificationResult({
+          message,
+          language,
+          hasActiveGallerySession,
+          result,
+          outcome: "json_parse_failed_fallback",
+          latencyMs: Date.now() - startedAt,
+        });
+        return result;
       }
 
       logger.info("[LLM INTENT CLASSIFIER] parsed", parsed);
+      logClassificationResult({
+        message,
+        language,
+        hasActiveGallerySession,
+        result: parsed,
+        outcome: "llm_success",
+        latencyMs: Date.now() - startedAt,
+      });
       return parsed;
     } catch (error) {
       if ((error instanceof Error && error.message === INTENT_TIMEOUT_ERROR) || isAbortError(error)) {
@@ -388,7 +452,16 @@ export const llmIntentClassifierService = {
           message,
           timeoutMs: INTENT_CLASSIFIER_TIMEOUT_MS,
         });
-        return fallbackIntentClassification(message, options, "timeout");
+        const result = fallbackIntentClassification(message, options, "timeout");
+        logClassificationResult({
+          message,
+          language,
+          hasActiveGallerySession,
+          result,
+          outcome: "timeout_fallback",
+          latencyMs: Date.now() - startedAt,
+        });
+        return result;
       }
 
       logger.warn("[LLM INTENT CLASSIFIER] fallback", {
@@ -396,7 +469,16 @@ export const llmIntentClassifierService = {
         reason: "network_error",
         error: error instanceof Error ? error.message : String(error),
       });
-      return fallbackIntentClassification(message, options, "network_error");
+      const result = fallbackIntentClassification(message, options, "network_error");
+      logClassificationResult({
+        message,
+        language,
+        hasActiveGallerySession,
+        result,
+        outcome: "network_error_fallback",
+        latencyMs: Date.now() - startedAt,
+      });
+      return result;
     } finally {
       if (timeoutHandle) {
         clearTimeout(timeoutHandle);

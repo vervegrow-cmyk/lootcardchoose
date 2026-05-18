@@ -57,108 +57,124 @@
     "syncSourceId": "local-gallery:142284098_p0_master1200.jpg",
     "intelligence": {
       "intelligenceVersion": "v1",
-      "confidence": 0.9875,
+      "confidence": 0.95,
       "visualLayer": {
-        "primaryColors": [
-          "pink",
+        "visualStyle": [
+          "anime"
+        ],
+        "colorPalette": [
+          "blue",
           "purple",
-          "white"
+          "pink"
+        ],
+        "artStyle": [
+          "anime"
+        ],
+        "primaryColors": [
+          "blue",
+          "purple",
+          "pink"
         ],
         "styleTags": [
-          "soft anime",
-          "illustrative",
-          "digital art"
+          "anime"
         ],
-        "compositionTags": [
-          "centered subject",
-          "diagonal lines",
-          "warm lighting"
-        ],
-        "subjectFocus": "anime girl reading book",
+        "compositionTags": [],
+        "subjectFocus": "queen",
         "raritySignals": [
-          "sr rarity",
-          "collectible card",
-          "high detail"
+          "SR",
+          "premium"
         ]
       },
       "emotionalLayer": {
-        "moodTags": [
-          "relaxed",
-          "cozy",
-          "peaceful"
-        ],
-        "toneTags": [
-          "gentle",
-          "dreamy",
+        "mood": [
+          "boss_like",
+          "cute",
           "calm"
         ],
-        "energyLevel": "low",
-        "dramaticIntensity": 0.1
+        "atmosphere": [],
+        "moodTags": [
+          "boss_like",
+          "cute",
+          "calm"
+        ],
+        "toneTags": [],
+        "energyLevel": "high",
+        "dramaticIntensity": 0.85
       },
       "characterLayer": {
-        "entityType": "anime girl",
-        "genderPresentation": "female",
-        "agePresentation": "teen",
-        "archetypeTags": [
-          "catgirl",
-          "sleeping beauty",
-          "bookworm"
+        "characterType": [
+          "queen",
+          "anime_girl"
         ],
-        "poseTags": [
-          "lounging",
-          "reading",
-          "hand on chin"
-        ]
+        "genderPresentation": "female",
+        "roleArchetype": [
+          "ruler"
+        ],
+        "entityType": "queen",
+        "agePresentation": "",
+        "archetypeTags": [
+          "ruler"
+        ],
+        "poseTags": []
       },
       "worldbuildingLayer": {
+        "universe": [
+          "Eclipse Queen"
+        ],
+        "theme": [
+          "romance",
+          "royalty"
+        ],
+        "faction": [
+          "queen's circle"
+        ],
         "settingTags": [
-          "bedroom",
-          "indoor",
-          "private space"
+          "Eclipse Queen"
         ],
         "genreTags": [
-          "anime",
-          "fantasy",
-          "slice of life"
+          "romance",
+          "royalty"
         ],
-        "factionTags": [],
-        "propTags": [
-          "book",
-          "pillow",
-          "cat ears"
+        "factionTags": [
+          "queen's circle"
         ],
+        "propTags": [],
         "powerSystemTags": []
       },
       "commerceLayer": {
+        "rarity": "SR",
+        "pricingTier": "premium",
+        "collectorScore": 78,
+        "waifuScore": 100,
+        "battleScore": 60,
         "searchKeywords": [
-          "anime girl",
-          "reading book",
-          "catgirl",
-          "bedroom",
-          "soft anime",
-          "collectible card",
-          "pink hair",
-          "purple lingerie"
+          "anime",
+          "boss_like",
+          "cute",
+          "calm",
+          "queen",
+          "anime_girl",
+          "Eclipse Queen",
+          "romance",
+          "royalty",
+          "ani",
+          "female character",
+          "bed"
         ],
         "collectorHooks": [
-          "sr rarity",
-          "detailed illustration",
-          "relaxed mood",
-          "unique pose"
+          "premium",
+          "SR"
         ],
         "marketingAngles": [
-          "cozy aesthetic",
-          "relatable character",
-          "high-quality art",
-          "limited edition"
+          "romance",
+          "royalty"
         ],
         "audienceTags": [
-          "anime fans",
-          "collectors",
-          "gacha players",
-          "digital art lovers"
+          "queen",
+          "anime girl"
         ],
-        "safetyFlags": []
+        "safetyFlags": [],
+        "category": "anime"
       },
       "audit": {
         "needsHumanReview": false,
@@ -171,11 +187,11 @@
     },
     "commerceNaming": {
       "displayTitle": "Cute Anime Girl Reading Book in Bed",
-      "shopifyTitle": "Anime Girl Reading Book in Bed - Collectible Card",
-      "shortName": "Reading Girl Card",
-      "slug": "reading-girl-card",
+      "shopifyTitle": "Cute Anime Girl Reading Book in Bed - SR Collectible Card",
+      "shortName": "Cute Anime Girl Reading",
+      "slug": "cute-anime-girl-reading",
       "namingVersion": "v1",
-      "confidence": 0.97,
+      "confidence": 0.8,
       "source": "vision-intelligence-v1"
     },
     "marketingTitle": "Violet Empress SR"

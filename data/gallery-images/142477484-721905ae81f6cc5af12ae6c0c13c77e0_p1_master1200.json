@@ -36,111 +36,109 @@
     "syncSourceId": "local-gallery:142477484-721905ae81f6cc5af12ae6c0c13c77e0_p1_master1200.jpg",
     "intelligence": {
       "intelligenceVersion": "v1",
-      "confidence": 0.975,
+      "confidence": 0.95,
       "visualLayer": {
+        "visualStyle": [
+          "anime"
+        ],
+        "colorPalette": [
+          "red",
+          "white",
+          "pink"
+        ],
+        "artStyle": [
+          "anime"
+        ],
         "primaryColors": [
-          "pink",
-          "white"
+          "red",
+          "white",
+          "pink"
         ],
         "styleTags": [
-          "soft anime",
-          "digital art",
-          "illustration"
+          "anime"
         ],
-        "compositionTags": [
-          "back view",
-          "leaning pose",
-          "sunlight",
-          "indoor lighting",
-          "partial framing"
-        ],
-        "subjectFocus": "pink-haired girl in maid outfit",
+        "compositionTags": [],
+        "subjectFocus": "anime_girl",
         "raritySignals": [
-          "collectible card",
-          "limited edition"
+          "SR",
+          "premium"
         ]
       },
       "emotionalLayer": {
+        "mood": [
+          "cute",
+          "calm"
+        ],
+        "atmosphere": [],
         "moodTags": [
-          "playful",
-          "cozy",
-          "cheerful",
-          "gentle"
+          "cute",
+          "calm"
         ],
-        "toneTags": [
-          "warm",
-          "soft",
-          "inviting"
-        ],
-        "energyLevel": "medium",
-        "dramaticIntensity": 0.3
+        "toneTags": [],
+        "energyLevel": "low",
+        "dramaticIntensity": 0.35
       },
       "characterLayer": {
-        "entityType": "anime girl",
-        "genderPresentation": "female",
-        "agePresentation": "teen",
-        "archetypeTags": [
-          "maid",
-          "schoolgirl",
-          "fashionable"
+        "characterType": [
+          "anime_girl"
         ],
-        "poseTags": [
-          "leaning",
-          "back view",
-          "relaxed",
-          "casual"
-        ]
+        "genderPresentation": "female",
+        "roleArchetype": [],
+        "entityType": "anime_girl",
+        "agePresentation": "",
+        "archetypeTags": [],
+        "poseTags": []
       },
       "worldbuildingLayer": {
+        "universe": [
+          "Eclipse Queen"
+        ],
+        "theme": [
+          "romance"
+        ],
+        "faction": [],
         "settingTags": [
-          "indoor",
-          "room",
-          "sunlit",
-          "domestic"
+          "Eclipse Queen"
         ],
         "genreTags": [
-          "anime",
-          "fantasy",
-          "slice of life"
+          "romance"
         ],
         "factionTags": [],
-        "propTags": [
-          "wooden desk",
-          "window",
-          "plant"
-        ],
+        "propTags": [],
         "powerSystemTags": []
       },
       "commerceLayer": {
+        "rarity": "SR",
+        "pricingTier": "premium",
+        "collectorScore": 80,
+        "waifuScore": 100,
+        "battleScore": 52,
         "searchKeywords": [
-          "pink hair maid",
-          "anime girl collectible",
-          "soft anime art",
-          "sr rarity card",
-          "back view anime girl"
+          "anime",
+          "cute",
+          "calm",
+          "anime_girl",
+          "Eclipse Queen",
+          "romance",
+          "ani",
+          "maid outfit",
+          "pink hair",
+          "female character",
+          "sunlight",
+          "desk"
         ],
         "collectorHooks": [
-          "limited edition",
-          "sr rarity",
-          "unique pose",
-          "soft anime style",
-          "sunlit scene"
+          "premium",
+          "SR"
         ],
         "marketingAngles": [
-          "cute aesthetic",
-          "collectible art",
-          "anime girl fan favorite",
-          "indoor cozy scene",
-          "high detail illustration"
+          "romance"
         ],
         "audienceTags": [
-          "anime collectors",
-          "digital art enthusiasts",
-          "gacha game players",
-          "female anime fans",
-          "soft anime lovers"
+          "anime girl"
         ],
-        "safetyFlags": []
+        "safetyFlags": [],
+        "category": "anime"
       },
       "audit": {
         "needsHumanReview": false,
@@ -154,10 +152,10 @@
     "commerceNaming": {
       "displayTitle": "Pink-haired Girl in Maid Outfit",
       "shopifyTitle": "Pink-haired Girl in Maid Outfit - SR Collectible Card",
-      "shortName": "Pink Maid Girl",
-      "slug": "pink-maid-girl",
+      "shortName": "Pink-haired Girl in Maid",
+      "slug": "pink-haired-girl-in-maid",
       "namingVersion": "v1",
-      "confidence": 0.95,
+      "confidence": 0.8,
       "source": "vision-intelligence-v1"
     },
     "marketingTitle": "Crimson Blossom Maid"

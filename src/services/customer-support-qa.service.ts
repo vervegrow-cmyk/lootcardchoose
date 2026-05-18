@@ -13,6 +13,14 @@ const STYLE_RULES_HEADING = "# Customer Support Style Rules";
 const QA_KNOWLEDGE_HEADING = "# Customer Support QA Knowledge";
 const FALLBACK_RULES_HEADING = "# Fallback Rules";
 
+const normalizePromptSection = (value: string): string =>
+  value
+    .replace(/\r\n/g, "\n")
+    .split("\n")
+    .map((line) => line.trimEnd())
+    .join("\n")
+    .trim();
+
 const mapTitleToTopic = (title: string): CustomerSupportTopic => {
   const normalized = title.trim().toLowerCase();
   if (
@@ -122,9 +130,9 @@ export const customerSupportQaService = {
     }
 
     const contents = readFileSync(filePath, "utf8");
-    const qaSection = extractSection(contents, QA_KNOWLEDGE_HEADING);
-    const styleRulesText = extractSection(contents, STYLE_RULES_HEADING);
-    const fallbackRulesText = extractSection(contents, FALLBACK_RULES_HEADING);
+    const qaSection = normalizePromptSection(extractSection(contents, QA_KNOWLEDGE_HEADING));
+    const styleRulesText = normalizePromptSection(extractSection(contents, STYLE_RULES_HEADING));
+    const fallbackRulesText = normalizePromptSection(extractSection(contents, FALLBACK_RULES_HEADING));
 
     if (!qaSection) {
       logger.warn("[CUSTOMER SUPPORT QA] QA section missing", {

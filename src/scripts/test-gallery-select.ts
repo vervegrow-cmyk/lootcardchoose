@@ -223,222 +223,221 @@ const main = async (): Promise<void> => {
     discordChannelId,
     status: "active",
   });
-    assert.equal(activeSessionsAfterSearch.length, 1);
-    assert.equal(activeSessionsAfterSearch[0]?.discordGuildId, discordGuildId);
+  assert.equal(activeSessionsAfterSearch.length, 1);
+  assert.equal(activeSessionsAfterSearch[0]?.discordGuildId, discordGuildId);
 
-    const zeroResultSearchResponse = await router.handle({
-      text: ZERO_RESULT_QUERY,
-      discordGuildId: zeroResultGuildId,
-      userId: zeroResultUserId,
-      channelId: zeroResultChannelId,
-      channelName: discordChannelName,
-    });
-    assert.equal(zeroResultSearchResponse.type, "text");
-    assert.equal(zeroResultSearchResponse.text, EMPTY_GALLERY_TEXT);
+  const zeroResultSearchResponse = await router.handle({
+    text: ZERO_RESULT_QUERY,
+    discordGuildId: zeroResultGuildId,
+    userId: zeroResultUserId,
+    channelId: zeroResultChannelId,
+    channelName: discordChannelName,
+  });
+  assert.equal(zeroResultSearchResponse.type, "text");
+  assert.equal(zeroResultSearchResponse.text, EMPTY_GALLERY_TEXT);
 
-    const zeroResultActiveSessions = await gallerySearchSessionRepository.findRecentByUserId({
-      discordGuildId: zeroResultGuildId,
-      discordUserId: zeroResultUserId,
-      discordChannelId: zeroResultChannelId,
-      status: "active",
-    });
-    assert.equal(zeroResultActiveSessions.length, 0);
+  const zeroResultActiveSessions = await gallerySearchSessionRepository.findRecentByUserId({
+    discordGuildId: zeroResultGuildId,
+    discordUserId: zeroResultUserId,
+    discordChannelId: zeroResultChannelId,
+    status: "active",
+  });
+  assert.equal(zeroResultActiveSessions.length, 0);
 
-    const staleSessionSearch = await router.handle({
-      text: query,
-      discordGuildId: staleSessionGuildId,
-      userId: staleSessionUserId,
-      channelId: staleSessionChannelId,
-      channelName: discordChannelName,
+  const staleSessionSearch = await router.handle({
+    text: query,
+    discordGuildId: staleSessionGuildId,
+    userId: staleSessionUserId,
+    channelId: staleSessionChannelId,
+    channelName: discordChannelName,
+  });
+  assert.equal(staleSessionSearch.type, "gallery_search_results");
+
+  await awaitPendingSearchSessionWrite({
+    discordGuildId: staleSessionGuildId,
+    discordUserId: staleSessionUserId,
+    discordChannelId: staleSessionChannelId,
+    timeoutMs: 5000,
+  });
+
+  const staleSessionBeforeZeroResult = await gallerySearchSessionRepository.findRecentByUserId({
+    discordGuildId: staleSessionGuildId,
+    discordUserId: staleSessionUserId,
+    discordChannelId: staleSessionChannelId,
+    status: "active",
+  });
+  assert.equal(staleSessionBeforeZeroResult.length, 1);
+
+  const staleSessionZeroResultResponse = await router.handle({
+    text: ZERO_RESULT_QUERY,
+    discordGuildId: staleSessionGuildId,
+    userId: staleSessionUserId,
+    channelId: staleSessionChannelId,
+    channelName: discordChannelName,
+  });
+  assert.equal(staleSessionZeroResultResponse.type, "text");
+  assert.equal(staleSessionZeroResultResponse.text, EMPTY_GALLERY_TEXT);
+
+  const staleSessionAfterZeroResult = await gallerySearchSessionRepository.findRecentByUserId({
+    discordGuildId: staleSessionGuildId,
+    discordUserId: staleSessionUserId,
+    discordChannelId: staleSessionChannelId,
+    status: "active",
+  });
+  assert.equal(staleSessionAfterZeroResult.length, 0);
+
+  const zeroResultSelectResponse = await router.handle({
+    text: "1",
+    discordGuildId: staleSessionGuildId,
+    userId: staleSessionUserId,
+    channelId: staleSessionChannelId,
+    channelName: discordChannelName,
+  });
+  assert.notEqual(zeroResultSelectResponse.type, "gallery_checkout_created");
+  if (zeroResultSelectResponse.type === "text") {
+    assert.notEqual(zeroResultSelectResponse.text, "Please choose a number from 1 to 0.");
+  }
+
+  const girlNarrationResponse = await router.handle({
+    text: "girl",
+    discordGuildId: narrationGuildId,
+    userId: narrationUserId,
+    channelId: narrationChannelId,
+    channelName: discordChannelName,
+  });
+  assert.equal(girlNarrationResponse.type, "gallery_search_results");
+  assert.ok(girlNarrationResponse.text.trim().length > 0);
+  assert.notEqual(girlNarrationResponse.text, LEGACY_SUCCESS_PREFIX);
+  assert.equal(girlNarrationResponse.metadata?.curatorNarrationUsed, true);
+  assert.equal(girlNarrationResponse.metadata?.responseTextSource, "curator_summary");
+  assert.ok((girlNarrationResponse.cards[0]?.curatorNarration?.embedLines?.length ?? 0) >= 2);
+
+  const girlSearchResult = await galleryService.searchGalleryCards("girl", "en");
+  assert.equal(girlSearchResult.recoveryAttempted, false);
+  assert.equal(girlSearchResult.recoveryTriggered, false);
+  assert.equal(girlSearchResult.results.length > 0, true);
+  assert.ok(girlSearchResult.summaryText?.trim().length);
+  assert.equal(girlSearchResult.curatorNarrationUsed, true);
+  assert.equal(girlSearchResult.responseTextSource, "curator_summary");
+
+  const zeroResultServiceResponse = await galleryService.searchGalleryCards(ZERO_RESULT_QUERY, "en");
+  assert.equal(zeroResultServiceResponse.results.length, 0);
+  assert.equal(zeroResultServiceResponse.recoveryAttempted, false);
+  assert.equal(zeroResultServiceResponse.recoveryResultCount, 0);
+  assert.equal(zeroResultServiceResponse.recoveryBroadCandidatePoolUsed, false);
+  assert.equal(zeroResultServiceResponse.recoveryScoredCandidateCount, 0);
+  assert.equal(zeroResultServiceResponse.recoveryAcceptedCount, 0);
+
+  const originalGallerySearch = galleryRepository.search;
+  const originalGetActiveGalleryCardsForRecommendation = galleryRepository.getActiveGalleryCardsForRecommendation;
+  const originalSearchRecoveryCandidatePool = galleryRepository.searchRecoveryCandidatePool;
+  let recoveryPrimarySearchConsumed = false;
+  galleryRepository.search = async (query) => {
+    const normalizedKeywords = query.keywords.map((keyword) => keyword.trim().toLowerCase());
+    const isRecoveryThemeQuery = normalizedKeywords.includes("cyberpunk");
+    const isDeterministicRecoveryAttempt =
+      normalizedKeywords.includes("neon") ||
+      normalizedKeywords.includes("tech noir") ||
+      normalizedKeywords.includes("futuristic") ||
+      normalizedKeywords.includes("sci-fi") ||
+      normalizedKeywords.includes("cyber");
+
+    if (isRecoveryThemeQuery && !isDeterministicRecoveryAttempt && !recoveryPrimarySearchConsumed) {
+      recoveryPrimarySearchConsumed = true;
+      return [];
+    }
+
+    if (isRecoveryThemeQuery && !isDeterministicRecoveryAttempt) {
+      return [];
+    }
+
+    if (isDeterministicRecoveryAttempt) {
+      return [];
+    }
+
+    return originalGallerySearch(query);
+  };
+  galleryRepository.searchRecoveryCandidatePool = async () => [];
+  galleryRepository.getActiveGalleryCardsForRecommendation = async (limit) =>
+    originalGallerySearch({
+      keywords: ["girl"],
+      tags: [],
+      style: "",
+      rarity: "",
+      category: "",
+      character: "female character",
+      color: "",
+      mood: "",
+      scene: "",
+      limit,
     });
-    assert.equal(staleSessionSearch.type, "gallery_search_results");
+
+  try {
+    const recoveryResponse = await searchGallerySkill(
+      {
+        query: RECOVERY_QUERY,
+        discordUserId: recoveryUserId,
+        discordChannelId: recoveryChannelId,
+      },
+      buildSearchSkillContext({
+        discordGuildId: recoveryGuildId,
+        userId: recoveryUserId,
+        channelId: recoveryChannelId,
+      })
+    );
+    assert.equal(recoveryResponse.results.length > 0, true);
+    assert.equal(recoveryResponse.exactResultCount, 0);
+    assert.equal(recoveryResponse.recoveryAttempted, true);
+    assert.equal(recoveryResponse.recoveryTriggered, true);
+    assert.equal(typeof recoveryResponse.recoveryTriggerReason, "string");
+    assert.ok((recoveryResponse.recoverySignals ?? []).includes("cyberpunk"));
+    assert.ok((recoveryResponse.recoverySignals ?? []).includes("neon"));
+    assert.ok(Number(recoveryResponse.recoveryCandidateCount) > 0);
+    assert.ok(Number(recoveryResponse.recoveryThreshold) > 0);
+    assert.equal(recoveryResponse.recoveryBroadCandidatePoolUsed, true);
+    assert.ok(Number(recoveryResponse.recoveryScoredCandidateCount) > 0);
+    assert.ok(Number(recoveryResponse.recoveryAcceptedCount) > 0);
+    assert.ok(Number(recoveryResponse.recoveryResultCount) > 0);
+    assert.equal(recoveryResponse.responseTextSource, "recovery");
 
     await awaitPendingSearchSessionWrite({
-      discordGuildId: staleSessionGuildId,
-      discordUserId: staleSessionUserId,
-      discordChannelId: staleSessionChannelId,
+      discordGuildId: recoveryGuildId,
+      discordUserId: recoveryUserId,
+      discordChannelId: recoveryChannelId,
       timeoutMs: 5000,
     });
 
-    const staleSessionBeforeZeroResult = await gallerySearchSessionRepository.findRecentByUserId({
-      discordGuildId: staleSessionGuildId,
-      discordUserId: staleSessionUserId,
-      discordChannelId: staleSessionChannelId,
+    const recoveryActiveSession = await gallerySearchSessionRepository.findLatest({
+      discordGuildId: recoveryGuildId,
+      discordUserId: recoveryUserId,
+      discordChannelId: recoveryChannelId,
       status: "active",
     });
-    assert.equal(staleSessionBeforeZeroResult.length, 1);
+    ensure(recoveryActiveSession, "Expected recovery session to be persisted");
+    assert.ok((recoveryResponse.results.length ?? 0) > 0);
+    assert.equal(Array.isArray(recoveryActiveSession?.results), true);
+    assert.equal(getFirstSessionCardId(recoveryActiveSession), recoveryResponse.results[0]?.id ?? null);
+  } finally {
+    galleryRepository.search = originalGallerySearch;
+    galleryRepository.searchRecoveryCandidatePool = originalSearchRecoveryCandidatePool;
+    galleryRepository.getActiveGalleryCardsForRecommendation = originalGetActiveGalleryCardsForRecommendation;
+  }
 
-    const staleSessionZeroResultResponse = await router.handle({
-      text: ZERO_RESULT_QUERY,
-      discordGuildId: staleSessionGuildId,
-      userId: staleSessionUserId,
-      channelId: staleSessionChannelId,
-      channelName: discordChannelName,
-    });
-    assert.equal(staleSessionZeroResultResponse.type, "text");
-    assert.equal(staleSessionZeroResultResponse.text, EMPTY_GALLERY_TEXT);
+  const dmGirlIntent = await router.determineIntent("girl", {
+    userId: `test-dm-girl-user-${suffix}`,
+    channelId: `test-dm-girl-channel-${suffix}`,
+    discordGuildId: null,
+    isDM: true,
+  });
+  assert.equal(dmGirlIntent.intent, "gallery_search");
 
-    const staleSessionAfterZeroResult = await gallerySearchSessionRepository.findRecentByUserId({
-      discordGuildId: staleSessionGuildId,
-      discordUserId: staleSessionUserId,
-      discordChannelId: staleSessionChannelId,
-      status: "active",
-    });
-    assert.equal(staleSessionAfterZeroResult.length, 0);
-
-    const zeroResultSelectResponse = await router.handle({
-      text: "1",
-      discordGuildId: staleSessionGuildId,
-      userId: staleSessionUserId,
-      channelId: staleSessionChannelId,
-      channelName: discordChannelName,
-    });
-    assert.notEqual(zeroResultSelectResponse.type, "gallery_checkout_created");
-    if (zeroResultSelectResponse.type === "text") {
-      assert.notEqual(zeroResultSelectResponse.text, "Please choose a number from 1 to 0.");
-    }
-
-    const girlNarrationResponse = await router.handle({
-      text: "girl",
-      discordGuildId: narrationGuildId,
-      userId: narrationUserId,
-      channelId: narrationChannelId,
-      channelName: discordChannelName,
-    });
-    assert.equal(girlNarrationResponse.type, "gallery_search_results");
-    assert.ok(girlNarrationResponse.text.trim().length > 0);
-    assert.notEqual(girlNarrationResponse.text, LEGACY_SUCCESS_PREFIX);
-    assert.equal(girlNarrationResponse.metadata?.curatorNarrationUsed, true);
-    assert.equal(girlNarrationResponse.metadata?.responseTextSource, "curator_summary");
-    assert.ok((girlNarrationResponse.cards[0]?.curatorNarration?.embedLines?.length ?? 0) >= 2);
-
-    const girlSearchResult = await galleryService.searchGalleryCards("girl", "en");
-    assert.equal(girlSearchResult.recoveryAttempted, false);
-    assert.equal(girlSearchResult.recoveryTriggered, false);
-    assert.equal(girlSearchResult.results.length > 0, true);
-    assert.ok(girlSearchResult.summaryText?.trim().length);
-    assert.equal(girlSearchResult.curatorNarrationUsed, true);
-    assert.equal(girlSearchResult.responseTextSource, "curator_summary");
-
-    const zeroResultServiceResponse = await galleryService.searchGalleryCards(ZERO_RESULT_QUERY, "en");
-    assert.equal(zeroResultServiceResponse.results.length, 0);
-    assert.equal(zeroResultServiceResponse.recoveryAttempted, false);
-    assert.equal(zeroResultServiceResponse.recoveryResultCount, 0);
-    assert.equal(zeroResultServiceResponse.recoveryBroadCandidatePoolUsed, false);
-    assert.equal(zeroResultServiceResponse.recoveryScoredCandidateCount, 0);
-    assert.equal(zeroResultServiceResponse.recoveryAcceptedCount, 0);
-
-    const originalGallerySearch = galleryRepository.search;
-    const originalGetActiveGalleryCardsForRecommendation = galleryRepository.getActiveGalleryCardsForRecommendation;
-    const originalSearchRecoveryCandidatePool = galleryRepository.searchRecoveryCandidatePool;
-    let recoveryPrimarySearchConsumed = false;
-    galleryRepository.search = async (query) => {
-      const normalizedKeywords = query.keywords.map((keyword) => keyword.trim().toLowerCase());
-      const isRecoveryThemeQuery = normalizedKeywords.includes("cyberpunk");
-      const isDeterministicRecoveryAttempt =
-        normalizedKeywords.includes("neon") ||
-        normalizedKeywords.includes("tech noir") ||
-        normalizedKeywords.includes("futuristic") ||
-        normalizedKeywords.includes("sci-fi") ||
-        normalizedKeywords.includes("cyber");
-
-      if (isRecoveryThemeQuery && !isDeterministicRecoveryAttempt && !recoveryPrimarySearchConsumed) {
-        recoveryPrimarySearchConsumed = true;
-        return [];
-      }
-
-      if (isRecoveryThemeQuery && !isDeterministicRecoveryAttempt) {
-        return [];
-      }
-
-      if (isDeterministicRecoveryAttempt) {
-        return [];
-      }
-
-      return originalGallerySearch(query);
-    };
-    galleryRepository.searchRecoveryCandidatePool = async (input) =>
-      [];
-    galleryRepository.getActiveGalleryCardsForRecommendation = async (limit) =>
-      originalGallerySearch({
-        keywords: ["girl"],
-        tags: [],
-        style: "",
-        rarity: "",
-        category: "",
-        character: "female character",
-        color: "",
-        mood: "",
-        scene: "",
-        limit,
-      });
-
-    try {
-      const recoveryResponse = await searchGallerySkill(
-        {
-          query: RECOVERY_QUERY,
-          discordUserId: recoveryUserId,
-          discordChannelId: recoveryChannelId,
-        },
-        buildSearchSkillContext({
-          discordGuildId: recoveryGuildId,
-          userId: recoveryUserId,
-          channelId: recoveryChannelId,
-        })
-      );
-      assert.equal(recoveryResponse.results.length > 0, true);
-      assert.equal(recoveryResponse.exactResultCount, 0);
-      assert.equal(recoveryResponse.recoveryAttempted, true);
-      assert.equal(recoveryResponse.recoveryTriggered, true);
-      assert.equal(typeof recoveryResponse.recoveryTriggerReason, "string");
-      assert.ok((recoveryResponse.recoverySignals ?? []).includes("cyberpunk"));
-      assert.ok((recoveryResponse.recoverySignals ?? []).includes("neon"));
-      assert.ok(Number(recoveryResponse.recoveryCandidateCount) > 0);
-      assert.ok(Number(recoveryResponse.recoveryThreshold) > 0);
-      assert.equal(recoveryResponse.recoveryBroadCandidatePoolUsed, true);
-      assert.ok(Number(recoveryResponse.recoveryScoredCandidateCount) > 0);
-      assert.ok(Number(recoveryResponse.recoveryAcceptedCount) > 0);
-      assert.ok(Number(recoveryResponse.recoveryResultCount) > 0);
-      assert.equal(recoveryResponse.responseTextSource, "recovery");
-
-      await awaitPendingSearchSessionWrite({
-        discordGuildId: recoveryGuildId,
-        discordUserId: recoveryUserId,
-        discordChannelId: recoveryChannelId,
-        timeoutMs: 5000,
-      });
-
-      const recoveryActiveSession = await gallerySearchSessionRepository.findLatest({
-        discordGuildId: recoveryGuildId,
-        discordUserId: recoveryUserId,
-        discordChannelId: recoveryChannelId,
-        status: "active",
-      });
-      ensure(recoveryActiveSession, "Expected recovery session to be persisted");
-      assert.ok((recoveryResponse.results.length ?? 0) > 0);
-      assert.equal(Array.isArray(recoveryActiveSession?.results), true);
-      assert.equal(getFirstSessionCardId(recoveryActiveSession), recoveryResponse.results[0]?.id ?? null);
-    } finally {
-      galleryRepository.search = originalGallerySearch;
-      galleryRepository.searchRecoveryCandidatePool = originalSearchRecoveryCandidatePool;
-      galleryRepository.getActiveGalleryCardsForRecommendation = originalGetActiveGalleryCardsForRecommendation;
-    }
-
-    const dmGirlIntent = await router.determineIntent("girl", {
-      userId: `test-dm-girl-user-${suffix}`,
-      channelId: `test-dm-girl-channel-${suffix}`,
-      discordGuildId: null,
-      isDM: true,
-    });
-    assert.equal(dmGirlIntent.intent, "gallery_search");
-
-    const dmNonsenseIntent = await router.determineIntent("asdfgh", {
-      userId: `test-dm-ignore-user-${suffix}`,
-      channelId: `test-dm-ignore-channel-${suffix}`,
-      discordGuildId: null,
-      isDM: true,
-    });
-    assert.equal(dmNonsenseIntent.intent, "ignore");
+  const dmNonsenseIntent = await router.determineIntent("asdfgh", {
+    userId: `test-dm-ignore-user-${suffix}`,
+    channelId: `test-dm-ignore-channel-${suffix}`,
+    discordGuildId: null,
+    isDM: true,
+  });
+  assert.equal(dmNonsenseIntent.intent, "ignore");
 
   const originalCreateProductFromGalleryCard = shopifyService.createProductFromGalleryCard;
   let capturedCheckoutPrice: string | null = null;

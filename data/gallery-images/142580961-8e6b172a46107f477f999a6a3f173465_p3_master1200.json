@@ -51,106 +51,101 @@
     "syncSourceId": "local-gallery:142580961-8e6b172a46107f477f999a6a3f173465_p3_master1200.jpg",
     "intelligence": {
       "intelligenceVersion": "v1",
-      "confidence": 0.975,
+      "confidence": 0.95,
       "visualLayer": {
+        "visualStyle": [
+          "anime"
+        ],
+        "colorPalette": [
+          "blue"
+        ],
+        "artStyle": [
+          "anime"
+        ],
         "primaryColors": [
-          "blue",
-          "white",
-          "beige"
+          "blue"
         ],
         "styleTags": [
-          "anime",
-          "digital art",
-          "high detail",
-          "soft shading"
+          "anime"
         ],
-        "compositionTags": [
-          "low angle",
-          "close-up",
-          "centered subject",
-          "natural lighting"
-        ],
-        "subjectFocus": "blue-haired anime girl in bikini",
+        "compositionTags": [],
+        "subjectFocus": "anime_girl",
         "raritySignals": [
-          "collectible card",
-          "premium art"
+          "UR",
+          "collector"
         ]
       },
       "emotionalLayer": {
+        "mood": [
+          "mysterious"
+        ],
+        "atmosphere": [],
         "moodTags": [
-          "relaxed",
-          "serene",
-          "playful"
+          "mysterious"
         ],
-        "toneTags": [
-          "calm",
-          "inviting",
-          "dreamy"
-        ],
+        "toneTags": [],
         "energyLevel": "medium",
-        "dramaticIntensity": 0.3
+        "dramaticIntensity": 0.5
       },
       "characterLayer": {
-        "entityType": "female character",
-        "genderPresentation": "female",
-        "agePresentation": "teen",
-        "archetypeTags": [
-          "beach beauty",
-          "swimsuit model",
-          "anime idol"
+        "characterType": [
+          "anime_girl"
         ],
-        "poseTags": [
-          "crouching",
-          "hands on ground",
-          "looking at viewer"
-        ]
+        "genderPresentation": "female",
+        "roleArchetype": [
+          "idol"
+        ],
+        "entityType": "anime_girl",
+        "agePresentation": "",
+        "archetypeTags": [
+          "idol"
+        ],
+        "poseTags": []
       },
       "worldbuildingLayer": {
+        "universe": [
+          "Eclipse Queen"
+        ],
+        "theme": [],
+        "faction": [],
         "settingTags": [
-          "beach",
-          "shoreline",
-          "water",
-          "rocks"
+          "Eclipse Queen"
         ],
-        "genreTags": [
-          "anime",
-          "fantasy",
-          "slice of life"
-        ],
+        "genreTags": [],
         "factionTags": [],
-        "propTags": [
-          "bikini",
-          "blue hair accessory",
-          "water droplets"
-        ],
+        "propTags": [],
         "powerSystemTags": []
       },
       "commerceLayer": {
+        "rarity": "UR",
+        "pricingTier": "collector",
+        "collectorScore": 100,
+        "waifuScore": 100,
+        "battleScore": 60,
         "searchKeywords": [
-          "anime girl bikini",
-          "blue hair collectible",
-          "beach anime art",
-          "female character card",
-          "ur rarity"
+          "anime",
+          "mysterious",
+          "anime_girl",
+          "Eclipse Queen",
+          "ani",
+          "female character",
+          "bikini",
+          "beach",
+          "blue hair",
+          "swimsuit",
+          "sum r",
+          "water"
         ],
         "collectorHooks": [
-          "high detail",
-          "premium rarity",
-          "unique pose",
-          "collectible card"
+          "collector",
+          "UR"
         ],
-        "marketingAngles": [
-          "beach aesthetic",
-          "anime beauty",
-          "collector s edition"
-        ],
+        "marketingAngles": [],
         "audienceTags": [
-          "anime fans",
-          "collectors",
-          "gacha players",
-          "digital art lovers"
+          "anime girl"
         ],
-        "safetyFlags": []
+        "safetyFlags": [],
+        "category": "anime"
       },
       "audit": {
         "needsHumanReview": false,
@@ -164,10 +159,10 @@
     "commerceNaming": {
       "displayTitle": "Blue-haired Girl in Bikini at Beach",
       "shopifyTitle": "Blue-haired Girl in Bikini at Beach - UR Collectible Card",
-      "shortName": "Blue Hair Bikini Girl",
-      "slug": "blue-hair-bikini-girl",
+      "shortName": "Blue-haired Girl in Bikini",
+      "slug": "blue-haired-girl-in-bikini",
       "namingVersion": "v1",
-      "confidence": 0.95,
+      "confidence": 0.8,
       "source": "vision-intelligence-v1"
     },
     "marketingTitle": "Sapphire Beach Idol"

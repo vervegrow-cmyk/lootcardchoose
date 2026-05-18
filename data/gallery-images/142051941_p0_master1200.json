@@ -37,103 +37,107 @@
     "syncSourceId": "local-gallery:142051941_p0_master1200.jpg",
     "intelligence": {
       "intelligenceVersion": "v1",
-      "confidence": 0.99,
+      "confidence": 0.95,
       "visualLayer": {
+        "visualStyle": [
+          "anime"
+        ],
+        "colorPalette": [
+          "blue",
+          "white",
+          "pink"
+        ],
+        "artStyle": [
+          "anime"
+        ],
         "primaryColors": [
           "blue",
+          "white",
           "pink"
         ],
         "styleTags": [
-          "anime",
-          "digital art",
-          "illustration"
+          "anime"
         ],
-        "compositionTags": [
-          "centered subject",
-          "full-body shot",
-          "water background"
-        ],
-        "subjectFocus": "female anime character",
+        "compositionTags": [],
+        "subjectFocus": "anime_girl",
         "raritySignals": [
-          "ur rarity",
-          "collectible card",
-          "high detail"
+          "UR",
+          "collector"
         ]
       },
       "emotionalLayer": {
+        "mood": [
+          "cute"
+        ],
+        "atmosphere": [],
         "moodTags": [
-          "cute",
-          "cheerful",
-          "playful"
+          "cute"
         ],
-        "toneTags": [
-          "bright",
-          "whimsical",
-          "serene"
-        ],
-        "energyLevel": "high",
-        "dramaticIntensity": 0.3
+        "toneTags": [],
+        "energyLevel": "medium",
+        "dramaticIntensity": 0.35
       },
       "characterLayer": {
-        "entityType": "mermaid",
-        "genderPresentation": "female",
-        "agePresentation": "teen",
-        "archetypeTags": [
-          "beauty",
-          "princess",
-          "water spirit"
+        "characterType": [
+          "anime_girl"
         ],
-        "poseTags": [
-          "standing",
-          "smiling",
-          "relaxed"
-        ]
+        "genderPresentation": "female",
+        "roleArchetype": [],
+        "entityType": "anime_girl",
+        "agePresentation": "",
+        "archetypeTags": [],
+        "poseTags": []
       },
       "worldbuildingLayer": {
+        "universe": [
+          "Eclipse Queen"
+        ],
+        "theme": [
+          "romance"
+        ],
+        "faction": [],
         "settingTags": [
-          "beach",
-          "ocean",
-          "water"
+          "Eclipse Queen"
         ],
         "genreTags": [
-          "fantasy",
-          "anime",
-          "mermaid lore"
+          "romance"
         ],
         "factionTags": [],
-        "propTags": [
-          "bikini",
-          "blue bow",
-          "water droplets"
-        ],
+        "propTags": [],
         "powerSystemTags": []
       },
       "commerceLayer": {
+        "rarity": "UR",
+        "pricingTier": "collector",
+        "collectorScore": 100,
+        "waifuScore": 100,
+        "battleScore": 60,
         "searchKeywords": [
-          "anime mermaid",
-          "pink hair girl",
-          "blue bikini",
-          "collectible card",
-          "cute anime girl"
+          "anime",
+          "cute",
+          "anime_girl",
+          "Eclipse Queen",
+          "romance",
+          "ani",
+          "rmaid",
+          "female character",
+          "bikini",
+          "blue hair",
+          "pink hair",
+          "water"
         ],
         "collectorHooks": [
-          "ur rarity",
-          "high detail art",
-          "unique character design"
+          "collector",
+          "UR"
         ],
         "marketingAngles": [
-          "beauty",
-          "fantasy",
-          "collectible",
-          "anime fan"
+          "romance"
         ],
         "audienceTags": [
-          "anime fans",
-          "mermaid lovers",
-          "collectors",
-          "gacha players"
+          "anime girl"
         ],
-        "safetyFlags": []
+        "safetyFlags": [],
+        "category": "anime"
       },
       "audit": {
         "needsHumanReview": false,
@@ -147,10 +151,10 @@
     "commerceNaming": {
       "displayTitle": "Pink-haired Mermaid Girl in Blue Bikini",
       "shopifyTitle": "Pink-haired Mermaid Girl in Blue Bikini - UR Collectible Card",
-      "shortName": "Pink Mermaid Card",
-      "slug": "pink-mermaid-card",
+      "shortName": "Pink-haired Mermaid Girl in",
+      "slug": "pink-haired-mermaid-girl-in",
       "namingVersion": "v1",
-      "confidence": 0.98,
+      "confidence": 0.8,
       "source": "vision-intelligence-v1"
     },
     "marketingTitle": "Sapphire Mermaid Enchantress"

@@ -35,123 +35,113 @@
     "syncSourceId": "local-gallery:12.jpg",
     "intelligence": {
       "intelligenceVersion": "v1",
-      "confidence": 0.99,
+      "confidence": 0.95,
       "visualLayer": {
-        "primaryColors": [
-          "brown",
+        "visualStyle": [
+          "black_gold",
+          "anime"
+        ],
+        "colorPalette": [
           "gold",
           "blue",
+          "red",
+          "white"
+        ],
+        "artStyle": [
+          "anime",
+          "illustration"
+        ],
+        "primaryColors": [
+          "gold",
+          "blue",
+          "red",
           "white"
         ],
         "styleTags": [
+          "black_gold",
           "anime",
-          "illustration",
-          "digital art",
-          "high detail",
-          "glow effect"
+          "illustration"
         ],
-        "compositionTags": [
-          "close-up",
-          "dynamic pose",
-          "centered subject",
-          "high contrast",
-          "shallow depth of field"
-        ],
-        "subjectFocus": "female anime character",
+        "compositionTags": [],
+        "subjectFocus": "anime_girl",
         "raritySignals": [
-          "collectible",
-          "premium art"
+          "UR",
+          "collector"
         ]
       },
       "emotionalLayer": {
+        "mood": [
+          "mysterious"
+        ],
+        "atmosphere": [],
         "moodTags": [
-          "playful",
-          "alluring",
-          "seductive",
-          "confident",
-          "charming"
+          "mysterious"
         ],
-        "toneTags": [
-          "lighthearted",
-          "vibrant",
-          "energetic",
-          "flirty"
-        ],
-        "energyLevel": "high",
-        "dramaticIntensity": 0.75
+        "toneTags": [],
+        "energyLevel": "medium",
+        "dramaticIntensity": 0.5
       },
       "characterLayer": {
-        "entityType": "anime character",
-        "genderPresentation": "female",
-        "agePresentation": "young adult",
-        "archetypeTags": [
-          "seductress",
-          "playful girl",
-          "fashionable",
-          "cosplay"
+        "characterType": [
+          "anime_girl"
         ],
-        "poseTags": [
-          "sitting",
-          "leg crossed",
-          "bent knee",
-          "exposed thigh",
-          "tassel accessory"
-        ]
+        "genderPresentation": "female",
+        "roleArchetype": [],
+        "entityType": "anime_girl",
+        "agePresentation": "",
+        "archetypeTags": [],
+        "poseTags": []
       },
       "worldbuildingLayer": {
+        "universe": [
+          "Eclipse Queen"
+        ],
+        "theme": [
+          "luxury"
+        ],
+        "faction": [],
         "settingTags": [
-          "studio",
-          "concept art",
-          "no background",
-          "isolated subject"
+          "Eclipse Queen"
         ],
         "genreTags": [
-          "anime",
-          "fantasy",
-          "cosplay",
-          "gaming"
+          "luxury"
         ],
         "factionTags": [],
-        "propTags": [
-          "tassels",
-          "gold patterns",
-          "red accessories",
-          "white top"
-        ],
+        "propTags": [],
         "powerSystemTags": []
       },
       "commerceLayer": {
+        "rarity": "UR",
+        "pricingTier": "collector",
+        "collectorScore": 100,
+        "waifuScore": 100,
+        "battleScore": 60,
         "searchKeywords": [
-          "anime girl",
+          "black_gold",
+          "anime",
+          "mysterious",
+          "anime_girl",
+          "Eclipse Queen",
+          "luxury",
+          "ani",
+          "female character",
           "blue hair",
           "brown tights",
           "gold pattern",
-          "collectible card",
-          "ur rarity",
-          "playful pose"
+          "collectible"
         ],
         "collectorHooks": [
-          "limited edition",
-          "high detail art",
-          "ur rarity",
-          "exclusive design",
-          "fan favorite"
+          "collector",
+          "UR"
         ],
         "marketingAngles": [
-          "visual appeal",
-          "character design",
-          "rarity value",
-          "collectible appeal",
-          "fan engagement"
+          "luxury"
         ],
         "audienceTags": [
-          "anime fans",
-          "gaming collectors",
-          "cosplay enthusiasts",
-          "digital art collectors",
-          "female anime lovers"
+          "anime girl"
         ],
-        "safetyFlags": []
+        "safetyFlags": [],
+        "category": "anime"
       },
       "audit": {
         "needsHumanReview": false,
@@ -163,12 +153,12 @@
       }
     },
     "commerceNaming": {
-      "displayTitle": "Blue-haired Anime Girl in Brown Tights Collectible Card",
-      "shopifyTitle": "UR Rarity Anime Girl in Brown Tights Collectible Card",
-      "shortName": "Blue Hair Brown Tights Card",
-      "slug": "blue-hair-brown-tights-card",
+      "displayTitle": "Blue-haired Female Character in Brown Tights Collectible Card",
+      "shopifyTitle": "Blue-haired Female Character in Brown Tights Collectible Card - UR Collectible Card",
+      "shortName": "Blue-haired Female Character in",
+      "slug": "blue-haired-female-character-in",
       "namingVersion": "v1",
-      "confidence": 0.98,
+      "confidence": 0.8,
       "source": "vision-intelligence-v1"
     },
     "marketingTitle": "Crimson Tassel Enchantress"

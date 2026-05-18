@@ -49,107 +49,107 @@
     "syncSourceId": "local-gallery:138403464_p2_master1200.jpg",
     "intelligence": {
       "intelligenceVersion": "v1",
-      "confidence": 0.975,
+      "confidence": 0.95,
       "visualLayer": {
+        "visualStyle": [
+          "anime"
+        ],
+        "colorPalette": [
+          "blue",
+          "white"
+        ],
+        "artStyle": [
+          "anime"
+        ],
         "primaryColors": [
           "blue",
-          "white",
-          "beige"
+          "white"
         ],
         "styleTags": [
-          "anime",
-          "digital art",
-          "high detail",
-          "glow effect"
+          "anime"
         ],
-        "compositionTags": [
-          "centered subject",
-          "full body",
-          "background blur",
-          "sunlight"
-        ],
-        "subjectFocus": "blue-haired anime girl",
+        "compositionTags": [],
+        "subjectFocus": "goddess",
         "raritySignals": [
-          "ur rarity",
-          "collectible card",
-          "high detail rendering"
+          "UR",
+          "collector"
         ]
       },
       "emotionalLayer": {
+        "mood": [
+          "divine"
+        ],
+        "atmosphere": [],
         "moodTags": [
-          "playful",
-          "sunny",
-          "relaxed",
-          "attractive"
+          "divine"
         ],
-        "toneTags": [
-          "bright",
-          "cheerful",
-          "serene"
-        ],
-        "energyLevel": "high",
-        "dramaticIntensity": 0.3
+        "toneTags": [],
+        "energyLevel": "medium",
+        "dramaticIntensity": 0.7
       },
       "characterLayer": {
-        "entityType": "female character",
-        "genderPresentation": "female",
-        "agePresentation": "teen",
-        "archetypeTags": [
-          "beach babe",
-          "anime idol",
-          "water goddess"
+        "characterType": [
+          "goddess",
+          "anime_girl"
         ],
-        "poseTags": [
-          "posing",
-          "hands on shoulders",
-          "looking at viewer"
-        ]
+        "genderPresentation": "female",
+        "roleArchetype": [],
+        "entityType": "goddess",
+        "agePresentation": "",
+        "archetypeTags": [],
+        "poseTags": []
       },
       "worldbuildingLayer": {
+        "universe": [
+          "Eclipse Queen"
+        ],
+        "theme": [
+          "divinity"
+        ],
+        "faction": [],
         "settingTags": [
-          "beach",
-          "ocean",
-          "sunny day",
-          "cliffside"
+          "Eclipse Queen"
         ],
         "genreTags": [
-          "anime",
-          "fantasy",
-          "adventure"
+          "divinity"
         ],
         "factionTags": [],
-        "propTags": [
-          "bikini",
-          "headband",
-          "sword"
-        ],
+        "propTags": [],
         "powerSystemTags": []
       },
       "commerceLayer": {
+        "rarity": "UR",
+        "pricingTier": "collector",
+        "collectorScore": 100,
+        "waifuScore": 100,
+        "battleScore": 60,
         "searchKeywords": [
-          "anime girl beach bikini",
-          "blue hair collectible",
-          "anime collectible card",
-          "female character card"
+          "anime",
+          "divine",
+          "goddess",
+          "anime_girl",
+          "Eclipse Queen",
+          "divinity",
+          "ani",
+          "female character",
+          "beach",
+          "bikini",
+          "blue hair",
+          "ocean"
         ],
         "collectorHooks": [
-          "ur rarity",
-          "high detail art",
-          "unique pose",
-          "blue hair aesthetic"
+          "collector",
+          "UR"
         ],
         "marketingAngles": [
-          "beach vacation vibe",
-          "anime fan collectible",
-          "high quality digital art"
+          "divinity"
         ],
         "audienceTags": [
-          "anime fans",
-          "collectors",
-          "gacha game players",
-          "digital art lovers"
+          "goddess",
+          "anime girl"
         ],
-        "safetyFlags": []
+        "safetyFlags": [],
+        "category": "anime"
       },
       "audit": {
         "needsHumanReview": false,
@@ -162,11 +162,11 @@
     },
     "commerceNaming": {
       "displayTitle": "Blue-haired Girl in Bikini at Beach",
-      "shopifyTitle": "Blue-haired Anime Girl in Bikini at Beach - UR Collectible Card",
-      "shortName": "Blue Hair Beach Girl",
-      "slug": "blue-hair-beach-girl",
+      "shopifyTitle": "Blue-haired Girl in Bikini at Beach - UR Collectible Card",
+      "shortName": "Blue-haired Girl in Bikini",
+      "slug": "blue-haired-girl-in-bikini",
       "namingVersion": "v1",
-      "confidence": 0.95,
+      "confidence": 0.8,
       "source": "vision-intelligence-v1"
     },
     "marketingTitle": "Sapphire Goddess UR"

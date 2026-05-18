@@ -37,131 +37,103 @@
     "syncSourceId": "local-gallery:142249649_p0_master1200.jpg",
     "intelligence": {
       "intelligenceVersion": "v1",
-      "confidence": 0.975,
+      "confidence": 0.95,
       "visualLayer": {
-        "primaryColors": [
-          "purple",
+        "visualStyle": [
+          "anime"
+        ],
+        "colorPalette": [
           "blue",
-          "white"
+          "red",
+          "purple"
+        ],
+        "artStyle": [
+          "anime",
+          "illustration"
+        ],
+        "primaryColors": [
+          "blue",
+          "red",
+          "purple"
         ],
         "styleTags": [
           "anime",
-          "illustration",
-          "digital art",
-          "soft shading",
-          "high detail"
+          "illustration"
         ],
-        "compositionTags": [
-          "close-up",
-          "partial nudity",
-          "bed scene",
-          "hair ornament",
-          "dramatic lighting"
-        ],
-        "subjectFocus": "female anime character",
+        "compositionTags": [],
+        "subjectFocus": "anime_girl",
         "raritySignals": [
-          "ur rarity",
-          "high detail",
-          "collectible card",
-          "artistic quality"
+          "UR",
+          "collector"
         ]
       },
       "emotionalLayer": {
+        "mood": [
+          "mysterious"
+        ],
+        "atmosphere": [],
         "moodTags": [
-          "sleepy",
-          "relaxed",
-          "seductive",
-          "innocent",
-          "dreamy"
+          "mysterious"
         ],
-        "toneTags": [
-          "soft",
-          "gentle",
-          "intimate",
-          "calm",
-          "romantic"
-        ],
-        "energyLevel": "low",
-        "dramaticIntensity": 0.3
+        "toneTags": [],
+        "energyLevel": "medium",
+        "dramaticIntensity": 0.5
       },
       "characterLayer": {
-        "entityType": "anime girl",
-        "genderPresentation": "female",
-        "agePresentation": "young adult",
-        "archetypeTags": [
-          "sleeping beauty",
-          "seductive girl",
-          "innocent girl",
-          "sleeping girl"
+        "characterType": [
+          "anime_girl"
         ],
-        "poseTags": [
-          "lying down",
-          "half-covered",
-          "sleeping",
-          "resting",
-          "bed pose"
-        ]
+        "genderPresentation": "female",
+        "roleArchetype": [],
+        "entityType": "anime_girl",
+        "agePresentation": "",
+        "archetypeTags": [],
+        "poseTags": []
       },
       "worldbuildingLayer": {
+        "universe": [
+          "Eclipse Queen"
+        ],
+        "theme": [],
+        "faction": [],
         "settingTags": [
-          "bedroom",
-          "private space",
-          "indoor",
-          "nighttime"
+          "Eclipse Queen"
         ],
-        "genreTags": [
-          "anime",
-          "fantasy",
-          "romance",
-          "sleeping scene",
-          "bed scene"
-        ],
+        "genreTags": [],
         "factionTags": [],
-        "propTags": [
-          "blue kimono",
-          "red hair ornament",
-          "bedding",
-          "pillow"
-        ],
+        "propTags": [],
         "powerSystemTags": []
       },
       "commerceLayer": {
+        "rarity": "UR",
+        "pricingTier": "collector",
+        "collectorScore": 100,
+        "waifuScore": 100,
+        "battleScore": 60,
         "searchKeywords": [
-          "anime girl",
+          "anime",
+          "mysterious",
+          "anime_girl",
+          "Eclipse Queen",
+          "ani",
+          "female character",
           "purple hair",
           "blue kimono",
-          "sleeping girl",
-          "nude anime",
-          "collectible card",
-          "anime art"
+          "bed",
+          "sleeping",
+          "nude",
+          "art"
         ],
         "collectorHooks": [
-          "ur rarity",
-          "high detail",
-          "artistic quality",
-          "sleeping scene",
-          "bed scene"
+          "collector",
+          "UR"
         ],
-        "marketingAngles": [
-          "sleepy beauty",
-          "seductive girl",
-          "anime art",
-          "collectible card",
-          "bed scene"
-        ],
+        "marketingAngles": [],
         "audienceTags": [
-          "anime fans",
-          "collectors",
-          "art lovers",
-          "gacha players",
-          "female anime characters"
+          "anime girl"
         ],
-        "safetyFlags": [
-          "nude",
-          "partial nudity",
-          "sleeping scene",
-          "bed scene"
-        ]
+        "safetyFlags": [],
+        "category": "anime"
       },
       "audit": {
         "needsHumanReview": false,
@@ -173,12 +145,12 @@
       }
     },
     "commerceNaming": {
-      "displayTitle": "Sleeping Anime Girl with Purple Hair in Blue Kimono",
-      "shopifyTitle": "Sleeping Anime Girl with Purple Hair in Blue Kimono - UR Collectible Card",
-      "shortName": "Sleeping Purple Hair Girl",
-      "slug": "sleeping-purple-hair-girl",
+      "displayTitle": "Purple-haired Female Character in Blue Kimono",
+      "shopifyTitle": "Purple-haired Female Character in Blue Kimono - UR Collectible Card",
+      "shortName": "Purple-haired Female Character in",
+      "slug": "purple-haired-female-character-in",
       "namingVersion": "v1",
-      "confidence": 0.95,
+      "confidence": 0.8,
       "source": "vision-intelligence-v1"
     },
     "marketingTitle": "Moonlit Kimono Enchantress"

@@ -18,6 +18,7 @@ type CliOptions = {
   mode: Mode;
   dryRun: boolean;
   force: boolean;
+  files: Set<string> | null;
 };
 
 type Summary = {
@@ -62,10 +63,23 @@ const parseArgs = (): CliOptions => {
     throw new Error('Missing or invalid "--mode audit|enrich"');
   }
 
+  const filesIndex = process.argv.indexOf("--files");
+  const rawFiles = filesIndex >= 0 ? process.argv[filesIndex + 1] : null;
+  const files =
+    rawFiles && rawFiles.trim().length > 0
+      ? new Set(
+          rawFiles
+            .split(",")
+            .map((value) => normalizeRelativePath(value.trim()))
+            .filter(Boolean)
+        )
+      : null;
+
   return {
     mode: rawMode,
     dryRun: process.argv.includes("--dry-run"),
     force: process.argv.includes("--force"),
+    files,
   };
 };
 
@@ -160,6 +174,9 @@ const main = async (): Promise<void> => {
 
   for (const jsonPath of jsonFiles) {
     const relativePath = normalizeRelativePath(path.relative(GALLERY_ROOT, jsonPath));
+    if (options.files && !options.files.has(relativePath)) {
+      continue;
+    }
     summary.scanned += 1;
 
     let parsed: GalleryImageMetadata;

@@ -45,115 +45,117 @@
     "syncSourceId": "local-gallery:13.jpg",
     "intelligence": {
       "intelligenceVersion": "v1",
-      "confidence": 0.975,
+      "confidence": 0.95,
       "visualLayer": {
+        "visualStyle": [
+          "black_gold",
+          "anime"
+        ],
+        "colorPalette": [
+          "black",
+          "silver"
+        ],
+        "artStyle": [
+          "anime"
+        ],
         "primaryColors": [
           "black",
-          "silver",
-          "white"
+          "silver"
         ],
         "styleTags": [
-          "shiny",
-          "glamorous",
-          "high contrast",
-          "anime",
-          "digital art"
+          "black_gold",
+          "anime"
         ],
-        "compositionTags": [
-          "close-up",
-          "intimate framing",
-          "dynamic pose",
-          "body focus",
-          "partial background"
-        ],
-        "subjectFocus": "female anime character",
+        "compositionTags": [],
+        "subjectFocus": "warrior",
         "raritySignals": [
-          "collectible",
-          "premium artwork"
+          "UR",
+          "collector"
         ]
       },
       "emotionalLayer": {
+        "mood": [
+          "fierce"
+        ],
+        "atmosphere": [
+          "battlefield"
+        ],
         "moodTags": [
-          "intimate",
-          "seductive",
-          "alluring",
-          "elegant"
+          "fierce"
         ],
         "toneTags": [
-          "soft",
-          "luxurious",
-          "mystical"
+          "battlefield"
         ],
-        "energyLevel": "medium",
+        "energyLevel": "high",
         "dramaticIntensity": 0.7
       },
       "characterLayer": {
-        "entityType": "anime girl",
-        "genderPresentation": "female",
-        "agePresentation": "young adult",
-        "archetypeTags": [
-          "seductress",
-          "glamour",
-          "mystic",
-          "warrior"
+        "characterType": [
+          "warrior",
+          "anime_girl"
         ],
-        "poseTags": [
-          "curled",
-          "reclining",
-          "intimate",
-          "posed",
-          "dynamic"
-        ]
+        "genderPresentation": "female",
+        "roleArchetype": [
+          "fighter"
+        ],
+        "entityType": "warrior",
+        "agePresentation": "",
+        "archetypeTags": [
+          "fighter"
+        ],
+        "poseTags": []
       },
       "worldbuildingLayer": {
+        "universe": [
+          "Eclipse Queen"
+        ],
+        "theme": [
+          "power"
+        ],
+        "faction": [],
         "settingTags": [
-          "abstract",
-          "studio",
-          "minimalist",
-          "neutral background"
+          "Eclipse Queen"
         ],
         "genreTags": [
-          "anime",
-          "fantasy",
-          "erotic"
+          "power"
         ],
         "factionTags": [],
-        "propTags": [
-          "outfit",
-          "armor",
-          "accessories",
-          "headpiece"
-        ],
+        "propTags": [],
         "powerSystemTags": []
       },
       "commerceLayer": {
+        "rarity": "UR",
+        "pricingTier": "collector",
+        "collectorScore": 100,
+        "waifuScore": 100,
+        "battleScore": 91,
         "searchKeywords": [
-          "anime girl",
-          "shiny black outfit",
+          "black_gold",
+          "anime",
+          "fierce",
+          "warrior",
+          "anime_girl",
+          "Eclipse Queen",
+          "power",
+          "ani",
+          "female character",
+          "shiny black",
           "intimate pose",
-          "silver hair",
-          "collectible card",
-          "anime art"
+          "silver hair"
         ],
         "collectorHooks": [
-          "ur rarity",
-          "premium digital art",
-          "exclusive design",
-          "high detail"
+          "collector",
+          "UR"
         ],
         "marketingAngles": [
-          "luxury aesthetic",
-          "emotional appeal",
-          "collector s edition",
-          "fan favorite"
+          "power"
         ],
         "audienceTags": [
-          "anime fans",
-          "collectors",
-          "digital art lovers",
-          "gaming community"
+          "warrior",
+          "anime girl"
         ],
-        "safetyFlags": []
+        "safetyFlags": [],
+        "category": "anime"
       },
       "audit": {
         "needsHumanReview": false,
@@ -167,10 +169,10 @@
     "commerceNaming": {
       "displayTitle": "Anime Girl in Shiny Black Outfit",
       "shopifyTitle": "Anime Girl in Shiny Black Outfit - UR Collectible Card",
-      "shortName": "Shiny Black Anime Girl",
-      "slug": "shiny-black-anime-girl",
+      "shortName": "Anime Girl in Shiny",
+      "slug": "anime-girl-in-shiny",
       "namingVersion": "v1",
-      "confidence": 0.95,
+      "confidence": 0.8,
       "source": "vision-intelligence-v1"
     },
     "marketingTitle": "Obsidian Warrior UR"

@@ -37,111 +37,103 @@
     "syncSourceId": "local-gallery:142571393_p0_master1200.jpg",
     "intelligence": {
       "intelligenceVersion": "v1",
-      "confidence": 0.9875,
+      "confidence": 0.95,
       "visualLayer": {
-        "primaryColors": [
-          "soft pastel",
-          "skin tone",
-          "light blue"
+        "visualStyle": [
+          "anime"
         ],
+        "colorPalette": [],
+        "artStyle": [
+          "anime"
+        ],
+        "primaryColors": [],
         "styleTags": [
-          "soft anime",
-          "digital painting",
-          "glow effect"
+          "anime"
         ],
-        "compositionTags": [
-          "close-up",
-          "centered framing",
-          "intimate angle",
-          "bed setting"
-        ],
-        "subjectFocus": "two female characters kissing",
+        "compositionTags": [],
+        "subjectFocus": "anime_girl",
         "raritySignals": [
-          "collectible card",
-          "high detail"
+          "UR",
+          "collector"
         ]
       },
       "emotionalLayer": {
+        "mood": [
+          "calm"
+        ],
+        "atmosphere": [
+          "romantic"
+        ],
         "moodTags": [
-          "romantic",
-          "passionate",
-          "intimate",
-          "tender"
+          "calm"
         ],
         "toneTags": [
-          "warm",
-          "soft",
-          "dreamy"
+          "romantic"
         ],
-        "energyLevel": "medium",
-        "dramaticIntensity": 0.7
+        "energyLevel": "low",
+        "dramaticIntensity": 0.35
       },
       "characterLayer": {
-        "entityType": "female anime characters",
-        "genderPresentation": "female",
-        "agePresentation": "young adult",
-        "archetypeTags": [
-          "romantic",
-          "lovers",
-          "innocent",
-          "beauty"
+        "characterType": [
+          "anime_girl"
         ],
-        "poseTags": [
-          "embracing",
-          "kissing",
-          "curled",
-          "intimate posture"
-        ]
+        "genderPresentation": "female",
+        "roleArchetype": [],
+        "entityType": "anime_girl",
+        "agePresentation": "",
+        "archetypeTags": [],
+        "poseTags": []
       },
       "worldbuildingLayer": {
+        "universe": [
+          "Eclipse Queen"
+        ],
+        "theme": [
+          "romance"
+        ],
+        "faction": [],
         "settingTags": [
-          "bedroom",
-          "window light",
-          "indoor"
+          "Eclipse Queen"
         ],
         "genreTags": [
-          "anime",
-          "romance",
-          "fantasy"
+          "romance"
         ],
         "factionTags": [],
-        "propTags": [
-          "pillow",
-          "window",
-          "heart motifs"
-        ],
+        "propTags": [],
         "powerSystemTags": []
       },
       "commerceLayer": {
+        "rarity": "UR",
+        "pricingTier": "collector",
+        "collectorScore": 100,
+        "waifuScore": 100,
+        "battleScore": 60,
         "searchKeywords": [
-          "anime kiss",
-          "nude anime girl",
-          "romantic anime art",
-          "soft anime",
-          "bedroom scene"
+          "anime",
+          "calm",
+          "anime_girl",
+          "Eclipse Queen",
+          "romance",
+          "ani",
+          "female character",
+          "nude",
+          "kiss",
+          "intimate",
+          "bed",
+          "romantic"
         ],
         "collectorHooks": [
-          "ur rarity",
-          "intimate moment",
-          "high detail",
-          "soft pastel art"
+          "collector",
+          "UR"
         ],
         "marketingAngles": [
-          "romantic anime collectors",
-          "soft anime art lovers",
-          "bedroom scene collectors"
+          "romance"
         ],
         "audienceTags": [
-          "anime fans",
-          "romance collectors",
-          "digital art collectors",
-          "soft anime lovers"
+          "anime girl"
         ],
-        "safetyFlags": [
-          "nude",
-          "intimate",
-          "romantic"
-        ]
+        "safetyFlags": [],
+        "category": "anime"
       },
       "audit": {
         "needsHumanReview": false,
@@ -153,12 +145,12 @@
       }
     },
     "commerceNaming": {
-      "displayTitle": "Intimate Kiss Between Two Female Anime Characters",
-      "shopifyTitle": "Intimate Kiss Between Two Female Anime Characters - UR Collectible Card",
-      "shortName": "Anime Kiss Card",
-      "slug": "anime-kiss-card",
+      "displayTitle": "Intimate Kiss Between Two Female Characters",
+      "shopifyTitle": "Intimate Kiss Between Two Female Characters - UR Collectible Card",
+      "shortName": "Intimate Kiss Between Two",
+      "slug": "intimate-kiss-between-two",
       "namingVersion": "v1",
-      "confidence": 0.97,
+      "confidence": 0.8,
       "source": "vision-intelligence-v1"
     },
     "marketingTitle": "Luminous Heartbond Collectible"

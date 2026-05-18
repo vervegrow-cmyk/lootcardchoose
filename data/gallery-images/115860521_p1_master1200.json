@@ -51,104 +51,116 @@
     "syncSourceId": "local-gallery:115860521_p1_master1200.jpg",
     "intelligence": {
       "intelligenceVersion": "v1",
-      "confidence": 0.975,
+      "confidence": 0.95,
       "visualLayer": {
+        "visualStyle": [
+          "black_gold",
+          "anime"
+        ],
+        "colorPalette": [
+          "black",
+          "gold",
+          "red",
+          "white"
+        ],
+        "artStyle": [
+          "anime",
+          "illustration"
+        ],
         "primaryColors": [
-          "white",
-          "black"
+          "black",
+          "gold",
+          "red",
+          "white"
         ],
         "styleTags": [
+          "black_gold",
           "anime",
-          "illustration",
-          "portrait",
-          "digital art"
+          "illustration"
         ],
-        "compositionTags": [
-          "centered",
-          "full-body",
-          "close-up",
-          "soft background"
-        ],
-        "subjectFocus": "anime girl",
+        "compositionTags": [],
+        "subjectFocus": "anime_girl",
         "raritySignals": [
-          "collectible card",
-          "high rarity"
+          "SSR",
+          "collector"
         ]
       },
       "emotionalLayer": {
+        "mood": [
+          "cute"
+        ],
+        "atmosphere": [],
         "moodTags": [
-          "playful",
-          "cheerful",
-          "adorable"
+          "cute"
         ],
-        "toneTags": [
-          "bright",
-          "whimsical",
-          "gentle"
-        ],
-        "energyLevel": "high",
-        "dramaticIntensity": 0.3
+        "toneTags": [],
+        "energyLevel": "medium",
+        "dramaticIntensity": 0.35
       },
       "characterLayer": {
-        "entityType": "humanoid",
-        "genderPresentation": "female",
-        "agePresentation": "child",
-        "archetypeTags": [
-          "schoolgirl",
-          "cute character"
+        "characterType": [
+          "anime_girl"
         ],
-        "poseTags": [
-          "hugging scarf",
-          "playful expression",
-          "standing"
-        ]
+        "genderPresentation": "female",
+        "roleArchetype": [],
+        "entityType": "anime_girl",
+        "agePresentation": "",
+        "archetypeTags": [],
+        "poseTags": []
       },
       "worldbuildingLayer": {
+        "universe": [
+          "Eclipse Queen"
+        ],
+        "theme": [
+          "luxury",
+          "romance"
+        ],
+        "faction": [],
         "settingTags": [
-          "studio",
-          "portrait studio",
-          "neutral background"
+          "Eclipse Queen"
         ],
         "genreTags": [
-          "anime",
-          "fantasy",
-          "chibi"
+          "luxury",
+          "romance"
         ],
         "factionTags": [],
-        "propTags": [
-          "scarf",
-          "outfit",
-          "belt"
-        ],
+        "propTags": [],
         "powerSystemTags": []
       },
       "commerceLayer": {
+        "rarity": "SSR",
+        "pricingTier": "collector",
+        "collectorScore": 100,
+        "waifuScore": 100,
+        "battleScore": 60,
         "searchKeywords": [
-          "anime girl",
-          "cute collectible",
+          "black_gold",
+          "anime",
+          "cute",
+          "anime_girl",
+          "Eclipse Queen",
+          "luxury",
+          "romance",
+          "ani",
+          "female character",
           "red outfit",
-          "ssr card",
-          "fucota art"
+          "floral",
+          "scarf"
         ],
         "collectorHooks": [
-          "limited edition",
-          "high rarity",
-          "artist signature",
-          "collectible card"
+          "collector",
+          "SSR"
         ],
         "marketingAngles": [
-          "cute aesthetic",
-          "anime fan appeal",
-          "collector s item",
-          "digital art"
+          "luxury",
+          "romance"
         ],
         "audienceTags": [
-          "anime fans",
-          "collectors",
-          "gacha players",
-          "digital art lovers"
+          "anime girl"
         ],
-        "safetyFlags": []
+        "safetyFlags": [],
+        "category": "anime"
       },
       "audit": {
         "needsHumanReview": false,
@@ -162,10 +174,10 @@
     "commerceNaming": {
       "displayTitle": "Cute Anime Girl in Red Outfit",
       "shopifyTitle": "Cute Anime Girl in Red Outfit - SSR Collectible Card",
-      "shortName": "Red Outfit Girl",
-      "slug": "red-outfit-girl",
+      "shortName": "Cute Anime Girl in",
+      "slug": "cute-anime-girl-in",
       "namingVersion": "v1",
-      "confidence": 0.95,
+      "confidence": 0.8,
       "source": "vision-intelligence-v1"
     },
     "marketingTitle": "Crimson Blossom Maiden"

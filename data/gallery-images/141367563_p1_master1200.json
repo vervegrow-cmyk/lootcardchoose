@@ -35,98 +35,111 @@
     "syncSourceId": "local-gallery:141367563_p1_master1200.jpg",
     "intelligence": {
       "intelligenceVersion": "v1",
-      "confidence": 0.975,
+      "confidence": 0.95,
       "visualLayer": {
+        "visualStyle": [
+          "black_gold",
+          "anime"
+        ],
+        "colorPalette": [
+          "black",
+          "gold",
+          "red"
+        ],
+        "artStyle": [
+          "anime",
+          "illustration"
+        ],
         "primaryColors": [
           "black",
-          "gold"
+          "gold",
+          "red"
         ],
         "styleTags": [
+          "black_gold",
           "anime",
-          "illustration",
-          "studio"
+          "illustration"
         ],
-        "compositionTags": [
-          "close-up",
-          "centered",
-          "dynamic pose"
-        ],
-        "subjectFocus": "female character",
+        "compositionTags": [],
+        "subjectFocus": "anime_girl",
         "raritySignals": [
-          "collectible card"
+          "SSR",
+          "collector"
         ]
       },
       "emotionalLayer": {
+        "mood": [
+          "mysterious"
+        ],
+        "atmosphere": [],
         "moodTags": [
-          "seductive",
-          "alluring",
-          "confident"
+          "mysterious"
         ],
-        "toneTags": [
-          "playful",
-          "elegant",
-          "intimate"
-        ],
-        "energyLevel": "high",
-        "dramaticIntensity": 0.85
+        "toneTags": [],
+        "energyLevel": "medium",
+        "dramaticIntensity": 0.5
       },
       "characterLayer": {
-        "entityType": "female character",
-        "genderPresentation": "female",
-        "agePresentation": "young adult",
-        "archetypeTags": [
-          "seductress",
-          "heroine",
-          "fashion icon"
+        "characterType": [
+          "anime_girl"
         ],
-        "poseTags": [
-          "seductive pose",
-          "reclining",
-          "crossed legs"
-        ]
+        "genderPresentation": "female",
+        "roleArchetype": [],
+        "entityType": "anime_girl",
+        "agePresentation": "",
+        "archetypeTags": [],
+        "poseTags": []
       },
       "worldbuildingLayer": {
+        "universe": [
+          "Eclipse Queen"
+        ],
+        "theme": [
+          "luxury"
+        ],
+        "faction": [],
         "settingTags": [
-          "studio",
-          "neutral background"
+          "Eclipse Queen"
         ],
         "genreTags": [
-          "anime",
-          "fantasy",
-          "adventure"
+          "luxury"
         ],
         "factionTags": [],
-        "propTags": [
-          "corset",
-          "gold accents",
-          "accessories"
-        ],
+        "propTags": [],
         "powerSystemTags": []
       },
       "commerceLayer": {
+        "rarity": "SSR",
+        "pricingTier": "collector",
+        "collectorScore": 100,
+        "waifuScore": 100,
+        "battleScore": 60,
         "searchKeywords": [
-          "anime girl",
+          "black_gold",
+          "anime",
+          "mysterious",
+          "anime_girl",
+          "Eclipse Queen",
+          "luxury",
+          "ani",
+          "female character",
           "red corset",
-          "seductive pose",
-          "ssr collectible",
-          "black gold outfit"
+          "black gold",
+          "collectible",
+          "seductive pose"
         ],
         "collectorHooks": [
-          "rare ssr rarity",
-          "high-drama illustration",
-          "limited edition collectible"
+          "collector",
+          "SSR"
         ],
         "marketingAngles": [
-          "visual appeal",
-          "character design",
-          "collectible value"
+          "luxury"
         ],
         "audienceTags": [
-          "anime fans",
-          "collectors",
-          "gacha game players"
+          "anime girl"
         ],
-        "safetyFlags": []
+        "safetyFlags": [],
+        "category": "anime"
       },
       "audit": {
         "needsHumanReview": false,
@@ -138,12 +151,12 @@
       }
     },
     "commerceNaming": {
-      "displayTitle": "Red Corseted Anime Girl - SSR Collectible",
-      "shopifyTitle": "Red Corseted Female Anime Character SSR Collectible Card",
-      "shortName": "Red Corset SSR",
-      "slug": "red-corset-ssr",
+      "displayTitle": "Red Corseted Female Character Collectible Card",
+      "shopifyTitle": "Red Corseted Female Character Collectible Card - SSR Collectible Card",
+      "shortName": "Red Corseted Female Character",
+      "slug": "red-corseted-female-character",
       "namingVersion": "v1",
-      "confidence": 0.95,
+      "confidence": 0.8,
       "source": "vision-intelligence-v1"
     },
     "marketingTitle": "Crimson Enchantress Collectible"

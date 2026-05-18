@@ -16,6 +16,7 @@
     "gallery:metadata:review": "tsx src/scripts/review-gallery-metadata-quality.ts",
     "gallery:enrich-metadata": "tsx src/scripts/enrich-gallery-metadata.ts",
     "gallery:audit-intelligence": "tsx src/scripts/audit-gallery-intelligence.ts",
+    "gallery:audit-intelligence:sources": "tsx src/scripts/audit-gallery-intelligence-sources.ts",
     "audit:v1-capabilities": "tsx src/scripts/audit-v1-capabilities.ts",
     "gallery:audit-sparse-themes": "tsx src/scripts/audit-sparse-theme-closeout.ts",
     "gallery:deactivate-placeholders": "tsx src/scripts/deactivate-placeholder-gallery.ts",

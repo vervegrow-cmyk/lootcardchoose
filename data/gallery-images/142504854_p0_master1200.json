@@ -36,110 +36,105 @@
     "syncSourceId": "local-gallery:142504854_p0_master1200.jpg",
     "intelligence": {
       "intelligenceVersion": "v1",
-      "confidence": 0.975,
+      "confidence": 0.95,
       "visualLayer": {
-        "primaryColors": [
-          "purple",
+        "visualStyle": [
+          "black_gold",
+          "anime"
+        ],
+        "colorPalette": [
           "black",
-          "white"
+          "red",
+          "purple",
+          "silver"
+        ],
+        "artStyle": [
+          "anime"
+        ],
+        "primaryColors": [
+          "black",
+          "red",
+          "purple",
+          "silver"
         ],
         "styleTags": [
-          "anime",
-          "black lace",
-          "glow",
-          "starry",
-          "shimmer"
+          "black_gold",
+          "anime"
         ],
-        "compositionTags": [
-          "lounging",
-          "close-up",
-          "partial body",
-          "soft lighting"
-        ],
-        "subjectFocus": "silver-haired anime girl",
+        "compositionTags": [],
+        "subjectFocus": "anime_girl",
         "raritySignals": [
-          "collectible card",
-          "high detail"
+          "UR",
+          "collector"
         ]
       },
       "emotionalLayer": {
+        "mood": [
+          "mysterious"
+        ],
+        "atmosphere": [],
         "moodTags": [
-          "relaxed",
-          "seductive",
-          "dreamy",
-          "calm"
+          "mysterious"
         ],
-        "toneTags": [
-          "soft",
-          "intimate",
-          "gentle"
-        ],
-        "energyLevel": "low",
-        "dramaticIntensity": 0.3
+        "toneTags": [],
+        "energyLevel": "medium",
+        "dramaticIntensity": 0.5
       },
       "characterLayer": {
-        "entityType": "female character",
-        "genderPresentation": "female",
-        "agePresentation": "teen",
-        "archetypeTags": [
-          "lounging beauty",
-          "cosplay",
-          "fashion model"
+        "characterType": [
+          "anime_girl"
         ],
-        "poseTags": [
-          "reclining",
-          "cross-legged",
-          "arm over head"
-        ]
+        "genderPresentation": "female",
+        "roleArchetype": [],
+        "entityType": "anime_girl",
+        "agePresentation": "",
+        "archetypeTags": [],
+        "poseTags": []
       },
       "worldbuildingLayer": {
+        "universe": [
+          "Eclipse Queen"
+        ],
+        "theme": [],
+        "faction": [],
         "settingTags": [
-          "bedroom",
-          "night",
-          "indoor"
+          "Eclipse Queen"
         ],
-        "genreTags": [
-          "anime",
-          "fantasy",
-          "erotic"
-        ],
+        "genreTags": [],
         "factionTags": [],
-        "propTags": [
-          "tights",
-          "lace",
-          "pillow",
-          "headboard"
-        ],
+        "propTags": [],
         "powerSystemTags": []
       },
       "commerceLayer": {
+        "rarity": "UR",
+        "pricingTier": "collector",
+        "collectorScore": 100,
+        "waifuScore": 100,
+        "battleScore": 60,
         "searchKeywords": [
-          "anime girl",
+          "black_gold",
+          "anime",
+          "mysterious",
+          "anime_girl",
+          "Eclipse Queen",
+          "ani",
+          "female character",
+          "bed",
           "starry tights",
           "silver hair",
-          "bed scene",
-          "black lace",
-          "collectible card"
+          "red eyes",
+          "lounging"
         ],
         "collectorHooks": [
-          "ur rarity",
-          "detailed artwork",
-          "unique pose",
-          "colorful design"
+          "collector",
+          "UR"
         ],
-        "marketingAngles": [
-          "visual appeal",
-          "character design",
-          "limited edition",
-          "fan favorite"
-        ],
+        "marketingAngles": [],
         "audienceTags": [
-          "anime fans",
-          "collectors",
-          "gacha players",
-          "cosplayers"
+          "anime girl"
         ],
-        "safetyFlags": []
+        "safetyFlags": [],
+        "category": "anime"
       },
       "audit": {
         "needsHumanReview": false,
@@ -153,10 +148,10 @@
     "commerceNaming": {
       "displayTitle": "Silver-haired Girl in Starry Tights on Bed",
       "shopifyTitle": "Silver-haired Girl in Starry Tights on Bed - UR Collectible Card",
-      "shortName": "Starry Tights Girl",
-      "slug": "starry-tights-girl",
+      "shortName": "Silver-haired Girl in Starry",
+      "slug": "silver-haired-girl-in-starry",
       "namingVersion": "v1",
-      "confidence": 0.95,
+      "confidence": 0.8,
       "source": "vision-intelligence-v1"
     },
     "marketingTitle": "Lunar Lace Enchantress"

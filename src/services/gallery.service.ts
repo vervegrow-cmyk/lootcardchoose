@@ -39,8 +39,18 @@ const RECOMMENDATION_CANDIDATE_LIMIT = 30;
 const RECOMMENDATION_SEARCH_SLICE_LIMIT = 10;
 const RECOMMENDATION_DEBUG_LIMIT = 10;
 const RECOVERY_BROAD_POOL_LIMIT = 100;
+const ANALYTICS_HINTS_CACHE_TTL_MS = 60 * 1000;
 
 let lastRecommendationDebugSnapshot: RecommendationDebugSnapshot | null = null;
+let analyticsHintsCache:
+  | {
+      value: Awaited<ReturnType<typeof recommendationAnalyticsService.getCommerceOptimizationInsights>>;
+      expiresAt: number;
+    }
+  | null = null;
+let analyticsHintsInFlight:
+  | Promise<Awaited<ReturnType<typeof recommendationAnalyticsService.getCommerceOptimizationInsights>>>
+  | null = null;
 
 export type GalleryCardDto = {
   id: string;
@@ -232,6 +242,16 @@ type RefreshSearchHints = {
   avoidKeywords?: string[];
 };
 
+type GallerySearchStageTimings = {
+  parseMs: number;
+  initialSearchMs: number;
+  recommendationCandidateMs: number;
+  rerankMs: number;
+  analyticsHintsMs: number;
+  finalAssemblyMs: number;
+  totalMs: number;
+};
+
 const STRUCTURED_FIELDS: Array<
   keyof Pick<ParsedGalleryQuery, "rarity" | "color" | "character" | "category" | "style" | "mood" | "scene">
 > = ["rarity", "color", "character", "category", "style", "mood", "scene"];
@@ -290,6 +310,55 @@ const RECOVERY_THEME_OVERLAY_MAP = {
     searchKeywords: ["mecha", "robot", "android", "mechanical"],
   },
 } as const;
+
+const buildDefaultAnalyticsHints = () => ({
+  dateKey: null,
+  sparseFamilies: [],
+  weakMatchFamilies: [],
+  lowConversionThemes: [],
+});
+
+const getCachedAnalyticsHints = async (): Promise<{
+  hints: Awaited<ReturnType<typeof recommendationAnalyticsService.getCommerceOptimizationInsights>>;
+  cacheStatus: "hit" | "miss" | "stale";
+}> => {
+  const now = Date.now();
+  if (analyticsHintsCache && analyticsHintsCache.expiresAt > now) {
+    return {
+      hints: analyticsHintsCache.value,
+      cacheStatus: "hit",
+    };
+  }
+
+  const cacheStatus: "miss" | "stale" = analyticsHintsCache ? "stale" : "miss";
+  if (!analyticsHintsInFlight) {
+    analyticsHintsInFlight = recommendationAnalyticsService
+      .getCommerceOptimizationInsights()
+      .then((hints) => {
+        analyticsHintsCache = {
+          value: hints,
+          expiresAt: Date.now() + ANALYTICS_HINTS_CACHE_TTL_MS,
+        };
+        return hints;
+      })
+      .finally(() => {
+        analyticsHintsInFlight = null;
+      });
+  }
+
+  try {
+    const hints = await analyticsHintsInFlight;
+    return {
+      hints,
+      cacheStatus,
+    };
+  } catch {
+    return {
+      hints: buildDefaultAnalyticsHints(),
+      cacheStatus,
+    };
+  }
+};
 
 const buildCardPricingInput = (card: GalleryCardRecord): CardPricingInput => ({
   galleryPrice: Number(card.price),
@@ -1179,13 +1248,25 @@ const REFRESH_PLANNER_TIMEOUT_ERROR = "GALLERY_REFRESH_PLANNER_TIMEOUT";
 
 export const galleryService = {
   async searchGalleryCards(query: string, language: SupportedLanguage = "en"): Promise<GallerySearchResult> {
+    const startedAt = Date.now();
+    const timings: GallerySearchStageTimings = {
+      parseMs: 0,
+      initialSearchMs: 0,
+      recommendationCandidateMs: 0,
+      rerankMs: 0,
+      analyticsHintsMs: 0,
+      finalAssemblyMs: 0,
+      totalMs: 0,
+    };
     logger.info("[GALLERY SERVICE] search", { query, language });
     if (!isDatabaseReady()) {
       throw new Error("DATABASE_NOT_READY");
     }
 
     const preferredLanguage = language ?? detectPreferredLanguage(query);
+    const parseStartedAt = Date.now();
     const parsed = await parseGalleryQuery(query, preferredLanguage);
+    timings.parseMs = Date.now() - parseStartedAt;
     const parserTelemetry = getLastQueryParserTelemetry();
     const limit = normalizeGalleryLimit(parsed?.limit, DEFAULT_GALLERY_RESULT_LIMIT);
     const parsedQuery = parsed
@@ -1211,6 +1292,7 @@ export const galleryService = {
     const finalKeywords = structuredKeywords.length > 0 ? structuredKeywords : fallbackKeywords;
     const finalTags = structuredKeywords.length > 0 ? normalizeGalleryKeywordsToEnglish(parsedQuery.tags) : [];
 
+    const initialSearchStartedAt = Date.now();
     const resultsSource = await galleryRepository.search({
       keywords: finalKeywords,
       tags: finalTags,
@@ -1223,6 +1305,7 @@ export const galleryService = {
       scene: parsedQuery.scene,
       limit,
     });
+    timings.initialSearchMs = Date.now() - initialSearchStartedAt;
 
     let candidateCards = resultsSource;
     const exactResultCount = resultsSource.length;
@@ -1238,6 +1321,7 @@ export const galleryService = {
     let recoveryTriggered = recoveryAttempted;
     let recoveryRejectedReason: string | null = recoveryAttempted ? "no_candidates_above_threshold" : null;
 
+    const recommendationCandidateStartedAt = Date.now();
     try {
       const [keywordHeavyResults, structuredHeavyResults] = await Promise.all([
         galleryRepository.search(buildRecommendationKeywordHeavyInput(parsedQuery, finalKeywords, finalTags)),
@@ -1327,14 +1411,18 @@ export const galleryService = {
         query,
         message: error instanceof Error ? error.message : String(error),
       });
+    } finally {
+      timings.recommendationCandidateMs = Date.now() - recommendationCandidateStartedAt;
     }
 
+    const rerankStartedAt = Date.now();
     const recommendationResult = galleryRecommendationService.rerank({
       parsedQuery,
       intelligenceQuery: parsedQuery.intelligenceQuery,
       candidates: candidateCards,
     });
     const rerankedCards = recommendationResult.cards;
+    timings.rerankMs = Date.now() - rerankStartedAt;
 
     lastRecommendationDebugSnapshot = buildRecommendationDebugSnapshot({
       rawQuery: query,
@@ -1356,12 +1444,10 @@ export const galleryService = {
     logger.debug("[GALLERY SERVICE] recommendation debug", buildRecommendationLogPayload(lastRecommendationDebugSnapshot));
 
     const scoreByCardId = new Map(recommendationResult.scoreBreakdowns.map((entry) => [entry.cardId, entry]));
-    const analyticsHints = await recommendationAnalyticsService.getCommerceOptimizationInsights().catch(() => ({
-      dateKey: null,
-      sparseFamilies: [],
-      weakMatchFamilies: [],
-      lowConversionThemes: [],
-    }));
+    const analyticsHintsStartedAt = Date.now();
+    const { hints: analyticsHints, cacheStatus: analyticsHintsCacheStatus } = await getCachedAnalyticsHints();
+    timings.analyticsHintsMs = Date.now() - analyticsHintsStartedAt;
+    const finalAssemblyStartedAt = Date.now();
     const rankedCards = dedupeCards(rerankedCards).slice(0, limit);
     const results = rankedCards
       .map((card) => decorateDtoWithCommerce(card, scoreByCardId.get(card.id), analyticsHints))
@@ -1392,6 +1478,8 @@ export const galleryService = {
     } else if (recoveryAttempted && recoveryCandidateCount > 0 && recoveryResultCount === 0) {
       recoveryRejectedReason = recoveryRejectedReason ?? "recovery_rerank_filtered_results";
     }
+    timings.finalAssemblyMs = Date.now() - finalAssemblyStartedAt;
+    timings.totalMs = Date.now() - startedAt;
 
     logger.info("[GALLERY SERVICE] final result count", {
       count: results.length,
@@ -1410,6 +1498,8 @@ export const galleryService = {
       recoveryResultCount,
       curatorNarrationUsed,
       responseTextSource,
+      analyticsHintsCacheStatus,
+      stageTimings: timings,
     });
 
     return {

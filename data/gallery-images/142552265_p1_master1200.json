@@ -53,111 +53,99 @@
     "syncSourceId": "local-gallery:142552265_p1_master1200.jpg",
     "intelligence": {
       "intelligenceVersion": "v1",
-      "confidence": 0.975,
+      "confidence": 0.95,
       "visualLayer": {
+        "visualStyle": [
+          "anime"
+        ],
+        "colorPalette": [
+          "blue",
+          "red"
+        ],
+        "artStyle": [
+          "anime"
+        ],
         "primaryColors": [
           "blue",
-          "white",
-          "blonde"
+          "red"
         ],
         "styleTags": [
-          "soft anime",
-          "illustration",
-          "digital art",
-          "silk texture"
+          "anime"
         ],
-        "compositionTags": [
-          "centered subject",
-          "bedroom setting",
-          "pillow background",
-          "soft lighting"
-        ],
-        "subjectFocus": "female character in bed",
+        "compositionTags": [],
+        "subjectFocus": "anime_girl",
         "raritySignals": [
-          "ssr rarity",
-          "collectible card",
-          "high detail"
+          "SSR",
+          "collector"
         ]
       },
       "emotionalLayer": {
+        "mood": [
+          "calm"
+        ],
+        "atmosphere": [],
         "moodTags": [
-          "calm",
-          "serene",
-          "peaceful",
-          "sleepy"
+          "calm"
         ],
-        "toneTags": [
-          "gentle",
-          "dreamy",
-          "soft",
-          "intimate"
-        ],
+        "toneTags": [],
         "energyLevel": "low",
-        "dramaticIntensity": 0.2
+        "dramaticIntensity": 0.35
       },
       "characterLayer": {
-        "entityType": "anime girl",
-        "genderPresentation": "female",
-        "agePresentation": "young adult",
-        "archetypeTags": [
-          "sleeping beauty",
-          "bedroom muse",
-          "delicate"
+        "characterType": [
+          "anime_girl"
         ],
-        "poseTags": [
-          "lying down",
-          "half-covered",
-          "resting",
-          "bed pose"
-        ]
+        "genderPresentation": "female",
+        "roleArchetype": [],
+        "entityType": "anime_girl",
+        "agePresentation": "",
+        "archetypeTags": [],
+        "poseTags": []
       },
       "worldbuildingLayer": {
+        "universe": [
+          "Eclipse Queen"
+        ],
+        "theme": [],
+        "faction": [],
         "settingTags": [
-          "bedroom",
-          "private space",
-          "indoor"
+          "Eclipse Queen"
         ],
-        "genreTags": [
-          "anime",
-          "fantasy",
-          "character art"
-        ],
+        "genreTags": [],
         "factionTags": [],
-        "propTags": [
-          "pillows",
-          "blue silk dress",
-          "hair ornament"
-        ],
+        "propTags": [],
         "powerSystemTags": []
       },
       "commerceLayer": {
+        "rarity": "SSR",
+        "pricingTier": "collector",
+        "collectorScore": 95,
+        "waifuScore": 100,
+        "battleScore": 60,
         "searchKeywords": [
-          "anime girl sleeping",
-          "blue silk dress",
-          "bedroom anime",
-          "ssr collectible",
-          "soft anime art"
+          "anime",
+          "calm",
+          "anime_girl",
+          "Eclipse Queen",
+          "ani",
+          "female character",
+          "sleeping",
+          "blue dress",
+          "bed",
+          "long hair",
+          "red eyes",
+          "silky"
         ],
         "collectorHooks": [
-          "high detail",
-          "rare ssr",
-          "sleeping pose",
-          "silky texture",
-          "red eyes"
+          "collector",
+          "SSR"
         ],
-        "marketingAngles": [
-          "dreamy aesthetic",
-          "bedroom collection",
-          "soft anime style",
-          "collector s edition"
-        ],
+        "marketingAngles": [],
         "audienceTags": [
-          "anime fans",
-          "collectible card collectors",
-          "digital art lovers",
-          "feminine aesthetic"
+          "anime girl"
         ],
-        "safetyFlags": []
+        "safetyFlags": [],
+        "category": "anime"
       },
       "audit": {
         "needsHumanReview": false,
@@ -169,12 +157,12 @@
       }
     },
     "commerceNaming": {
-      "displayTitle": "Sleeping Anime Girl in Blue Silk Dress",
-      "shopifyTitle": "Sleeping Anime Girl in Blue Silk Dress - SSR Collectible Card",
-      "shortName": "Sleeping Blue Silk Girl",
-      "slug": "sleeping-blue-silk-girl",
+      "displayTitle": "Sleeping Female Character in Blue Silk Dress",
+      "shopifyTitle": "Sleeping Female Character in Blue Silk Dress - SSR Collectible Card",
+      "shortName": "Sleeping Female Character in",
+      "slug": "sleeping-female-character-in",
       "namingVersion": "v1",
-      "confidence": 0.95,
+      "confidence": 0.8,
       "source": "vision-intelligence-v1"
     },
     "marketingTitle": "Sapphire Dream Slumber"

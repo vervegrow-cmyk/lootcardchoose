@@ -37,104 +37,105 @@
     "syncSourceId": "local-gallery:118162072_p0_master1200.jpg",
     "intelligence": {
       "intelligenceVersion": "v1",
-      "confidence": 0.9875,
+      "confidence": 0.95,
       "visualLayer": {
+        "visualStyle": [
+          "anime"
+        ],
+        "colorPalette": [
+          "red",
+          "white"
+        ],
+        "artStyle": [
+          "anime"
+        ],
         "primaryColors": [
-          "white",
-          "brown"
+          "red",
+          "white"
         ],
         "styleTags": [
-          "anime",
-          "chibi",
-          "illustration"
+          "anime"
         ],
-        "compositionTags": [
-          "close-up",
-          "centered",
-          "isolated"
-        ],
-        "subjectFocus": "anime girl eating toast",
+        "compositionTags": [],
+        "subjectFocus": "anime_girl",
         "raritySignals": [
-          "collectible card"
+          "SR",
+          "premium"
         ]
       },
       "emotionalLayer": {
+        "mood": [
+          "cute"
+        ],
+        "atmosphere": [],
         "moodTags": [
-          "happy",
-          "cheerful",
-          "playful"
+          "cute"
         ],
-        "toneTags": [
-          "whimsical",
-          "sweet",
-          "lighthearted"
-        ],
-        "energyLevel": "high",
-        "dramaticIntensity": 0.2
+        "toneTags": [],
+        "energyLevel": "medium",
+        "dramaticIntensity": 0.35
       },
       "characterLayer": {
-        "entityType": "humanoid",
-        "genderPresentation": "female",
-        "agePresentation": "childlike",
-        "archetypeTags": [
-          "adventurer",
-          "traveler",
-          "cute girl"
+        "characterType": [
+          "anime_girl"
         ],
-        "poseTags": [
-          "eating",
-          "holding food",
-          "looking at viewer"
-        ]
+        "genderPresentation": "female",
+        "roleArchetype": [],
+        "entityType": "anime_girl",
+        "agePresentation": "",
+        "archetypeTags": [],
+        "poseTags": []
       },
       "worldbuildingLayer": {
+        "universe": [
+          "Eclipse Queen"
+        ],
+        "theme": [
+          "romance"
+        ],
+        "faction": [],
         "settingTags": [
-          "fantasy",
-          "isolated",
-          "studio"
+          "Eclipse Queen"
         ],
         "genreTags": [
-          "anime",
-          "fantasy",
-          "adventure"
+          "romance"
         ],
         "factionTags": [],
-        "propTags": [
-          "toast",
-          "strawberry",
-          "backpack"
-        ],
+        "propTags": [],
         "powerSystemTags": []
       },
       "commerceLayer": {
+        "rarity": "SR",
+        "pricingTier": "premium",
+        "collectorScore": 84,
+        "waifuScore": 100,
+        "battleScore": 52,
         "searchKeywords": [
-          "anime girl",
-          "eating toast",
-          "collectible card",
-          "cute girl",
-          "strawberry toast",
-          "red eyes",
-          "anime collectible"
+          "anime",
+          "cute",
+          "anime_girl",
+          "Eclipse Queen",
+          "romance",
+          "ani",
+          "female character",
+          "food",
+          "toast",
+          "strawberry",
+          "eating",
+          "red eyes"
         ],
         "collectorHooks": [
-          "sr rarity",
-          "limited edition",
-          "character design",
-          "food theme"
+          "premium",
+          "SR"
         ],
         "marketingAngles": [
-          "cute aesthetic",
-          "food fantasy",
-          "anime fan collectible",
-          "character expression"
+          "romance"
         ],
         "audienceTags": [
-          "anime fans",
-          "collectors",
-          "gacha players",
-          "cute content lovers"
+          "anime girl"
         ],
-        "safetyFlags": []
+        "safetyFlags": [],
+        "category": "anime"
       },
       "audit": {
         "needsHumanReview": false,
@@ -146,12 +147,12 @@
       }
     },
     "commerceNaming": {
-      "displayTitle": "Cute Anime Girl Eating Strawberry Toast Collectible Card",
-      "shopifyTitle": "Anime Girl Eating Toast SR Collectible Card",
-      "shortName": "Strawberry Toast Girl",
-      "slug": "strawberry-toast-girl",
+      "displayTitle": "Cute Girl Eating Toast Collectible Card",
+      "shopifyTitle": "Cute Girl Eating Toast Collectible Card - SR Collectible Card",
+      "shortName": "Cute Girl Eating Toast",
+      "slug": "cute-girl-eating-toast",
       "namingVersion": "v1",
-      "confidence": 0.97,
+      "confidence": 0.8,
       "source": "vision-intelligence-v1"
     },
     "marketingTitle": "Crimson Toast Maiden"

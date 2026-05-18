@@ -389,3 +389,67 @@ The most important takeaway is:
 - `docs/architecture/lootcardchoose-v1-boundary-rules.md`
 - `docs/architecture/lootcardchoose-v1-optimization-gates.md`
 - `docs/architecture/lootcardchoose-v1-phase-registry.md`
+
+## Freeze Closeout And Metadata Phase 1
+The current freeze-safe closeout keeps only these approved change classes:
+- customer-support multi-turn context and prompt hardening
+- gallery help anti-injection hardening and edge-case tests
+- LLM intent classifier latency and outcome logging
+- gallery service timing logs and analytics hints cache
+
+The closeout explicitly excludes:
+- inquiry telemetry expansion
+- gallery session runtime drift
+- any alternate `gallery_select` state machine
+- any overlapping analytics truth source
+
+### Canonical Intelligence Shape
+`metadata.intelligence` is valid only when all checks below pass:
+- `intelligenceVersion === "v1"`
+- all 5 layers exist:
+  - `visualLayer`
+  - `emotionalLayer`
+  - `characterLayer`
+  - `worldbuildingLayer`
+  - `commerceLayer`
+- required canonical list fields are string arrays:
+  - `visualLayer.visualStyle`
+  - `visualLayer.colorPalette`
+  - `visualLayer.artStyle`
+  - `emotionalLayer.mood`
+  - `emotionalLayer.atmosphere`
+  - `characterLayer.characterType`
+  - `characterLayer.roleArchetype`
+  - `worldbuildingLayer.universe`
+  - `worldbuildingLayer.theme`
+  - `worldbuildingLayer.faction`
+- `commerceLayer.pricingTier` is one of:
+  - `budget`
+  - `standard`
+  - `premium`
+  - `collector`
+- `commerceLayer.collectorScore`, `waifuScore`, and `battleScore` are finite numbers
+
+Legacy-compatible fields may remain, but they do not replace the canonical V1 shape above.
+
+### Metadata Phase 1 Result
+Phase 1 targeted the dominant repeated drift cluster rather than mixed one-off anomalies.
+
+Batch 1 scope:
+- 25 source files under `data/gallery-images/*.json`
+- all from the same drift family:
+  - missing canonical V1 arrays
+  - missing valid `pricingTier`
+  - missing valid score fields
+
+Observed result after Batch 1:
+- source-level invalid files dropped from `104` to `79`
+- DB-level intelligence drift dropped from `104 / 221` to `79 / 221`
+
+Read-only audit entrypoints:
+- `npm run gallery:audit-intelligence`
+- `npm run gallery:audit-intelligence:sources`
+
+Remaining backlog after Batch 1:
+- `79` cards still need the same canonical-shape repair pass
+- this remains a metadata consistency issue, not a recommendation or router issue

@@ -16,6 +16,16 @@ export type CustomerSupportQaEntry = {
   sourceFile: string;
 };
 
+export type CustomerSupportMessageMode = "welcome" | "help" | "question";
+
+export type CustomerSupportConversationContext = {
+  recentUserMessages: string[];
+  lastAssistantReply: string;
+  lastTopic: CustomerSupportTopic;
+  language: SupportedLanguage;
+  updatedAt: number;
+};
+
 export type CustomerSupportKnowledgeBundle = {
   entries: CustomerSupportQaEntry[];
   styleRulesText: string;

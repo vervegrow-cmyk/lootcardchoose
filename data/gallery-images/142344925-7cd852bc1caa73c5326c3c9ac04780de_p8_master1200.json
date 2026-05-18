@@ -53,125 +53,103 @@
     "syncSourceId": "local-gallery:142344925-7cd852bc1caa73c5326c3c9ac04780de_p8_master1200.jpg",
     "intelligence": {
       "intelligenceVersion": "v1",
-      "confidence": 0.975,
+      "confidence": 0.95,
       "visualLayer": {
+        "visualStyle": [
+          "dark_fantasy",
+          "anime"
+        ],
+        "colorPalette": [
+          "white"
+        ],
+        "artStyle": [
+          "anime"
+        ],
         "primaryColors": [
-          "light skin",
-          "white",
-          "dark blue",
-          "beige"
+          "white"
         ],
         "styleTags": [
-          "anime",
-          "digital art",
-          "soft lighting",
-          "high detail",
-          "realistic shading"
+          "dark_fantasy",
+          "anime"
         ],
-        "compositionTags": [
-          "diagonal line",
-          "foreground focus",
-          "natural lighting",
-          "partial framing",
-          "reflection"
-        ],
-        "subjectFocus": "female character drinking water",
+        "compositionTags": [],
+        "subjectFocus": "anime_girl",
         "raritySignals": [
-          "ur rarity",
-          "collectible card",
-          "high detail rendering",
-          "unique pose"
+          "UR",
+          "collector"
         ]
       },
       "emotionalLayer": {
+        "mood": [
+          "mysterious"
+        ],
+        "atmosphere": [],
         "moodTags": [
-          "relaxed",
-          "casual",
-          "sunny",
-          "refreshing",
-          "content"
+          "mysterious"
         ],
-        "toneTags": [
-          "warm",
-          "gentle",
-          "calm",
-          "inviting"
-        ],
-        "energyLevel": "low",
-        "dramaticIntensity": 0.2
+        "toneTags": [],
+        "energyLevel": "medium",
+        "dramaticIntensity": 0.5
       },
       "characterLayer": {
-        "entityType": "anime girl",
-        "genderPresentation": "female",
-        "agePresentation": "teen",
-        "archetypeTags": [
-          "schoolgirl",
-          "everyday student",
-          "relaxed character",
-          "water-drinker"
+        "characterType": [
+          "anime_girl"
         ],
-        "poseTags": [
-          "sitting",
-          "leaning",
-          "drinking",
-          "casual",
-          "relaxed"
-        ]
+        "genderPresentation": "female",
+        "roleArchetype": [],
+        "entityType": "anime_girl",
+        "agePresentation": "",
+        "archetypeTags": [],
+        "poseTags": []
       },
       "worldbuildingLayer": {
+        "universe": [
+          "Void Empire"
+        ],
+        "theme": [],
+        "faction": [
+          "void legion"
+        ],
         "settingTags": [
-          "classroom",
-          "school",
-          "indoor",
-          "daytime",
-          "window-lit"
+          "Void Empire"
         ],
-        "genreTags": [
-          "slice of life",
-          "school life",
-          "anime",
-          "daily routine"
+        "genreTags": [],
+        "factionTags": [
+          "void legion"
         ],
-        "factionTags": [],
-        "propTags": [
-          "water bottle",
-          "desk",
-          "blackboard",
-          "school uniform",
-          "glasses"
-        ],
+        "propTags": [],
         "powerSystemTags": []
       },
       "commerceLayer": {
+        "rarity": "UR",
+        "pricingTier": "collector",
+        "collectorScore": 100,
+        "waifuScore": 100,
+        "battleScore": 60,
         "searchKeywords": [
-          "anime girl drinking water",
-          "schoolgirl collectible",
-          "classroom anime",
-          "wet blouse anime",
-          "ur rarity card"
+          "dark_fantasy",
+          "anime",
+          "mysterious",
+          "anime_girl",
+          "Void Empire",
+          "ani",
+          "female character",
+          "classroom",
+          "drinking water",
+          "blonde hair",
+          "glasses",
+          "school"
         ],
         "collectorHooks": [
-          "unique pose",
-          "detailed rendering",
-          "sunlight effect",
-          "wet clothing detail",
-          "ur rarity"
+          "collector",
+          "UR"
         ],
-        "marketingAngles": [
-          "relaxing daily life",
-          "school aesthetic",
-          "refreshing vibe",
-          "anime beauty",
-          "collectible art"
-        ],
+        "marketingAngles": [],
         "audienceTags": [
-          "anime fans",
-          "collectors",
-          "schoolgirl lovers",
-          "digital art enthusiasts",
-          "gacha players"
+          "anime girl"
         ],
-        "safetyFlags": []
+        "safetyFlags": [],
+        "category": "anime"
       },
       "audit": {
         "needsHumanReview": false,
@@ -183,12 +161,12 @@
       }
     },
     "commerceNaming": {
-      "displayTitle": "Anime Girl Drinking Water in Classroom",
-      "shopifyTitle": "Anime Girl Drinking Water in Classroom - UR Collectible Card",
-      "shortName": "Water Break Schoolgirl",
-      "slug": "water-break-schoolgirl",
+      "displayTitle": "Blonde Female Character Drinking Water in Classroom",
+      "shopifyTitle": "Blonde Female Character Drinking Water in Classroom - UR Collectible Card",
+      "shortName": "Blonde Female Character Drinking",
+      "slug": "blonde-female-character-drinking",
       "namingVersion": "v1",
-      "confidence": 0.95,
+      "confidence": 0.8,
       "source": "vision-intelligence-v1"
     },
     "marketingTitle": "Radiant Scholar Hydration"

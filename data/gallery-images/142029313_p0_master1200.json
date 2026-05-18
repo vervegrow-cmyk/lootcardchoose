@@ -55,119 +55,134 @@
     "syncSourceId": "local-gallery:142029313_p0_master1200.jpg",
     "intelligence": {
       "intelligenceVersion": "v1",
-      "confidence": 0.975,
+      "confidence": 0.95,
       "visualLayer": {
-        "primaryColors": [
-          "purple",
+        "visualStyle": [
+          "black_gold",
+          "dark_fantasy",
+          "holy",
+          "anime",
+          "fantasy"
+        ],
+        "colorPalette": [
           "blue",
-          "white"
+          "white",
+          "purple"
+        ],
+        "artStyle": [
+          "anime",
+          "fantasy art"
+        ],
+        "primaryColors": [
+          "blue",
+          "white",
+          "purple"
         ],
         "styleTags": [
+          "black_gold",
+          "dark_fantasy",
+          "holy",
           "anime",
           "fantasy",
-          "illustration",
-          "digital art"
+          "fantasy art"
         ],
-        "compositionTags": [
-          "centered subject",
-          "soft lighting",
-          "glowing particles",
-          "floating elements"
-        ],
-        "subjectFocus": "female anime character with white wings",
+        "compositionTags": [],
+        "subjectFocus": "goddess",
         "raritySignals": [
-          "ssr rarity",
-          "premium collectible",
-          "luxury aesthetic"
+          "SSR",
+          "collector"
         ]
       },
       "emotionalLayer": {
+        "mood": [
+          "elegant",
+          "divine",
+          "calm"
+        ],
+        "atmosphere": [
+          "celestial"
+        ],
         "moodTags": [
-          "serene",
-          "peaceful",
-          "dreamy",
-          "ethereal"
+          "elegant",
+          "divine",
+          "calm"
         ],
         "toneTags": [
-          "calm",
-          "magical",
-          "divine",
-          "gentle"
+          "celestial"
         ],
         "energyLevel": "low",
-        "dramaticIntensity": 0.2
+        "dramaticIntensity": 0.7
       },
       "characterLayer": {
-        "entityType": "goddess",
-        "genderPresentation": "female",
-        "agePresentation": "young adult",
-        "archetypeTags": [
-          "angelic",
-          "magical being",
-          "celestial",
-          "goddess"
+        "characterType": [
+          "goddess",
+          "anime_girl"
         ],
-        "poseTags": [
-          "sitting",
-          "graceful",
-          "relaxed",
-          "contemplative"
-        ]
+        "genderPresentation": "female",
+        "roleArchetype": [],
+        "entityType": "goddess",
+        "agePresentation": "",
+        "archetypeTags": [],
+        "poseTags": []
       },
       "worldbuildingLayer": {
+        "universe": [
+          "Void Empire"
+        ],
+        "theme": [
+          "luxury",
+          "divinity"
+        ],
+        "faction": [
+          "void legion"
+        ],
         "settingTags": [
-          "magical landscape",
-          "celestial realm",
-          "floating islands",
-          "glowing environment"
+          "Void Empire"
         ],
         "genreTags": [
-          "fantasy",
-          "anime",
-          "mythology",
-          "spiritual"
+          "luxury",
+          "divinity"
         ],
-        "factionTags": [],
-        "propTags": [
-          "white feathered wings",
-          "glowing particles",
-          "floating creatures",
-          "ornate clothing"
+        "factionTags": [
+          "void legion"
         ],
-        "powerSystemTags": [
-          "magic",
-          "divine energy",
-          "elemental aura"
-        ]
+        "propTags": [],
+        "powerSystemTags": []
       },
       "commerceLayer": {
+        "rarity": "SSR",
+        "pricingTier": "collector",
+        "collectorScore": 100,
+        "waifuScore": 100,
+        "battleScore": 60,
         "searchKeywords": [
-          "anime girl",
-          "white wings",
-          "magic girl",
-          "ssr collectible",
-          "gacha card",
-          "anime fantasy"
+          "black_gold",
+          "dark_fantasy",
+          "holy",
+          "anime",
+          "fantasy",
+          "elegant",
+          "divine",
+          "calm",
+          "goddess",
+          "anime_girl",
+          "Void Empire",
+          "luxury"
         ],
         "collectorHooks": [
-          "premium rarity",
-          "luxury aesthetic",
-          "limited edition",
-          "goddess character"
+          "collector",
+          "SSR"
         ],
         "marketingAngles": [
-          "serene beauty",
-          "celestial theme",
-          "fantasy collectible",
-          "gacha game asset"
+          "luxury",
+          "divinity"
         ],
         "audienceTags": [
-          "anime fans",
-          "collectors",
-          "gacha players",
-          "fantasy enthusiasts"
+          "goddess",
+          "anime girl"
         ],
-        "safetyFlags": []
+        "safetyFlags": [],
+        "category": "anime"
       },
       "audit": {
         "needsHumanReview": false,
@@ -179,12 +194,12 @@
       }
     },
     "commerceNaming": {
-      "displayTitle": "Serene Goddess with White Wings",
-      "shopifyTitle": "Serene Goddess with White Wings - SSR Collectible Card",
-      "shortName": "Goddess Wings SSR",
-      "slug": "goddess-wings-ssr",
+      "displayTitle": "Anime Girl with White Wings Collectible Card",
+      "shopifyTitle": "Anime Girl with White Wings Collectible Card - SSR Collectible Card",
+      "shortName": "Anime Girl with White",
+      "slug": "anime-girl-with-white",
       "namingVersion": "v1",
-      "confidence": 0.95,
+      "confidence": 0.8,
       "source": "vision-intelligence-v1"
     },
     "marketingTitle": "Celestial Winged Goddess"

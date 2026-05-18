@@ -53,116 +53,117 @@
     "syncSourceId": "local-gallery:14.jpg",
     "intelligence": {
       "intelligenceVersion": "v1",
-      "confidence": 0.9824999999999999,
+      "confidence": 0.95,
       "visualLayer": {
-        "primaryColors": [
-          "purple",
+        "visualStyle": [
+          "black_gold",
+          "gothic",
+          "anime",
+          "fantasy"
+        ],
+        "colorPalette": [
           "gold",
-          "white"
+          "purple"
+        ],
+        "artStyle": [
+          "anime",
+          "fantasy art"
+        ],
+        "primaryColors": [
+          "gold",
+          "purple"
         ],
         "styleTags": [
+          "black_gold",
+          "gothic",
           "anime",
           "fantasy",
-          "illustration",
-          "digital art"
+          "fantasy art"
         ],
-        "compositionTags": [
-          "full body",
-          "side profile",
-          "dynamic pose",
-          "centered subject",
-          "high contrast"
-        ],
-        "subjectFocus": "female character with glowing orb",
+        "compositionTags": [],
+        "subjectFocus": "anime_girl",
         "raritySignals": [
-          "premium",
-          "luxury",
-          "collectible"
+          "SSR",
+          "collector"
         ]
       },
       "emotionalLayer": {
+        "mood": [
+          "elegant"
+        ],
+        "atmosphere": [],
         "moodTags": [
-          "mystical",
-          "powerful",
-          "alluring",
-          "serene"
+          "elegant"
         ],
-        "toneTags": [
-          "elegant",
-          "magical",
-          "awe-inspiring"
-        ],
-        "energyLevel": "high",
-        "dramaticIntensity": 0.85
+        "toneTags": [],
+        "energyLevel": "medium",
+        "dramaticIntensity": 0.5
       },
       "characterLayer": {
-        "entityType": "anime character",
-        "genderPresentation": "female",
-        "agePresentation": "young adult",
-        "archetypeTags": [
-          "mage",
-          "warrior",
-          "priestess",
-          "heroine"
+        "characterType": [
+          "anime_girl"
         ],
-        "poseTags": [
-          "back view",
-          "curved posture",
-          "hand gesture",
-          "revealing attire"
-        ]
+        "genderPresentation": "female",
+        "roleArchetype": [
+          "mage"
+        ],
+        "entityType": "anime_girl",
+        "agePresentation": "",
+        "archetypeTags": [
+          "mage"
+        ],
+        "poseTags": []
       },
       "worldbuildingLayer": {
+        "universe": [
+          "Eclipse Queen"
+        ],
+        "theme": [
+          "luxury"
+        ],
+        "faction": [],
         "settingTags": [
-          "studio",
-          "abstract",
-          "magical realm"
+          "Eclipse Queen"
         ],
         "genreTags": [
-          "fantasy",
-          "anime",
-          "magic",
-          "action"
+          "luxury"
         ],
         "factionTags": [],
-        "propTags": [
-          "glowing orb",
-          "ornate clothing",
-          "magic staff"
-        ],
-        "powerSystemTags": [
-          "elemental magic",
-          "arcane energy",
-          "spiritual power"
-        ]
+        "propTags": [],
+        "powerSystemTags": []
       },
       "commerceLayer": {
+        "rarity": "SSR",
+        "pricingTier": "collector",
+        "collectorScore": 100,
+        "waifuScore": 100,
+        "battleScore": 60,
         "searchKeywords": [
-          "anime girl",
+          "black_gold",
+          "gothic",
+          "anime",
+          "fantasy",
+          "elegant",
+          "anime_girl",
+          "Eclipse Queen",
+          "luxury",
+          "ani",
+          "female character",
           "purple hair",
-          "glowing orb",
-          "ssr collectible",
-          "fantasy art"
+          "braided hair"
         ],
         "collectorHooks": [
-          "limited edition",
-          "high rarity",
-          "premium quality",
-          "exclusive design"
+          "collector",
+          "SSR"
         ],
         "marketingAngles": [
-          "mystical beauty",
-          "powerful mage",
-          "luxury collectible",
-          "anime fantasy"
+          "luxury"
         ],
         "audienceTags": [
-          "anime fans",
-          "collectors",
-          "gaming community",
-          "fantasy enthusiasts"
+          "anime girl"
         ],
-        "safetyFlags": []
+        "safetyFlags": [],
+        "category": "anime"
       },
       "audit": {
         "needsHumanReview": false,
@@ -174,12 +175,12 @@
       }
     },
     "commerceNaming": {
-      "displayTitle": "Mystical Purple Mage with Glowing Orb",
-      "shopifyTitle": "SSR Anime Fantasy Collectible Card - Purple Braided Hair Mage",
-      "shortName": "Purple Mage Orb",
-      "slug": "purple-mage-orb-ssr",
+      "displayTitle": "Purple Braided Hair Female Character Collectible Card",
+      "shopifyTitle": "Purple Braided Hair Female Character Collectible Card - SSR Collectible Card",
+      "shortName": "Purple Braided Hair Female",
+      "slug": "purple-braided-hair-female",
       "namingVersion": "v1",
-      "confidence": 0.98,
+      "confidence": 0.8,
       "source": "vision-intelligence-v1"
     },
     "marketingTitle": "Mystic Violet Enchantress"

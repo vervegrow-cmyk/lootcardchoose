@@ -57,107 +57,129 @@
     "syncSourceId": "local-gallery:10.jpg",
     "intelligence": {
       "intelligenceVersion": "v1",
-      "confidence": 0.975,
+      "confidence": 0.95,
       "visualLayer": {
-        "primaryColors": [
+        "visualStyle": [
+          "black_gold",
+          "anime",
+          "fantasy"
+        ],
+        "colorPalette": [
+          "gold",
           "blue",
-          "gold"
+          "red"
+        ],
+        "artStyle": [
+          "anime",
+          "fantasy art"
+        ],
+        "primaryColors": [
+          "gold",
+          "blue",
+          "red"
         ],
         "styleTags": [
+          "black_gold",
           "anime",
           "fantasy",
-          "luxury",
-          "portrait"
+          "fantasy art"
         ],
-        "compositionTags": [
-          "centered",
-          "close-up",
-          "sensual",
-          "detailed"
-        ],
-        "subjectFocus": "female deity",
+        "compositionTags": [],
+        "subjectFocus": "goddess",
         "raritySignals": [
-          "premium",
-          "collectible"
+          "SSR",
+          "collector"
         ]
       },
       "emotionalLayer": {
+        "mood": [
+          "elegant",
+          "divine",
+          "cute"
+        ],
+        "atmosphere": [
+          "romantic"
+        ],
         "moodTags": [
-          "sensual",
-          "cute",
-          "serene",
-          "alluring"
+          "elegant",
+          "divine",
+          "cute"
         ],
         "toneTags": [
-          "luxurious",
-          "divine",
-          "playful"
+          "romantic"
         ],
         "energyLevel": "medium",
-        "dramaticIntensity": 0.3
+        "dramaticIntensity": 0.7
       },
       "characterLayer": {
-        "entityType": "goddess",
-        "genderPresentation": "female",
-        "agePresentation": "young adult",
-        "archetypeTags": [
-          "sea goddess",
-          "divine maiden",
-          "luxury deity"
+        "characterType": [
+          "goddess",
+          "anime_girl"
         ],
-        "poseTags": [
-          "relaxed",
-          "sensual",
-          "posed",
-          "seductive"
-        ]
+        "genderPresentation": "female",
+        "roleArchetype": [],
+        "entityType": "goddess",
+        "agePresentation": "",
+        "archetypeTags": [],
+        "poseTags": []
       },
       "worldbuildingLayer": {
+        "universe": [
+          "Eclipse Queen"
+        ],
+        "theme": [
+          "luxury",
+          "divinity",
+          "romance"
+        ],
+        "faction": [],
         "settingTags": [
-          "mythical",
-          "celestial",
-          "oceanic"
+          "Eclipse Queen"
         ],
         "genreTags": [
-          "fantasy",
-          "anime",
-          "mythology"
+          "luxury",
+          "divinity",
+          "romance"
         ],
         "factionTags": [],
-        "propTags": [
-          "crown",
-          "gold accessories",
-          "blue robes",
-          "sandals"
-        ],
+        "propTags": [],
         "powerSystemTags": []
       },
       "commerceLayer": {
+        "rarity": "SSR",
+        "pricingTier": "collector",
+        "collectorScore": 100,
+        "waifuScore": 100,
+        "battleScore": 60,
         "searchKeywords": [
-          "anime goddess",
-          "sea goddess card",
-          "blue gold anime",
-          "sensual anime girl",
-          "collectible card"
+          "black_gold",
+          "anime",
+          "fantasy",
+          "elegant",
+          "divine",
+          "cute",
+          "goddess",
+          "anime_girl",
+          "Eclipse Queen",
+          "luxury",
+          "divinity",
+          "romance"
         ],
         "collectorHooks": [
-          "ssr rarity",
-          "luxury design",
-          "divine theme",
-          "high detail"
+          "collector",
+          "SSR"
         ],
         "marketingAngles": [
-          "luxury collectible",
-          "fantasy art",
-          "premium anime"
+          "luxury",
+          "divinity",
+          "romance"
         ],
         "audienceTags": [
-          "anime collectors",
-          "fantasy fans",
-          "luxury art buyers",
-          "gaming community"
+          "goddess",
+          "anime girl"
         ],
-        "safetyFlags": []
+        "safetyFlags": [],
+        "category": "anime"
       },
       "audit": {
         "needsHumanReview": false,
@@ -171,10 +193,10 @@
     "commerceNaming": {
       "displayTitle": "Goddess of the Sea",
       "shopifyTitle": "Goddess of the Sea - SSR Collectible Card",
-      "shortName": "Sea Goddess",
-      "slug": "sea-goddess",
+      "shortName": "Goddess of the Sea",
+      "slug": "goddess-of-the-sea",
       "namingVersion": "v1",
-      "confidence": 0.95,
+      "confidence": 0.8,
       "source": "vision-intelligence-v1"
     },
     "marketingTitle": "Sapphire Sea Goddess"

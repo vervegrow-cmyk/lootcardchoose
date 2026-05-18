@@ -54,109 +54,111 @@
     "syncSourceId": "local-gallery:141684177-72d0d4b53ee3d1d118726abc151e0811_p1_master1200.jpg",
     "intelligence": {
       "intelligenceVersion": "v1",
-      "confidence": 0.9875,
+      "confidence": 0.95,
       "visualLayer": {
+        "visualStyle": [
+          "black_gold",
+          "anime"
+        ],
+        "colorPalette": [
+          "black",
+          "gold"
+        ],
+        "artStyle": [
+          "anime"
+        ],
         "primaryColors": [
           "black",
-          "beige",
-          "blue"
+          "gold"
         ],
         "styleTags": [
-          "anime",
-          "high detail",
-          "glow effect",
-          "soft shading"
+          "black_gold",
+          "anime"
         ],
-        "compositionTags": [
-          "centered subject",
-          "low angle",
-          "foreground element",
-          "background depth"
-        ],
-        "subjectFocus": "female character in bikini",
+        "compositionTags": [],
+        "subjectFocus": "anime_girl",
         "raritySignals": [
-          "black gold",
-          "collectible card"
+          "SSR",
+          "collector"
         ]
       },
       "emotionalLayer": {
+        "mood": [
+          "mysterious"
+        ],
+        "atmosphere": [],
         "moodTags": [
-          "relaxed",
-          "serene",
-          "content"
+          "mysterious"
         ],
-        "toneTags": [
-          "calm",
-          "warm",
-          "inviting"
-        ],
-        "energyLevel": "low",
-        "dramaticIntensity": 0.15
+        "toneTags": [],
+        "energyLevel": "medium",
+        "dramaticIntensity": 0.5
       },
       "characterLayer": {
-        "entityType": "anime girl",
+        "characterType": [
+          "anime_girl"
+        ],
         "genderPresentation": "female",
-        "agePresentation": "young adult",
-        "archetypeTags": [
-          "lounge",
-          "beach beauty",
-          "summer girl"
-        ],
-        "poseTags": [
-          "lounging",
-          "hand to chin",
-          "side profile",
-          "relaxed posture"
-        ]
-      },
-      "worldbuildingLayer": {
-        "settingTags": [
-          "beach",
-          "tropical",
-          "ocean",
-          "sunny day"
-        ],
-        "genreTags": [
-          "anime",
-          "fantasy",
+        "roleArchetype": [
           "idol"
         ],
-        "factionTags": [],
-        "propTags": [
-          "bikini",
-          "wooden bench",
-          "palm tree"
+        "entityType": "anime_girl",
+        "agePresentation": "",
+        "archetypeTags": [
+          "idol"
         ],
+        "poseTags": []
+      },
+      "worldbuildingLayer": {
+        "universe": [
+          "Eclipse Queen"
+        ],
+        "theme": [
+          "luxury"
+        ],
+        "faction": [],
+        "settingTags": [
+          "Eclipse Queen"
+        ],
+        "genreTags": [
+          "luxury"
+        ],
+        "factionTags": [],
+        "propTags": [],
         "powerSystemTags": []
       },
       "commerceLayer": {
+        "rarity": "SSR",
+        "pricingTier": "collector",
+        "collectorScore": 100,
+        "waifuScore": 100,
+        "battleScore": 60,
         "searchKeywords": [
-          "anime beach girl",
-          "black bikini",
-          "ssr collectible",
-          "tropical anime",
-          "anime girl collectible"
+          "black_gold",
+          "anime",
+          "mysterious",
+          "anime_girl",
+          "Eclipse Queen",
+          "luxury",
+          "ani",
+          "female character",
+          "beach",
+          "bikini",
+          "blonde",
+          "sum r"
         ],
         "collectorHooks": [
-          "black gold design",
-          "ssr rarity",
-          "high detail artwork",
-          "tropical theme"
+          "collector",
+          "SSR"
         ],
         "marketingAngles": [
-          "summer collection",
-          "beach relaxation vibe",
-          "anime idol aesthetic",
-          "premium collectible"
+          "luxury"
         ],
         "audienceTags": [
-          "anime fans",
-          "collectors",
-          "gacha players",
-          "beach lovers",
-          "ssr collectors"
+          "anime girl"
         ],
-        "safetyFlags": []
+        "safetyFlags": [],
+        "category": "anime"
       },
       "audit": {
         "needsHumanReview": false,
@@ -168,12 +170,12 @@
       }
     },
     "commerceNaming": {
-      "displayTitle": "Blonde Anime Girl in Black Bikini at Tropical Beach",
-      "shopifyTitle": "SSR Collectible: Blonde Anime Girl in Black Bikini at Beach",
-      "shortName": "Beach Blonde SSR",
-      "slug": "beach-blonde-ssr",
+      "displayTitle": "Blonde Female Character in Black Bikini at Beach",
+      "shopifyTitle": "Blonde Female Character in Black Bikini at Beach - SSR Collectible Card",
+      "shortName": "Blonde Female Character in",
+      "slug": "blonde-female-character-in",
       "namingVersion": "v1",
-      "confidence": 0.97,
+      "confidence": 0.8,
       "source": "vision-intelligence-v1"
     },
     "marketingTitle": "Golden Beach Idol Ssr"
