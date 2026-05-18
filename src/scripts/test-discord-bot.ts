@@ -35,7 +35,7 @@ const main = async (): Promise<void> => {
 
   const fallbackText = buildCheckoutFallbackText(response);
 
-  await replyWithFallback(
+  const deliveryResult = await replyWithFallback(
     fakeMessage,
     async () => {
       await fakeMessage.reply({
@@ -55,6 +55,8 @@ const main = async (): Promise<void> => {
 
   assert.equal(calls.length, 2);
   assert.deepEqual(calls[1], fallbackText);
+  assert.equal(deliveryResult.replySuccess, true);
+  assert.equal(deliveryResult.usedDeliveryFallback, true);
 };
 
 main().catch((error) => {

@@ -55,7 +55,10 @@ const buildPrompt = (message: string, language: SupportedLanguage): DeepSeekMess
 ];
 
 export const galleryHelpService = {
-  async answerInquiry(message: string, language?: SupportedLanguage): Promise<{ language: SupportedLanguage; text: string }> {
+  async answerInquiry(
+    message: string,
+    language?: SupportedLanguage
+  ): Promise<{ language: SupportedLanguage; text: string; usedFallback: boolean }> {
     const env = loadEnv();
     const resolvedLanguage = language ?? detectPreferredLanguage(message);
 
@@ -63,6 +66,7 @@ export const galleryHelpService = {
       return {
         language: resolvedLanguage,
         text: fallbackAnswer(message, resolvedLanguage),
+        usedFallback: true,
       };
     }
 
@@ -85,6 +89,7 @@ export const galleryHelpService = {
         return {
           language: resolvedLanguage,
           text: fallbackAnswer(message, resolvedLanguage),
+          usedFallback: true,
         };
       }
 
@@ -94,12 +99,14 @@ export const galleryHelpService = {
         return {
           language: resolvedLanguage,
           text: fallbackAnswer(message, resolvedLanguage),
+          usedFallback: true,
         };
       }
 
       return {
         language: resolvedLanguage,
         text,
+        usedFallback: false,
       };
     } catch (error) {
       logger.warn("[GALLERY HELP] fallback response", {
@@ -108,6 +115,7 @@ export const galleryHelpService = {
       return {
         language: resolvedLanguage,
         text: fallbackAnswer(message, resolvedLanguage),
+        usedFallback: true,
       };
     }
   },

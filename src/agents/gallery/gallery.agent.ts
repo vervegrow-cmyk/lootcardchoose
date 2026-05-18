@@ -106,6 +106,7 @@ export const GalleryAgent: AgentDefinition = {
             language: result.language,
             text: buildSearchEmptyText(result.language),
             metadata: {
+              requestId: context.requestId,
               query: result.query,
               parsedQuery: result.parsedQuery ?? undefined,
               structuredKeywords: result.parsedQuery?.keywords ?? undefined,
@@ -116,6 +117,8 @@ export const GalleryAgent: AgentDefinition = {
               recoveryResultCount: result.recoveryResultCount,
               curatorNarrationUsed: result.curatorNarrationUsed,
               responseTextSource: result.responseTextSource,
+              intent: "gallery_search",
+              agentId: "lootcardchoose",
             },
           };
         }
@@ -174,6 +177,8 @@ export const GalleryAgent: AgentDefinition = {
             count: Math.min(result.results.length, 10),
           }),
           metadata: {
+            requestId: context.requestId,
+            sessionId: activeSessionAfterSearch?.id ?? null,
             query: result.query,
             parsedQuery: result.parsedQuery ?? undefined,
             structuredKeywords: result.parsedQuery?.keywords ?? undefined,
@@ -184,6 +189,8 @@ export const GalleryAgent: AgentDefinition = {
             recoveryResultCount: result.recoveryResultCount,
             curatorNarrationUsed: result.curatorNarrationUsed,
             responseTextSource: result.responseTextSource,
+            intent: "gallery_search",
+            agentId: "lootcardchoose",
           },
         };
       }
@@ -210,6 +217,7 @@ export const GalleryAgent: AgentDefinition = {
             language: result.language,
             text: t(result.language, "gallery.refresh.noPreviousSearch"),
             metadata: {
+              requestId: context.requestId,
               refreshMode: result.refreshMode,
               reason: result.reason,
               keep: result.keep,
@@ -219,6 +227,8 @@ export const GalleryAgent: AgentDefinition = {
               anchorSessionId: result.anchorSessionId,
               displaySessionId: result.displaySessionId,
               poolExhausted: result.poolExhausted,
+              intent: "gallery_refresh",
+              agentId: "lootcardchoose",
             },
           };
         }
@@ -267,6 +277,7 @@ export const GalleryAgent: AgentDefinition = {
           refreshMode,
           reason: result.reason,
           metadata: {
+            requestId: context.requestId,
             previousQuery: result.query,
             refreshMode,
             reason: result.reason,
@@ -279,6 +290,8 @@ export const GalleryAgent: AgentDefinition = {
             anchorSessionId: result.anchorSessionId,
             displaySessionId: result.displaySessionId,
             poolExhausted: result.poolExhausted,
+            intent: "gallery_refresh",
+            agentId: "lootcardchoose",
           },
         };
       }
@@ -307,6 +320,13 @@ export const GalleryAgent: AgentDefinition = {
             type: "text",
             language: context.language,
             text: t(context.language, "gallery.select.invalid"),
+            metadata: {
+              requestId: context.requestId,
+              intent: "gallery_select",
+              agentId: "lootcardchoose",
+              sessionId: activeSession?.id ?? null,
+              query: activeSession?.query ?? null,
+            },
           };
         }
 
@@ -369,6 +389,12 @@ export const GalleryAgent: AgentDefinition = {
             orderNumber: checkoutResult.order.orderNumber,
             orderStatus: checkoutResult.order.status,
             metadata: {
+              requestId: context.requestId,
+              intent: "gallery_select",
+              agentId: "lootcardchoose",
+              sessionId: activeSession?.id ?? null,
+              query: activeSession?.query ?? null,
+              selectedCardId: checkoutResult.selectedCard.galleryCardId,
               galleryCardId: checkoutResult.selectedCard.galleryCardId,
               title: checkoutResult.productTitle,
               productCode: checkoutResult.productCode,
@@ -422,6 +448,12 @@ export const GalleryAgent: AgentDefinition = {
           type: "text",
           language: result.language,
           text: result.text,
+          metadata: {
+            requestId: context.requestId,
+            intent: context.intent,
+            agentId: "lootcardchoose",
+            usedFallback: result.usedFallback,
+          },
         };
       }
 
@@ -442,6 +474,11 @@ export const GalleryAgent: AgentDefinition = {
           type: "text",
           language: context.language,
           text: t(context.language, "help.message"),
+          metadata: {
+            requestId: context.requestId,
+            intent: context.intent ?? "help",
+            agentId: "lootcardchoose",
+          },
         };
     }
   },

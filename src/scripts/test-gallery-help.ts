@@ -147,6 +147,7 @@ const run = async (): Promise<void> => {
     const englishReply = await galleryHelpSkill({ message: englishMessage }, buildContext("en"));
     console.log("[TEST GALLERY HELP] english reply=", JSON.stringify(englishReply));
     assert.equal(englishReply.language, "en");
+    assert.equal(englishReply.usedFallback, false);
     assert.ok(!containsChinese(englishReply.text));
     assert.ok(sentenceCount(englishReply.text) <= 2, "Expected short English help reply");
     assert.ok(/style|browse|number|choose/i.test(englishReply.text));
@@ -155,6 +156,7 @@ const run = async (): Promise<void> => {
     const chineseReply = await galleryHelpSkill({ message: chineseMessage }, buildContext("zh"));
     console.log("[TEST GALLERY HELP] chinese reply=", JSON.stringify(chineseReply));
     assert.equal(chineseReply.language, "zh");
+    assert.equal(chineseReply.usedFallback, false);
     assert.ok(containsChinese(chineseReply.text));
     assert.ok(sentenceCount(chineseReply.text) <= 2, "Expected short Chinese help reply");
     assert.ok(/风格|选项|编号|选择/.test(chineseReply.text));

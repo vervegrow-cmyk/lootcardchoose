@@ -8,6 +8,7 @@ export type GalleryHelpInput = {
 export type GalleryHelpOutput = {
   language: SkillContext["language"];
   text: string;
+  usedFallback: boolean;
 };
 
 export const galleryHelpSkill: SkillHandler<GalleryHelpInput, GalleryHelpOutput> = async (input, context) => {
@@ -15,5 +16,6 @@ export const galleryHelpSkill: SkillHandler<GalleryHelpInput, GalleryHelpOutput>
   return {
     language: response.language,
     text: response.text,
+    usedFallback: response.usedFallback,
   };
 };

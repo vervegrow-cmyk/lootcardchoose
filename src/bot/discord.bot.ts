@@ -9,6 +9,8 @@ import {
 import { buildHermesRegistry } from "../hermes/registry";
 import { HermesRouter } from "../hermes/router";
 import { discordNotificationService } from "../services/discord-notification.service";
+import { inquiryTelemetryService } from "../services/inquiry-telemetry.service";
+import type { InquiryTelemetryResponseType, RecordInquiryTelemetryInput } from "../types/inquiry-telemetry.types";
 import { buildGalleryLargeImageFeedEmbeds, resolveGalleryCardImageUrl } from "../utils/embeds";
 import { t } from "../utils/i18n";
 import { logger } from "../utils/logger";
@@ -152,6 +154,96 @@ export const buildCheckoutFallbackText = (response: HermesGalleryCheckoutCreated
   ].join("\n");
 };
 
+type ReplyDeliveryResult = {
+  replySuccess: boolean;
+  usedDeliveryFallback: boolean;
+};
+
+type ResponseTelemetryMetadata = {
+  intent: string | null;
+  agentId: string | null;
+  usedBusinessFallback: boolean | null;
+  sessionId: string | null;
+  orderNumber: string | null;
+  selectedCardId: string | null;
+  query: string | null;
+};
+
+const readBooleanMetadata = (metadata: Record<string, unknown> | undefined, key: string): boolean | null =>
+  typeof metadata?.[key] === "boolean" ? (metadata[key] as boolean) : null;
+
+const readStringMetadata = (metadata: Record<string, unknown> | undefined, key: string): string | null =>
+  typeof metadata?.[key] === "string" ? (metadata[key] as string) : null;
+
+const readResponseTelemetryMetadata = (response: HermesOutput): ResponseTelemetryMetadata => {
+  const metadata = response.metadata as Record<string, unknown> | undefined;
+  const selectedCardId = readStringMetadata(metadata, "selectedCardId") ?? readStringMetadata(metadata, "galleryCardId");
+  const inferredSupportIntent =
+    response.type === "text" &&
+    (typeof metadata?.topic === "string" || typeof metadata?.qaEntryCount === "number")
+      ? "customer_support"
+      : null;
+
+  return {
+    intent: readStringMetadata(metadata, "intent") ?? inferredSupportIntent,
+    agentId: readStringMetadata(metadata, "agentId") ?? (inferredSupportIntent ? "customer-support" : null),
+    usedBusinessFallback: readBooleanMetadata(metadata, "usedFallback"),
+    sessionId: readStringMetadata(metadata, "sessionId"),
+    orderNumber:
+      response.type === "gallery_checkout_created"
+        ? response.orderNumber
+        : readStringMetadata(metadata, "orderNumber"),
+    selectedCardId,
+    query: readStringMetadata(metadata, "query"),
+  };
+};
+
+const buildInquiryTelemetryInput = (input: {
+  message: Message;
+  handlingDecision: DiscordMessageHandlingDecision;
+  requestId: string | null;
+  responseType: InquiryTelemetryResponseType;
+  responseTelemetry: ResponseTelemetryMetadata;
+  replyText: string | null;
+  replySuccess: boolean;
+  usedDeliveryFallback: boolean;
+}): RecordInquiryTelemetryInput => ({
+  requestId: input.requestId,
+  userId: input.message.author.id,
+  channelId: input.message.channelId,
+  discordGuildId: input.message.guildId ?? null,
+  isDM: input.handlingDecision.isDM,
+  normalizedContent: input.handlingDecision.normalizedText,
+  intent:
+    input.responseTelemetry.intent === "gallery_search" ||
+    input.responseTelemetry.intent === "gallery_select" ||
+    input.responseTelemetry.intent === "gallery_refresh" ||
+    input.responseTelemetry.intent === "order_status" ||
+    input.responseTelemetry.intent === "customer_support" ||
+    input.responseTelemetry.intent === "help" ||
+    input.responseTelemetry.intent === "ignore"
+      ? input.responseTelemetry.intent
+      : null,
+  agentId:
+    input.responseTelemetry.agentId === "lootcardchoose" ||
+    input.responseTelemetry.agentId === "customer-support" ||
+    input.responseTelemetry.agentId === "lootcarddiy" ||
+    input.responseTelemetry.agentId === "support" ||
+    input.responseTelemetry.agentId === "orders" ||
+    input.responseTelemetry.agentId === "affiliate"
+      ? input.responseTelemetry.agentId
+      : null,
+  responseType: input.responseType,
+  replySuccess: input.replySuccess,
+  replyText: input.replyText,
+  usedBusinessFallback: input.responseTelemetry.usedBusinessFallback,
+  usedDeliveryFallback: input.usedDeliveryFallback,
+  sessionId: input.responseTelemetry.sessionId,
+  orderNumber: input.responseTelemetry.orderNumber,
+  selectedCardId: input.responseTelemetry.selectedCardId,
+  query: input.responseTelemetry.query,
+});
+
 const sendTypingIndicator = async (message: Message): Promise<void> => {
   if (!("sendTyping" in message.channel) || typeof message.channel.sendTyping !== "function") {
     return;
@@ -185,7 +277,7 @@ export const replyWithFallback = async (
     purchaseUrl?: string;
     startAt: number;
   }
-): Promise<void> => {
+): Promise<ReplyDeliveryResult> => {
   try {
     await primaryReply();
     logger.info("[DISCORD] reply sent", {
@@ -198,6 +290,10 @@ export const replyWithFallback = async (
       purchaseUrl: metadata.purchaseUrl,
       latencyMs: Date.now() - metadata.startAt,
     });
+    return {
+      replySuccess: true,
+      usedDeliveryFallback: false,
+    };
   } catch (error) {
     logger.error("[DISCORD] primary reply failed", {
       userId: message.author.id,
@@ -220,6 +316,10 @@ export const replyWithFallback = async (
       responseType: metadata.responseType,
       latencyMs: Date.now() - metadata.startAt,
     });
+    return {
+      replySuccess: true,
+      usedDeliveryFallback: true,
+    };
   }
 };
 
@@ -327,6 +427,8 @@ export const DiscordBot = {
 
       const startedAt = Date.now();
       let stage = "typing";
+      let lastResponseTelemetry: ResponseTelemetryMetadata | null = null;
+      let lastResponseRequestId: string | null = null;
 
       try {
         await sendTypingIndicator(message);
@@ -344,6 +446,9 @@ export const DiscordBot = {
         if (!response.text) {
           return;
         }
+
+        lastResponseTelemetry = readResponseTelemetryMetadata(response);
+        lastResponseRequestId = readStringMetadata(response.metadata as Record<string, unknown> | undefined, "requestId");
 
         if (response.type === "gallery_search_results") {
           stage = "reply.gallery_search_results";
@@ -380,7 +485,7 @@ export const DiscordBot = {
             return builder;
           };
 
-          await replyWithFallback(
+          const deliveryResult = await replyWithFallback(
             message,
             async () => {
               await message.reply({
@@ -415,12 +520,26 @@ export const DiscordBot = {
               startAt: startedAt,
             }
           );
+          await inquiryTelemetryService.recordEvent(
+            buildInquiryTelemetryInput({
+              message,
+              handlingDecision,
+              requestId: lastResponseRequestId,
+              responseType: response.type,
+              responseTelemetry: lastResponseTelemetry,
+              replyText: deliveryResult.usedDeliveryFallback
+                ? buildSearchFallbackText(response)
+                : `${response.text}\n${response.selectionPrompt}`,
+              replySuccess: deliveryResult.replySuccess,
+              usedDeliveryFallback: deliveryResult.usedDeliveryFallback,
+            })
+          );
           return;
         }
 
         if (response.type === "gallery_checkout_created") {
           stage = "reply.gallery_checkout_created";
-          await replyWithFallback(
+          const deliveryResult = await replyWithFallback(
             message,
             async () => {
               await message.reply({
@@ -437,6 +556,18 @@ export const DiscordBot = {
               startAt: startedAt,
             }
           );
+          await inquiryTelemetryService.recordEvent(
+            buildInquiryTelemetryInput({
+              message,
+              handlingDecision,
+              requestId: lastResponseRequestId,
+              responseType: response.type,
+              responseTelemetry: lastResponseTelemetry,
+              replyText: deliveryResult.usedDeliveryFallback ? buildCheckoutFallbackText(response) : response.text,
+              replySuccess: deliveryResult.replySuccess,
+              usedDeliveryFallback: deliveryResult.usedDeliveryFallback,
+            })
+          );
           return;
         }
 
@@ -448,6 +579,18 @@ export const DiscordBot = {
           responseType: response.type,
           latencyMs: Date.now() - startedAt,
         });
+        await inquiryTelemetryService.recordEvent(
+          buildInquiryTelemetryInput({
+            message,
+            handlingDecision,
+            requestId: lastResponseRequestId,
+            responseType: response.type,
+            responseTelemetry: lastResponseTelemetry,
+            replyText: response.text,
+            replySuccess: true,
+            usedDeliveryFallback: false,
+          })
+        );
       } catch (error) {
         const language: SupportedLanguage = /[\u4e00-\u9fff]/.test(handlingDecision.normalizedText) ? "zh" : "en";
         const fallbackText = isUserFacingError(error) ? error.message : t(language, "error.generic");
@@ -464,6 +607,27 @@ export const DiscordBot = {
 
         try {
           await message.reply(fallbackText);
+          await inquiryTelemetryService.recordEvent(
+            buildInquiryTelemetryInput({
+              message,
+              handlingDecision,
+              requestId: lastResponseRequestId,
+              responseType: "error_fallback",
+              responseTelemetry:
+                lastResponseTelemetry ?? {
+                  intent: null,
+                  agentId: null,
+                  usedBusinessFallback: null,
+                  sessionId: null,
+                  orderNumber: null,
+                  selectedCardId: null,
+                  query: null,
+                },
+              replyText: fallbackText,
+              replySuccess: true,
+              usedDeliveryFallback: false,
+            })
+          );
         } catch (replyError) {
           logger.error("[DISCORD] fallback reply failed", {
             userId: message.author.id,
@@ -473,6 +637,27 @@ export const DiscordBot = {
             discordApiCode: extractDiscordApiCode(replyError),
             latencyMs: Date.now() - startedAt,
           });
+          await inquiryTelemetryService.recordEvent(
+            buildInquiryTelemetryInput({
+              message,
+              handlingDecision,
+              requestId: lastResponseRequestId,
+              responseType: "error_fallback",
+              responseTelemetry:
+                lastResponseTelemetry ?? {
+                  intent: null,
+                  agentId: null,
+                  usedBusinessFallback: null,
+                  sessionId: null,
+                  orderNumber: null,
+                  selectedCardId: null,
+                  query: null,
+                },
+              replyText: fallbackText,
+              replySuccess: false,
+              usedDeliveryFallback: false,
+            })
+          );
         }
       }
     });
