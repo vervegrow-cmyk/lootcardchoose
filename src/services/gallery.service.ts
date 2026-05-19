@@ -26,6 +26,7 @@ import { cardPricingService, CardPricingInput } from "./card-pricing.service";
 import { galleryRecommendationService } from "./gallery-recommendation.service";
 import { recommendationAnalyticsService } from "./recommendation-analytics.service";
 import {
+  buildRawQueryFallbackKeywords,
   ParsedGalleryQuery,
   getLastQueryParserTelemetry,
   parseGalleryQuery,
@@ -106,6 +107,8 @@ export type GallerySearchResult = {
   recoveryResultCount: number;
   curatorNarrationUsed: boolean;
   responseTextSource: "curator_summary" | "recovery" | "legacy_success" | "legacy_empty";
+  searchKeywordSource: "structured" | "raw_phrase" | "raw_tokens" | "none";
+  fallbackKeywordSource: QueryParserTelemetry["fallbackKeywordSource"];
 };
 
 export type RecommendationDebugCardSummary = {
@@ -138,6 +141,11 @@ export type RecommendationDebugSnapshot = {
   usedFallback: boolean;
   rerankHappened: boolean;
   parserTelemetry?: QueryParserTelemetry;
+  searchResultCount?: number;
+  responseTextSource?: GallerySearchResult["responseTextSource"];
+  recoveryTriggered?: boolean;
+  searchKeywordSource?: GallerySearchResult["searchKeywordSource"];
+  fallbackKeywordSource?: QueryParserTelemetry["fallbackKeywordSource"];
   top10BeforeRerank: RecommendationDebugCardSummary[];
   top10AfterRerank: RecommendationDebugCardSummary[];
   scoreBreakdowns: RecommendationDebugCardSummary[];
@@ -151,6 +159,11 @@ type RecommendationDebugLogPayload = {
   usedFallback: boolean;
   rerankHappened: boolean;
   parserTelemetry?: QueryParserTelemetry;
+  searchResultCount?: number;
+  responseTextSource?: GallerySearchResult["responseTextSource"];
+  recoveryTriggered?: boolean;
+  searchKeywordSource?: GallerySearchResult["searchKeywordSource"];
+  fallbackKeywordSource?: QueryParserTelemetry["fallbackKeywordSource"];
   top10BeforeRerank: RecommendationDebugCardSummary[];
   top10AfterRerank: RecommendationDebugCardSummary[];
   scoreBreakdowns: RecommendationDebugCardSummary[];
@@ -705,6 +718,8 @@ const buildRecommendationDebugSnapshot = (input: {
   usedFallback: boolean;
   rerankHappened: boolean;
   parserTelemetry?: QueryParserTelemetry;
+  searchKeywordSource?: GallerySearchResult["searchKeywordSource"];
+  fallbackKeywordSource?: QueryParserTelemetry["fallbackKeywordSource"];
 }): RecommendationDebugSnapshot => {
   const scoreByCardId = new Map(input.scoreBreakdowns.map((entry) => [entry.cardId, entry]));
 
@@ -728,6 +743,8 @@ const buildRecommendationDebugSnapshot = (input: {
     usedFallback: input.usedFallback,
     rerankHappened: input.rerankHappened,
     parserTelemetry: input.parserTelemetry,
+    searchKeywordSource: input.searchKeywordSource,
+    fallbackKeywordSource: input.fallbackKeywordSource ?? input.parserTelemetry?.fallbackKeywordSource ?? null,
     top10BeforeRerank: input.resultsSource.slice(0, RECOMMENDATION_DEBUG_LIMIT).map((card) =>
       buildRecommendationDebugCardSummary(card, scoreByCardId.get(card.id))
     ),
@@ -769,6 +786,11 @@ const buildRecommendationLogPayload = (
     usedFallback: snapshot.usedFallback,
     rerankHappened: snapshot.rerankHappened,
     ...(snapshot.parserTelemetry ? { parserTelemetry: snapshot.parserTelemetry } : {}),
+    ...(typeof snapshot.searchResultCount === "number" ? { searchResultCount: snapshot.searchResultCount } : {}),
+    ...(snapshot.responseTextSource ? { responseTextSource: snapshot.responseTextSource } : {}),
+    ...(typeof snapshot.recoveryTriggered === "boolean" ? { recoveryTriggered: snapshot.recoveryTriggered } : {}),
+    ...(snapshot.searchKeywordSource ? { searchKeywordSource: snapshot.searchKeywordSource } : {}),
+    ...(snapshot.fallbackKeywordSource ? { fallbackKeywordSource: snapshot.fallbackKeywordSource } : {}),
     top10BeforeRerank: snapshot.top10BeforeRerank.slice(0, RECOMMENDATION_DEBUG_LIMIT),
     top10AfterRerank: snapshot.top10AfterRerank.slice(0, RECOMMENDATION_DEBUG_LIMIT),
     scoreBreakdowns: snapshot.scoreBreakdowns.slice(0, RECOMMENDATION_DEBUG_LIMIT),
@@ -832,8 +854,14 @@ export const getLastRecommendationFeedbackSummary = (): RecommendationFeedbackDe
           parserTimedOut: lastRecommendationDebugSnapshot.parserTelemetry.parserTimedOut,
           parserUsedFallback: lastRecommendationDebugSnapshot.parserTelemetry.parserUsedFallback,
           parserFallbackReason: lastRecommendationDebugSnapshot.parserTelemetry.parserFallbackReason,
+          fallbackKeywordSource: lastRecommendationDebugSnapshot.parserTelemetry.fallbackKeywordSource,
         }
       : {}),
+    searchResultCount: lastRecommendationDebugSnapshot.searchResultCount,
+    responseTextSource: lastRecommendationDebugSnapshot.responseTextSource,
+    recoveryTriggered: lastRecommendationDebugSnapshot.recoveryTriggered,
+    searchKeywordSource: lastRecommendationDebugSnapshot.searchKeywordSource,
+    fallbackKeywordSource: lastRecommendationDebugSnapshot.fallbackKeywordSource,
     top10BeforeRerank: lastRecommendationDebugSnapshot.top10BeforeRerank.map((item) => ({
       id: item.id,
       title: item.title,
@@ -1281,15 +1309,42 @@ export const galleryService = {
     const structuredKeywords = buildStructuredGalleryKeywords(parsedQuery);
     logger.info("[GALLERY SERVICE] structured keywords", { structuredKeywords });
 
-    const fallbackKeywords = structuredKeywords.length > 0 ? [] : normalizeGalleryKeywordsToEnglish([query]);
+    const rawFallback = buildRawQueryFallbackKeywords(query);
+    const fallbackKeywords = structuredKeywords.length > 0 ? [] : rawFallback.keywords;
+    let searchKeywordSource: GallerySearchResult["searchKeywordSource"] = "structured";
     if (structuredKeywords.length === 0) {
+      searchKeywordSource = rawFallback.fallbackKeywordSource;
       logger.info("[GALLERY SERVICE] raw query fallback", {
         query,
         fallbackKeywords,
+        fallbackKeywordSource: rawFallback.fallbackKeywordSource,
         reason: "structured_keywords_empty",
+      });
+    } else if (
+      parserTelemetry.parserUsedFallback &&
+      (parserTelemetry.fallbackKeywordSource === "raw_phrase" || parserTelemetry.fallbackKeywordSource === "raw_tokens")
+    ) {
+      searchKeywordSource = parserTelemetry.fallbackKeywordSource;
+      logger.info("[GALLERY SERVICE] parser fallback supplied search keywords", {
+        query,
+        parserOutcome: parserTelemetry.parserOutcome,
+        parserFallbackReason: parserTelemetry.parserFallbackReason,
+        fallbackKeywordSource: parserTelemetry.fallbackKeywordSource,
+        structuredKeywordCount: structuredKeywords.length,
+      });
+    } else if (parserTelemetry.parserUsedFallback) {
+      logger.info("[GALLERY SERVICE] parser fallback recovered by structured keywords", {
+        query,
+        parserOutcome: parserTelemetry.parserOutcome,
+        parserFallbackReason: parserTelemetry.parserFallbackReason,
+        fallbackKeywordSource: parserTelemetry.fallbackKeywordSource,
+        structuredKeywordCount: structuredKeywords.length,
       });
     }
     const finalKeywords = structuredKeywords.length > 0 ? structuredKeywords : fallbackKeywords;
+    if (finalKeywords.length === 0) {
+      searchKeywordSource = "none";
+    }
     const finalTags = structuredKeywords.length > 0 ? normalizeGalleryKeywordsToEnglish(parsedQuery.tags) : [];
 
     const initialSearchStartedAt = Date.now();
@@ -1424,25 +1479,6 @@ export const galleryService = {
     const rerankedCards = recommendationResult.cards;
     timings.rerankMs = Date.now() - rerankStartedAt;
 
-    lastRecommendationDebugSnapshot = buildRecommendationDebugSnapshot({
-      rawQuery: query,
-      parsedQuery,
-      candidateCards,
-      resultsSource,
-      rerankedCards,
-      scoreBreakdowns: recommendationResult.scoreBreakdowns,
-      usedFallback: recommendationResult.usedFallback,
-      rerankHappened: recommendationResult.rerankHappened,
-      parserTelemetry,
-    });
-
-    recommendationFeedbackService.captureLatestSearchSnapshot({
-      query,
-      summary: getLastRecommendationFeedbackSummary()!,
-    });
-
-    logger.debug("[GALLERY SERVICE] recommendation debug", buildRecommendationLogPayload(lastRecommendationDebugSnapshot));
-
     const scoreByCardId = new Map(recommendationResult.scoreBreakdowns.map((entry) => [entry.cardId, entry]));
     const analyticsHintsStartedAt = Date.now();
     const { hints: analyticsHints, cacheStatus: analyticsHintsCacheStatus } = await getCachedAnalyticsHints();
@@ -1481,6 +1517,30 @@ export const galleryService = {
     timings.finalAssemblyMs = Date.now() - finalAssemblyStartedAt;
     timings.totalMs = Date.now() - startedAt;
 
+    lastRecommendationDebugSnapshot = buildRecommendationDebugSnapshot({
+      rawQuery: query,
+      parsedQuery,
+      candidateCards,
+      resultsSource,
+      rerankedCards,
+      scoreBreakdowns: recommendationResult.scoreBreakdowns,
+      usedFallback: recommendationResult.usedFallback,
+      rerankHappened: recommendationResult.rerankHappened,
+      parserTelemetry,
+      searchKeywordSource,
+      fallbackKeywordSource: parserTelemetry.fallbackKeywordSource,
+    });
+    lastRecommendationDebugSnapshot.searchResultCount = results.length;
+    lastRecommendationDebugSnapshot.responseTextSource = responseTextSource;
+    lastRecommendationDebugSnapshot.recoveryTriggered = recoveryTriggered;
+
+    recommendationFeedbackService.captureLatestSearchSnapshot({
+      query,
+      summary: getLastRecommendationFeedbackSummary()!,
+    });
+
+    logger.debug("[GALLERY SERVICE] recommendation debug", buildRecommendationLogPayload(lastRecommendationDebugSnapshot));
+
     logger.info("[GALLERY SERVICE] final result count", {
       count: results.length,
       query,
@@ -1498,6 +1558,11 @@ export const galleryService = {
       recoveryResultCount,
       curatorNarrationUsed,
       responseTextSource,
+      parserOutcome: parserTelemetry.parserOutcome,
+      parserFallbackReason: parserTelemetry.parserFallbackReason,
+      fallbackKeywordSource: parserTelemetry.fallbackKeywordSource,
+      searchKeywordSource,
+      zeroResult: results.length === 0,
       analyticsHintsCacheStatus,
       stageTimings: timings,
     });
@@ -1524,6 +1589,8 @@ export const galleryService = {
       recoveryResultCount,
       curatorNarrationUsed,
       responseTextSource,
+      searchKeywordSource,
+      fallbackKeywordSource: parserTelemetry.fallbackKeywordSource,
     };
   },
 

@@ -4,7 +4,11 @@ dotenv.config();
 dotenv.config({ path: ".env.local", override: true });
 
 import { buildStructuredGalleryKeywords, galleryService } from "../services/gallery.service";
-import { parseGalleryQuery } from "../services/llm-query-parser.service";
+import {
+  buildRawQueryFallbackKeywords,
+  getLastQueryParserTelemetry,
+  parseGalleryQuery,
+} from "../services/llm-query-parser.service";
 
 const TEST_CASES = [
   {
@@ -88,6 +92,60 @@ const main = async (): Promise<void> => {
         })}`
       );
     });
+  }
+
+  const originalFetch = global.fetch;
+  const originalApiKey = process.env.DEEPSEEK_API_KEY;
+  const originalEnableNaturalLanguageSearch = process.env.ENABLE_NATURAL_LANGUAGE_SEARCH;
+  try {
+    process.env.ENABLE_NATURAL_LANGUAGE_SEARCH = "true";
+    process.env.DEEPSEEK_API_KEY = originalApiKey || "test-parser-key";
+    global.fetch = async () => {
+      throw new Error("simulated parser network failure");
+    };
+
+    const phraseQuery = "Atack on Titan";
+    const phraseFallbackKeywords = buildRawQueryFallbackKeywords(phraseQuery);
+    ensure(phraseFallbackKeywords.keywords.length > 0, "Expected raw fallback keywords for phrase query");
+    ensure(
+      phraseFallbackKeywords.fallbackKeywordSource === "raw_phrase" ||
+        phraseFallbackKeywords.fallbackKeywordSource === "raw_tokens",
+      "Expected raw fallback keyword source for phrase query"
+    );
+
+    const parsedFallback = await parseGalleryQuery(phraseQuery, "en");
+    ensure(parsedFallback, "Expected parser fallback result for phrase query");
+    ensure((parsedFallback?.keywords.length ?? 0) > 0, "Expected parser fallback keywords for phrase query");
+
+    const parserTelemetry = getLastQueryParserTelemetry();
+    ensure(parserTelemetry.parserUsedFallback, "Expected parser telemetry to record fallback");
+    ensure(parserTelemetry.parserFallbackReason === "network_error", "Expected network_error fallback reason");
+    ensure(
+      parserTelemetry.fallbackKeywordSource === "raw_phrase" || parserTelemetry.fallbackKeywordSource === "raw_tokens",
+      "Expected raw fallback keyword source in parser telemetry"
+    );
+
+    const phraseSearchResult = await galleryService.searchGalleryCards(phraseQuery, "en");
+    ensure(
+      phraseSearchResult.searchKeywordSource === "raw_phrase" || phraseSearchResult.searchKeywordSource === "raw_tokens",
+      "Expected search to use raw fallback keyword source for phrase query"
+    );
+
+    const meaninglessQuery = "12345 ???";
+    const meaninglessFallbackKeywords = buildRawQueryFallbackKeywords(meaninglessQuery);
+    ensure(meaninglessFallbackKeywords.keywords.length === 0, "Expected no raw fallback keywords for meaningless query");
+  } finally {
+    global.fetch = originalFetch;
+    if (originalApiKey == null) {
+      delete process.env.DEEPSEEK_API_KEY;
+    } else {
+      process.env.DEEPSEEK_API_KEY = originalApiKey;
+    }
+    if (originalEnableNaturalLanguageSearch == null) {
+      delete process.env.ENABLE_NATURAL_LANGUAGE_SEARCH;
+    } else {
+      process.env.ENABLE_NATURAL_LANGUAGE_SEARCH = originalEnableNaturalLanguageSearch;
+    }
   }
 };
 

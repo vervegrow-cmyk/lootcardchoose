@@ -313,6 +313,7 @@ const logClassificationResult = (input: {
     intent: input.result.intent,
     outcome: input.outcome,
     usedFallback: input.result.source === "fallback",
+    fallbackReason: input.result.fallbackReason ?? null,
     latencyMs: input.latencyMs,
   });
 };

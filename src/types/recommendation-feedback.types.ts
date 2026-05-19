@@ -72,6 +72,11 @@ export type RecommendationFeedbackDebugSummary = {
   parserTimedOut?: boolean;
   parserUsedFallback?: boolean;
   parserFallbackReason?: string | null;
+  fallbackKeywordSource?: "parser" | "raw_phrase" | "raw_tokens" | "none" | null;
+  searchResultCount?: number;
+  responseTextSource?: "curator_summary" | "recovery" | "legacy_success" | "legacy_empty";
+  recoveryTriggered?: boolean;
+  searchKeywordSource?: "structured" | "raw_phrase" | "raw_tokens" | "none";
   top10BeforeRerank: RecommendationFeedbackCardSummary[];
   top10AfterRerank: RecommendationFeedbackCardSummary[];
 };
@@ -98,6 +103,11 @@ export type RecommendationFeedbackEvent = {
   parserTimedOut?: boolean;
   parserUsedFallback?: boolean;
   parserFallbackReason?: string | null;
+  fallbackKeywordSource?: "parser" | "raw_phrase" | "raw_tokens" | "none" | null;
+  searchResultCount?: number;
+  responseTextSource?: "curator_summary" | "recovery" | "legacy_success" | "legacy_empty";
+  recoveryTriggered?: boolean;
+  searchKeywordSource?: "structured" | "raw_phrase" | "raw_tokens" | "none";
   rerankHappened?: boolean;
   recommendationDebugSummary: RecommendationFeedbackDebugSummary | null;
 };

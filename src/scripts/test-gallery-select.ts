@@ -327,6 +327,9 @@ const main = async (): Promise<void> => {
   assert.equal(zeroResultServiceResponse.recoveryBroadCandidatePoolUsed, false);
   assert.equal(zeroResultServiceResponse.recoveryScoredCandidateCount, 0);
   assert.equal(zeroResultServiceResponse.recoveryAcceptedCount, 0);
+  assert.equal(zeroResultServiceResponse.searchKeywordSource, "raw_phrase");
+  assert.equal(zeroResultServiceResponse.fallbackKeywordSource, "raw_phrase");
+  assert.equal(zeroResultServiceResponse.responseTextSource, "legacy_empty");
 
   const originalGallerySearch = galleryRepository.search;
   const originalGetActiveGalleryCardsForRecommendation = galleryRepository.getActiveGalleryCardsForRecommendation;

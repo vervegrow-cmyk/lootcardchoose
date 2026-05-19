@@ -6,7 +6,12 @@ import type {
   ParsedGalleryQuery,
   QuerySafetyIntent,
 } from "../types/gallery-query.types";
-import { canonicalizeGalleryTerm, detectPreferredLanguage, normalizeGalleryLimit } from "../utils/gallery-language";
+import {
+  canonicalizeGalleryTerm,
+  detectPreferredLanguage,
+  normalizeGalleryKeywordsToEnglish,
+  normalizeGalleryLimit,
+} from "../utils/gallery-language";
 import { logger } from "../utils/logger";
 
 export type { IntelligenceQuery, IntelligenceQueryLanguage, ParsedGalleryQuery, QuerySafetyIntent };
@@ -27,6 +32,7 @@ export type QueryParserTelemetry = {
   parserTimedOut: boolean;
   parserUsedFallback: boolean;
   parserFallbackReason: string | null;
+  fallbackKeywordSource: "parser" | "raw_phrase" | "raw_tokens" | "none" | null;
 };
 
 export const QUERY_PARSER_TIMEOUT_MS = 6000;
@@ -129,6 +135,26 @@ const QUANTIFIER_PATTERNS = [
   /^(one|two|three|four|five|six|seven|eight|nine|ten)$/i,
   /^(张|个|些|套|份)$/,
 ];
+const RAW_FALLBACK_TOKEN_STOP_WORDS = new Set([
+  "a",
+  "an",
+  "and",
+  "for",
+  "i",
+  "me",
+  "my",
+  "of",
+  "on",
+  "or",
+  "please",
+  "show",
+  "that",
+  "the",
+  "this",
+  "to",
+  "want",
+  "with",
+]);
 
 const EMPTY_INTELLIGENCE_QUERY = (): IntelligenceQuery => ({
   visualStyle: [],
@@ -1114,6 +1140,79 @@ export const buildRuleBasedGalleryQuery = (userMessage: string, language: Suppor
 const fallbackParsedQuery = (userMessage: string, language: SupportedLanguage): ParsedGalleryQuery =>
   buildRuleBasedGalleryQuery(userMessage, language);
 
+const uniqueKeywordValues = (values: string[]): string[] => {
+  const seen = new Set<string>();
+  const result: string[] = [];
+
+  for (const value of values) {
+    const normalized = normalizeLower(value);
+    if (!normalized || seen.has(normalized)) {
+      continue;
+    }
+
+    seen.add(normalized);
+    result.push(value.trim());
+  }
+
+  return result;
+};
+
+export const buildRawQueryFallbackKeywords = (
+  userMessage: string
+): {
+  keywords: string[];
+  fallbackKeywordSource: "raw_phrase" | "raw_tokens" | "none";
+} => {
+  const phraseKeywords = normalizeGalleryKeywordsToEnglish([userMessage]);
+  const tokenCandidates =
+    userMessage
+      .match(/[\u4e00-\u9fff]+|[a-zA-Z]+(?:['-][a-zA-Z]+)*/g)
+      ?.map((token) => token.trim())
+      .filter((token) => !RAW_FALLBACK_TOKEN_STOP_WORDS.has(token.toLowerCase())) ?? [];
+  const tokenKeywords = normalizeGalleryKeywordsToEnglish(tokenCandidates);
+  const keywords = uniqueKeywordValues([...phraseKeywords, ...tokenKeywords]);
+
+  if (keywords.length === 0) {
+    return {
+      keywords: [],
+      fallbackKeywordSource: "none",
+    };
+  }
+
+  const phraseKeywordSet = new Set(phraseKeywords.map((keyword) => normalizeLower(keyword)));
+  const includesTokenExpansion = tokenKeywords.some((keyword) => !phraseKeywordSet.has(normalizeLower(keyword)));
+
+  return {
+    keywords,
+    fallbackKeywordSource: includesTokenExpansion ? "raw_tokens" : "raw_phrase",
+  };
+};
+
+const buildFallbackParsedQuery = (
+  userMessage: string,
+  language: SupportedLanguage
+): {
+  parsedQuery: ParsedGalleryQuery;
+  fallbackKeywordSource: "parser" | "raw_phrase" | "raw_tokens" | "none";
+} => {
+  const parsedQuery = fallbackParsedQuery(userMessage, language);
+  if (parsedQuery.keywords.length > 0) {
+    return {
+      parsedQuery,
+      fallbackKeywordSource: "parser",
+    };
+  }
+
+  const rawFallback = buildRawQueryFallbackKeywords(userMessage);
+  return {
+    parsedQuery: {
+      ...parsedQuery,
+      keywords: rawFallback.keywords,
+    },
+    fallbackKeywordSource: rawFallback.fallbackKeywordSource,
+  };
+};
+
 const logFallback = (
   query: string,
   language: SupportedLanguage,
@@ -1126,20 +1225,22 @@ const logFallback = (
     network_error: "network_fallback",
     missing_api_key: "missing_api_key_fallback",
   };
+  const fallback = buildFallbackParsedQuery(query, language);
   setLastQueryParserTelemetry({
     parserOutcome: outcomeMap[reason],
     parserTimedOut: reason === "timeout",
     parserUsedFallback: true,
     parserFallbackReason: reason,
+    fallbackKeywordSource: fallback.fallbackKeywordSource,
   });
-  const fallback = fallbackParsedQuery(query, language);
   logger.warn("[LLM QUERY PARSER] fallback", {
     query,
     reason,
-    fallbackKeywords: fallback.keywords,
-    intelligenceQuery: fallback.intelligenceQuery,
+    fallbackKeywords: fallback.parsedQuery.keywords,
+    fallbackKeywordSource: fallback.fallbackKeywordSource,
+    intelligenceQuery: fallback.parsedQuery.intelligenceQuery,
   });
-  return fallback;
+  return fallback.parsedQuery;
 };
 
 const isAbortError = (error: unknown): boolean =>
@@ -1159,6 +1260,7 @@ export const parseGalleryQuery = async (
       parserTimedOut: false,
       parserUsedFallback: false,
       parserFallbackReason: "disabled",
+      fallbackKeywordSource: null,
     });
     return null;
   }
@@ -1220,15 +1322,24 @@ export const parseGalleryQuery = async (
         parserTimedOut: false,
         parserUsedFallback: true,
         parserFallbackReason: "non_200",
+        fallbackKeywordSource: null,
       });
-      const fallback = fallbackParsedQuery(userMessage, resolvedLanguage);
+      const fallback = buildFallbackParsedQuery(userMessage, resolvedLanguage);
+      setLastQueryParserTelemetry({
+        parserOutcome: "non_200_fallback",
+        parserTimedOut: false,
+        parserUsedFallback: true,
+        parserFallbackReason: "non_200",
+        fallbackKeywordSource: fallback.fallbackKeywordSource,
+      });
       logger.warn("[LLM QUERY PARSER] fallback", {
         query: userMessage,
         reason: "non_200",
         status: response.status,
-        fallbackKeywords: fallback.keywords,
+        fallbackKeywords: fallback.parsedQuery.keywords,
+        fallbackKeywordSource: fallback.fallbackKeywordSource,
       });
-      return fallback;
+      return fallback.parsedQuery;
     }
 
     const content = response.payload.choices?.[0]?.message?.content?.trim() ?? "";
@@ -1242,6 +1353,7 @@ export const parseGalleryQuery = async (
       parserTimedOut: false,
       parserUsedFallback: false,
       parserFallbackReason: null,
+      fallbackKeywordSource: "parser",
     });
     logger.info("[LLM QUERY PARSER] parsed", parsed);
     return parsed;
@@ -1252,14 +1364,23 @@ export const parseGalleryQuery = async (
         parserTimedOut: true,
         parserUsedFallback: true,
         parserFallbackReason: "timeout",
+        fallbackKeywordSource: null,
       });
-      const fallback = fallbackParsedQuery(userMessage, resolvedLanguage);
+      const fallback = buildFallbackParsedQuery(userMessage, resolvedLanguage);
+      setLastQueryParserTelemetry({
+        parserOutcome: "timeout_fallback",
+        parserTimedOut: true,
+        parserUsedFallback: true,
+        parserFallbackReason: "timeout",
+        fallbackKeywordSource: fallback.fallbackKeywordSource,
+      });
       logger.warn("[LLM QUERY PARSER] timeout", {
         query: userMessage,
         timeoutMs: QUERY_PARSER_TIMEOUT_MS,
-        fallbackKeywords: fallback.keywords,
+        fallbackKeywords: fallback.parsedQuery.keywords,
+        fallbackKeywordSource: fallback.fallbackKeywordSource,
       });
-      return fallback;
+      return fallback.parsedQuery;
     }
 
     setLastQueryParserTelemetry({
@@ -1267,15 +1388,24 @@ export const parseGalleryQuery = async (
       parserTimedOut: false,
       parserUsedFallback: true,
       parserFallbackReason: "network_error",
+      fallbackKeywordSource: null,
     });
-    const fallback = fallbackParsedQuery(userMessage, resolvedLanguage);
+    const fallback = buildFallbackParsedQuery(userMessage, resolvedLanguage);
+    setLastQueryParserTelemetry({
+      parserOutcome: "network_fallback",
+      parserTimedOut: false,
+      parserUsedFallback: true,
+      parserFallbackReason: "network_error",
+      fallbackKeywordSource: fallback.fallbackKeywordSource,
+    });
     logger.warn("[LLM QUERY PARSER] fallback", {
       query: userMessage,
       reason: "network_error",
       error: error instanceof Error ? error.message : String(error),
-      fallbackKeywords: fallback.keywords,
+      fallbackKeywords: fallback.parsedQuery.keywords,
+      fallbackKeywordSource: fallback.fallbackKeywordSource,
     });
-    return fallback;
+    return fallback.parsedQuery;
   } finally {
     if (timeoutHandle) {
       clearTimeout(timeoutHandle);
@@ -1287,6 +1417,7 @@ let lastQueryParserTelemetry: QueryParserTelemetry = {
   parserTimedOut: false,
   parserUsedFallback: false,
   parserFallbackReason: null,
+  fallbackKeywordSource: null,
 };
 
 const setLastQueryParserTelemetry = (telemetry: QueryParserTelemetry): void => {

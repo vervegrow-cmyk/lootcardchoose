@@ -125,6 +125,24 @@ const resolveImageUrlHost = (imageUrl: string | null): string | null => {
   }
 };
 
+const classifyGuidanceText = (
+  text: string,
+  language: SupportedLanguage
+): "legacy_wrong_channel" | "guild_disabled" | "channel_not_enabled" | null => {
+  if (text === t(language, "channel.onlyLootcardchoose")) {
+    return "legacy_wrong_channel";
+  }
+
+  if (
+    text === "LootCardChoose is disabled for this server. Please ask the server admin to enable it first." ||
+    text.includes("This bot is not enabled in this channel.")
+  ) {
+    return text.includes("disabled for this server") ? "guild_disabled" : "channel_not_enabled";
+  }
+
+  return null;
+};
+
 export const buildSearchFallbackText = (response: HermesGallerySearchResultsOutput): string => {
   const cardLines = response.cards.slice(0, 10).map((card, index) => {
     const priceLine = response.language === "zh" ? `价格: $${card.price.toFixed(2)}` : `Price: $${card.price.toFixed(2)}`;
@@ -442,10 +460,23 @@ export const DiscordBot = {
 
         stage = "reply.text";
         await message.reply(response.text);
+        const guidanceReason = classifyGuidanceText(response.text, response.language);
+        if (guidanceReason) {
+          logger.info("[DISCORD] channel guidance sent", {
+            userId: message.author.id,
+            channelId: message.channelId,
+            guildId: message.guildId ?? null,
+            channelName: handlingDecision.channelName,
+            isDM: handlingDecision.isDM,
+            guidanceReason,
+            responseType: response.type,
+          });
+        }
         logger.info("[DISCORD] reply sent", {
           userId: message.author.id,
           channelId: message.channelId,
           responseType: response.type,
+          guidanceReason,
           latencyMs: Date.now() - startedAt,
         });
       } catch (error) {

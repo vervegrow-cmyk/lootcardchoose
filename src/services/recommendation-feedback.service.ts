@@ -58,6 +58,11 @@ const normalizeSummary = (
     parserTimedOut: summary.parserTimedOut,
     parserUsedFallback: summary.parserUsedFallback,
     parserFallbackReason: summary.parserFallbackReason ?? null,
+    fallbackKeywordSource: summary.fallbackKeywordSource ?? null,
+    searchResultCount: summary.searchResultCount,
+    responseTextSource: summary.responseTextSource,
+    recoveryTriggered: summary.recoveryTriggered,
+    searchKeywordSource: summary.searchKeywordSource,
     top10BeforeRerank: limitItems(summary.top10BeforeRerank).map((item) => ({
       id: item.id,
       title: item.title,
@@ -135,6 +140,11 @@ const buildEvent = (input: {
   parserTimedOut: input.recommendationDebugSummary?.parserTimedOut,
   parserUsedFallback: input.recommendationDebugSummary?.parserUsedFallback,
   parserFallbackReason: input.recommendationDebugSummary?.parserFallbackReason ?? null,
+  fallbackKeywordSource: input.recommendationDebugSummary?.fallbackKeywordSource ?? null,
+  searchResultCount: input.recommendationDebugSummary?.searchResultCount,
+  responseTextSource: input.recommendationDebugSummary?.responseTextSource,
+  recoveryTriggered: input.recommendationDebugSummary?.recoveryTriggered,
+  searchKeywordSource: input.recommendationDebugSummary?.searchKeywordSource,
   rerankHappened: input.recommendationDebugSummary?.rerankHappened,
   recommendationDebugSummary: normalizeSummary(input.recommendationDebugSummary),
 });

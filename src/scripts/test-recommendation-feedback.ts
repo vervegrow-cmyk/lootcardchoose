@@ -214,6 +214,10 @@ const main = async (): Promise<void> => {
     assert.equal(paidEvent?.purchased, true);
     assert.equal(paidEvent?.orderNumber, normalFlow.orderNumber);
     ensure(searchEvent?.recommendationDebugSummary, "Expected recommendation summary on search event");
+    ensure(typeof searchEvent?.searchResultCount === "number", "Expected searchResultCount on search event");
+    ensure(searchEvent?.responseTextSource, "Expected responseTextSource on search event");
+    ensure(searchEvent?.searchKeywordSource, "Expected searchKeywordSource on search event");
+    ensure("fallbackKeywordSource" in (searchEvent ?? {}), "Expected fallbackKeywordSource field on search event");
     ensure(
       (searchEvent?.recommendationDebugSummary?.top10BeforeRerank.length ?? 0) <= 10,
       "Expected top10BeforeRerank <= 10"

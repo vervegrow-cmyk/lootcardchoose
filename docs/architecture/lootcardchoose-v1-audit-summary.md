@@ -36,6 +36,46 @@ The default next action should be:
 
 `stabilize -> validate with real users -> observe analytics -> fix only real problems`
 
+## 2026-05-18 Incident Runbook
+The `2026-05-18` runtime logs confirmed that the main funnel still worked, but they also exposed a narrow set of V1 follow-up risks that should be monitored continuously.
+
+### Parser network failure
+- Monitor `LLM QUERY PARSER` fallback events with `reason = network_error`.
+- Expected V1-safe behavior:
+  - parser failure still yields usable raw-query fallback keywords when the user query is meaningful
+  - the gallery search log should show which keyword source was used
+  - recommendation feedback should preserve parser outcome and search-result count for later analysis
+- Escalate when:
+  - `network_error` appears repeatedly in a short observation window
+  - zero-result rate spikes specifically on parser-fallback searches
+
+### Railway SIGTERM
+- Treat isolated `npm error signal SIGTERM` events as an ops/deploy signal first, not an app-logic failure by default.
+- Verify:
+  - Railway deployment or restart activity at the same timestamp
+  - platform healthcheck or shutdown behavior before blaming parser/search code
+- Escalate when:
+  - SIGTERM appears repeatedly without a matching deploy/restart explanation
+  - reply failures or funnel interruption cluster immediately after restart signals
+
+### Repeated legacy_wrong_channel access
+- Monitor repeated `legacy_wrong_channel` denials grouped by guild and channel.
+- Expected V1-safe behavior:
+  - router policy remains unchanged
+  - Discord logs should make redirect guidance countable
+- Escalate when:
+  - wrong-channel redirects cluster heavily in one guild or one channel
+  - users repeatedly bounce between blocked channels and `#lootcardchoose`
+
+### Duplicate checkout evidence
+- Keep `search / selection / checkout_created / purchase_completed` as the only funnel truth.
+- Analyze recommendation feedback for:
+  - repeated `checkout_created` events for the same `orderNumber`
+  - repeated `checkout_created` events for the same `sessionId`
+  - session-link anomalies or orphan purchase patterns
+- Escalate when:
+  - duplicate checkout evidence appears repeatedly in production samples instead of isolated test noise
+
 ## What The Audit Confirmed
 ### 1. Current Product Identity
 The system is currently a Discord-first collectible card discovery and purchase workflow.

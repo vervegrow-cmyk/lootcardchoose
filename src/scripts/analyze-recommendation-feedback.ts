@@ -18,6 +18,17 @@ const REPORTS_DIR = path.join(process.cwd(), "reports");
 type FeedbackCardSummary = NonNullable<
   RecommendationFeedbackEvent["recommendationDebugSummary"]
 >["top10BeforeRerank"][number];
+type ExtendedRecommendationFeedbackAnalyticsReport = RecommendationFeedbackAnalyticsReport & {
+  observability: {
+    parserOutcomeBreakdown: Record<string, number>;
+    parserNetworkFallbackSearches: number;
+    zeroResultSearches: number;
+    zeroResultAfterParserFallback: number;
+    duplicateCheckoutOrderCount: number;
+    duplicateCheckoutSessionCount: number;
+    sessionLinkAnomalyCount: number;
+  };
+};
 
 const parseArgs = (argv: string[]): RecommendationFeedbackAnalyticsCliOptions => {
   let json = false;
@@ -320,7 +331,7 @@ const buildReport = (
   invalidLines: number,
   source: RecommendationFeedbackAnalyticsSource,
   limit: number
-): RecommendationFeedbackAnalyticsReport => {
+): ExtendedRecommendationFeedbackAnalyticsReport => {
   let searchCount = 0;
   let selectionCount = 0;
   let checkoutCount = 0;
@@ -329,20 +340,38 @@ const buildReport = (
   let orphanPurchaseCount = 0;
   let sessionsWithRerank = 0;
   let sessionsWithNoRankingChange = 0;
+  let parserNetworkFallbackSearches = 0;
+  let zeroResultSearches = 0;
+  let zeroResultAfterParserFallback = 0;
+  let sessionLinkAnomalyCount = 0;
 
   const queryCounts = new Map<string, number>();
   const selectedCardCounts = new Map<string, number>();
   const purchasedCardCounts = new Map<string, number>();
   const selectedCardTitles = new Map<string, string | null>();
   const purchasedCardTitles = new Map<string, string | null>();
+  const parserOutcomeBreakdown = new Map<string, number>();
+  const checkoutCountByOrder = new Map<string, number>();
+  const checkoutCountBySession = new Map<string, number>();
+  const sessionIdsByOrder = new Map<string, Set<string>>();
 
   for (const event of parsedEvents) {
     if (event.eventType === "search") {
       searchCount += 1;
       incrementMap(queryCounts, event.query);
+      incrementMap(parserOutcomeBreakdown, event.parserOutcome ?? "unknown");
 
       if (event.recommendationDebugSummary?.usedFallback) {
         fallbackSearchCount += 1;
+      }
+      if (event.parserFallbackReason === "network_error") {
+        parserNetworkFallbackSearches += 1;
+      }
+      if ((event.searchResultCount ?? -1) === 0) {
+        zeroResultSearches += 1;
+      }
+      if ((event.searchResultCount ?? -1) === 0 && event.parserUsedFallback) {
+        zeroResultAfterParserFallback += 1;
       }
 
       const rerankStatus = compareIdOrder(
@@ -366,12 +395,22 @@ const buildReport = (
 
     if (event.eventType === "checkout_created") {
       checkoutCount += 1;
+      incrementMap(checkoutCountByOrder, event.orderNumber);
+      incrementMap(checkoutCountBySession, event.sessionId);
+      if (event.orderNumber) {
+        const linkedSessions = sessionIdsByOrder.get(event.orderNumber) ?? new Set<string>();
+        if (event.sessionId) {
+          linkedSessions.add(event.sessionId);
+        }
+        sessionIdsByOrder.set(event.orderNumber, linkedSessions);
+      }
     }
 
     if (event.eventType === "purchase_completed") {
       purchaseCount += 1;
       if (event.orphan) {
         orphanPurchaseCount += 1;
+        sessionLinkAnomalyCount += 1;
       }
       incrementMap(purchasedCardCounts, event.selectedCardId);
       if (event.selectedCardId) {
@@ -384,6 +423,9 @@ const buildReport = (
   const selectionToCheckoutRate = safeRate(checkoutCount, selectionCount);
   const checkoutToPurchaseRate = safeRate(purchaseCount, checkoutCount);
   const usedFallbackRate = safeRate(fallbackSearchCount, searchCount);
+  const duplicateCheckoutOrderCount = Array.from(checkoutCountByOrder.values()).filter((count) => count > 1).length;
+  const duplicateCheckoutSessionCount = Array.from(checkoutCountBySession.values()).filter((count) => count > 1).length;
+  sessionLinkAnomalyCount += Array.from(sessionIdsByOrder.values()).filter((sessions) => sessions.size > 1).length;
 
   const summary: RecommendationFeedbackAnalyticsSummary = {
     file: source.file,
@@ -430,10 +472,19 @@ const buildReport = (
     topQueries: toTopQueries(queryCounts, limit),
     topSelectedCards: toTopCards(selectedCardCounts, selectedCardTitles, limit),
     topPurchasedCards: toTopCards(purchasedCardCounts, purchasedCardTitles, limit),
+    observability: {
+      parserOutcomeBreakdown: Object.fromEntries(parserOutcomeBreakdown.entries()),
+      parserNetworkFallbackSearches,
+      zeroResultSearches,
+      zeroResultAfterParserFallback,
+      duplicateCheckoutOrderCount,
+      duplicateCheckoutSessionCount,
+      sessionLinkAnomalyCount,
+    },
   };
 };
 
-const renderMarkdown = (report: RecommendationFeedbackAnalyticsReport): string => {
+const renderMarkdown = (report: ExtendedRecommendationFeedbackAnalyticsReport): string => {
   const lines: string[] = [];
 
   lines.push("## Summary");
@@ -462,6 +513,16 @@ const renderMarkdown = (report: RecommendationFeedbackAnalyticsReport): string =
   lines.push(`- orphan purchase count: ${report.rerankHealth.orphanPurchaseCount}`);
   lines.push(`- sessions with rerank: ${report.rerankHealth.sessionsWithRerank}`);
   lines.push(`- sessions with no ranking change: ${report.rerankHealth.sessionsWithNoRankingChange}`);
+
+  lines.push("");
+  lines.push("## Observability");
+  lines.push(`- parser outcome breakdown: ${JSON.stringify(report.observability.parserOutcomeBreakdown)}`);
+  lines.push(`- parser network fallback searches: ${report.observability.parserNetworkFallbackSearches}`);
+  lines.push(`- zero-result searches: ${report.observability.zeroResultSearches}`);
+  lines.push(`- zero-result searches after parser fallback: ${report.observability.zeroResultAfterParserFallback}`);
+  lines.push(`- duplicate checkout orders: ${report.observability.duplicateCheckoutOrderCount}`);
+  lines.push(`- duplicate checkout sessions: ${report.observability.duplicateCheckoutSessionCount}`);
+  lines.push(`- session-link anomalies: ${report.observability.sessionLinkAnomalyCount}`);
 
   lines.push("");
   lines.push("## Interpretation");
